@@ -1,0 +1,117 @@
+﻿/* Paleta dental */
+:root {
+    --azul-principal: #00bcd4;
+    --azul-secundario: #0288d1;
+    --blanco: #ffffff;
+    --gris-claro: #f5f9fc;
+    --gris-texto: #6c757d;
+}
+
+/* Fondo general */
+body {
+    background-color: var(--gris-claro);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* NAVBAR */
+.navbar {
+    background: linear-gradient(90deg, var(--azul-principal), var(--azul-secundario));
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.4rem;
+    color: var(--blanco) !important;
+}
+
+.nav-link {
+    color: var(--blanco) !important;
+    transition: 0.3s;
+}
+
+    .nav-link:hover {
+        color: #e0f7fa !important;
+    }
+
+/* CONTENEDOR PRINCIPAL */
+.body-content {
+    background-color: var(--blanco);
+    margin-top: 30px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.08);
+}
+
+/* FOOTER */
+footer {
+    text-align: center;
+    color: var(--gris-texto);
+    margin-top: 20px;
+}
+
+/* BOTONES (para que todo se vea acorde luego) */
+.btn-primary {
+    background-color: var(--azul-principal);
+    border: none;
+}
+
+    .btn-primary:hover {
+        background-color: var(--azul-secundario);
+    }
+
+/* TITULOS */
+h1, h2, h3 {
+    color: var(--azul-secundario);
+}
+
+/* SEPARADOR */
+hr {
+    border-top: 1px solid #e0e0e0;
+}
+
+/* HERO */
+.hero {
+    height: 90vh;
+    background: url('https://images.unsplash.com/photo-1606813909354-3d9c4c0f5d74') no-repeat center center/cover;
+    position: relative;
+}
+
+.hero-overlay {
+    background: rgba(0, 188, 212, 0.7);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-content {
+    color: white;
+    max-width: 600px;
+}
+
+    .hero-content h1 {
+        font-size: 3rem;
+        font-weight: bold;
+    }
+
+    .hero-content p {
+        margin: 20px 0;
+    }
+
+/* CARDS */
+.servicio-card {
+    border: none;
+    border-radius: 12px;
+    transition: 0.3s;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+}
+
+    .servicio-card:hover {
+        transform: translateY(-5px);
+    }
+
+/* SCROLL SUAVE */
+html {
+    scroll-behavior: smooth;
+}
