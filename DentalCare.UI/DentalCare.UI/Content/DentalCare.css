@@ -1,117 +1,339 @@
-﻿/* Paleta dental */
-:root {
-    --azul-principal: #00bcd4;
-    --azul-secundario: #0288d1;
-    --blanco: #ffffff;
-    --gris-claro: #f5f9fc;
-    --gris-texto: #6c757d;
+﻿/* ===== RESET Y FUENTES ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap');
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
-/* Fondo general */
 body {
-    background-color: var(--gris-claro);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    color: #1e293b;
+    line-height: 1.5;
+    position: relative;
+    background: none;
 }
 
-/* NAVBAR */
+    /* ===== IMAGEN DE FONDO CON BLUR ===== */
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('images/logo.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: blur(6px);
+        z-index: -2;
+    }
+
+    /* Capa adicional para oscurecer ligeramente el fondo y mejorar contraste */
+    body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.3);
+        z-index: -1;
+    }
+
+/* ===== CONTENEDOR PRINCIPAL: FULL WIDTH ===== */
+.body-content {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent;
+    overflow-x: hidden;
+}
+
+/* ===== NAVBAR (semi-transparente) ===== */
 .navbar {
-    background: linear-gradient(90deg, var(--azul-principal), var(--azul-secundario));
-    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 0.75rem 1rem;
 }
 
 .navbar-brand {
-    font-weight: bold;
-    font-size: 1.4rem;
-    color: var(--blanco) !important;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #0b63e5 !important;
 }
 
-.nav-link {
-    color: var(--blanco) !important;
-    transition: 0.3s;
+.navbar-nav .nav-link {
+    color: #1e293b !important;
+    font-weight: 500;
+    transition: all 0.2s;
+    border-radius: 8px;
 }
 
-    .nav-link:hover {
-        color: #e0f7fa !important;
+    .navbar-nav .nav-link:hover {
+        color: #0b63e5 !important;
+        background-color: rgba(11, 99, 229, 0.1);
     }
 
-/* CONTENEDOR PRINCIPAL */
-.body-content {
-    background-color: var(--blanco);
-    margin-top: 30px;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 15px rgba(0,0,0,0.08);
+/* ===== SECCIONES FULL WIDTH CON FONDO SEMI-TRANSPARENTE ===== */
+.full-width-section {
+    width: 100%;
+    padding: 4rem 0;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(2px);
+    margin-bottom: 0;
 }
 
-/* FOOTER */
-footer {
-    text-align: center;
-    color: var(--gris-texto);
-    margin-top: 20px;
-}
-
-/* BOTONES (para que todo se vea acorde luego) */
-.btn-primary {
-    background-color: var(--azul-principal);
-    border: none;
-}
-
-    .btn-primary:hover {
-        background-color: var(--azul-secundario);
-    }
-
-/* TITULOS */
-h1, h2, h3 {
-    color: var(--azul-secundario);
-}
-
-/* SEPARADOR */
-hr {
-    border-top: 1px solid #e0e0e0;
-}
-
-/* HERO */
+/* Hero necesita un poco más de transparencia para destacar */
 .hero {
-    height: 90vh;
-    background: url('https://images.unsplash.com/photo-1606813909354-3d9c4c0f5d74') no-repeat center center/cover;
-    position: relative;
-}
-
-.hero-overlay {
-    background: rgba(0, 188, 212, 0.7);
-    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    min-height: 80vh;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.hero-content {
+    text-align: center;
     color: white;
-    max-width: 600px;
 }
 
-    .hero-content h1 {
-        font-size: 3rem;
-        font-weight: bold;
+    .hero .hero-content h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
     }
 
-    .hero-content p {
-        margin: 20px 0;
+    .hero .lead {
+        font-size: 1.25rem;
+        margin-bottom: 2rem;
     }
 
-/* CARDS */
+/* ===== TARJETAS DE SERVICIOS SIN BORDES ===== */
 .servicio-card {
-    border: none;
-    border-radius: 12px;
-    transition: 0.3s;
-    box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
 }
 
     .servicio-card:hover {
         transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
     }
 
-/* SCROLL SUAVE */
-html {
-    scroll-behavior: smooth;
+    .servicio-card h4 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+/* Eliminar bordes de cualquier posible card-body heredado */
+.card-body {
+    border: none !important;
+    padding: 0 !important;
+}
+
+/* ===== BOTONES ===== */
+.btn-primary {
+    background-color: #0b63e5;
+    border-color: #0b63e5;
+    border-radius: 40px;
+    padding: 0.6rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+    .btn-primary:hover {
+        background-color: #084caf;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(11, 99, 229, 0.3);
+    }
+
+.btn-outline-primary {
+    border: 1px solid #0b63e5;
+    color: #0b63e5;
+    border-radius: 40px;
+    background-color: transparent;
+}
+
+    .btn-outline-primary:hover {
+        background-color: #0b63e5;
+        color: white;
+    }
+
+/* ===== FOOTER (semi-transparente) ===== */
+footer {
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(4px);
+    border: none !important;
+    padding: 1.5rem 0;
+    text-align: center;
+    color: #1e293b;
+    margin-top: 0;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .hero .hero-content h1 {
+        font-size: 2.2rem;
+    }
+
+    .full-width-section {
+        padding: 2rem 0;
+    }
+
+    .servicio-card {
+        padding: 1rem;
+    }
+}
+
+/* ===== UTILIDADES ADICIONALES ===== */
+.container {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.text-muted {
+    color: #475569 !important;
+}
+
+.rounded {
+    border-radius: 0.5rem;
+}
+
+/* ===== ESTILOS PÁGINA DE CONTACTO ===== */
+
+/* Tarjeta de información de contacto */
+.contact-info-card,
+.contact-form-card {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    height: 100%;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+    .contact-info-card h3,
+    .contact-form-card h3 {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+        color: #0b63e5;
+        font-weight: 600;
+    }
+
+/* Lista de detalles de contacto */
+.contact-details {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+}
+
+    .contact-details li {
+        margin-bottom: 1.25rem;
+        line-height: 1.5;
+    }
+
+.contact-icon {
+    font-size: 1.5rem;
+    margin-right: 0.75rem;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.contact-details a {
+    color: #0b63e5;
+    text-decoration: none;
+}
+
+    .contact-details a:hover {
+        text-decoration: underline;
+    }
+
+/* Enlaces sociales */
+.social-links {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background-color: rgba(11, 99, 229, 0.1);
+    border-radius: 50%;
+    font-size: 1.5rem;
+    color: #0b63e5;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+    .social-icon:hover {
+        background-color: #0b63e5;
+        color: white;
+        transform: translateY(-3px);
+    }
+
+/* Formulario */
+.contact-form-card .form-label {
+    font-weight: 500;
+    color: #1e293b;
+}
+
+.contact-form-card .form-control {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+}
+
+    .contact-form-card .form-control:focus {
+        border-color: #0b63e5;
+        box-shadow: 0 0 0 3px rgba(11, 99, 229, 0.2);
+    }
+
+/* Contenedor del mapa */
+.map-container {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 0.5rem;
+    border-radius: 0; /* sin bordes redondeados para mantener consistencia */
+    overflow: hidden;
+}
+
+    .map-container iframe {
+        display: block;
+        filter: brightness(0.95);
+        transition: filter 0.3s;
+    }
+
+        .map-container iframe:hover {
+            filter: brightness(1);
+        }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .contact-info-card,
+    .contact-form-card {
+        padding: 1.5rem;
+    }
+
+        .contact-info-card h3,
+        .contact-form-card h3 {
+            font-size: 1.5rem;
+        }
+
+    .social-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 1.25rem;
+    }
 }
