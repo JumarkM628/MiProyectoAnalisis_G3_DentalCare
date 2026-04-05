@@ -42,7 +42,7 @@ namespace DentalCare.UI.Controllers
         }
 
         // GET: Cita/Details/5
-        public ActionResult Details(int id)
+        public ActionResult DetallesCita(int id)
         {
             return View();
         }

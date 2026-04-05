@@ -1,46 +1,68 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Clínica Dental</title>
+    <title>@ViewBag.Title - Clínica Dental Dra. Rebeca</title>
     @Styles.Render("~/Content/css")
     <link href="~/Content/DentalCare.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm">
-        <div class="container">
-            @Html.ActionLink("DentalCare", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Alternar navegación" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+
+    <!-- Navbar -->
+    <nav class="main-nav">
+        <div class="nav-inner">
+            <!-- Título centrado -->
+            <div class="navbar-title">
+                Clínica dental y especialidades Dra. Rebeca
+            </div>
+
+            <!-- Botón hamburguesa móvil -->
+            <button class="nav-toggler" data-bs-toggle="collapse" data-bs-target="#mainNavLinks" aria-controls="mainNavLinks" aria-expanded="false" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
             </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
+
+            <!-- Links centrados -->
+            <div class="nav-links-wrapper" id="mainNavLinks">
+                <ul class="nav-links">
                     <li>@Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Expedientes", "Expedientes", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Citas", "ObtenerTodasLasCitas", "Cita", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Litado Citas", "ObtenerTodasLasCitas", "Cita", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Citas", "AgregarCita", "Cita", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Contabilidad", "Contabilidad", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Reporteria", "Reporteria", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Productos", "Productos", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Expedientes", "Expedientes", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Inventario", "Inventario", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Servicios", "Servicios", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Tienda", "Productos", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Acerca de", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Contacto", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                </ul>
-            </div>
+</div>
         </div>
     </nav>
 
-    <div class="body-content">
+    <!-- Page Content -->
+    <div class="page-wrapper">
         @RenderBody()
-        <footer>
-            <p>&copy; @DateTime.Now.Year - Clínica Dental | Sonríe con confianza 😁</p>
+
+        <footer class="site-footer">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <span>Clínica Dental y Especialidades<br><strong>Dra. Rebeca</strong></span>
+                </div>
+                <p class="footer-tagline">Sonríe con confianza</p>
+                <p class="footer-copy">&copy; @DateTime.Now.Year — Todos los derechos reservados</p>
+            </div>
         </footer>
     </div>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    <script>document.querySelector('.nav-toggler').addEventListener('click', function () {
+            document.getElementById('mainNavLinks').classList.toggle('open');
+        });</script>
 </body>
 </html>
+
+
