@@ -164,6 +164,7 @@
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\DentalCare.css" />
     <Content Include="Content\Images\Logo.jpg" />
+    <Content Include="Content\Images\Promocion.png" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -200,6 +201,7 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Cita\ObtenerTodasLasCitas.cshtml" />
+    <Content Include="Views\Cita\AgregarCita.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
