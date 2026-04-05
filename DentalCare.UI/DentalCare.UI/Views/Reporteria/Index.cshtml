@@ -1,0 +1,328 @@
+﻿@{
+    ViewBag.Title = "Reportería";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .report-container {
+        display: flex;
+        height: 85vh;
+    }
+    .sidebar {
+        width: 250px;
+        background: #f8f9fa;
+        padding: 15px;
+        border-right: 1px solid #ddd;
+    }
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: black;
+            text-decoration: none;
+        }
+            .sidebar a:hover, .active {
+                background: #0d6efd;
+                color: white !important;
+            }
+    .content {
+        flex: 1;
+        padding: 20px;
+    }
+    .section {
+        display: none;
+    }
+    .calendar-container {
+        max-width: 400px;
+        margin: auto;
+        text-align: center;
+    }
+
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7,1fr);
+        gap: 5px;
+    }
+    .day {
+        padding: 10px;
+        background: #e9ecef;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+        .day:hover {
+            background: #0d6efd;
+            color: white;
+        }
+        .day.selected {
+            background: #0d6efd;
+            color: white;
+        }
+    .card-item {
+        width: 120px;
+        height: 120px;
+        border-radius: 12px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        font-size: 14px;
+    }
+    .low {
+        background: #fff3cd;
+    }
+    .out {
+        background: #f8d7da;
+    }
+    .day-box {
+        background: #f1f1f1;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+    .payment-row {
+        display: flex;
+        justify-content: space-between;
+        background: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin-top: 5px;
+    }
+    .patient {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+        .patient img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+    .modal-box {
+        display: none;
+        position: fixed;
+        top: 30%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        z-index: 1000;
+    }
+    .overlay {
+        display: none;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+    }
+</style>
+<div class="report-container">
+    <div class="sidebar">
+        <h5>Reportes</h5>
+        <a onclick="showSection('citas',this)" class="active">Citas</a>
+        <a onclick="showSection('inventario',this)">Inventario</a>
+        <a onclick="showSection('pagos',this)">Pagos</a>
+        <a onclick="showSection('pacientes',this)">Pacientes</a>
+        <a onclick="showSection('agenda',this)">Agenda</a>
+    </div>
+    <div class="content">
+        <div id="citas" class="section" style="display:block;">
+            <h3>Citas</h3>
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <button class="btn btn-outline-primary btn-sm" onclick="prevMonth()">◀</button>
+                    <span id="monthYear"></span>
+                    <button class="btn btn-outline-primary btn-sm" onclick="nextMonth()">▶</button>
+                </div>
+                <div class="calendar-grid" id="calendar"></div>
+            </div>
+        </div>
+        <div id="inventario" class="section">
+            <h3>Inventario</h3>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <div class="card-item low">
+                    Guantes<br>Stock: 5
+                </div>
+                <div class="card-item out">
+                    Mascarillas<br>Stock: 0
+                </div>
+            </div>
+        </div>
+        <div id="pagos" class="section">
+            <h3>Pagos</h3>
+
+            <div class="day-box">
+                <strong>01/04/2026</strong>
+
+                <div class="payment-row">
+                    <span>Limpieza</span>
+                    <span>$50</span>
+                </div>
+                <div class="payment-row">
+                    <span>Ortodoncia</span>
+                    <span>$120</span>
+                </div>
+                <hr>
+                <strong>Total: $170</strong>
+            </div>
+            <div class="day-box">
+                <strong>02/04/2026</strong>
+                <div class="payment-row">
+                    <span>Extracción</span>
+                    <span>$80</span>
+                </div>
+                <div class="payment-row">
+                    <span>Consulta</span>
+                    <span>$40</span>
+                </div>
+                <hr>
+                <strong>Total: $120</strong>
+            </div>
+        </div>
+        <div id="pacientes" class="section">
+            <h3>Pacientes</h3>
+            <div class="patient">
+                <img src="https://via.placeholder.com/40" />
+                <span>Juan Pérez</span>
+                <button class="btn btn-sm btn-primary" onclick="showInfo()">Ver</button>
+            </div>
+            <div class="patient">
+                <img src="https://via.placeholder.com/40" />
+                <span>María López</span>
+                <button class="btn btn-sm btn-primary" onclick="showInfo()">Ver</button>
+            </div>
+        </div>
+        <div id="agenda" class="section">
+            <h3>Agenda</h3>
+
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <button class="btn btn-outline-primary btn-sm" onclick="prevMonth()">◀</button>
+                    <span id="monthYearAgenda"></span>
+                    <button class="btn btn-outline-primary btn-sm" onclick="nextMonth()">▶</button>
+                </div>
+                <div class="calendar-grid" id="calendarAgenda"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="overlay" id="overlay" onclick="closeModal()"></div>
+<div class="modal-box" id="modal">
+    <h5 id="modalTitle">Acción</h5>
+    <div id="modalContent"></div>
+    <button class="btn btn-secondary mt-2" onclick="closeModal()">Cerrar</button>
+</div>
+<script>
+    let currentDate = new Date();
+    let selectedDay = null;
+    let currentView = "citas";
+    function showSection(id, el) {
+        currentView = id;
+        document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+        document.getElementById(id).style.display = "block";
+        document.querySelectorAll(".sidebar a").forEach(a => a.classList.remove("active"));
+        el.classList.add("active");
+        if (id === "citas") renderCalendar("calendar", "monthYear");
+        if (id === "agenda") renderCalendar("calendarAgenda", "monthYearAgenda", true);
+    }
+    function renderCalendar(containerId, labelId, agenda = false) {
+        let container = document.getElementById(containerId);
+        let label = document.getElementById(labelId);
+        container.innerHTML = "";
+        let year = currentDate.getFullYear();
+        let month = currentDate.getMonth();
+        label.innerText = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+        let firstDay = new Date(year, month, 1).getDay();
+        let days = new Date(year, month + 1, 0).getDate();
+        for (let i = 0; i < firstDay; i++) {
+            container.innerHTML += "<div></div>";
+        }
+        for (let d = 1; d <= days; d++) {
+            let div = document.createElement("div");
+            div.className = "day";
+            div.innerText = d;
+
+            div.onclick = () => {
+                selectedDay = div;
+
+                if (agenda) {
+                    openAgendaModal();
+                } else {
+                    openCitasModal();
+                }
+            };
+            container.appendChild(div);
+        }
+    }
+    function prevMonth() {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        updateCalendar();
+    }
+    function nextMonth() {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        updateCalendar();
+    }
+    function updateCalendar() {
+        if (currentView === "citas") {
+            renderCalendar("calendar", "monthYear");
+        } else {
+            renderCalendar("calendarAgenda", "monthYearAgenda", true);
+        }
+    }
+    function openCitasModal() {
+        document.getElementById("modalTitle").innerText = "Opciones";
+        document.getElementById("modalContent").innerHTML = `
+        <button class="btn btn-primary w-100 mb-2">Agendar</button>
+        <button class="btn btn-danger w-100 mb-2">Cancelar</button>
+        <button class="btn btn-info w-100">Info</button>
+    `;
+        openModal();
+    }
+
+    function openAgendaModal() {
+        document.getElementById("modalTitle").innerText = "Agenda";
+        document.getElementById("modalContent").innerHTML = `
+        <button class="btn btn-primary w-100 mb-2" onclick="selectDay()">Agendar</button>
+        <button class="btn btn-danger w-100" onclick="clearDay()">Cancelar</button>
+    `;
+        openModal();
+    }
+    function selectDay() {
+        if (selectedDay) selectedDay.classList.add("selected");
+        closeModal();
+    }
+    function clearDay() {
+        if (selectedDay) selectedDay.classList.remove("selected");
+        closeModal();
+    }
+    function showInfo() {
+        document.getElementById("modalTitle").innerText = "Paciente";
+        document.getElementById("modalContent").innerHTML = "Data por decidir";
+        openModal();
+    }
+    function openModal() {
+        document.getElementById("modal").style.display = "block";
+        document.getElementById("overlay").style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById("modal").style.display = "none";
+        document.getElementById("overlay").style.display = "none";
+    }
+
+    renderCalendar("calendar", "monthYear");
+</script>

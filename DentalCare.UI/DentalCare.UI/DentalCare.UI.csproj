@@ -143,6 +143,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Reporteria\ReporteCitasViewModel.cs" />
+    <Compile Include="Models\Reporteria\ReporteInventarioViewModel.cs" />
+    <Compile Include="Models\Reporteria\ReportePacientesViewModel.cs" />
+    <Compile Include="Models\Reporteria\ReportePagosViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -200,15 +204,19 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Cita\ObtenerTodasLasCitas.cshtml" />
+    <Content Include="Views\Reporteria\Index.cshtml" />
+    <Content Include="Views\Reporteria\Citas.cshtml" />
+    <Content Include="Views\Reporteria\Inventario.cshtml" />
+    <Content Include="Views\Reporteria\Pagos.cshtml" />
+    <Content Include="Views\Reporteria\Pacientes.cshtml" />
+    <Content Include="Views\Reporteria\Agenda.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
     <Folder Include="Views\Contabilidad\" />
     <Folder Include="Views\Expediente\" />
     <Folder Include="Views\Inventario\" />
     <Folder Include="Views\Producto\" />
-    <Folder Include="Views\Reporteria\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
