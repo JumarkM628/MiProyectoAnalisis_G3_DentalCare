@@ -1,0 +1,222 @@
+﻿@{
+    ViewBag.Title = "Editar Pago";
+}
+
+<style>
+    .ep-page {
+        padding: 32px 0;
+    }
+
+    .ep-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+    }
+
+        .ep-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .ep-header p {
+            font-size: 13px;
+            color: #6B7A99;
+            margin: 0;
+        }
+
+    .badge-mdc {
+        font-size: 11px;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: #E6F1FB;
+        color: #185FA5;
+        font-weight: 600;
+    }
+
+    .ep-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 20px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+        .form-group input,
+        .form-group select {
+            border: 1px solid #DDE1EC;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+    .form-full {
+        grid-column: 1/-1;
+    }
+
+    .btn-primario {
+        background: #185FA5;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+    }
+
+    .btn-secundario {
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+    }
+
+    .acciones {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="container ep-page">
+
+    <!-- HEADER -->
+    <div class="ep-header">
+        <div>
+            <h1>Editar pago</h1>
+            <p>Modificá la información de un pago registrado</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a href="@Url.Action("Menu","Contabilidad")" class="btn-secundario">← Volver</a>
+        </div>
+    </div>
+
+    <!-- BUSCADOR -->
+    <div class="ep-card">
+        <div class="form-group">
+            <label>Buscar pago</label>
+            <input type="text" placeholder="Ej: Juan Pérez o PAG-001" oninput="buscarPago(this.value)" />
+        </div>
+    </div>
+
+    <!-- FORMULARIO -->
+    <div class="ep-card">
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label>Paciente</label>
+                <input id="paciente" />
+            </div>
+
+            <div class="form-group">
+                <label>Tratamiento</label>
+                <input id="tratamiento" />
+            </div>
+
+            <div class="form-group">
+                <label>Monto</label>
+                <input type="number" id="monto" />
+            </div>
+
+            <div class="form-group">
+                <label>Estado</label>
+                <select id="estado">
+                    <option>Pagado</option>
+                    <option>Pendiente</option>
+                    <option>Vencido</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Método de pago</label>
+                <select id="metodo">
+                    <option>Efectivo</option>
+                    <option>Transferencia</option>
+                    <option>Tarjeta</option>
+                    <option>SINPE</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Fecha</label>
+                <input type="date" id="fecha" />
+            </div>
+
+            <div class="form-group form-full">
+                <label>Observaciones</label>
+                <input id="obs" />
+            </div>
+
+        </div>
+
+        <div class="acciones">
+            <button class="btn-secundario">Cancelar</button>
+            <button class="btn-primario" onclick="guardar()">Guardar cambios</button>
+        </div>
+    </div>
+
+</div>
+
+@section scripts{
+    <script>
+
+    var pagos = [
+        {id:'PAG-001', paciente:'Juan Pérez', tratamiento:'Ortodoncia', monto:350000, estado:'Pagado', metodo:'Transferencia', fecha:'2026-04-01', obs:''},
+        {id:'PAG-002', paciente:'Ana López', tratamiento:'Limpieza', monto:45000, estado:'Pendiente', metodo:'Efectivo', fecha:'2026-04-02', obs:''},
+        {id:'PAG-003', paciente:'Carlos Ruiz', tratamiento:'Implante', monto:600000, estado:'Pagado', metodo:'Tarjeta', fecha:'2026-04-03', obs:''}
+    ];
+
+    var seleccionado = null;
+
+    function buscarPago(txt){
+        txt = txt.toLowerCase();
+
+        var p = pagos.find(x =>
+            x.id.toLowerCase().includes(txt) ||
+            x.paciente.toLowerCase().includes(txt)
+        );
+
+        if(p){
+            seleccionado = p;
+            document.getElementById('paciente').value = p.paciente;
+            document.getElementById('tratamiento').value = p.tratamiento;
+            document.getElementById('monto').value = p.monto;
+            document.getElementById('estado').value = p.estado;
+            document.getElementById('metodo').value = p.metodo;
+            document.getElementById('fecha').value = p.fecha;
+            document.getElementById('obs').value = p.obs;
+        }
+    }
+
+    function guardar(){
+        if(!seleccionado){
+            alert("Buscá un pago primero");
+            return;
+        }
+
+        seleccionado.paciente = document.getElementById('paciente').value;
+        seleccionado.tratamiento = document.getElementById('tratamiento').value;
+        seleccionado.monto = parseFloat(document.getElementById('monto').value);
+        seleccionado.estado = document.getElementById('estado').value;
+        seleccionado.metodo = document.getElementById('metodo').value;
+        seleccionado.fecha = document.getElementById('fecha').value;
+        seleccionado.obs = document.getElementById('obs').value;
+
+        alert("Pago actualizado correctamente");
+    }
+
+    </script>
+}

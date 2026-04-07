@@ -202,15 +202,26 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Cita\ObtenerTodasLasCitas.cshtml" />
     <Content Include="Views\Cita\AgregarCita.cshtml" />
+    <Content Include="Views\Contabilidad\anticipo.cshtml" />
+    <Content Include="Views\Contabilidad\CostosTratamiento.cshtml" />
+    <Content Include="Views\Contabilidad\EditarPago.cshtml" />
+    <Content Include="Views\Contabilidad\EstadoPagos.cshtml" />
+    <Content Include="Views\Contabilidad\Gastos.cshtml" />
+    <Content Include="Views\Contabilidad\Menu.cshtml" />
+    <Content Include="Views\Contabilidad\RegistroPago.cshtml" />
+    <Content Include="Views\Reporteria\Agenda.cshtml" />
+    <Content Include="Views\Reporteria\Citas.cshtml" />
+    <Content Include="Views\Reporteria\Index.cshtml" />
+    <Content Include="Views\Reporteria\Inventario.cshtml" />
+    <Content Include="Views\Reporteria\Pacientes.cshtml" />
+    <Content Include="Views\Reporteria\Pagos.cshtml" />
+    <Content Include="Views\Inventario\InventarioIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
-    <Folder Include="Views\Contabilidad\" />
     <Folder Include="Views\Expediente\" />
-    <Folder Include="Views\Inventario\" />
     <Folder Include="Views\Producto\" />
-    <Folder Include="Views\Reporteria\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

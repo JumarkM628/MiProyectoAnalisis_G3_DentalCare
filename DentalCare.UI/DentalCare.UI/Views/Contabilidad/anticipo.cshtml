@@ -1,0 +1,318 @@
+﻿@{
+        ViewBag.Title = "Anticipos";
+}
+
+<style>
+    .an-page {
+        padding: 32px 0;
+    }
+
+    .an-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+    }
+
+        .an-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .an-header p {
+            font-size: 13px;
+            color: #6B7A99;
+            margin: 0;
+        }
+
+    .badge-mdc {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: #E6F1FB;
+        color: #185FA5;
+    }
+
+    .metricas-grid {
+        display: grid;
+        grid-template-columns: repeat(4,1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .metrica-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 18px;
+    }
+
+    .metrica-label {
+        font-size: 11px;
+        color: #8896B0;
+        font-weight: 700;
+    }
+
+    .metrica-valor {
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    .an-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 20px;
+    }
+
+    .an-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+        .an-table th {
+            font-size: 11px;
+            color: #8896B0;
+            text-align: left;
+            padding: 10px;
+        }
+
+        .an-table td {
+            padding: 12px;
+            border-bottom: 1px solid #F0F2F8;
+        }
+
+    .badge-aplicado {
+        background: #EAF3DE;
+        color: #3B6D11;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+    }
+
+    .badge-pendiente {
+        background: #FAEEDA;
+        color: #854F0B;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+    }
+
+    .btn-nuevo {
+        background: #185FA5;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+    /* MODAL estilo igual a gastos */
+    .modal-backdrop-custom {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(12,27,51,0.45);
+        z-index: 1050;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .modal-backdrop-custom.show {
+            display: flex;
+        }
+
+    .modal-box {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        width: 400px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 12px;
+    }
+
+        .form-group input,
+        .form-group select {
+            border: 1px solid #DDE1EC;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+    .modal-btns {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .btn-secundario {
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        padding: 8px 16px;
+        border-radius: 8px;
+    }
+
+    .btn-primario {
+        background: #185FA5;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+    }
+</style>
+
+<div class="container an-page">
+
+    <!-- HEADER -->
+    <div class="an-header">
+        <div>
+            <h1>Anticipos</h1>
+            <p>Gestión de pagos parciales de pacientes</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn-nuevo" onclick="abrirModal()">+ Nuevo anticipo</button>
+            <a href="@Url.Action("Menu","Contabilidad")" class="btn-secundario">← Volver</a>
+        </div>
+    </div>
+
+    <!-- MÉTRICAS -->
+    <div class="metricas-grid">
+        <div class="metrica-card">
+            <div class="metrica-label">Total anticipos</div>
+            <div class="metrica-valor">₡650.000</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Aplicados</div>
+            <div class="metrica-valor">₡420.000</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Pendientes</div>
+            <div class="metrica-valor">₡230.000</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Pacientes</div>
+            <div class="metrica-valor">5</div>
+        </div>
+    </div>
+
+    <!-- TABLA -->
+    <div class="an-card">
+        <table class="an-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Paciente</th>
+                    <th>Tratamiento</th>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody id="tablaAnticipos"></tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-backdrop-custom" id="modalAnticipo">
+    <div class="modal-box">
+        <h4>Nuevo anticipo</h4>
+
+        <div class="form-group">
+            <label>Paciente</label>
+            <input id="paciente" />
+        </div>
+
+        <div class="form-group">
+            <label>Tratamiento</label>
+            <input id="tratamiento" />
+        </div>
+
+        <div class="form-group">
+            <label>Monto</label>
+            <input type="number" id="monto" />
+        </div>
+
+        <div class="form-group">
+            <label>Estado</label>
+            <select id="estadoAnt">
+                <option>Aplicado</option>
+                <option>Pendiente</option>
+            </select>
+        </div>
+
+        <div class="modal-btns">
+            <button class="btn-secundario" onclick="cerrar()">Cancelar</button>
+            <button class="btn-primario" onclick="guardar()">Guardar</button>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var anticipos = [
+            { id: 'ANT-001', paciente: 'Juan Pérez', tratamiento: 'Ortodoncia', monto: 200000, fecha: '01/04/2026', estado: 'Aplicado' },
+            { id: 'ANT-002', paciente: 'Ana López', tratamiento: 'Implante', monto: 150000, fecha: '02/04/2026', estado: 'Pendiente' }
+        ];
+
+        function render() {
+            var html = '';
+            anticipos.forEach(a => {
+                var badge = a.estado === 'Aplicado' ? 'badge-aplicado' : 'badge-pendiente';
+
+                html += `<tr>
+                    <td>${a.id}</td>
+                    <td>${a.paciente}</td>
+                    <td>${a.tratamiento}</td>
+                    <td>₡${a.monto.toLocaleString()}</td>
+                    <td>${a.fecha}</td>
+                    <td><span class="${badge}">${a.estado}</span></td>
+                </tr>`;
+            });
+            document.getElementById('tablaAnticipos').innerHTML = html;
+        }
+
+        function abrirModal() {
+            document.getElementById('modalAnticipo').classList.add('show');
+        }
+
+        function cerrar() {
+            document.getElementById('modalAnticipo').classList.remove('show');
+        }
+
+        function guardar() {
+            var p = document.getElementById('paciente').value;
+            var t = document.getElementById('tratamiento').value;
+            var m = document.getElementById('monto').value;
+            var e = document.getElementById('estadoAnt').value;
+
+            if (!p || !t || !m) {
+                alert("Completá los campos");
+                return;
+            }
+
+            anticipos.unshift({
+                id: 'ANT-' + String(anticipos.length + 1).padStart(3, '0'),
+                paciente: p,
+                tratamiento: t,
+                monto: parseFloat(m),
+                fecha: '06/04/2026',
+                estado: e
+            });
+
+            cerrar();
+            render();
+        }
+
+        render();
+    </script>
+}
