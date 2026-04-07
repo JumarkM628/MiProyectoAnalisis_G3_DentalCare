@@ -124,7 +124,7 @@ a {
 
 /* ---------- Main Nav ---------- */
 .main-nav {
-    background: var(--white);
+    background: #8FFDFF;
     border-bottom: 2px solid var(--border);
 }
 
@@ -279,15 +279,7 @@ a {
     }
 
     .hero::after {
-        content: '';
-        position: absolute;
-        right: -80px;
-        top: -80px;
-        width: 500px;
-        height: 500px;
-        border-radius: 50%;
-        border: 80px solid rgba(143,253,255,0.07);
-        pointer-events: none;
+        display: none;
     }
 
 .hero-overlay {
@@ -474,7 +466,7 @@ a {
 .servicio-card h4 {
     font-family: var(--font-main);
     font-size: 1.25rem;
-    color: var(--black);
+    color: #6EA0FF;
     margin-bottom: 10px;
     font-weight: 700;
 }
@@ -494,17 +486,7 @@ a {
     overflow: hidden;
 }
 
-    .why-section::before {
-        content: '';
-        position: absolute;
-        right: -120px;
-        bottom: -120px;
-        width: 400px;
-        height: 400px;
-        border-radius: 50%;
-        border: 60px solid rgba(143,253,255,0.08);
-        pointer-events: none;
-    }
+
 
     .why-section .section-title {
         color: var(--white);
@@ -1472,3 +1454,27 @@ textarea.form-control {
         font-size: 0.72rem;
     }
 }
+.about-hero::after {
+    display: none !important;
+}
+.btn-info {
+    background: var(--accent);
+    color: var(--black);
+    border-color: var(--accent);
+}
+
+    .btn-info:hover {
+        background: var(--accent-dark);
+        color: var(--black);
+    }
+
+.btn-light {
+    background: var(--white);
+    color: var(--black);
+    border-color: var(--white);
+}
+
+    .btn-light:hover {
+        background: #e5e7eb;
+        color: var(--black);
+    }
