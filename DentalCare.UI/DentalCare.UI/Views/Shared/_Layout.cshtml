@@ -19,7 +19,8 @@
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                     <li>@Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Expedientes", "Expedientes", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+
+                    <li>@Html.ActionLink("Expediente", "Index", "Expediente", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Citas", "ObtenerTodasLasCitas", "Cita", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Contabilidad", "Contabilidad", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Reporteria", "Reporteria", "Home", new { area = "" }, new { @class = "nav-link" })</li>
