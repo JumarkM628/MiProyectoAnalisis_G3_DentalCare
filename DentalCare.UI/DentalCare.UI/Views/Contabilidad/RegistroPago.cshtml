@@ -1,0 +1,798 @@
+﻿@{
+    ViewBag.Title = "Registro de Pago";
+}
+
+<style>
+    .rp-page {
+        padding: 32px 0;
+    }
+
+    .rp-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+    }
+
+    .rp-header-left h1 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0C1B33;
+        margin: 0 0 4px;
+    }
+
+    .rp-header-left p {
+        font-size: 13px;
+        color: #6B7A99;
+        margin: 0;
+    }
+
+    .badge-mdc {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: #E6F1FB;
+        color: #185FA5;
+    }
+
+    .rp-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 20px;
+    }
+
+    .rp-card-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: #8896B0;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-bottom: 16px;
+    }
+
+    .form-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .form-full {
+        grid-column: 1 / -1;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #3D4D6B;
+        }
+
+            .form-group label span {
+                color: #E24B4A;
+            }
+
+        .form-group input,
+        .form-group select {
+            border: 1px solid #DDE1EC;
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 14px;
+            color: #0C1B33;
+            background: #fff;
+            font-family: inherit;
+            transition: border-color 0.15s;
+        }
+
+            .form-group input:focus,
+            .form-group select:focus {
+                outline: none;
+                border-color: #378ADD;
+            }
+
+            .form-group input.input-error,
+            .form-group select.input-error {
+                border-color: #E24B4A;
+            }
+
+    .error-msg {
+        font-size: 12px;
+        color: #E24B4A;
+        display: none;
+        margin-top: 2px;
+    }
+
+    /* Chips info cita */
+    .chips-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .chip {
+        background: #F5F6FA;
+        border-radius: 10px;
+        padding: 10px 14px;
+    }
+
+        .chip .chip-label {
+            font-size: 11px;
+            color: #8896B0;
+            margin-bottom: 3px;
+        }
+
+        .chip .chip-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0C1B33;
+        }
+
+    .badge-estado {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #EAF3DE;
+        color: #3B6D11;
+    }
+
+    /* Tabla tratamientos */
+    .trat-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        margin-top: 12px;
+    }
+
+        .trat-table th {
+            text-align: left;
+            padding: 8px 10px;
+            color: #8896B0;
+            font-weight: 600;
+            font-size: 11px;
+            border-bottom: 1px solid #E8ECF4;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .trat-table td {
+            padding: 10px;
+            color: #3D4D6B;
+            border-bottom: 1px solid #F0F2F8;
+        }
+
+        .trat-table tr:last-child td {
+            border-bottom: none;
+        }
+
+    .td-right {
+        text-align: right;
+        font-weight: 600;
+        color: #0C1B33;
+    }
+
+    .btn-eliminar {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #E24B4A;
+        font-size: 13px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: inherit;
+    }
+
+        .btn-eliminar:hover {
+            background: #FCEBEB;
+        }
+
+    .resumen-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #F5F6FA;
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-top: 14px;
+    }
+
+        .resumen-total .label {
+            font-size: 13px;
+            color: #6B7A99;
+            font-weight: 500;
+        }
+
+        .resumen-total .value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0C1B33;
+        }
+
+    .empty-trat {
+        text-align: center;
+        padding: 20px;
+        color: #8896B0;
+        font-size: 13px;
+        border: 1px dashed #DDE1EC;
+        border-radius: 10px;
+        margin-top: 12px;
+    }
+
+    /* Métodos de pago */
+    .metodos-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .metodo-btn {
+        border: 1px solid #DDE1EC;
+        border-radius: 10px;
+        padding: 12px 8px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 13px;
+        color: #6B7A99;
+        background: #fff;
+        transition: all 0.15s;
+        font-family: inherit;
+        font-weight: 500;
+    }
+
+        .metodo-btn:hover {
+            background: #F5F6FA;
+            border-color: #B5D4F4;
+        }
+
+        .metodo-btn.activo {
+            border-color: #185FA5;
+            background: #E6F1FB;
+            color: #185FA5;
+            font-weight: 600;
+        }
+
+    .metodo-icono {
+        display: block;
+        margin: 0 auto 6px;
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Alertas */
+    .alert-custom {
+        display: none;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        margin-bottom: 20px;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .alert-custom.show {
+            display: flex;
+        }
+
+    .alert-warning-custom {
+        background: #FAEEDA;
+        color: #854F0B;
+        border: 1px solid #EF9F27;
+    }
+
+    .alert-success-custom {
+        background: #EAF3DE;
+        color: #3B6D11;
+        border: 1px solid #97C459;
+    }
+
+    .alert-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+        flex-shrink: 0;
+    }
+
+    /* Botones */
+    .btn-row {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 8px;
+    }
+
+    .btn-secundario {
+        padding: 9px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        color: #3D4D6B;
+        cursor: pointer;
+        font-family: inherit;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-secundario:hover {
+            background: #F5F6FA;
+            text-decoration: none;
+            color: #3D4D6B;
+        }
+
+    .btn-primario {
+        padding: 9px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        background: #185FA5;
+        color: #fff;
+        cursor: pointer;
+        font-family: inherit;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-primario:hover {
+            background: #0C447C;
+            text-decoration: none;
+            color: #fff;
+        }
+
+    .btn-agregar {
+        padding: 9px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid #185FA5;
+        background: #E6F1FB;
+        color: #185FA5;
+        cursor: pointer;
+        font-family: inherit;
+        white-space: nowrap;
+    }
+
+        .btn-agregar:hover {
+            background: #B5D4F4;
+        }
+
+    /* Modal */
+    .modal-backdrop-custom {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(12,27,51,0.45);
+        z-index: 1050;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .modal-backdrop-custom.show {
+            display: flex;
+        }
+
+    .modal-box {
+        background: #fff;
+        border-radius: 16px;
+        padding: 36px 32px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+    }
+
+    .modal-check-circle {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #EAF3DE;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+    }
+
+    .modal-box h4 {
+        font-size: 17px;
+        font-weight: 700;
+        color: #0C1B33;
+        margin-bottom: 8px;
+    }
+
+    .modal-box p {
+        font-size: 13px;
+        color: #6B7A99;
+        line-height: 1.6;
+        margin-bottom: 24px;
+    }
+
+    .modal-btns {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    @@media (max-width: 768px) {
+        .chips-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .form-grid-2 {
+            grid-template-columns: 1fr;
+        }
+
+        .metodos-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-full {
+            grid-column: 1;
+        }
+
+        .rp-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+    }
+</style>
+
+<div class="container rp-page">
+
+    <!-- HEADER -->
+    <div class="rp-header">
+        <div class="rp-header-left">
+            <h1>Registro de pago</h1>
+            <p>Seleccioná el paciente, agregá los tratamientos y registrá el pago</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a href="@Url.Action("Menu", "Contabilidad")" class="btn-secundario ms-2">&#8592; Volver</a>
+        </div>
+    </div>
+
+    <!-- ALERTAS -->
+    <div class="alert-custom alert-warning-custom" id="alertaGlobal">
+        <div class="alert-dot"></div>
+        <span id="alertaTexto">Debe completar todos los campos obligatorios.</span>
+    </div>
+    <div class="alert-custom alert-success-custom" id="alertaExito">
+        <div class="alert-dot"></div>
+        <span>El pago fue registrado y agregado al historial financiero de la clínica.</span>
+    </div>
+
+    <!-- PASO 1: PACIENTE Y CITA -->
+    <div class="rp-card">
+        <div class="rp-card-title">Paso 1 &middot; Selección de paciente y cita</div>
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label>Paciente <span>*</span></label>
+                <select id="selectPaciente" onchange="cargarCitas()">
+                    <option value="">-- Seleccionar paciente --</option>
+                    <option value="1">Carlos Méndez Rojas</option>
+                    <option value="2">María Fernández Solís</option>
+                    <option value="3">Luis Araya Mora</option>
+                    <option value="4">Andrea Jiménez Castro</option>
+                </select>
+                <span class="error-msg" id="errPaciente">Debe seleccionar un paciente.</span>
+            </div>
+            <div class="form-group">
+                <label>Cita finalizada <span>*</span></label>
+                <select id="selectCita" onchange="cargarInfoCita()" disabled>
+                    <option value="">-- Primero seleccioná un paciente --</option>
+                </select>
+                <span class="error-msg" id="errCita">Debe seleccionar una cita.</span>
+            </div>
+        </div>
+
+        <div id="infoCita" style="display:none;">
+            <div class="chips-row">
+                <div class="chip">
+                    <div class="chip-label">Paciente</div>
+                    <div class="chip-value" id="chipPaciente">-</div>
+                </div>
+                <div class="chip">
+                    <div class="chip-label">Cita #</div>
+                    <div class="chip-value" id="chipCita">-</div>
+                </div>
+                <div class="chip">
+                    <div class="chip-label">Fecha de cita</div>
+                    <div class="chip-value" id="chipFecha">-</div>
+                </div>
+                <div class="chip">
+                    <div class="chip-label">Estado</div>
+                    <div class="chip-value"><span class="badge-estado">Finalizada</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PASO 2: TRATAMIENTOS -->
+    <div class="rp-card">
+        <div class="rp-card-title">Paso 2 &middot; Tratamientos realizados</div>
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label>Tratamiento <span>*</span></label>
+                <select id="selectTratamiento">
+                    <option value="">-- Seleccionar --</option>
+                    <option value="Limpieza dental|35000">Limpieza dental</option>
+                    <option value="Blanqueamiento|45000">Blanqueamiento</option>
+                    <option value="Radiografía|12000">Radiografía</option>
+                    <option value="Extracción dental|25000">Extracción dental</option>
+                    <option value="Ortodoncia (mensualidad)|55000">Ortodoncia (mensualidad)</option>
+                    <option value="Resina dental|30000">Resina dental</option>
+                    <option value="Endodoncia|80000">Endodoncia</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Odontólogo</label>
+                <select id="selectOdontologo">
+                    <option value="">-- Seleccionar --</option>
+                    <option value="Dra. Sofía Vargas">Dra. Sofía Vargas</option>
+                    <option value="Dr. Marco Acuña">Dr. Marco Acuña</option>
+                    <option value="Dra. Laura Pérez">Dra. Laura Pérez</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Costo (&#8353;)</label>
+                <input type="number" id="costoTratamiento" placeholder="0" min="0" />
+            </div>
+            <div class="form-group" style="justify-content:flex-end;">
+                <label style="visibility:hidden;">x</label>
+                <button type="button" class="btn-agregar" onclick="agregarTratamiento()">+ Agregar tratamiento</button>
+            </div>
+        </div>
+
+        <div id="listaTratamientos">
+            <div class="empty-trat" id="emptyTrat">Aún no se han agregado tratamientos.</div>
+        </div>
+
+        <div class="resumen-total" id="resumenTotal" style="display:none;">
+            <span class="label">Total a pagar</span>
+            <span class="value" id="totalPagar">&#8353;0</span>
+        </div>
+    </div>
+
+    <!-- PASO 3: DATOS DEL PAGO -->
+    <div class="rp-card">
+        <div class="rp-card-title">Paso 3 &middot; Datos del pago</div>
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label>Monto pagado (&#8353;) <span>*</span></label>
+                <input type="number" id="monto" placeholder="0" min="0" />
+                <span class="error-msg" id="errMonto">El monto es obligatorio y debe ser mayor a 0.</span>
+            </div>
+            <div class="form-group">
+                <label>Fecha de pago <span>*</span></label>
+                <input type="date" id="fechaPago" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="form-group form-full">
+                <label>Método de pago <span>*</span></label>
+                <div class="metodos-grid">
+                    <button type="button" class="metodo-btn" onclick="seleccionarMetodo(this,'Efectivo')">
+                        <svg class="metodo-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="1" y="4" width="22" height="16" rx="2" />
+                            <line x1="1" y1="10" x2="23" y2="10" />
+                        </svg>
+                        Efectivo
+                    </button>
+                    <button type="button" class="metodo-btn" onclick="seleccionarMetodo(this,'Tarjeta')">
+                        <svg class="metodo-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="1" y="4" width="22" height="16" rx="2" />
+                            <line x1="1" y1="10" x2="23" y2="10" />
+                            <line x1="5" y1="15" x2="9" y2="15" />
+                        </svg>
+                        Tarjeta
+                    </button>
+                    <button type="button" class="metodo-btn" onclick="seleccionarMetodo(this,'SINPE')">
+                        <svg class="metodo-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="5" y="2" width="14" height="20" rx="2" />
+                            <line x1="12" y1="18" x2="12.01" y2="18" />
+                        </svg>
+                        SINPE
+                    </button>
+                </div>
+                <span class="error-msg" id="errMetodo">Debe seleccionar un método de pago.</span>
+            </div>
+            <div class="form-group form-full">
+                <label>Observaciones</label>
+                <input type="text" id="observaciones" placeholder="Ej: pago parcial, referencia de transferencia..." />
+            </div>
+        </div>
+        <div class="btn-row">
+            <button type="button" class="btn-secundario" onclick="limpiarTodo()">Cancelar</button>
+            <button type="button" class="btn-primario" onclick="confirmarPago()">Confirmar pago</button>
+        </div>
+    </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-backdrop-custom" id="modalConfirmacion">
+    <div class="modal-box">
+        <div class="modal-check-circle">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3B6D11" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+            </svg>
+        </div>
+        <h4>Pago registrado exitosamente</h4>
+        <p id="modalDetalle">El pago ha sido guardado y asociado al paciente y a la cita correspondiente.</p>
+        <div class="modal-btns">
+            <button class="btn-secundario" onclick="cerrarModal()">Nuevo pago</button>
+            <a href="@Url.Action("Menu", "Contabilidad")" class="btn-primario">Ir al menú</a>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var metodoSeleccionado = '';
+        var tratamientos = [];
+
+        var citasPorPaciente = {
+            '1': [{ id: 'CIT-2024', fecha: '06/04/2026' }, { id: 'CIT-2018', fecha: '15/02/2026' }],
+            '2': [{ id: 'CIT-2021', fecha: '01/04/2026' }],
+            '3': [{ id: 'CIT-2019', fecha: '28/03/2026' }, { id: 'CIT-2010', fecha: '10/01/2026' }],
+            '4': [{ id: 'CIT-2030', fecha: '05/04/2026' }]
+        };
+
+        var nombresPaciente = {
+            '1': 'Carlos Méndez Rojas',
+            '2': 'María Fernández Solís',
+            '3': 'Luis Araya Mora',
+            '4': 'Andrea Jiménez Castro'
+        };
+
+        function cargarCitas() {
+            var pid = document.getElementById('selectPaciente').value;
+            var selectCita = document.getElementById('selectCita');
+            document.getElementById('infoCita').style.display = 'none';
+            selectCita.innerHTML = '<option value="">-- Seleccionar cita --</option>';
+
+            if (!pid) {
+                selectCita.disabled = true;
+                selectCita.innerHTML = '<option value="">-- Primero seleccioná un paciente --</option>';
+                return;
+            }
+            selectCita.disabled = false;
+            (citasPorPaciente[pid] || []).forEach(function (c) {
+                var opt = document.createElement('option');
+                opt.value = c.id;
+                opt.textContent = c.id + ' · ' + c.fecha;
+                selectCita.appendChild(opt);
+            });
+            document.getElementById('errPaciente').style.display = 'none';
+        }
+
+        function cargarInfoCita() {
+            var pid = document.getElementById('selectPaciente').value;
+            var citaId = document.getElementById('selectCita').value;
+            if (!citaId || !pid) { document.getElementById('infoCita').style.display = 'none'; return; }
+            var cita = (citasPorPaciente[pid] || []).find(function (c) { return c.id === citaId; });
+            document.getElementById('chipPaciente').textContent = nombresPaciente[pid];
+            document.getElementById('chipCita').textContent = citaId;
+            document.getElementById('chipFecha').textContent = cita ? cita.fecha : '-';
+            document.getElementById('infoCita').style.display = 'block';
+            document.getElementById('errCita').style.display = 'none';
+        }
+
+        document.getElementById('selectTratamiento').addEventListener('change', function () {
+            var val = this.value;
+            document.getElementById('costoTratamiento').value = val ? val.split('|')[1] : '';
+        });
+
+        function agregarTratamiento() {
+            var selTrat = document.getElementById('selectTratamiento');
+            var inputCosto = document.getElementById('costoTratamiento');
+            var selOdon = document.getElementById('selectOdontologo');
+            if (!selTrat.value) { alert('Seleccioná un tratamiento.'); return; }
+            var nombre = selTrat.value.split('|')[0];
+            var costo = parseFloat(inputCosto.value) || parseFloat(selTrat.value.split('|')[1]) || 0;
+            tratamientos.push({ nombre: nombre, odontologo: selOdon.value || '—', costo: costo });
+            renderTratamientos();
+            selTrat.value = ''; selOdon.value = ''; inputCosto.value = '';
+        }
+
+        function eliminarTratamiento(idx) {
+            tratamientos.splice(idx, 1);
+            renderTratamientos();
+        }
+
+        function renderTratamientos() {
+            var lista = document.getElementById('listaTratamientos');
+            var resumen = document.getElementById('resumenTotal');
+            if (tratamientos.length === 0) {
+                lista.innerHTML = '<div class="empty-trat">Aún no se han agregado tratamientos.</div>';
+                resumen.style.display = 'none';
+                return;
+            }
+            var total = tratamientos.reduce(function (s, t) { return s + t.costo; }, 0);
+            var html = '<table class="trat-table"><thead><tr><th>Tratamiento</th><th>Odontólogo</th><th style="text-align:right">Costo</th><th></th></tr></thead><tbody>';
+            tratamientos.forEach(function (t, i) {
+                html += '<tr><td>' + t.nombre + '</td><td>' + t.odontologo + '</td>'
+                    + '<td class="td-right">&#8353;' + t.costo.toLocaleString('es-CR') + '</td>'
+                    + '<td><button class="btn-eliminar" onclick="eliminarTratamiento(' + i + ')">&#x2715;</button></td></tr>';
+            });
+            html += '</tbody></table>';
+            lista.innerHTML = html;
+            document.getElementById('totalPagar').innerHTML = '&#8353;' + total.toLocaleString('es-CR');
+            document.getElementById('monto').value = total;
+            resumen.style.display = 'flex';
+        }
+
+        function seleccionarMetodo(el, nombre) {
+            document.querySelectorAll('.metodo-btn').forEach(function (b) { b.classList.remove('activo'); });
+            el.classList.add('activo');
+            metodoSeleccionado = nombre;
+            document.getElementById('errMetodo').style.display = 'none';
+        }
+
+        function confirmarPago() {
+            var valido = true;
+            ocultarAlertas();
+            var pid = document.getElementById('selectPaciente').value;
+            var citaId = document.getElementById('selectCita').value;
+            var monto = document.getElementById('monto');
+
+            ['errPaciente', 'errCita', 'errMonto', 'errMetodo'].forEach(function (id) {
+                document.getElementById(id).style.display = 'none';
+            });
+            monto.classList.remove('input-error');
+
+            if (!pid) { document.getElementById('errPaciente').style.display = 'block'; valido = false; }
+            if (!citaId) { document.getElementById('errCita').style.display = 'block'; valido = false; }
+            if (tratamientos.length === 0) { alert('Agregá al menos un tratamiento.'); valido = false; }
+            if (!monto.value || parseFloat(monto.value) <= 0) { monto.classList.add('input-error'); document.getElementById('errMonto').style.display = 'block'; valido = false; }
+            if (!metodoSeleccionado) { document.getElementById('errMetodo').style.display = 'block'; valido = false; }
+
+            if (!valido) {
+                document.getElementById('alertaTexto').textContent = 'Debe completar todos los campos obligatorios.';
+                document.getElementById('alertaGlobal').classList.add('show');
+                return;
+            }
+
+            document.getElementById('modalDetalle').textContent =
+                'Monto: \u20A1' + parseFloat(monto.value).toLocaleString('es-CR')
+                + ' \u00B7 M\u00E9todo: ' + metodoSeleccionado
+                + ' \u00B7 Cita: ' + citaId
+                + ' \u00B7 Paciente: ' + nombresPaciente[pid];
+
+            document.getElementById('modalConfirmacion').classList.add('show');
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalConfirmacion').classList.remove('show');
+            limpiarTodo();
+            document.getElementById('alertaExito').classList.add('show');
+        }
+
+        function limpiarTodo() {
+            document.getElementById('selectPaciente').value = '';
+            document.getElementById('selectCita').innerHTML = '<option value="">-- Primero seleccioná un paciente --</option>';
+            document.getElementById('selectCita').disabled = true;
+            document.getElementById('infoCita').style.display = 'none';
+            tratamientos = [];
+            renderTratamientos();
+            document.getElementById('monto').value = '';
+            document.getElementById('observaciones').value = '';
+            document.getElementById('monto').classList.remove('input-error');
+            document.querySelectorAll('.metodo-btn').forEach(function (b) { b.classList.remove('activo'); });
+            metodoSeleccionado = '';
+            ocultarAlertas();
+        }
+
+        function ocultarAlertas() {
+            document.getElementById('alertaGlobal').classList.remove('show');
+            document.getElementById('alertaExito').classList.remove('show');
+        }
+    </script>
+}
+

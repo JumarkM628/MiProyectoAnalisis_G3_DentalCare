@@ -200,11 +200,17 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Cita\ObtenerTodasLasCitas.cshtml" />
+    <Content Include="Views\Contabilidad\Menu.cshtml" />
+    <Content Include="Views\Contabilidad\RegistroPago.cshtml" />
+    <Content Include="Views\Contabilidad\CostosTratamiento.cshtml" />
+    <Content Include="Views\Contabilidad\Gastos.cshtml" />
+    <Content Include="Views\Contabilidad\EstadoPagos.cshtml" />
+    <Content Include="Views\Contabilidad\anticipo.cshtml" />
+    <Content Include="Views\Contabilidad\EditarPago.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
-    <Folder Include="Views\Contabilidad\" />
     <Folder Include="Views\Expediente\" />
     <Folder Include="Views\Inventario\" />
     <Folder Include="Views\Producto\" />

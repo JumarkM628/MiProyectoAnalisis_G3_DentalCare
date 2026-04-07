@@ -1,0 +1,1164 @@
+﻿@{
+    ViewBag.Title = "Gastos de la Clínica";
+}
+
+<style>
+    .gs-page {
+        padding: 32px 0;
+    }
+
+    .gs-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+    }
+
+    .gs-header-left h1 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0C1B33;
+        margin: 0 0 4px;
+    }
+
+    .gs-header-left p {
+        font-size: 13px;
+        color: #6B7A99;
+        margin: 0;
+    }
+
+    .badge-mdc {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: #E6F1FB;
+        color: #185FA5;
+    }
+
+    /* Métricas */
+    .metricas-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .metrica-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 18px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .metrica-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #8896B0;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+    }
+
+    .metrica-valor {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0C1B33;
+    }
+
+    .metrica-sub {
+        font-size: 12px;
+        color: #6B7A99;
+    }
+
+    .badge-up {
+        font-size: 11px;
+        font-weight: 600;
+        color: #A0291E;
+        background: #FCEBEB;
+        border-radius: 20px;
+        padding: 2px 8px;
+        width: fit-content;
+    }
+
+    .badge-down {
+        font-size: 11px;
+        font-weight: 600;
+        color: #3B6D11;
+        background: #EAF3DE;
+        border-radius: 20px;
+        padding: 2px 8px;
+        width: fit-content;
+    }
+
+    /* Cards */
+    .gs-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 20px;
+    }
+
+    .gs-card-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: #8896B0;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-bottom: 16px;
+    }
+
+    /* Tabs */
+    .tabs-row {
+        display: flex;
+        gap: 6px;
+        border-bottom: 1px solid #E8ECF4;
+        margin-bottom: 20px;
+    }
+
+    .tab-btn {
+        padding: 10px 18px;
+        border: none;
+        background: none;
+        font-size: 13px;
+        font-weight: 600;
+        color: #6B7A99;
+        cursor: pointer;
+        font-family: inherit;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+    }
+
+        .tab-btn:hover {
+            color: #185FA5;
+        }
+
+        .tab-btn.activo {
+            color: #185FA5;
+            border-bottom-color: #185FA5;
+        }
+
+    /* Filtros */
+    .filtros-row {
+        display: flex;
+        gap: 12px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+    }
+
+    .filtro-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+        .filtro-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #3D4D6B;
+        }
+
+        .filtro-group input,
+        .filtro-group select {
+            border: 1px solid #DDE1EC;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #0C1B33;
+            background: #fff;
+            font-family: inherit;
+            min-width: 140px;
+        }
+
+            .filtro-group input:focus,
+            .filtro-group select:focus {
+                outline: none;
+                border-color: #378ADD;
+            }
+
+    .btn-nuevo {
+        padding: 9px 18px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: none;
+        background: #185FA5;
+        color: #fff;
+        cursor: pointer;
+        font-family: inherit;
+        margin-left: auto;
+    }
+
+        .btn-nuevo:hover {
+            background: #0C447C;
+        }
+
+    .btn-limpiar {
+        padding: 9px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        color: #3D4D6B;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+        .btn-limpiar:hover {
+            background: #F5F6FA;
+        }
+
+    /* Tabla */
+    .gs-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+        .gs-table thead tr {
+            border-bottom: 2px solid #E8ECF4;
+        }
+
+        .gs-table th {
+            text-align: left;
+            padding: 10px 12px;
+            color: #8896B0;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        .gs-table td {
+            padding: 12px;
+            color: #3D4D6B;
+            border-bottom: 1px solid #F0F2F8;
+            vertical-align: middle;
+        }
+
+        .gs-table tbody tr:hover {
+            background: #F9FAFC;
+        }
+
+        .gs-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    .td-desc {
+        font-weight: 600;
+        color: #0C1B33;
+    }
+
+    .td-right {
+        text-align: right;
+        font-weight: 600;
+        color: #0C1B33;
+    }
+
+    /* Badges categoría */
+    .badge-cat {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        white-space: nowrap;
+    }
+
+    .badge-insumos {
+        background: #E6F1FB;
+        color: #185FA5;
+    }
+
+    .badge-servicios {
+        background: #F0EBFB;
+        color: #6B3FA0;
+    }
+
+    .badge-salarios {
+        background: #EAF3DE;
+        color: #3B6D11;
+    }
+
+    .badge-equipo {
+        background: #FAEEDA;
+        color: #854F0B;
+    }
+
+    .badge-admin {
+        background: #E6F7F3;
+        color: #1A7A5E;
+    }
+
+    .badge-otros {
+        background: #F5F6FA;
+        color: #6B7A99;
+    }
+
+    /* Estado pago gasto */
+    .badge-pagado {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #EAF3DE;
+        color: #3B6D11;
+    }
+
+    .badge-pendiente {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #FAEEDA;
+        color: #854F0B;
+    }
+
+    .badge-vencido {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #FCEBEB;
+        color: #A0291E;
+    }
+
+    /* Botones acción */
+    .btn-accion {
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-family: inherit;
+    }
+
+    .btn-editar {
+        color: #185FA5;
+        background: #E6F1FB;
+    }
+
+        .btn-editar:hover {
+            background: #B5D4F4;
+        }
+
+    .btn-eliminar-sm {
+        color: #A0291E;
+        background: #FCEBEB;
+    }
+
+        .btn-eliminar-sm:hover {
+            background: #F5C6C6;
+        }
+
+    /* Resumen categorías */
+    .resumen-cats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .cat-item {
+        background: #F9FAFC;
+        border: 1px solid #E8ECF4;
+        border-radius: 10px;
+        padding: 14px 16px;
+    }
+
+    .cat-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .cat-item-nombre {
+        font-size: 13px;
+        font-weight: 600;
+        color: #0C1B33;
+    }
+
+    .cat-item-monto {
+        font-size: 14px;
+        font-weight: 700;
+        color: #0C1B33;
+    }
+
+    .barra-bg {
+        background: #E8ECF4;
+        border-radius: 20px;
+        height: 5px;
+    }
+
+    .barra-fill {
+        border-radius: 20px;
+        height: 5px;
+        transition: width 0.4s;
+    }
+
+    /* Paginación */
+    .paginacion-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 14px;
+        font-size: 13px;
+        color: #6B7A99;
+    }
+
+    .pag-btns {
+        display: flex;
+        gap: 6px;
+    }
+
+    .pag-btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        color: #3D4D6B;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+        .pag-btn:hover {
+            background: #F5F6FA;
+        }
+
+        .pag-btn.activo {
+            background: #185FA5;
+            color: #fff;
+            border-color: #185FA5;
+        }
+
+    /* Modal */
+    .modal-backdrop-custom {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(12,27,51,0.45);
+        z-index: 1050;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .modal-backdrop-custom.show {
+            display: flex;
+        }
+
+    .modal-box {
+        background: #fff;
+        border-radius: 16px;
+        padding: 28px;
+        max-width: 480px;
+        width: 94%;
+    }
+
+        .modal-box h4 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #0C1B33;
+            margin-bottom: 4px;
+        }
+
+    .modal-sub {
+        font-size: 13px;
+        color: #6B7A99;
+        margin-bottom: 20px;
+    }
+
+    .form-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .form-full {
+        grid-column: 1 / -1;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-bottom: 0;
+    }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #3D4D6B;
+        }
+
+            .form-group label span {
+                color: #E24B4A;
+            }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            border: 1px solid #DDE1EC;
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 14px;
+            color: #0C1B33;
+            background: #fff;
+            font-family: inherit;
+        }
+
+            .form-group input:focus,
+            .form-group select:focus,
+            .form-group textarea:focus {
+                outline: none;
+                border-color: #378ADD;
+            }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 65px;
+        }
+
+    .modal-btns {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+
+    .btn-secundario {
+        padding: 9px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        color: #3D4D6B;
+        cursor: pointer;
+        font-family: inherit;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-secundario:hover {
+            background: #F5F6FA;
+            text-decoration: none;
+            color: #3D4D6B;
+        }
+
+    .btn-primario {
+        padding: 9px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        background: #185FA5;
+        color: #fff;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+        .btn-primario:hover {
+            background: #0C447C;
+        }
+
+    /* Alert */
+    .alert-custom {
+        display: none;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        margin-bottom: 20px;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .alert-custom.show {
+            display: flex;
+        }
+
+    .alert-success-custom {
+        background: #EAF3DE;
+        color: #3B6D11;
+        border: 1px solid #97C459;
+    }
+
+    .alert-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+        flex-shrink: 0;
+    }
+
+    /* Modal confirm eliminar */
+    .modal-confirm .modal-box {
+        max-width: 380px;
+        text-align: center;
+    }
+
+    .modal-confirm .modal-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: #FCEBEB;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 14px;
+    }
+
+    .modal-confirm h4 {
+        margin-bottom: 8px;
+    }
+
+    .modal-confirm p {
+        font-size: 13px;
+        color: #6B7A99;
+        margin-bottom: 22px;
+        line-height: 1.6;
+    }
+
+    @@media (max-width: 900px) {
+        .metricas-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .resumen-cats {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .gs-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .filtros-row {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .btn-nuevo {
+            margin-left: 0;
+        }
+    }
+</style>
+
+<div class="container gs-page">
+
+    <!-- HEADER -->
+    <div class="gs-header">
+        <div class="gs-header-left">
+            <h1>Gastos de la clínica</h1>
+            <p>Registrá y gestioná todos los egresos operativos de la clínica</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a href="@Url.Action("Menu", "Contabilidad")" class="btn-secundario ms-2">&#8592; Volver</a>
+        </div>
+    </div>
+
+    <!-- ALERTA ÉXITO -->
+    <div class="alert-custom alert-success-custom" id="alertaExito">
+        <div class="alert-dot"></div>
+        <span id="alertaTexto">Gasto registrado correctamente.</span>
+    </div>
+
+    <!-- MÉTRICAS -->
+    <div class="metricas-grid">
+        <div class="metrica-card">
+            <div class="metrica-label">Total gastos (mes)</div>
+            <div class="metrica-valor">&#8353;1.248.500</div>
+            <div class="badge-up">&#9650; 8% vs mes anterior</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Gastos pendientes</div>
+            <div class="metrica-valor">&#8353;284.000</div>
+            <div class="metrica-sub">3 facturas por pagar</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Gastos vencidos</div>
+            <div class="metrica-valor" style="color:#A0291E;">&#8353;95.000</div>
+            <div class="metrica-sub">1 factura vencida</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Mayor gasto</div>
+            <div class="metrica-valor" style="font-size: 15px;">Salarios</div>
+            <div class="metrica-sub">&#8353;620.000 este mes</div>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs-row">
+        <button class="tab-btn activo" onclick="cambiarTab(this,'lista')">Lista de gastos</button>
+        <button class="tab-btn" onclick="cambiarTab(this,'resumen')">Resumen por categoría</button>
+    </div>
+
+    <!-- TAB: LISTA -->
+    <div id="tabLista">
+        <div class="gs-card" style="padding: 18px 24px 0;">
+            <div class="filtros-row">
+                <div class="filtro-group">
+                    <label>Buscar</label>
+                    <input type="text" id="inputBuscar" placeholder="Descripción o proveedor..." oninput="filtrarGastos()" />
+                </div>
+                <div class="filtro-group">
+                    <label>Categoría</label>
+                    <select id="selCat" onchange="filtrarGastos()">
+                        <option value="">Todas</option>
+                        <option>Insumos</option>
+                        <option>Servicios</option>
+                        <option>Salarios</option>
+                        <option>Equipo</option>
+                        <option>Administrativo</option>
+                        <option>Otros</option>
+                    </select>
+                </div>
+                <div class="filtro-group">
+                    <label>Estado</label>
+                    <select id="selEstado" onchange="filtrarGastos()">
+                        <option value="">Todos</option>
+                        <option>Pagado</option>
+                        <option>Pendiente</option>
+                        <option>Vencido</option>
+                    </select>
+                </div>
+                <div class="filtro-group">
+                    <label>Mes</label>
+                    <select id="selMes" onchange="filtrarGastos()">
+                        <option value="">Todos</option>
+                        <option value="04/2026" selected>Abril 2026</option>
+                        <option value="03/2026">Marzo 2026</option>
+                        <option value="02/2026">Febrero 2026</option>
+                    </select>
+                </div>
+                <button class="btn-limpiar" onclick="limpiarFiltros()">&#x2715; Limpiar</button>
+                <button class="btn-nuevo" onclick="abrirModalNuevo()">+ Nuevo gasto</button>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table class="gs-table" id="tablaGastos">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Descripción</th>
+                            <th>Categoría</th>
+                            <th>Proveedor</th>
+                            <th>Fecha</th>
+                            <th>Vencimiento</th>
+                            <th style="text-align:right">Monto (&#8353;)</th>
+                            <th>Estado</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpoGastos"></tbody>
+                </table>
+            </div>
+
+            <div class="paginacion-row" style="padding: 12px 0 16px;">
+                <span id="pagInfo">Mostrando resultados</span>
+                <div class="pag-btns">
+                    <button class="pag-btn" onclick="cambiarPag(-1)">&#8592;</button>
+                    <button class="pag-btn activo" onclick="irPag(1)">1</button>
+                    <button class="pag-btn" id="pag2" onclick="irPag(2)">2</button>
+                    <button class="pag-btn" onclick="cambiarPag(1)">&#8594;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: RESUMEN POR CATEGORÍA -->
+    <div id="tabResumen" style="display:none;">
+        <div class="gs-card">
+            <div class="gs-card-title">Distribución de gastos — Abril 2026</div>
+            <div class="resumen-cats" id="resumenCats"></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- MODAL NUEVO / EDITAR GASTO -->
+<div class="modal-backdrop-custom" id="modalGasto">
+    <div class="modal-box">
+        <h4 id="modalTitulo">Registrar nuevo gasto</h4>
+        <p class="modal-sub">Completá los datos del egreso a registrar.</p>
+
+        <div class="form-grid-2" style="gap:14px;">
+            <div class="form-group form-full">
+                <label>Descripción <span>*</span></label>
+                <input type="text" id="gDescripcion" placeholder="Ej: Compra de guantes de látex" />
+            </div>
+            <div class="form-group">
+                <label>Categoría <span>*</span></label>
+                <select id="gCategoria">
+                    <option value="">-- Seleccionar --</option>
+                    <option>Insumos</option>
+                    <option>Servicios</option>
+                    <option>Salarios</option>
+                    <option>Equipo</option>
+                    <option>Administrativo</option>
+                    <option>Otros</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Proveedor</label>
+                <input type="text" id="gProveedor" placeholder="Nombre del proveedor" />
+            </div>
+            <div class="form-group">
+                <label>Monto (&#8353;) <span>*</span></label>
+                <input type="number" id="gMonto" placeholder="0" min="0" />
+            </div>
+            <div class="form-group">
+                <label>Fecha del gasto <span>*</span></label>
+                <input type="date" id="gFecha" />
+            </div>
+            <div class="form-group">
+                <label>Fecha de vencimiento</label>
+                <input type="date" id="gVencimiento" />
+            </div>
+            <div class="form-group">
+                <label>Estado <span>*</span></label>
+                <select id="gEstado">
+                    <option value="">-- Seleccionar --</option>
+                    <option>Pagado</option>
+                    <option>Pendiente</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Método de pago</label>
+                <select id="gMetodo">
+                    <option value="">-- Seleccionar --</option>
+                    <option>Efectivo</option>
+                    <option>Transferencia</option>
+                    <option>Tarjeta</option>
+                    <option>SINPE</option>
+                </select>
+            </div>
+            <div class="form-group form-full">
+                <label>Observaciones</label>
+                <textarea id="gObservaciones" placeholder="Notas adicionales..."></textarea>
+            </div>
+        </div>
+
+        <div class="modal-btns">
+            <button class="btn-secundario" onclick="cerrarModalGasto()">Cancelar</button>
+            <button class="btn-primario" onclick="guardarGasto()">Guardar gasto</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CONFIRMAR ELIMINAR -->
+<div class="modal-backdrop-custom modal-confirm" id="modalEliminar">
+    <div class="modal-box">
+        <div class="modal-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A0291E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                <path d="M10 11v6" />
+                <path d="M14 11v6" />
+                <path d="M9 6V4h6v2" />
+            </svg>
+        </div>
+        <h4>¿Eliminar este gasto?</h4>
+        <p id="eliminarDesc">Esta acción no se puede deshacer. El gasto será removido del historial.</p>
+        <div class="modal-btns" style="justify-content:center;">
+            <button class="btn-secundario" onclick="cerrarEliminar()">Cancelar</button>
+            <button class="btn-primario" style="background:#A0291E;" onclick="confirmarEliminar()">Sí, eliminar</button>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>var gastos = [
+        { id:'GST-001', desc:'Compra de guantes de látex',      cat:'Insumos',        proveedor:'Dental Supply CR',   fecha:'01/04/2026', venc:'15/04/2026', monto:42000,  estado:'Pagado',    metodo:'Transferencia', obs:'' },
+        { id:'GST-002', desc:'Factura de electricidad',          cat:'Servicios',      proveedor:'ICE',                fecha:'02/04/2026', venc:'20/04/2026', monto:68000,  estado:'Pendiente', metodo:'',              obs:'' },
+        { id:'GST-003', desc:'Salario Dra. Sofía Vargas',        cat:'Salarios',       proveedor:'—',                  fecha:'01/04/2026', venc:'—',          monto:280000, estado:'Pagado',    metodo:'Transferencia', obs:'' },
+        { id:'GST-004', desc:'Salario Dr. Marco Acuña',          cat:'Salarios',       proveedor:'—',                  fecha:'01/04/2026', venc:'—',          monto:260000, estado:'Pagado',    metodo:'Transferencia', obs:'' },
+        { id:'GST-005', desc:'Servicio de internet',             cat:'Servicios',      proveedor:'Claro CR',           fecha:'03/04/2026', venc:'05/04/2026', monto:32000,  estado:'Vencido',   metodo:'',              obs:'Pendiente de pago' },
+        { id:'GST-006', desc:'Compra de amalgama dental',        cat:'Insumos',        proveedor:'MedDent',            fecha:'04/04/2026', venc:'18/04/2026', monto:55000,  estado:'Pagado',    metodo:'Tarjeta',       obs:'' },
+        { id:'GST-007', desc:'Mantenimiento sillón dental',      cat:'Equipo',         proveedor:'TecnoOdont',         fecha:'05/04/2026', venc:'25/04/2026', monto:95000,  estado:'Pendiente', metodo:'',              obs:'Requiere repuesto importado' },
+        { id:'GST-008', desc:'Alquiler del local',               cat:'Administrativo', proveedor:'Inmobiliaria CR',    fecha:'01/04/2026', venc:'05/04/2026', monto:180000, estado:'Pagado',    metodo:'Transferencia', obs:'' },
+        { id:'GST-009', desc:'Papel y útiles de oficina',        cat:'Administrativo', proveedor:'Office Depot',       fecha:'06/04/2026', venc:'—',          monto:12500,  estado:'Pagado',    metodo:'Efectivo',      obs:'' },
+        { id:'GST-010', desc:'Anestesia local (cajas x10)',      cat:'Insumos',        proveedor:'Dental Supply CR',   fecha:'04/04/2026', venc:'—',          monto:28000,  estado:'Pagado',    metodo:'SINPE',         obs:'' },
+        { id:'GST-011', desc:'Suscripción software clínica',     cat:'Servicios',      proveedor:'CliniSoft',          fecha:'01/04/2026', venc:'—',          monto:15000,  estado:'Pagado',    metodo:'Tarjeta',       obs:'' },
+        { id:'GST-012', desc:'Compra de radiografías digitales', cat:'Equipo',         proveedor:'RadioDent',          fecha:'03/04/2026', venc:'30/04/2026', monto:145000, estado:'Pendiente', metodo:'',              obs:'Equipo en tránsito' },
+        { id:'GST-013', desc:'Desinfectante instrumental',       cat:'Insumos',        proveedor:'MedDent',            fecha:'02/04/2026', venc:'—',          monto:18000,  estado:'Pagado',    metodo:'Efectivo',      obs:'' },
+        { id:'GST-014', desc:'Publicidad redes sociales',        cat:'Otros',          proveedor:'AgenciaMKT',         fecha:'01/04/2026', venc:'—',          monto:25000,  estado:'Pagado',    metodo:'Transferencia', obs:'' },
+    ];
+
+    var filtrado = [...gastos];
+    var pag = 1;
+    var porPag = 10;
+    var editandoIdx = null;
+    var eliminandoIdx = null;
+
+    var badgeCat = {
+        'Insumos':        'badge-insumos',
+        'Servicios':      'badge-servicios',
+        'Salarios':       'badge-salarios',
+        'Equipo':         'badge-equipo',
+        'Administrativo': 'badge-admin',
+        'Otros':          'badge-otros',
+    };
+
+    var coloresBarra = {
+        'Salarios':       '#3B6D11',
+        'Equipo':         '#854F0B',
+        'Administrativo': '#1A7A5E',
+        'Servicios':      '#6B3FA0',
+        'Insumos':        '#185FA5',
+        'Otros':          '#6B7A99',
+    };
+
+    function fc(n) { return '&#8353;' + n.toLocaleString('es-CR'); }
+
+    function renderTabla() {
+        var tbody  = document.getElementById('cuerpoGastos');
+        var inicio = (pag - 1) * porPag;
+        var slice  = filtrado.slice(inicio, inicio + porPag);
+
+        if (slice.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:#8896B0;">No hay gastos con esos filtros.</td></tr>';
+            document.getElementById('pagInfo').textContent = 'Sin resultados';
+            return;
+        }
+
+        var html = '';
+        slice.forEach(function(g, i) {
+            var real = inicio + i;
+            var bCat    = badgeCat[g.cat] || 'badge-otros';
+            var bEstado = g.estado === 'Pagado' ? 'badge-pagado' : (g.estado === 'Pendiente' ? 'badge-pendiente' : 'badge-vencido');
+            html += '<tr>'
+                + '<td style="color:#8896B0;font-size:11px;">' + g.id + '</td>'
+                + '<td class="td-desc">' + g.desc + '</td>'
+                + '<td><span class="badge-cat ' + bCat + '">' + g.cat + '</span></td>'
+                + '<td>' + g.proveedor + '</td>'
+                + '<td>' + g.fecha + '</td>'
+                + '<td style="color:' + (g.estado==='Vencido'?'#A0291E':'#3D4D6B') + ';">' + g.venc + '</td>'
+                + '<td class="td-right">' + fc(g.monto) + '</td>'
+                + '<td><span class="' + bEstado + '">' + g.estado + '</span></td>'
+                + '<td style="display:flex;gap:5px;">'
+                +   '<button class="btn-accion btn-editar" onclick="abrirModalEditar(' + real + ')">&#x270E;</button>'
+                +   '<button class="btn-accion btn-eliminar-sm" onclick="pedirEliminar(' + real + ')">&#x2715;</button>'
+                + '</td>'
+                + '</tr>';
+        });
+        tbody.innerHTML = html;
+
+        var total = filtrado.length;
+        var fin   = Math.min(inicio + porPag, total);
+        document.getElementById('pagInfo').textContent = 'Mostrando ' + (inicio+1) + '–' + fin + ' de ' + total + ' gastos';
+
+        var totalPags = Math.ceil(total / porPag);
+        document.getElementById('pag2').style.display = totalPags > 1 ? '' : 'none';
+    }
+
+    function filtrarGastos() {
+        var b  = document.getElementById('inputBuscar').value.toLowerCase();
+        var c  = document.getElementById('selCat').value;
+        var e  = document.getElementById('selEstado').value;
+        var m  = document.getElementById('selMes').value;
+
+        filtrado = gastos.filter(function(g) {
+            var matchB = g.desc.toLowerCase().includes(b) || g.proveedor.toLowerCase().includes(b);
+            var matchC = !c || g.cat === c;
+            var matchE = !e || g.estado === e;
+            var matchM = !m || g.fecha.endsWith(m.slice(2));
+            return matchB && matchC && matchE && matchM;
+        });
+        pag = 1;
+        renderTabla();
+    }
+
+    function limpiarFiltros() {
+        document.getElementById('inputBuscar').value = '';
+        document.getElementById('selCat').value      = '';
+        document.getElementById('selEstado').value   = '';
+        document.getElementById('selMes').value      = '';
+        filtrado = [...gastos];
+        pag = 1;
+        renderTabla();
+    }
+
+    function cambiarPag(d) {
+        var t = Math.ceil(filtrado.length / porPag);
+        pag = Math.max(1, Math.min(t, pag + d));
+        renderTabla();
+    }
+
+    function irPag(n) { pag = n; renderTabla(); }
+
+    // ---- Resumen por categoría ----
+    function renderResumen() {
+        var totales = {};
+        gastos.forEach(function(g) {
+            totales[g.cat] = (totales[g.cat] || 0) + g.monto;
+        });
+        var total = gastos.reduce(function(s,g){ return s+g.monto; }, 0);
+        var cats  = Object.keys(totales).sort(function(a,b){ return totales[b]-totales[a]; });
+
+        var html = '';
+        cats.forEach(function(cat) {
+            var m   = totales[cat];
+            var pct = Math.round(m / total * 100);
+            var col = coloresBarra[cat] || '#6B7A99';
+            html += '<div class="cat-item">'
+                + '<div class="cat-item-header">'
+                +   '<span class="cat-item-nombre">' + cat + '</span>'
+                +   '<span class="cat-item-monto">' + fc(m) + '</span>'
+                + '</div>'
+                + '<div class="barra-bg"><div class="barra-fill" style="width:' + pct + '%;background:' + col + ';"></div></div>'
+                + '<div style="font-size:11px;color:#8896B0;margin-top:4px;">' + pct + '% del total</div>'
+                + '</div>';
+        });
+        document.getElementById('resumenCats').innerHTML = html;
+    }
+
+    // ---- Tabs ----
+    function cambiarTab(el, tab) {
+        document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('activo'); });
+        el.classList.add('activo');
+        document.getElementById('tabLista').style.display   = tab === 'lista'   ? '' : 'none';
+        document.getElementById('tabResumen').style.display = tab === 'resumen' ? '' : 'none';
+        if (tab === 'resumen') renderResumen();
+    }
+
+    // ---- Modal nuevo/editar ----
+    function setFechaHoy(id) {
+        var hoy = new Date();
+        var yyyy = hoy.getFullYear();
+        var mm   = String(hoy.getMonth()+1).padStart(2,'0');
+        var dd   = String(hoy.getDate()).padStart(2,'0');
+        document.getElementById(id).value = yyyy+'-'+mm+'-'+dd;
+    }
+
+    function abrirModalNuevo() {
+        editandoIdx = null;
+        document.getElementById('modalTitulo').textContent = 'Registrar nuevo gasto';
+        ['gDescripcion','gProveedor','gObservaciones'].forEach(function(id){ document.getElementById(id).value=''; });
+        ['gCategoria','gEstado','gMetodo'].forEach(function(id){ document.getElementById(id).value=''; });
+        document.getElementById('gMonto').value = '';
+        document.getElementById('gVencimiento').value = '';
+        setFechaHoy('gFecha');
+        document.getElementById('modalGasto').classList.add('show');
+    }
+
+    function abrirModalEditar(idx) {
+        editandoIdx = idx;
+        var g = filtrado[idx];
+        document.getElementById('modalTitulo').textContent = 'Editar gasto';
+        document.getElementById('gDescripcion').value = g.desc;
+        document.getElementById('gCategoria').value   = g.cat;
+        document.getElementById('gProveedor').value   = g.proveedor === '—' ? '' : g.proveedor;
+        document.getElementById('gMonto').value        = g.monto;
+        document.getElementById('gEstado').value       = g.estado;
+        document.getElementById('gMetodo').value       = g.metodo;
+        document.getElementById('gObservaciones').value= g.obs;
+        // fechas (quemadas no tienen formato ISO, dejamos vacío)
+        document.getElementById('gFecha').value       = '';
+        document.getElementById('gVencimiento').value = '';
+        document.getElementById('modalGasto').classList.add('show');
+    }
+
+    function cerrarModalGasto() {
+        document.getElementById('modalGasto').classList.remove('show');
+    }
+
+    function guardarGasto() {
+        var desc = document.getElementById('gDescripcion').value.trim();
+        var cat  = document.getElementById('gCategoria').value;
+        var monto= parseFloat(document.getElementById('gMonto').value);
+        var fecha= document.getElementById('gFecha').value;
+        var est  = document.getElementById('gEstado').value;
+
+        if (!desc || !cat || !monto || !fecha || !est) {
+            alert('Completá todos los campos obligatorios.');
+            return;
+        }
+
+        var fParts = fecha.split('-');
+        var fFormat = fParts[2]+'/'+fParts[1]+'/'+fParts[0];
+
+        var venc = document.getElementById('gVencimiento').value;
+        var vFormat = '—';
+        if (venc) {
+            var vp = venc.split('-');
+            vFormat = vp[2]+'/'+vp[1]+'/'+vp[0];
+        }
+
+        if (editandoIdx !== null) {
+            var g = filtrado[editandoIdx];
+            var realIdx = gastos.indexOf(g);
+            gastos[realIdx].desc      = desc;
+            gastos[realIdx].cat       = cat;
+            gastos[realIdx].proveedor = document.getElementById('gProveedor').value || '—';
+            gastos[realIdx].monto     = monto;
+            gastos[realIdx].fecha     = fFormat;
+            gastos[realIdx].venc      = vFormat;
+            gastos[realIdx].estado    = est;
+            gastos[realIdx].metodo    = document.getElementById('gMetodo').value;
+            gastos[realIdx].obs       = document.getElementById('gObservaciones').value;
+            mostrarAlerta('Gasto actualizado correctamente.');
+        } else {
+            var nuevo = {
+                id: 'GST-' + String(gastos.length + 1).padStart(3,'0'),
+                desc: desc, cat: cat,
+                proveedor: document.getElementById('gProveedor').value || '—',
+                fecha: fFormat, venc: vFormat,
+                monto: monto, estado: est,
+                metodo: document.getElementById('gMetodo').value,
+                obs: document.getElementById('gObservaciones').value
+            };
+            gastos.unshift(nuevo);
+            mostrarAlerta('Nuevo gasto registrado correctamente.');
+        }
+
+        filtrado = [...gastos];
+        pag = 1;
+        renderTabla();
+        cerrarModalGasto();
+    }
+
+    // ---- Eliminar ----
+    function pedirEliminar(idx) {
+        eliminandoIdx = idx;
+        document.getElementById('eliminarDesc').textContent =
+            '¿Seguro que querés eliminar "' + filtrado[idx].desc + '"? Esta acción no se puede deshacer.';
+        document.getElementById('modalEliminar').classList.add('show');
+    }
+
+    function cerrarEliminar() {
+        document.getElementById('modalEliminar').classList.remove('show');
+        eliminandoIdx = null;
+    }
+
+    function confirmarEliminar() {
+        if (eliminandoIdx === null) return;
+        var g = filtrado[eliminandoIdx];
+        var ri = gastos.indexOf(g);
+        if (ri > -1) gastos.splice(ri, 1);
+        filtrado = [...gastos];
+        pag = 1;
+        cerrarEliminar();
+        renderTabla();
+        mostrarAlerta('Gasto eliminado del registro.');
+    }
+
+    function mostrarAlerta(txt) {
+        document.getElementById('alertaTexto').textContent = txt;
+        document.getElementById('alertaExito').classList.add('show');
+        setTimeout(function(){ document.getElementById('alertaExito').classList.remove('show'); }, 4000);
+    }
+
+    // Init
+    renderTabla();</script>
+}
+

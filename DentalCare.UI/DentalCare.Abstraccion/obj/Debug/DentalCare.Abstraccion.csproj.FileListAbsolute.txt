@@ -4,3 +4,9 @@ C:\Users\runli\source\repos\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\Denta
 C:\Users\runli\source\repos\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\DentalCare.Abstraccion.csproj.CoreCompileInputs.cache
 C:\Users\runli\source\repos\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\DentalCare.Abstraccion.dll
 C:\Users\runli\source\repos\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\DentalCare.Abstraccion.pdb
+C:\Users\werne\source\repos\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\bin\Debug\DentalCare.Abstraccion.dll
+C:\Users\werne\source\repos\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\bin\Debug\DentalCare.Abstraccion.pdb
+C:\Users\werne\source\repos\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\DentalCare.Abstraccion.csproj.AssemblyReference.cache
+C:\Users\werne\source\repos\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\DentalCare.Abstraccion.csproj.CoreCompileInputs.cache
+C:\Users\werne\source\repos\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\DentalCare.Abstraccion.dll
+C:\Users\werne\source\repos\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\DentalCare.Abstraccion.pdb

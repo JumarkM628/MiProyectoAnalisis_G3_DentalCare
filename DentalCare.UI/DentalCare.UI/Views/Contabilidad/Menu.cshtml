@@ -1,0 +1,329 @@
+﻿@{
+    ViewBag.Title = "Contabilidad";
+}
+
+<style>
+    .cont-page {
+        padding: 32px 0;
+    }
+
+    .cont-header {
+        margin-bottom: 28px;
+    }
+
+        .cont-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0C1B33;
+            margin-bottom: 4px;
+        }
+
+        .cont-header p {
+            font-size: 14px;
+            color: #6B7A99;
+            margin: 0;
+        }
+
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 36px;
+    }
+
+    .metric-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 12px;
+        padding: 18px 20px;
+    }
+
+        .metric-card .m-label {
+            font-size: 12px;
+            color: #8896B0;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .metric-card .m-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0C1B33;
+        }
+
+        .metric-card .m-sub {
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+    .m-sub.pos {
+        color: #27B07A;
+    }
+
+    .m-sub.neg {
+        color: #E24B4A;
+    }
+
+    .section-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #8896B0;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-bottom: 14px;
+    }
+
+    .modules-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+
+    .mod-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 24px 20px;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        transition: border-color 0.15s, box-shadow 0.15s;
+        color: inherit;
+    }
+
+        .mod-card:hover {
+            border-color: #378ADD;
+            box-shadow: 0 4px 18px rgba(55,138,221,0.10);
+            text-decoration: none;
+            color: inherit;
+        }
+
+    .mod-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+    }
+
+        .mod-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+    .mod-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #0C1B33;
+        margin-bottom: 4px;
+    }
+
+    .mod-desc {
+        font-size: 13px;
+        color: #7A8BA8;
+        line-height: 1.5;
+        flex: 1;
+    }
+
+    .mod-badge {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 3px 9px;
+        border-radius: 20px;
+        margin-top: 12px;
+        width: fit-content;
+    }
+
+    .mod-arrow {
+        position: absolute;
+        right: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 18px;
+        color: #C5D0E0;
+    }
+
+    .bg-blue {
+        background: #E6F1FB;
+    }
+
+    .txt-blue {
+        color: #185FA5;
+    }
+
+    .bg-teal {
+        background: #E1F5EE;
+    }
+
+    .txt-teal {
+        color: #0F6E56;
+    }
+
+    .bg-amber {
+        background: #FAEEDA;
+    }
+
+    .txt-amber {
+        color: #854F0B;
+    }
+
+    .bg-coral {
+        background: #FAECE7;
+    }
+
+    .txt-coral {
+        color: #993C1D;
+    }
+
+    .bg-purple {
+        background: #EEEDFE;
+    }
+
+    .txt-purple {
+        color: #534AB7;
+    }
+
+    .bg-green {
+        background: #EAF3DE;
+    }
+
+    .txt-green {
+        color: #3B6D11;
+    }
+
+    @@media (max-width: 992px) {
+        .metrics-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .modules-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .metrics-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .modules-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="container cont-page">
+
+    <div class="cont-header">
+        <h1>Contabilidad</h1>
+        <p>Resumen financiero &middot; @DateTime.Now.ToString("MMMM yyyy")</p>
+    </div>
+
+    <!-- MÉTRICAS -->
+    <div class="metrics-grid mb-4">
+        <div class="metric-card">
+            <div class="m-label">Ingresos del mes</div>
+            <div class="m-value">&#8353;2,450,000</div>
+            <div class="m-sub pos">+12% vs mes anterior</div>
+        </div>
+        <div class="metric-card">
+            <div class="m-label">Gastos del mes</div>
+            <div class="m-value">&#8353;840,000</div>
+            <div class="m-sub neg">+5% vs mes anterior</div>
+        </div>
+        <div class="metric-card">
+            <div class="m-label">Pagos pendientes</div>
+            <div class="m-value">&#8353;185,000</div>
+            <div class="m-sub neg">4 pacientes</div>
+        </div>
+        <div class="metric-card">
+            <div class="m-label">Anticipos activos</div>
+            <div class="m-value">&#8353;320,000</div>
+            <div class="m-sub pos">7 anticipos</div>
+        </div>
+    </div>
+
+    <!-- MÓDULOS -->
+    <div class="section-label">Accesos rápidos</div>
+
+    <div class="modules-grid">
+
+        <a href="@Url.Action("RegistroPago", "Contabilidad")" class="mod-card">
+            <div class="mod-icon bg-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23" />
+                    <path d="M17 5H9.5a3.5 3.5 0 1 0 0 7h5a3.5 3.5 0 1 1 0 7H6" />
+                </svg>
+            </div>
+            <div class="mod-title">Registro de pago</div>
+            <div class="mod-desc">Registra el pago de una cita finalizada. Efectivo, tarjeta o SINPE.</div>
+            <span class="mod-arrow">›</span>
+        </a>
+
+        <a href="@Url.Action("CostosTratamiento", "Contabilidad")" class="mod-card">
+            <div class="mod-icon bg-teal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#0F6E56" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                </svg>
+            </div>
+            <div class="mod-title">Costos de tratamiento</div>
+            <div class="mod-desc">Registra tratamientos realizados y calcula el total a cobrar al paciente.</div>
+            <span class="mod-arrow">›</span>
+        </a>
+
+        <a href="@Url.Action("Gastos", "Contabilidad")" class="mod-card">
+            <div class="mod-icon bg-amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#854F0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                </svg>
+            </div>
+            <div class="mod-title">Gastos de la clínica</div>
+            <div class="mod-desc">Registra y categoriza los gastos operativos: servicios, insumos, mantenimiento.</div>
+            <span class="mod-arrow">›</span>
+        </a>
+
+        <a href="@Url.Action("EstadoPagos", "Contabilidad")" class="mod-card">
+            <div class="mod-icon bg-coral">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#993C1D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 11l3 3L22 4" />
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                </svg>
+            </div>
+            <div class="mod-title">Estado de pagos</div>
+            <div class="mod-desc">Gestiona pagos pendientes y actualiza el estado cuando el paciente cancela su deuda.</div>
+            <span class="mod-arrow">›</span>
+        </a>
+
+        <a href="@Url.Action("Anticipo", "Contabilidad")" class="mod-card">
+            <div class="mod-icon bg-purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                </svg>
+            </div>
+            <div class="mod-title">Anticipos</div>
+            <div class="mod-desc">Registra pagos adelantados de pacientes antes de su tratamiento.</div>
+            <span class="mod-arrow">›</span>
+        </a>
+
+        <a href="@Url.Action("EditarPago", "Contabilidad")" class="mod-card">
+            <div class="mod-icon bg-green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#3B6D11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+            </div>
+            <div class="mod-title">Editar pago</div>
+            <div class="mod-desc">Corrige errores en pagos registrados. Registra fecha, hora y usuario del cambio.</div>
+            <span class="mod-arrow">›</span>
+        </a>
+
+    </div>
+</div>

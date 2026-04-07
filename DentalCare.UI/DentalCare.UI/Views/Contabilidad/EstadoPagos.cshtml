@@ -1,0 +1,303 @@
+﻿@{
+    ViewBag.Title = "Estado de Pagos";
+}
+
+<style>
+    .ep-page {
+        padding: 32px 0;
+    }
+
+    .ep-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+    }
+
+    .ep-header-left h1 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0C1B33;
+        margin: 0 0 4px;
+    }
+
+    .ep-header-left p {
+        font-size: 13px;
+        color: #6B7A99;
+        margin: 0;
+    }
+
+    .badge-mdc {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: #E6F1FB;
+        color: #185FA5;
+    }
+
+    /* MÉTRICAS */
+    .metricas-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .metrica-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 18px 20px;
+    }
+
+    .metrica-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #8896B0;
+        text-transform: uppercase;
+    }
+
+    .metrica-valor {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0C1B33;
+    }
+
+    .metrica-sub {
+        font-size: 12px;
+        color: #6B7A99;
+    }
+
+    /* CARDS */
+    .ep-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    /* TABS */
+    .tabs-row {
+        display: flex;
+        gap: 6px;
+        border-bottom: 1px solid #E8ECF4;
+        margin-bottom: 20px;
+    }
+
+    .tab-btn {
+        padding: 10px 18px;
+        border: none;
+        background: none;
+        font-weight: 600;
+        color: #6B7A99;
+        border-bottom: 2px solid transparent;
+    }
+
+        .tab-btn.activo {
+            color: #185FA5;
+            border-bottom-color: #185FA5;
+        }
+
+    /* FILTROS */
+    .filtros-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+    }
+
+    .filtro-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+        .filtro-group input,
+        .filtro-group select {
+            border: 1px solid #DDE1EC;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 13px;
+        }
+
+    /* TABLA */
+    .ep-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+        .ep-table th {
+            text-align: left;
+            padding: 10px;
+            font-size: 11px;
+            color: #8896B0;
+        }
+
+        .ep-table td {
+            padding: 12px;
+            border-bottom: 1px solid #F0F2F8;
+        }
+
+    .td-right {
+        text-align: right;
+        font-weight: 600;
+    }
+
+    /* BADGES */
+    .badge-pagado {
+        background: #EAF3DE;
+        color: #3B6D11;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+    }
+
+    .badge-pendiente {
+        background: #FAEEDA;
+        color: #854F0B;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+    }
+
+    .badge-vencido {
+        background: #FCEBEB;
+        color: #A0291E;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+    }
+
+    .btn-ver {
+        background: #E6F1FB;
+        color: #185FA5;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+    }
+</style>
+
+<div class="container ep-page">
+
+    <!-- HEADER -->
+    <div class="ep-header">
+        <div class="ep-header-left">
+            <h1>Estado de pagos</h1>
+            <p>Controlá los pagos de tratamientos de los pacientes</p>
+        </div>
+        <div>
+            <a href="@Url.Action("Menu","Contabilidad")" class="btn-secundario ms-2">← Volver</a>
+        </div>
+    </div>
+
+    <!-- MÉTRICAS -->
+    <div class="metricas-grid">
+        <div class="metrica-card">
+            <div class="metrica-label">Cobrado</div>
+            <div class="metrica-valor">₡1.850.000</div>
+            <div class="metrica-sub">Este mes</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Pendiente</div>
+            <div class="metrica-valor">₡420.000</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Vencido</div>
+            <div class="metrica-valor" style="color:#A0291E;">₡95.000</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Pacientes con deuda</div>
+            <div class="metrica-valor">8</div>
+        </div>
+    </div>
+
+    <!-- TABLA -->
+    <div class="ep-card">
+
+        <div class="filtros-row">
+            <div class="filtro-group">
+                <label>Buscar</label>
+                <input type="text" placeholder="Paciente o tratamiento..." oninput="filtrar()" id="buscar" />
+            </div>
+
+            <div class="filtro-group">
+                <label>Estado</label>
+                <select id="estado" onchange="filtrar()">
+                    <option value="">Todos</option>
+                    <option>Pagado</option>
+                    <option>Pendiente</option>
+                    <option>Vencido</option>
+                </select>
+            </div>
+        </div>
+
+        <table class="ep-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Paciente</th>
+                    <th>Tratamiento</th>
+                    <th>Fecha</th>
+                    <th class="td-right">Monto</th>
+                    <th>Estado</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tablaPagos"></tbody>
+        </table>
+
+    </div>
+
+</div>
+
+@section scripts{
+    <script>
+    var pagos = [
+        {id:'PAG-001', paciente:'Juan Pérez', tratamiento:'Ortodoncia', fecha:'01/04/2026', monto:350000, estado:'Pagado'},
+        {id:'PAG-002', paciente:'Ana López', tratamiento:'Limpieza', fecha:'02/04/2026', monto:45000, estado:'Pendiente'},
+        {id:'PAG-003', paciente:'Carlos Ruiz', tratamiento:'Implante', fecha:'03/04/2026', monto:600000, estado:'Pagado'},
+        {id:'PAG-004', paciente:'María Gómez', tratamiento:'Extracción', fecha:'04/04/2026', monto:80000, estado:'Vencido'},
+    ];
+
+    var filtrado = [...pagos];
+
+    function render(){
+        var html = '';
+        filtrado.forEach(p=>{
+            var badge = p.estado === 'Pagado' ? 'badge-pagado'
+                        : p.estado === 'Pendiente' ? 'badge-pendiente'
+                        : 'badge-vencido';
+
+            html += `<tr>
+                <td>${p.id}</td>
+                <td>${p.paciente}</td>
+                <td>${p.tratamiento}</td>
+                <td>${p.fecha}</td>
+                <td class="td-right">₡${p.monto.toLocaleString()}</td>
+                <td><span class="${badge}">${p.estado}</span></td>
+                <td><button class="btn-ver">Ver</button></td>
+            </tr>`;
+        });
+
+        document.getElementById('tablaPagos').innerHTML = html;
+    }
+
+    function filtrar(){
+        var b = document.getElementById('buscar').value.toLowerCase();
+        var e = document.getElementById('estado').value;
+
+        filtrado = pagos.filter(p =>
+            (p.paciente.toLowerCase().includes(b) || p.tratamiento.toLowerCase().includes(b)) &&
+            (!e || p.estado === e)
+        );
+
+        render();
+    }
+
+    render();
+    </script>
+}
