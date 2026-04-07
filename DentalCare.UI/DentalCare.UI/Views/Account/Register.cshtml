@@ -1,0 +1,82 @@
+﻿@{
+    ViewBag.Title = "Registrarse";
+}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .register-container {
+        max-width: 500px;
+        margin: 60px auto;
+        background: #FFFFFF;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .register-title {
+        text-align: center;
+        color: #000000;
+        margin-bottom: 20px;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #6EA0FF;
+    }
+
+    .btn-custom {
+        background-color: #6EA0FF;
+        color: white;
+        border-radius: 8px;
+        width: 100%;
+    }
+
+        .btn-custom:hover {
+            background-color: #000000;
+        }
+
+    .link {
+        text-align: center;
+        margin-top: 15px;
+    }
+
+        .link a {
+            color: #6EA0FF;
+            text-decoration: none;
+        }
+
+            .link a:hover {
+                color: #000000;
+            }
+</style>
+
+<div class="register-container">
+    <h4 class="text-center">Crear cuenta</h4>
+    <hr />
+
+    <form>
+        <div class="mb-3">
+            <label>Correo</label>
+            <input type="email" class="form-control" placeholder="Ingrese su correo" />
+        </div>
+
+        <div class="mb-3">
+            <label>Contraseña</label>
+            <input type="password" class="form-control" placeholder="Ingrese su contraseña" />
+        </div>
+
+        <div class="mb-3">
+            <label>Confirmar contraseña</label>
+            <input type="password" class="form-control" placeholder="Confirme su contraseña" />
+        </div>
+
+        <button type="submit" class="btn btn-custom">Registrarse</button>
+
+        <div class="link">
+            @Html.ActionLink("¿Ya tienes cuenta? Inicia sesión", "Login")
+        </div>
+    </form>
+</div>
