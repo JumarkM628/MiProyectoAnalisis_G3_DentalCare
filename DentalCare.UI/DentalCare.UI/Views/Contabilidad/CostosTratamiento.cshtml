@@ -1,0 +1,971 @@
+﻿@{
+    ViewBag.Title = "Costos de Tratamiento";
+}
+
+<style>
+    .ct-page {
+        padding: 32px 0;
+    }
+
+    .ct-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+    }
+
+    .ct-header-left h1 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0C1B33;
+        margin: 0 0 4px;
+    }
+
+    .ct-header-left p {
+        font-size: 13px;
+        color: #6B7A99;
+        margin: 0;
+    }
+
+    .badge-mdc {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: #E6F1FB;
+        color: #185FA5;
+    }
+
+    /* Métricas resumen */
+    .metricas-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .metrica-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 18px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .metrica-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #8896B0;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+    }
+
+    .metrica-valor {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0C1B33;
+    }
+
+    .metrica-sub {
+        font-size: 12px;
+        color: #6B7A99;
+    }
+
+    .metrica-badge-up {
+        font-size: 11px;
+        font-weight: 600;
+        color: #3B6D11;
+        background: #EAF3DE;
+        border-radius: 20px;
+        padding: 2px 8px;
+        width: fit-content;
+    }
+
+    .metrica-badge-down {
+        font-size: 11px;
+        font-weight: 600;
+        color: #854F0B;
+        background: #FAEEDA;
+        border-radius: 20px;
+        padding: 2px 8px;
+        width: fit-content;
+    }
+
+    /* Card general */
+    .ct-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 20px;
+    }
+
+    .ct-card-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: #8896B0;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-bottom: 16px;
+    }
+
+    /* Filtros */
+    .filtros-row {
+        display: flex;
+        gap: 12px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .filtro-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+        .filtro-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #3D4D6B;
+        }
+
+        .filtro-group input,
+        .filtro-group select {
+            border: 1px solid #DDE1EC;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #0C1B33;
+            background: #fff;
+            font-family: inherit;
+            min-width: 150px;
+        }
+
+            .filtro-group input:focus,
+            .filtro-group select:focus {
+                outline: none;
+                border-color: #378ADD;
+            }
+
+    .btn-filtrar {
+        padding: 9px 18px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: none;
+        background: #185FA5;
+        color: #fff;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+        .btn-filtrar:hover {
+            background: #0C447C;
+        }
+
+    .btn-limpiar {
+        padding: 9px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        color: #3D4D6B;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+        .btn-limpiar:hover {
+            background: #F5F6FA;
+        }
+
+    /* Tabla principal */
+    .ct-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+        .ct-table thead tr {
+            border-bottom: 2px solid #E8ECF4;
+        }
+
+        .ct-table th {
+            text-align: left;
+            padding: 10px 12px;
+            color: #8896B0;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        .ct-table td {
+            padding: 12px;
+            color: #3D4D6B;
+            border-bottom: 1px solid #F0F2F8;
+            vertical-align: middle;
+        }
+
+        .ct-table tbody tr:hover {
+            background: #F9FAFC;
+        }
+
+        .ct-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    .td-nombre {
+        font-weight: 600;
+        color: #0C1B33;
+    }
+
+    .td-right {
+        text-align: right;
+        font-weight: 600;
+        color: #0C1B33;
+    }
+
+    .td-center {
+        text-align: center;
+    }
+
+    /* Badges categoría */
+    .badge-cat {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        white-space: nowrap;
+    }
+
+    .badge-preventivo {
+        background: #E6F1FB;
+        color: #185FA5;
+    }
+
+    .badge-estetico {
+        background: #F0EBFB;
+        color: #6B3FA0;
+    }
+
+    .badge-restaurador {
+        background: #EAF3DE;
+        color: #3B6D11;
+    }
+
+    .badge-cirugia {
+        background: #FCEBEB;
+        color: #A0291E;
+    }
+
+    .badge-ortodoncia {
+        background: #FAEEDA;
+        color: #854F0B;
+    }
+
+    .badge-endodoncia {
+        background: #E6F7F3;
+        color: #1A7A5E;
+    }
+
+    /* Botones acción */
+    .btn-accion {
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-family: inherit;
+    }
+
+    .btn-editar {
+        color: #185FA5;
+        background: #E6F1FB;
+    }
+
+        .btn-editar:hover {
+            background: #B5D4F4;
+        }
+
+    .btn-ver {
+        color: #3B6D11;
+        background: #EAF3DE;
+    }
+
+        .btn-ver:hover {
+            background: #C7E5A5;
+        }
+
+    /* Paginación */
+    .paginacion-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 16px;
+        font-size: 13px;
+        color: #6B7A99;
+    }
+
+    .pag-btns {
+        display: flex;
+        gap: 6px;
+    }
+
+    .pag-btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        color: #3D4D6B;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+        .pag-btn:hover {
+            background: #F5F6FA;
+        }
+
+        .pag-btn.activo {
+            background: #185FA5;
+            color: #fff;
+            border-color: #185FA5;
+        }
+
+    /* Panel lateral detalle */
+    .detalle-panel {
+        background: #F9FAFC;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 20px;
+    }
+
+    .detalle-titulo {
+        font-size: 15px;
+        font-weight: 700;
+        color: #0C1B33;
+        margin-bottom: 4px;
+    }
+
+    .detalle-cat {
+        font-size: 12px;
+        color: #6B7A99;
+        margin-bottom: 16px;
+    }
+
+    .detalle-fila {
+        display: flex;
+        justify-content: space-between;
+        padding: 9px 0;
+        border-bottom: 1px solid #E8ECF4;
+        font-size: 13px;
+    }
+
+        .detalle-fila:last-child {
+            border-bottom: none;
+        }
+
+        .detalle-fila .dk {
+            color: #6B7A99;
+        }
+
+        .detalle-fila .dv {
+            font-weight: 600;
+            color: #0C1B33;
+        }
+
+    .mini-barra-wrap {
+        margin-top: 14px;
+    }
+
+    .mini-barra-label {
+        font-size: 11px;
+        color: #8896B0;
+        margin-bottom: 4px;
+    }
+
+    .mini-barra-bg {
+        background: #E8ECF4;
+        border-radius: 20px;
+        height: 6px;
+    }
+
+    .mini-barra-fill {
+        background: #185FA5;
+        border-radius: 20px;
+        height: 6px;
+        transition: width 0.4s;
+    }
+
+    /* Layout 2 columnas para tabla + panel */
+    .layout-split {
+        display: grid;
+        grid-template-columns: 1fr 260px;
+        gap: 20px;
+        align-items: start;
+    }
+
+    /* Modal editar */
+    .modal-backdrop-custom {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(12,27,51,0.45);
+        z-index: 1050;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .modal-backdrop-custom.show {
+            display: flex;
+        }
+
+    .modal-box {
+        background: #fff;
+        border-radius: 16px;
+        padding: 28px 28px;
+        max-width: 460px;
+        width: 94%;
+    }
+
+        .modal-box h4 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #0C1B33;
+            margin-bottom: 4px;
+        }
+
+        .modal-box .modal-sub {
+            font-size: 13px;
+            color: #6B7A99;
+            margin-bottom: 20px;
+        }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-bottom: 14px;
+    }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #3D4D6B;
+        }
+
+            .form-group label span {
+                color: #E24B4A;
+            }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            border: 1px solid #DDE1EC;
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 14px;
+            color: #0C1B33;
+            background: #fff;
+            font-family: inherit;
+        }
+
+            .form-group input:focus,
+            .form-group select:focus,
+            .form-group textarea:focus {
+                outline: none;
+                border-color: #378ADD;
+            }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+    .form-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .modal-btns {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 6px;
+    }
+
+    .btn-secundario {
+        padding: 9px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        color: #3D4D6B;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+        .btn-secundario:hover {
+            background: #F5F6FA;
+        }
+
+    .btn-primario {
+        padding: 9px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        background: #185FA5;
+        color: #fff;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+        .btn-primario:hover {
+            background: #0C447C;
+        }
+
+    /* Alert éxito */
+    .alert-custom {
+        display: none;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        margin-bottom: 20px;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .alert-custom.show {
+            display: flex;
+        }
+
+    .alert-success-custom {
+        background: #EAF3DE;
+        color: #3B6D11;
+        border: 1px solid #97C459;
+    }
+
+    .alert-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+        flex-shrink: 0;
+    }
+
+    @@media (max-width: 900px) {
+        .layout-split {
+            grid-template-columns: 1fr;
+        }
+
+        .metricas-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .ct-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .filtros-row {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+</style>
+
+<div class="container ct-page">
+
+    <!-- HEADER -->
+    <div class="ct-header">
+        <div class="ct-header-left">
+            <h1>Costos de tratamiento</h1>
+            <p>Consultá, filtrá y editá los costos de cada tratamiento disponible</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a href="@Url.Action("Menu", "Contabilidad")" class="btn-secundario ms-2">&#8592; Volver</a>
+        </div>
+    </div>
+
+    <!-- ALERTA ÉXITO -->
+    <div class="alert-custom alert-success-custom" id="alertaExito">
+        <div class="alert-dot"></div>
+        <span>El costo del tratamiento fue actualizado correctamente.</span>
+    </div>
+
+    <!-- MÉTRICAS -->
+    <div class="metricas-grid">
+        <div class="metrica-card">
+            <div class="metrica-label">Tratamientos activos</div>
+            <div class="metrica-valor">14</div>
+            <div class="metrica-sub">en catálogo actual</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Costo promedio</div>
+            <div class="metrica-valor">&#8353;38.500</div>
+            <div class="metrica-sub">por tratamiento</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Más solicitado</div>
+            <div class="metrica-valor" style="font-size:15px;">Limpieza dental</div>
+            <div class="metrica-badge-up">&#8353;35.000</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Última actualización</div>
+            <div class="metrica-valor" style="font-size:15px;">01/04/2026</div>
+            <div class="metrica-sub">Endodoncia</div>
+        </div>
+    </div>
+
+    <!-- FILTROS -->
+    <div class="ct-card" style="padding: 18px 24px;">
+        <div class="filtros-row">
+            <div class="filtro-group">
+                <label>Buscar tratamiento</label>
+                <input type="text" id="inputBuscar" placeholder="Ej: limpieza, resina..." oninput="filtrarTabla()" />
+            </div>
+            <div class="filtro-group">
+                <label>Categoría</label>
+                <select id="selectCategoria" onchange="filtrarTabla()">
+                    <option value="">Todas</option>
+                    <option value="Preventivo">Preventivo</option>
+                    <option value="Estético">Estético</option>
+                    <option value="Restaurador">Restaurador</option>
+                    <option value="Cirugía">Cirugía</option>
+                    <option value="Ortodoncia">Ortodoncia</option>
+                    <option value="Endodoncia">Endodoncia</option>
+                </select>
+            </div>
+            <div class="filtro-group">
+                <label>Costo mínimo (&#8353;)</label>
+                <input type="number" id="costoMin" placeholder="0" oninput="filtrarTabla()" />
+            </div>
+            <div class="filtro-group">
+                <label>Costo máximo (&#8353;)</label>
+                <input type="number" id="costoMax" placeholder="999999" oninput="filtrarTabla()" />
+            </div>
+            <button class="btn-limpiar" onclick="limpiarFiltros()">&#x2715; Limpiar</button>
+        </div>
+    </div>
+
+    <!-- TABLA + PANEL -->
+    <div class="layout-split">
+
+        <!-- TABLA -->
+        <div class="ct-card" style="padding: 0; overflow: hidden;">
+            <div style="padding: 20px 24px 0;">
+                <div class="ct-card-title">Catálogo de tratamientos</div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="ct-table" id="tablaTratamientos">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Tratamiento</th>
+                            <th>Categoría</th>
+                            <th>Duración</th>
+                            <th style="text-align:right">Costo (&#8353;)</th>
+                            <th style="text-align:right">Últ. actualización</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpoTabla">
+                        <!-- JS renderiza acá -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="paginacion-row" style="padding: 12px 24px 16px;">
+                <span id="paginacionInfo">Mostrando 1–10 de 14 tratamientos</span>
+                <div class="pag-btns">
+                    <button class="pag-btn" onclick="cambiarPagina(-1)">&#8592;</button>
+                    <button class="pag-btn activo" id="pag1" onclick="irPagina(1)">1</button>
+                    <button class="pag-btn" id="pag2" onclick="irPagina(2)">2</button>
+                    <button class="pag-btn" onclick="cambiarPagina(1)">&#8594;</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL DETALLE -->
+        <div class="detalle-panel" id="panelDetalle">
+            <div class="detalle-titulo" id="detNombre">Seleccioná un tratamiento</div>
+            <div class="detalle-cat" id="detCat">para ver su detalle</div>
+
+            <div id="detContenido" style="display:none;">
+                <div class="detalle-fila">
+                    <span class="dk">Código</span>
+                    <span class="dv" id="detCodigo">—</span>
+                </div>
+                <div class="detalle-fila">
+                    <span class="dk">Duración est.</span>
+                    <span class="dv" id="detDuracion">—</span>
+                </div>
+                <div class="detalle-fila">
+                    <span class="dk">Costo actual</span>
+                    <span class="dv" id="detCosto">—</span>
+                </div>
+                <div class="detalle-fila">
+                    <span class="dk">Costo anterior</span>
+                    <span class="dv" id="detCostoAnt">—</span>
+                </div>
+                <div class="detalle-fila">
+                    <span class="dk">Últ. actualización</span>
+                    <span class="dv" id="detFecha">—</span>
+                </div>
+                <div class="detalle-fila">
+                    <span class="dk">Veces realizado</span>
+                    <span class="dv" id="detVeces">—</span>
+                </div>
+                <div class="mini-barra-wrap">
+                    <div class="mini-barra-label">Popularidad en clínica</div>
+                    <div class="mini-barra-bg">
+                        <div class="mini-barra-fill" id="detBarra" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div style="margin-top: 16px;">
+                    <button class="btn-accion btn-editar" style="width:100%; padding: 9px;" onclick="abrirModal()">
+                        ✎ Editar costo
+                    </button>
+                </div>
+            </div>
+
+            <div id="detPlaceholder" style="text-align:center; padding: 24px 0; color: #8896B0; font-size: 13px;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#DDE1EC" stroke-width="1.5" style="margin-bottom:10px; display:block; margin:0 auto 10px;">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                Hacé clic en "Ver" en cualquier tratamiento para ver el detalle aquí.
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- MODAL EDITAR COSTO -->
+<div class="modal-backdrop-custom" id="modalEditar">
+    <div class="modal-box">
+        <h4>Editar costo de tratamiento</h4>
+        <p class="modal-sub" id="modalSubtitulo">Actualizá el costo y guardá los cambios.</p>
+
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label>Tratamiento</label>
+                <input type="text" id="editNombre" disabled />
+            </div>
+            <div class="form-group">
+                <label>Categoría</label>
+                <input type="text" id="editCategoria" disabled />
+            </div>
+            <div class="form-group">
+                <label>Costo actual (&#8353;)</label>
+                <input type="number" id="editCostoActual" disabled />
+            </div>
+            <div class="form-group">
+                <label>Nuevo costo (&#8353;) <span>*</span></label>
+                <input type="number" id="editCostoNuevo" placeholder="0" min="0" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Motivo del cambio</label>
+            <textarea id="editMotivo" placeholder="Ej: ajuste por inflación, nuevo proveedor de insumos..."></textarea>
+        </div>
+        <div class="modal-btns">
+            <button class="btn-secundario" onclick="cerrarModal()">Cancelar</button>
+            <button class="btn-primario" onclick="guardarCambio()">Guardar cambio</button>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>var tratamientos = [
+        { cod:'TRT-001', nombre:'Limpieza dental',         cat:'Preventivo',  duracion:'45 min',  costo:35000, costoAnt:30000, fecha:'15/03/2026', veces:128, pop:95 },
+        { cod:'TRT-002', nombre:'Blanqueamiento',           cat:'Estético',    duracion:'60 min',  costo:45000, costoAnt:42000, fecha:'20/02/2026', veces:64,  pop:55 },
+        { cod:'TRT-003', nombre:'Radiografía periapical',   cat:'Preventivo',  duracion:'15 min',  costo:12000, costoAnt:10000, fecha:'01/01/2026', veces:210, pop:100 },
+        { cod:'TRT-004', nombre:'Extracción dental simple', cat:'Cirugía',     duracion:'30 min',  costo:25000, costoAnt:25000, fecha:'01/01/2026', veces:87,  pop:68 },
+        { cod:'TRT-005', nombre:'Ortodoncia (mensualidad)', cat:'Ortodoncia',  duracion:'30 min',  costo:55000, costoAnt:50000, fecha:'01/02/2026', veces:45,  pop:42 },
+        { cod:'TRT-006', nombre:'Resina dental',            cat:'Restaurador', duracion:'50 min',  costo:30000, costoAnt:28000, fecha:'10/03/2026', veces:102, pop:79 },
+        { cod:'TRT-007', nombre:'Endodoncia',               cat:'Endodoncia',  duracion:'90 min',  costo:80000, costoAnt:75000, fecha:'01/04/2026', veces:31,  pop:28 },
+        { cod:'TRT-008', nombre:'Corona de porcelana',      cat:'Restaurador', duracion:'120 min', costo:95000, costoAnt:90000, fecha:'15/02/2026', veces:22,  pop:20 },
+        { cod:'TRT-009', nombre:'Implante dental',          cat:'Cirugía',     duracion:'180 min', costo:350000,costoAnt:320000,fecha:'01/03/2026', veces:11,  pop:10 },
+        { cod:'TRT-010', nombre:'Profilaxis infantil',      cat:'Preventivo',  duracion:'30 min',  costo:18000, costoAnt:15000, fecha:'01/01/2026', veces:76,  pop:60 },
+        { cod:'TRT-011', nombre:'Blanqueamiento láser',     cat:'Estético',    duracion:'90 min',  costo:75000, costoAnt:70000, fecha:'20/02/2026', veces:18,  pop:16 },
+        { cod:'TRT-012', nombre:'Puente dental (3 piezas)', cat:'Restaurador', duracion:'90 min',  costo:120000,costoAnt:110000,fecha:'15/01/2026', veces:9,   pop:8  },
+        { cod:'TRT-013', nombre:'Extracción de muela juicio',cat:'Cirugía',   duracion:'60 min',  costo:40000, costoAnt:38000, fecha:'10/02/2026', veces:53,  pop:46 },
+        { cod:'TRT-014', nombre:'Sellante dental',          cat:'Preventivo',  duracion:'20 min',  costo:8000,  costoAnt:8000,  fecha:'01/01/2026', veces:149, pop:98 },
+    ];
+
+    var filtrado    = [...tratamientos];
+    var paginaActual = 1;
+    var porPagina    = 10;
+    var seleccionado = null;
+
+    var badgeClass = {
+        'Preventivo':  'badge-preventivo',
+        'Estético':    'badge-estetico',
+        'Restaurador': 'badge-restaurador',
+        'Cirugía':     'badge-cirugia',
+        'Ortodoncia':  'badge-ortodoncia',
+        'Endodoncia':  'badge-endodoncia',
+    };
+
+    function formatColones(n) {
+        return '&#8353;' + n.toLocaleString('es-CR');
+    }
+
+    function renderTabla() {
+        var tbody = document.getElementById('cuerpoTabla');
+        var inicio = (paginaActual - 1) * porPagina;
+        var slice  = filtrado.slice(inicio, inicio + porPagina);
+
+        if (slice.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:#8896B0;">No se encontraron tratamientos con esos filtros.</td></tr>';
+            document.getElementById('paginacionInfo').textContent = 'Sin resultados';
+            return;
+        }
+
+        var html = '';
+        slice.forEach(function(t, i) {
+            html += '<tr>'
+                + '<td style="color:#8896B0;font-size:11px;">' + t.cod + '</td>'
+                + '<td class="td-nombre">' + t.nombre + '</td>'
+                + '<td><span class="badge-cat ' + (badgeClass[t.cat] || '') + '">' + t.cat + '</span></td>'
+                + '<td>' + t.duracion + '</td>'
+                + '<td class="td-right">' + formatColones(t.costo) + '</td>'
+                + '<td class="td-right" style="color:#8896B0;font-weight:400;">' + t.fecha + '</td>'
+                + '<td><button class="btn-accion btn-ver" onclick="verDetalle(' + (inicio + i) + ')">Ver</button></td>'
+                + '</tr>';
+        });
+        tbody.innerHTML = html;
+
+        var total = filtrado.length;
+        var fin   = Math.min(inicio + porPagina, total);
+        document.getElementById('paginacionInfo').textContent =
+            'Mostrando ' + (inicio + 1) + '–' + fin + ' de ' + total + ' tratamientos';
+
+        actualizarPaginacion();
+    }
+
+    function actualizarPaginacion() {
+        var totalPags = Math.ceil(filtrado.length / porPagina);
+        var p1 = document.getElementById('pag1');
+        var p2 = document.getElementById('pag2');
+        p1.classList.toggle('activo', paginaActual === 1);
+        p2.classList.toggle('activo', paginaActual === 2);
+        p2.style.display = totalPags > 1 ? '' : 'none';
+    }
+
+    function cambiarPagina(delta) {
+        var totalPags = Math.ceil(filtrado.length / porPagina);
+        paginaActual = Math.max(1, Math.min(totalPags, paginaActual + delta));
+        renderTabla();
+    }
+
+    function irPagina(n) {
+        paginaActual = n;
+        renderTabla();
+    }
+
+    function filtrarTabla() {
+        var buscar   = document.getElementById('inputBuscar').value.toLowerCase();
+        var cat      = document.getElementById('selectCategoria').value;
+        var costoMin = parseFloat(document.getElementById('costoMin').value) || 0;
+        var costoMax = parseFloat(document.getElementById('costoMax').value) || 9999999;
+
+        filtrado = tratamientos.filter(function(t) {
+            return t.nombre.toLowerCase().includes(buscar)
+                && (cat === '' || t.cat === cat)
+                && t.costo >= costoMin
+                && t.costo <= costoMax;
+        });
+        paginaActual = 1;
+        renderTabla();
+    }
+
+    function limpiarFiltros() {
+        document.getElementById('inputBuscar').value    = '';
+        document.getElementById('selectCategoria').value = '';
+        document.getElementById('costoMin').value        = '';
+        document.getElementById('costoMax').value        = '';
+        filtrado = [...tratamientos];
+        paginaActual = 1;
+        renderTabla();
+    }
+
+    function verDetalle(idx) {
+        seleccionado = filtrado[idx];
+        document.getElementById('detNombre').textContent = seleccionado.nombre;
+        document.getElementById('detCat').innerHTML      = '<span class="badge-cat ' + (badgeClass[seleccionado.cat] || '') + '">' + seleccionado.cat + '</span>';
+        document.getElementById('detCodigo').textContent  = seleccionado.cod;
+        document.getElementById('detDuracion').textContent = seleccionado.duracion;
+        document.getElementById('detCosto').innerHTML     = formatColones(seleccionado.costo);
+        document.getElementById('detCostoAnt').innerHTML  = formatColones(seleccionado.costoAnt);
+        document.getElementById('detFecha').textContent   = seleccionado.fecha;
+        document.getElementById('detVeces').textContent   = seleccionado.veces + ' veces';
+        document.getElementById('detBarra').style.width   = seleccionado.pop + '%';
+
+        document.getElementById('detContenido').style.display  = 'block';
+        document.getElementById('detPlaceholder').style.display = 'none';
+    }
+
+    var tratamientoEnEdicion = null;
+
+    function abrirModal() {
+        if (!seleccionado) return;
+        tratamientoEnEdicion = seleccionado;
+        document.getElementById('modalSubtitulo').textContent  = 'Actualizá el costo de: ' + seleccionado.nombre;
+        document.getElementById('editNombre').value            = seleccionado.nombre;
+        document.getElementById('editCategoria').value         = seleccionado.cat;
+        document.getElementById('editCostoActual').value       = seleccionado.costo;
+        document.getElementById('editCostoNuevo').value        = '';
+        document.getElementById('editMotivo').value            = '';
+        document.getElementById('modalEditar').classList.add('show');
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalEditar').classList.remove('show');
+    }
+
+    function guardarCambio() {
+        var nuevo = parseFloat(document.getElementById('editCostoNuevo').value);
+        if (!nuevo || nuevo <= 0) {
+            alert('Ingresá un nuevo costo válido.');
+            return;
+        }
+        if (!tratamientoEnEdicion) return;
+
+        // Actualizar datos quemados
+        var idx = tratamientos.indexOf(tratamientoEnEdicion);
+        if (idx > -1) {
+            tratamientos[idx].costoAnt = tratamientos[idx].costo;
+            tratamientos[idx].costo    = nuevo;
+            tratamientos[idx].fecha    = new Date().toLocaleDateString('es-CR');
+        }
+
+        cerrarModal();
+        filtrado = [...tratamientos];
+        renderTabla();
+
+        // Si el panel está mostrando este tratamiento, refresca
+        if (seleccionado === tratamientoEnEdicion) {
+            verDetalle(filtrado.indexOf(tratamientoEnEdicion));
+        }
+
+        document.getElementById('alertaExito').classList.add('show');
+        setTimeout(function() {
+            document.getElementById('alertaExito').classList.remove('show');
+        }, 4000);
+    }
+
+    // Init
+    renderTabla();</script>
+}

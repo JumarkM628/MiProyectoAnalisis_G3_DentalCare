@@ -8,33 +8,26 @@ namespace DentalCare.UI.Controllers
 {
     public class ContabilidadController : Controller
     {
-        // GET: Contabilidad
-        public ActionResult Index()
+        // GET: Contabilidad/Menu
+        public ActionResult Menu()
         {
             return View();
         }
 
-        // GET: Contabilidad/Details/5
-        public ActionResult Details(int id)
+        // GET: Contabilidad/RegistroPago
+        public ActionResult RegistroPago()
         {
             return View();
         }
 
-        // GET: Contabilidad/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Contabilidad/Create
+        // POST: Contabilidad/RegistroPago
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult RegistroPago(FormCollection collection)
         {
             try
             {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
+                // TODO: Agregar lógica de registro de pago (MDC-001, MDC-007)
+                return RedirectToAction("Menu");
             }
             catch
             {
@@ -42,21 +35,20 @@ namespace DentalCare.UI.Controllers
             }
         }
 
-        // GET: Contabilidad/Edit/5
-        public ActionResult Edit(int id)
+        // GET: Contabilidad/CostosTratamiento
+        public ActionResult CostosTratamiento()
         {
             return View();
         }
 
-        // POST: Contabilidad/Edit/5
+        // POST: Contabilidad/CostosTratamiento
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult CostosTratamiento(FormCollection collection)
         {
             try
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
+                // TODO: Agregar lógica de costos de tratamiento (MDC-002)
+                return RedirectToAction("Menu");
             }
             catch
             {
@@ -64,21 +56,83 @@ namespace DentalCare.UI.Controllers
             }
         }
 
-        // GET: Contabilidad/Delete/5
-        public ActionResult Delete(int id)
+        // GET: Contabilidad/Gastos
+        public ActionResult Gastos()
         {
             return View();
         }
 
-        // POST: Contabilidad/Delete/5
+        // POST: Contabilidad/Gastos
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Gastos(FormCollection collection)
         {
             try
             {
-                // TODO: Add delete logic here
+                // TODO: Agregar lógica de registro de gastos (MDC-003, MDC-006)
+                return RedirectToAction("Menu");
+            }
+            catch
+            {
+                return View();
+            }
+        }
 
-                return RedirectToAction("Index");
+        // GET: Contabilidad/EstadoPagos
+        public ActionResult EstadoPagos()
+        {
+            return View();
+        }
+
+        // POST: Contabilidad/EstadoPagos
+        [HttpPost]
+        public ActionResult EstadoPagos(FormCollection collection)
+        {
+            try
+            {
+                // TODO: Agregar lógica de estado de pagos (MDC-004, MDC-005)
+                return RedirectToAction("Menu");
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        // GET: Contabilidad/Anticipo
+        public ActionResult Anticipo()
+        {
+            return View();
+        }
+
+        // POST: Contabilidad/Anticipo
+        [HttpPost]
+        public ActionResult Anticipo(FormCollection collection)
+        {
+            try
+            {
+                // TODO: Agregar lógica de anticipos (MDC-008)
+                return RedirectToAction("Menu");
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        // GET: Contabilidad/EditarPago
+        public ActionResult EditarPago()
+        {
+            return View();
+        }
+
+        // POST: Contabilidad/EditarPago
+        [HttpPost]
+        public ActionResult EditarPago(FormCollection collection)
+        {
+            try
+            {
+                // TODO: Agregar lógica de edición de pago (MDC-009)
+                return RedirectToAction("Menu");
             }
             catch
             {

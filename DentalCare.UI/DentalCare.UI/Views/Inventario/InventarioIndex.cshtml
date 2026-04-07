@@ -1,0 +1,383 @@
+﻿@{
+    ViewBag.Title = "InventarioIndex";
+}
+
+<div class="inv-page">
+
+    <!-- Header -->
+    <div class="inv-header">
+        <h1 class="inv-titulo">Inventario</h1>
+        <div class="inv-header-btns">
+            @Html.ActionLink("Registrar Producto", "CrearProducto", "Home", null, new { @class = "btn-inv-primary" })
+        </div>
+    </div>
+
+
+    <!-- Filtros -->
+    <div class="inv-filtros">
+        <input type="text" id="buscador" class="exp-input" placeholder="Buscar producto, código o proveedor..." oninput="filtrarTabla()" />
+        <select class="exp-select" id="filtroCategoria" onchange="filtrarTabla()">
+            <option value="">Todas las categorías</option>
+            <option value="consumible">Consumible</option>
+            <option value="medicamento">Medicamento</option>
+            <option value="instrumental">Instrumental</option>
+            <option value="higiene">Higiene</option>
+        </select>
+        <select class="exp-select" id="filtroEstado" onchange="filtrarTabla()">
+            <option value="">Todos los estados</option>
+            <option value="disponible">Disponible</option>
+            <option value="bajo">Stock bajo</option>
+            <option value="agotado">Agotado</option>
+            <option value="vencido">Vencido</option>
+        </select>
+    </div>
+
+    <!-- Tabla -->
+    <div class="exp-table-wrapper">
+        <div class="exp-table-card">
+            <table class="exp-table" id="tablaInventario">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Unidad</th>
+                        <th>Stock Actual</th>
+                        <th>Stock Mínimo</th>
+                        <th>Lote</th>
+                        <th>Vencimiento</th>
+                        <th>Proveedor</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @*
+                        @foreach (var item in Model) {
+                        <tr>
+                            <td class="td-id">@item.codigo_producto</td>
+                            <td class="td-nombre">@item.nombre_producto</td>
+                            <td>@item.categoria</td>
+                            <td>@item.unidad_medida</td>
+                            <td class="@(item.cantidad_actual == 0 ? "stock-agotado" : item.cantidad_actual <= item.cantidad_minima ? "stock-bajo" : "")">
+                                @item.cantidad_actual
+                            </td>
+                            <td>@item.cantidad_minima</td>
+                            <td>@item.lote</td>
+                            <td class="td-muted">@item.fecha_vencimiento.ToString("dd/MM/yyyy")</td>
+                            <td>@item.proveedor</td>
+                            <td><span class="estado-badge estado-@item.estado_producto.ToLower()">@item.estado_producto</span></td>
+                            <td>
+                                <div class="acciones-col">
+                                    <div class="acciones-row1">
+                                        @Html.ActionLink("Editar", "EditarProducto", new { id = item.id_producto }, new { @class = "accion-btn accion-editar" })
+                                        @Html.ActionLink("Movimiento", "RegistrarMovimiento", new { id = item.id_producto }, new { @class = "accion-btn accion-ver" })
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        }
+                    *@
+
+                    <!-- Filas de ejemplo -->
+                    <tr data-categoria="consumible" data-estado="agotado">
+                        <td class="td-id">CONS-001</td>
+                        <td class="td-nombre">Guantes de látex</td>
+                        <td>Consumible</td>
+                        <td>Caja</td>
+                        <td><span class="stock-num stock-agotado">0</span></td>
+                        <td>10</td>
+                        <td>L-2024-A</td>
+                        <td class="td-muted">01/12/2026</td>
+                        <td>MedSupply CR</td>
+                        <td><span class="estado-badge estado-agotado">Agotado</span></td>
+                        <td>
+                            <div class="acciones-col">
+                                <div class="acciones-row1">
+                                    <a href="/Home/EditarProducto/1" class="accion-btn accion-editar">Editar</a>
+                                    <a href="/Home/RegistrarMovimiento/1" class="accion-btn accion-ver">Movimiento</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-categoria="medicamento" data-estado="bajo">
+                        <td class="td-id">MED-012</td>
+                        <td class="td-nombre">Hilo de sutura 3-0</td>
+                        <td>Medicamento</td>
+                        <td>Unidad</td>
+                        <td><span class="stock-num stock-bajo">3</span></td>
+                        <td>15</td>
+                        <td>L-2025-B</td>
+                        <td class="td-muted">15/06/2027</td>
+                        <td>DentaLab</td>
+                        <td><span class="estado-badge estado-bajo">Stock bajo</span></td>
+                        <td>
+                            <div class="acciones-col">
+                                <div class="acciones-row1">
+                                    <a href="/Home/EditarProducto/2" class="accion-btn accion-editar">Editar</a>
+                                    <a href="/Home/RegistrarMovimiento/2" class="accion-btn accion-ver">Movimiento</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-categoria="medicamento" data-estado="vencido">
+                        <td class="td-id">MED-007</td>
+                        <td class="td-nombre">Revelador RX</td>
+                        <td>Medicamento</td>
+                        <td>Frasco</td>
+                        <td><span class="stock-num">8</span></td>
+                        <td>5</td>
+                        <td>L-2023-C</td>
+                        <td class="td-muted vencido-text">01/03/2026</td>
+                        <td>RadioChem</td>
+                        <td><span class="estado-badge estado-vencido">Vencido</span></td>
+                        <td>
+                            <div class="acciones-col">
+                                <div class="acciones-row1">
+                                    <a href="/Home/EditarProducto/3" class="accion-btn accion-editar">Editar</a>
+                                    <a href="/Home/RegistrarMovimiento/3" class="accion-btn accion-ver">Movimiento</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-categoria="higiene" data-estado="disponible">
+                        <td class="td-id">HIG-004</td>
+                        <td class="td-nombre">Gasas estériles</td>
+                        <td>Higiene</td>
+                        <td>Paquete</td>
+                        <td><span class="stock-num stock-ok">42</span></td>
+                        <td>20</td>
+                        <td>L-2025-D</td>
+                        <td class="td-muted">30/09/2027</td>
+                        <td>MedSupply CR</td>
+                        <td><span class="estado-badge estado-activo">Disponible</span></td>
+                        <td>
+                            <div class="acciones-col">
+                                <div class="acciones-row1">
+                                    <a href="/Home/EditarProducto/4" class="accion-btn accion-editar">Editar</a>
+                                    <a href="/Home/RegistrarMovimiento/4" class="accion-btn accion-ver">Movimiento</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="exp-empty" id="emptyMsg" style="display:none;">
+                <p>No se encontraron productos con ese criterio.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .inv-page {
+        min-height: 100vh;
+        background: linear-gradient(160deg, #0d2137 0%, #163350 100%);
+        padding: 40px 32px 60px;
+    }
+
+    .inv-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .inv-titulo {
+        font-family: var(--font-display);
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #fff;
+        margin: 0;
+    }
+
+    .inv-header-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .btn-inv-primary {
+        display: inline-flex;
+        align-items: center;
+        background: var(--teal);
+        color: #fff !important;
+        font-weight: 700;
+        font-size: 0.9rem;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none !important;
+        transition: background 0.2s, transform 0.15s;
+        box-shadow: 0 4px 14px rgba(26,188,176,0.35);
+    }
+
+    .btn-inv-primary:hover { background: var(--teal-dark); transform: translateY(-1px); color: #fff !important; }
+
+    .btn-inv-secondary {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(255,255,255,0.12);
+        color: #fff !important;
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none !important;
+        border: 1.5px solid rgba(255,255,255,0.25);
+        transition: background 0.2s;
+    }
+
+    .btn-inv-secondary:hover { background: rgba(255,255,255,0.2); color: #fff !important; }
+
+    /* Alertas */
+    .alertas-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 24px;
+    }
+
+    .alerta-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 18px;
+        border-radius: 10px;
+        font-size: 0.88rem;
+        backdrop-filter: blur(4px);
+    }
+
+    .alerta-rojo    { background: rgba(220, 53, 53, 0.18); border: 1px solid rgba(220,53,53,0.4); color: #ffd0d0; }
+    .alerta-amarillo { background: rgba(240, 165, 0, 0.18); border: 1px solid rgba(240,165,0,0.4); color: #ffe9b0; }
+
+    .alerta-dot {
+        width: 10px; height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .rojo    { background: #ff4444; box-shadow: 0 0 6px rgba(255,68,68,0.6); }
+    .amarillo { background: #f0a500; box-shadow: 0 0 6px rgba(240,165,0,0.6); }
+
+    /* Filtros */
+    .inv-filtros {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .exp-input {
+        flex: 1;
+        min-width: 240px;
+        padding: 11px 18px;
+        border-radius: 8px;
+        border: none;
+        font-size: 0.92rem;
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+        outline: none;
+        transition: background 0.2s;
+    }
+
+    .exp-input::placeholder { color: rgba(255,255,255,0.5); }
+    .exp-input:focus { background: rgba(255,255,255,0.18); }
+
+    .exp-select {
+        padding: 11px 16px;
+        border-radius: 8px;
+        border: none;
+        font-size: 0.88rem;
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+        outline: none;
+        cursor: pointer;
+    }
+
+    .exp-select option { background: #163350; color: #fff; }
+
+    /* Tabla */
+    .exp-table-wrapper { border-radius: 16px 16px 0 0; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.3); }
+    .exp-table-card { background: #fff; overflow-x: auto; }
+
+    .exp-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .exp-table thead tr { background: #f0f4f8; border-bottom: 2px solid #dce7ef; }
+    .exp-table thead th { padding: 14px 16px; text-align: left; font-weight: 700; font-size: 0.78rem; color: #1e2d3d; white-space: nowrap; border: none; }
+    .exp-table tbody tr { border-bottom: 1px solid #edf2f7; transition: background 0.15s; }
+    .exp-table tbody tr:last-child { border-bottom: none; }
+    .exp-table tbody tr:hover { background: #f0fbf9; }
+    .exp-table td { padding: 13px 16px; vertical-align: middle; color: #1e2d3d; border: none; }
+
+    .td-id { font-weight: 700; color: #0d2137; font-size: 0.8rem; }
+    .td-nombre { font-weight: 600; }
+    .td-muted { color: #8a9bb0; font-size: 0.82rem; }
+    .vencido-text { color: #c0392b !important; font-weight: 600; }
+
+    /* Stock numbers */
+    .stock-num { font-weight: 700; font-size: 0.95rem; }
+    .stock-agotado { color: #c0392b; }
+    .stock-bajo    { color: #d97706; }
+    .stock-ok      { color: #0f6e56; }
+
+    /* Badges */
+    .estado-badge { display: inline-block; padding: 4px 10px; border-radius: 50px; font-size: 0.72rem; font-weight: 700; }
+    .estado-activo  { background: #e6f9f7; color: #0f6e56; border: 1px solid #1abcb0; }
+    .estado-bajo    { background: #fff8e1; color: #b45309; border: 1px solid #f0a500; }
+    .estado-agotado { background: #fff0f0; color: #9b2020; border: 1px solid #f0a0a0; }
+    .estado-vencido { background: #fce8e8; color: #7b1515; border: 1px solid #e08080; }
+
+    /* Acciones */
+    .acciones-col { display: flex; flex-direction: column; gap: 6px; }
+    .acciones-row1 { display: flex; gap: 6px; }
+
+    .accion-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 12px;
+        border-radius: 7px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        text-decoration: none !important;
+        transition: opacity 0.15s, transform 0.1s;
+        white-space: nowrap;
+    }
+
+    .accion-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .accion-editar { background: #f0a500; color: #fff !important; }
+    .accion-ver    { background: #1abcb0; color: #fff !important; }
+
+    .exp-empty { text-align: center; padding: 48px; color: #6b7f91; }
+
+    @@media (max-width: 768px) {
+        .inv-page { padding: 24px 16px; }
+        .inv-titulo { font-size: 1.6rem; }
+        .inv-filtros { flex-direction: column; }
+        .exp-input, .exp-select { width: 100%; }
+    }
+</style>
+
+<script>
+    function filtrarTabla() {
+        var texto = document.getElementById('buscador').value.toLowerCase();
+        var categoria = document.getElementById('filtroCategoria').value.toLowerCase();
+        var estado = document.getElementById('filtroEstado').value.toLowerCase();
+        var filas = document.querySelectorAll('#tablaInventario tbody tr');
+        var visibles = 0;
+
+        filas.forEach(function (fila) {
+            var contenido = fila.textContent.toLowerCase();
+            var filaCat = (fila.getAttribute('data-categoria') || '').toLowerCase();
+            var filaEst = (fila.getAttribute('data-estado') || '').toLowerCase();
+
+            var okTexto = contenido.includes(texto);
+            var okCat = !categoria || filaCat === categoria;
+            var okEst = !estado || filaEst === estado;
+
+            var mostrar = okTexto && okCat && okEst;
+            fila.style.display = mostrar ? '' : 'none';
+            if (mostrar) visibles++;
+        });
+
+        document.getElementById('emptyMsg').style.display = visibles === 0 ? 'block' : 'none';
+    }
+</script>

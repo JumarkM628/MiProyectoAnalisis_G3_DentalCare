@@ -9,7 +9,7 @@ namespace DentalCare.UI.Controllers
     public class InventarioController : Controller
     {
         // GET: Inventario
-        public ActionResult Index()
+        public ActionResult InventarioIndex()
         {
             return View();
         }
