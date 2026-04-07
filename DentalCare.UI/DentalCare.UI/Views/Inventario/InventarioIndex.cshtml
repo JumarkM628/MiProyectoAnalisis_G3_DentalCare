@@ -173,7 +173,6 @@
 <style>
     .inv-page {
         min-height: 100vh;
-        background: linear-gradient(160deg, #0d2137 0%, #163350 100%);
         padding: 40px 32px 60px;
     }
 
@@ -190,27 +189,25 @@
         font-family: var(--font-display);
         font-size: 2.2rem;
         font-weight: 700;
-        color: #fff;
+        color: #000000;
         margin: 0;
     }
 
     .inv-header-btns { display: flex; gap: 12px; flex-wrap: wrap; }
 
     .btn-inv-primary {
-        display: inline-flex;
-        align-items: center;
-        background: var(--teal);
-        color: #fff !important;
-        font-weight: 700;
-        font-size: 0.9rem;
-        padding: 10px 20px;
+        background-color: #8FFDFF;
+        color: #000000;
+        border: none;
+        padding: 10px 15px;
         border-radius: 8px;
-        text-decoration: none !important;
-        transition: background 0.2s, transform 0.15s;
-        box-shadow: 0 4px 14px rgba(26,188,176,0.35);
+        text-decoration: none;
     }
 
-    .btn-inv-primary:hover { background: var(--teal-dark); transform: translateY(-1px); color: #fff !important; }
+        .btn-inv-primary:hover {
+            background-color: #6EA0FF;
+            color: #FFFFFF;
+        }
 
     .btn-inv-secondary {
         display: inline-flex;

@@ -18,6 +18,8 @@
             <div class="navbar-title">
                 Clínica dental y especialidades Dra. Rebeca
             </div>
+                
+
 
             <!-- Botón hamburguesa móvil -->
             <button class="nav-toggler" data-bs-toggle="collapse" data-bs-target="#mainNavLinks" aria-controls="mainNavLinks" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,13 +33,16 @@
                     <li>@Html.ActionLink("Litado Citas", "ObtenerTodasLasCitas", "Cita", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Citas", "AgregarCita", "Cita", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Contabilidad", "Menu", "Contabilidad", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Expedientes", "Expedientes", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Expedientes", "Index", "Expediente", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Inventario", "InventarioIndex", "Inventario", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Servicios", "Servicios", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Reporteria", "Index", "Reporteria", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Acerca de", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Contacto", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-</div>
+                    <li>@Html.ActionLink("Login", "Login", "Account", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Registro", "Register", "Account", new { area = "" }, new { @class = "nav-link" })</li>
+                </ul>
+
+            </div>
         </div>
     </nav>
 

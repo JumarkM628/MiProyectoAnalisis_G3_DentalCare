@@ -1,75 +1,239 @@
 ﻿@model IEnumerable<DentalCare.Abstraccion.Modelo.Citas.CitaTDO>
 
 @{
-    ViewBag.Title = "ObtenerTodasLasCitas";
+    ViewBag.Title = "Citas";
 }
 
-<h2>ObtenerTodasLasCitas</h2>
+<div class="inv-page">
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Id_cita)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.descripcion)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Fecha_Cita)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Fecha_Registro)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Fecha_Modificacion)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Estado)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Id_Usuario)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Id_Doctor)
-        </th>
-        <th></th>
-    </tr>
+    <!-- Header -->
+    <div class="inv-header">
+        <h1 class="inv-titulo">Citas</h1>
+        <div class="inv-header-btns">
+            @Html.ActionLink("Registrar Cita", "Create", null, new { @class = "btn-inv-primary" })
+        </div>
+    </div>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Id_cita)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.descripcion)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Fecha_Cita)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Fecha_Registro)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Fecha_Modificacion)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Estado)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Id_Usuario)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Id_Doctor)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-        </td>
-    </tr>
-}
+    <!-- Filtros (solo visual) -->
+    <div class="inv-filtros">
+        <input type="text" class="exp-input" placeholder="Buscar por descripción, usuario o doctor..." />
+        <select class="exp-select">
+            <option>Todos los estados</option>
+            <option>Pendiente</option>
+            <option>Completada</option>
+            <option>Cancelada</option>
+        </select>
+    </div>
 
-</table>
+    <!-- Tabla -->
+    <div class="exp-table-wrapper">
+        <div class="exp-table-card">
+            <table class="exp-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Descripción</th>
+                        <th>Fecha Cita</th>
+                        <th>Estado</th>
+                        <th>Usuario</th>
+                        <th>Doctor</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="td-id">@item.Id_cita</td>
+                            <td class="td-nombre">@item.descripcion</td>
+                            <td class="td-muted">
+                                @(item.Fecha_Cita != null ? item.Fecha_Cita.ToString("dd/MM/yyyy HH:mm") : "")
+                            </td>
+
+                            <td>
+                                <span class="estado-badge estado-activo">
+                                    @item.Estado
+                                </span>
+                            </td>
+
+                            <td>@item.Id_Usuario</td>
+                            <td>@item.Id_Doctor</td>
+
+                            <td>
+                                <div class="acciones-col">
+                                    <div class="acciones-row1">
+                                        @Html.ActionLink("Editar", "Edit", new { id = item.Id_cita }, new { @class = "accion-btn accion-editar" })
+                                        @Html.ActionLink("Ver", "Details", new { id = item.Id_cita }, new { @class = "accion-btn accion-ver" })
+                                        @Html.ActionLink("Eliminar", "Delete", new { id = item.Id_cita }, new { @class = "accion-btn accion-editar" })
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+            <div class="exp-empty">
+                <p>No se encontraron citas.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .inv-page {
+        min-height: 100vh;
+        padding: 40px 32px 60px;
+    }
+
+    .inv-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .inv-titulo {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #000000;
+    }
+
+    .btn-inv-primary {
+        background-color: #8FFDFF;
+        color: #000000;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        text-decoration: none;
+    }
+
+        .btn-inv-primary:hover {
+            background-color: #6EA0FF;
+            color: #FFFFFF;
+        }
+
+    .inv-filtros {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .exp-input {
+        flex: 1;
+        min-width: 240px;
+        padding: 11px 18px;
+        border-radius: 8px;
+        border: 1px solid #6EA0FF;
+    }
+
+    .exp-select {
+        padding: 11px 16px;
+        border-radius: 8px;
+        border: 1px solid #6EA0FF;
+    }
+
+    .exp-table-wrapper {
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+    }
+
+    .exp-table-card {
+        background: #fff;
+        overflow-x: auto;
+    }
+
+    .exp-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .exp-table thead {
+            background: #f0f4f8;
+        }
+
+        .exp-table th, .exp-table td {
+            padding: 12px;
+            text-align: left;
+        }
+
+    .td-id {
+        font-weight: bold;
+    }
+
+    .td-nombre {
+        font-weight: 600;
+    }
+
+    .td-muted {
+        color: #6b7f91;
+        font-size: 0.85rem;
+    }
+
+    .estado-badge {
+        padding: 5px 10px;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        background: #e6f9f7;
+        color: #0f6e56;
+    }
+
+    .acciones-col {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .acciones-row1 {
+        display: flex;
+        gap: 6px;
+    }
+
+    .accion-btn {
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        text-decoration: none;
+        color: white;
+    }
+
+    .accion-editar {
+        background: #f0a500;
+    }
+
+    .accion-ver {
+        background: #1abcb0;
+    }
+
+    .exp-empty {
+        text-align: center;
+        padding: 40px;
+        color: #6b7f91;
+    }
+
+    @@media (max-width: 768px) {
+        .inv-page {
+            padding: 24px 16px;
+        }
+
+        .inv-titulo {
+            font-size: 1.6rem;
+        }
+
+        .inv-filtros {
+            flex-direction: column;
+        }
+
+        .exp-input, .exp-select {
+            width: 100%;
+        }
+    }
+</style>
