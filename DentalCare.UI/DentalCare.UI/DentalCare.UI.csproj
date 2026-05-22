@@ -240,6 +240,8 @@
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Usuario\ObtenerTodosLosUsuarios.cshtml" />
     <Content Include="Views\Usuario\RegistrarUsuario.cshtml" />
+    <Content Include="Views\Usuario\DetallesDelUsuario.cshtml" />
+    <Content Include="Views\Usuario\EditarUsuario.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

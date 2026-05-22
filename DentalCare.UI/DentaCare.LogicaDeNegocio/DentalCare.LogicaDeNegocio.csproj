@@ -42,7 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Usuarios\EditarUsuario\EditarUsuarioLN.cs" />
     <Compile Include="Usuarios\ObtenerTodosLosUsuarios\ObtenerTodosLosUsuariosLN.cs" />
+    <Compile Include="Usuarios\ObtenerUsuarioPorId\ObtenerUsuarioPorIdLN.cs" />
     <Compile Include="Usuarios\RegistrarUsuarios\RegistrarUsuariosLN.cs" />
   </ItemGroup>
   <ItemGroup>

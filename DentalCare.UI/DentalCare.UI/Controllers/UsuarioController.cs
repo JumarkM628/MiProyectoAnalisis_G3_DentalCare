@@ -1,7 +1,11 @@
-﻿using DentaCare.LogicaDeNegocio.Usuarios.ObtenerTodosLosUsuarios;
+﻿using DentaCare.LogicaDeNegocio.Usuarios.EditarUsuario;
+using DentaCare.LogicaDeNegocio.Usuarios.ObtenerTodosLosUsuarios;
+using DentaCare.LogicaDeNegocio.Usuarios.ObtenerUsuarioPorId;
 using DentaCare.LogicaDeNegocio.Usuarios.RegistrarUsuarios;
 using DentalCare.Abstraccion.AccesoADatos.Usuarios.RegistrarUsuarios;
+using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.EditarUsuario;
 using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.ObtenerTodosLosUsuarios;
+using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.ObtenerUsuarioPorId;
 using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.RegistrarUsuario;
 using DentalCare.Abstraccion.Modelo.Usuarios;
 using DentalCare.AccesoADatos;
@@ -17,10 +21,14 @@ namespace DentalCare.UI.Controllers
     {
         private IObtenerTodosLosUsuariosLN _obtenerTodosLosUsuariosLN;
         private IRegistrarUsuariosLN _registrarUsuariosLN;
+        private IObtenerUsuarioPorIdLN _obtenerUsuarioPorIdLN;
+        private IEditarUsuarioLN _editarUsuarioLN;
         public UsuarioController()
         {
             _obtenerTodosLosUsuariosLN = new ObtenerTodosLosUsuariosLN();
             _registrarUsuariosLN = new RegistrarUsuariosLN();
+            _obtenerUsuarioPorIdLN = new ObtenerUsuarioPorIdLN();
+            _editarUsuarioLN = new EditarUsuarioLN();
         }
 
         // GET: Usuario
@@ -31,9 +39,10 @@ namespace DentalCare.UI.Controllers
         }
 
         // GET: Usuario/Details/5
-        public ActionResult Details(int id)
+        public ActionResult DetallesDelUsuario(int id)
         {
-            return View();
+            UsuarioDto elUsuario = _obtenerUsuarioPorIdLN.Obtener(id);
+            return View(elUsuario);
         }
 
         // GET: Usuario/Create
@@ -67,25 +76,42 @@ namespace DentalCare.UI.Controllers
         }
 
         // GET: Usuario/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult EditarUsuario(int id)
         {
-            return View();
+            UsuarioDto dto = _obtenerUsuarioPorIdLN.Obtener(id);
+
+            if (dto == null)
+            {
+                TempData["Error"] = "No se encontró el usuario.";
+                return RedirectToAction("ObtenerTodosLosUsuarios");
+            }
+
+            CargarDropdowns(dto);
+            return View(dto);
         }
 
         // POST: Usuario/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult EditarUsuario(int id, UsuarioDto dto)
         {
-            try
-            {
-                // TODO: Add update logic here
+            dto.IdUsuario = id;
 
-                return RedirectToAction("Index");
-            }
-            catch
+            if (!ModelState.IsValid)
             {
-                return View();
+                CargarDropdowns(dto);
+                return View(dto);
             }
+
+            string error = _editarUsuarioLN.Editar(dto);
+            if (error != null)
+            {
+                ModelState.AddModelError(string.Empty, error);
+                CargarDropdowns(dto);
+                return View(dto);
+            }
+
+            TempData["Exito"] = "Usuario actualizado correctamente.";
+            return RedirectToAction("ObtenerTodosLosUsuarios");
         }
 
         // GET: Usuario/Delete/5
