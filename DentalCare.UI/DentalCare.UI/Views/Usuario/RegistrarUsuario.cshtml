@@ -1,0 +1,140 @@
+﻿@model DentalCare.Abstraccion.Modelo.Usuarios.UsuarioDto
+
+@{
+    ViewBag.Title = "RegistrarUsuario";
+}
+
+<div class="container" style="max-width: 860px; padding: 24px;">
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 style="font-weight:600; color:#2c3e50;">Registrar Nuevo Usuario</h2>
+            <p class="text-muted">
+                Campos obligatorios marcados con <span class="text-danger">*</span>
+            </p>
+        </div>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""] != null)
+    {
+        <div class="alert alert-danger">
+            @Html.ValidationMessage("")
+        </div>
+    }
+
+    @using (Html.BeginForm("RegistrarUsuario", "Usuario", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <!-- SECCIÓN: Datos personales -->
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Datos Personales</strong></div>
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-md-4 form-group">
+                        @Html.LabelFor(m => m.Nombre)<span class="text-danger"> *</span>
+                        @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", placeholder = "Solo letras" })
+                        @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-4 form-group">
+                        @Html.LabelFor(m => m.PrimerApellido)<span class="text-danger"> *</span>
+                        @Html.TextBoxFor(m => m.PrimerApellido, new { @class = "form-control", placeholder = "Solo letras" })
+                        @Html.ValidationMessageFor(m => m.PrimerApellido, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-4 form-group">
+                        @Html.LabelFor(m => m.SegundoApellido)
+                        @Html.TextBoxFor(m => m.SegundoApellido, new { @class = "form-control", placeholder = "Opcional" })
+                        @Html.ValidationMessageFor(m => m.SegundoApellido, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 form-group">
+                        @Html.LabelFor(m => m.TipoCedula)<span class="text-danger"> *</span>
+                        @Html.DropDownListFor(m => m.TipoCedula, Model.ListaTiposCedula,
+                            "-- Seleccione --", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.TipoCedula, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-4 form-group">
+                        @Html.LabelFor(m => m.NumeroCedula)<span class="text-danger"> *</span>
+                        @Html.TextBoxFor(m => m.NumeroCedula, new { @class = "form-control", placeholder = "Ej: 1-1234-5678" })
+                        @Html.ValidationMessageFor(m => m.NumeroCedula, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-4 form-group">
+                        @Html.LabelFor(m => m.Telefono)<span class="text-danger"> *</span>
+                        @Html.TextBoxFor(m => m.Telefono, new { @class = "form-control", placeholder = "Solo números" })
+                        @Html.ValidationMessageFor(m => m.Telefono, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(m => m.Correo)<span class="text-danger"> *</span>
+                        @Html.TextBoxFor(m => m.Correo, new { @class = "form-control", placeholder = "ejemplo@correo.com" })
+                        @Html.ValidationMessageFor(m => m.Correo, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SECCIÓN: Datos del sistema -->
+        <div class="panel panel-default" style="margin-top:16px;">
+            <div class="panel-heading"><strong>Datos del Sistema</strong></div>
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(m => m.AspNetUserId)<span class="text-danger"> *</span>
+                        @Html.DropDownListFor(m => m.AspNetUserId, Model.ListaAspNetUsuarios,
+                            "-- Seleccione usuario registrado --", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.AspNetUserId, "", new { @class = "text-danger" })
+                        <small class="text-muted">Solo aparecen usuarios sin perfil de clínica asignado.</small>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        @Html.LabelFor(m => m.IdEstado)<span class="text-danger"> *</span>
+                        @Html.DropDownListFor(m => m.IdEstado, Model.ListaEstados,
+                            "-- Seleccione --", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.IdEstado, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 form-group">
+                        @Html.LabelFor(m => m.IdAreaUsuario)<span class="text-danger"> *</span>
+                        @Html.DropDownListFor(m => m.IdAreaUsuario, Model.ListaAreas,
+                            "-- Seleccione --", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.IdAreaUsuario, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-4 form-group">
+                        @Html.LabelFor(m => m.IdEspecialidad)<span class="text-danger"> *</span>
+                        @Html.DropDownListFor(m => m.IdEspecialidad, Model.ListaEspecialidades,
+                            "-- Seleccione --", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.IdEspecialidad, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-4 form-group">
+                        @Html.LabelFor(m => m.FechaContratacion)
+                        @Html.TextBoxFor(m => m.FechaContratacion, "{0:yyyy-MM-dd}",
+                            new { @class = "form-control", type = "date" })
+                        @Html.ValidationMessageFor(m => m.FechaContratacion, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- BOTONES -->
+        <div style="margin-top:24px;">
+            <button type="submit" class="btn btn-primary">Guardar Usuario</button>
+            @Html.ActionLink("Cancelar", "ObtenerTodosLosUsuarios", "Usuario",
+                null, new { @class = "btn btn-default", style = "margin-left:8px;" })
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+

@@ -1,0 +1,129 @@
+﻿@model IEnumerable<DentalCare.Abstraccion.Modelo.Usuarios.UsuarioDto>
+
+@{
+    ViewBag.Title = "ObtenerTodosLosUsuarios";
+}
+
+<div class="container-fluid" style="padding: 24px;">
+
+    <!-- Encabezado -->
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h2 style="font-weight: 600; color: #2c3e50;">
+                <i class="fa fa-users" aria-hidden="true"></i>
+                Usuarios del Sistema
+            </h2>
+            <p class="text-muted" style="margin-top: 4px;">
+                Total de usuarios registrados: <strong>@Model.Count()</strong>
+            </p>
+        </div>
+        <div class="col-md-4 text-right">
+            @Html.ActionLink(
+                "+ Nuevo Usuario",
+                "RegistrarUsuario",
+                "Usuario",
+                null,
+                new { @class = "btn btn-primary" }
+            )
+        </div>
+    </div>
+
+    <!-- Buscador rápido (filtrado en cliente) -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <input type="text"
+                   id="buscador"
+                   class="form-control"
+                   placeholder="Buscar por nombre, cédula o correo..."
+                   onkeyup="filtrarTabla()" />
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped" id="tablaUsuarios">
+            <thead class="thead-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(m => m.First().IdUsuario)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().TipoCedula)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().NumeroCedula)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().Telefono)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().Correo)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().NombreArea)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().NombreEspecialidad)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().FechaContratacion)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().NombreEstado)</th>
+                    <th style="min-width: 130px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model == null || !Model.Any())
+                {
+                    <tr>
+                        <td colspan="11" class="text-center text-muted" style="padding: 32px;">
+                            No hay usuarios registrados en el sistema.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var usuario in Model)
+                    {
+                        <tr>
+                            <td>@usuario.IdUsuario</td>
+                            <td>@(string.IsNullOrEmpty(usuario.TipoCedula) ? "—" : usuario.TipoCedula)</td>
+                            <td>@(string.IsNullOrEmpty(usuario.NumeroCedula) ? "—" : usuario.NumeroCedula)</td>
+                            <td>@(string.IsNullOrEmpty(usuario.Telefono) ? "—" : usuario.Telefono)</td>
+                            <td>@(string.IsNullOrEmpty(usuario.Correo) ? "—" : usuario.Correo)</td>
+                            <td>@usuario.NombreArea</td>
+                            <td>@usuario.NombreEspecialidad</td>
+                            <td>
+                                @(usuario.FechaContratacion.HasValue
+                                    ? usuario.FechaContratacion.Value.ToString("dd/MM/yyyy")
+                                    : "—")
+                            </td>
+                            <td>
+                                @{
+                                    string estadoClass = usuario.NombreEstado != null &&
+                                                         usuario.NombreEstado.ToLower() == "activo"
+                                        ? "success" : "danger";
+                                }
+                                <span class="label label-@estadoClass">
+                                    @usuario.NombreEstado
+                                </span>
+                            </td>
+                            <td>
+                                @Html.ActionLink("Ver", "Details", new { id = usuario.IdUsuario },
+                                    new { @class = "btn btn-info btn-xs" })
+                                @Html.ActionLink("Editar", "Edit", new { id = usuario.IdUsuario },
+                                    new { @class = "btn btn-warning btn-xs" })
+                                @Html.ActionLink("Eliminar", "Delete", new { id = usuario.IdUsuario },
+                                    new
+                                         {
+                                             @class = "btn btn-danger btn-xs",
+                                          onclick = "return confirm('¿Desea eliminar este usuario?');"
+                                         })
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+    // Filtro de búsqueda en cliente — busca en todas las columnas de texto
+        function filtrarTabla() {
+            var filtro = document.getElementById("buscador").value.toLowerCase();
+            var filas = document.querySelectorAll("#tablaUsuarios tbody tr");
+
+            filas.forEach(function (fila) {
+                var texto = fila.innerText.toLowerCase();
+                fila.style.display = texto.indexOf(filtro) > -1 ? "" : "none";
+            });
+        }</script>
+}
+
+

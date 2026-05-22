@@ -95,6 +95,8 @@ C:\Users\runli\source\repos\DentalCare.UI\DentalCare.UI\obj\Debug\DentalCare.UI.
 C:\Users\runli\source\repos\DentalCare.UI\DentalCare.UI\obj\Debug\DentalCa.91FCFEA0.Up2Date
 C:\Users\runli\source\repos\DentalCare.UI\DentalCare.UI\obj\Debug\DentalCare.UI.dll
 C:\Users\runli\source\repos\DentalCare.UI\DentalCare.UI\obj\Debug\DentalCare.UI.pdb
+C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\obj\Debug\DentalCare.UI.csproj.AssemblyReference.cache
+C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\obj\Debug\DentalCare.UI.csproj.CoreCompileInputs.cache
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\DentalCare.UI.dll.config
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\DentalCare.UI.dll
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\DentalCare.UI.pdb
@@ -148,7 +150,11 @@ C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\Dent
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\roslyn\VBCSCompiler.exe
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\roslyn\VBCSCompiler.exe.config
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\Antlr3.Runtime.dll
+C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\DentaCare.LogicaDeNegocio.dll
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\DentalCare.Abstraccion.dll
+C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\DentalCare.AccesoADatos.dll
+C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\EntityFramework.dll
+C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\EntityFramework.SqlServer.dll
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\Microsoft.Web.Infrastructure.dll
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\Newtonsoft.Json.dll
@@ -163,7 +169,12 @@ C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\Dent
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\System.Web.WebPages.dll
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\System.Web.WebPages.Razor.dll
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\WebGrease.dll
+C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\DentaCare.LogicaDeNegocio.pdb
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\DentalCare.Abstraccion.pdb
+C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\DentalCare.AccesoADatos.pdb
+C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\DentalCare.AccesoADatos.dll.config
+C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\EntityFramework.xml
+C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\EntityFramework.SqlServer.xml
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\System.Web.Helpers.xml
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\System.Web.Mvc.xml
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\System.Web.Optimization.xml
@@ -187,8 +198,6 @@ C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\Dent
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\es\System.Net.Http.Formatting.resources.dll
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\es\System.Web.Http.resources.dll
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\bin\es\System.Web.Http.WebHost.resources.dll
-C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\obj\Debug\DentalCare.UI.csproj.AssemblyReference.cache
-C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\obj\Debug\DentalCare.UI.csproj.CoreCompileInputs.cache
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\obj\Debug\DentalCa.91FCFEA0.Up2Date
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\obj\Debug\DentalCare.UI.dll
 C:\Users\runli\Documents\ProyectoAnalisis2\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.UI\obj\Debug\DentalCare.UI.pdb
