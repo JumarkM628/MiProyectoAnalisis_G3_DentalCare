@@ -1,4 +1,6 @@
 <Solution>
+  <Project Path="DentaCare.LogicaDeNegocio/DentalCare.LogicaDeNegocio.csproj" Id="5330835d-86fc-4f92-8c2e-c266b39c6bcd" />
   <Project Path="DentalCare.Abstraccion/DentalCare.Abstraccion.csproj" Id="5ca43661-855a-4661-9407-f546c204c953" />
+  <Project Path="DentalCare.AccesoADatos/DentalCare.AccesoADatos.csproj" Id="7e8de50d-d54b-439f-b10e-6ddb1b25ad88" />
   <Project Path="DentalCare.UI/DentalCare.UI.csproj" Id="38ec7ad9-b026-4628-965e-fecea5c14279" />
 </Solution>
