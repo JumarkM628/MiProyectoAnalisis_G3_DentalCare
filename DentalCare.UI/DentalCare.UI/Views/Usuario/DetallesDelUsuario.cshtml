@@ -1,0 +1,162 @@
+﻿@model DentalCare.Abstraccion.Modelo.Usuarios.UsuarioDto
+
+@{
+    ViewBag.Title = "DetallesDelUsuario";
+}
+
+<h2>DetallesDelUsuario</h2>
+
+<div>
+    <h4>UsuarioDto</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.IdUsuario)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IdUsuario)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NombreCompleto)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NombreCompleto)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NombreArea)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NombreArea)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NombreEspecialidad)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NombreEspecialidad)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NombreEstado)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NombreEstado)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FechaCreacion)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FechaCreacion)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Nombre)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Nombre)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PrimerApellido)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PrimerApellido)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SegundoApellido)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SegundoApellido)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TipoCedula)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TipoCedula)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NumeroCedula)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NumeroCedula)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Telefono)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Telefono)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Correo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Correo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IdAreaUsuario)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IdAreaUsuario)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IdEspecialidad)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IdEspecialidad)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IdEstado)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IdEstado)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FechaContratacion)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FechaContratacion)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AspNetUserId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AspNetUserId)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
