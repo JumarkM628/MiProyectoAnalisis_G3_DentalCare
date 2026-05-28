@@ -1,12 +1,14 @@
-﻿using System;
+﻿using DentalCare.AccesoADatos.Entidades;
+using DentalCare.AccesoADatos.Entidades.Estado;
+using DentalCare.AccesoADatos.Entidades.Expediente;
+using DentalCare.AccesoADatos.Entidades.Expedientes;
+using DentalCare.AccesoADatos.Entidades.Usuarios;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.Entity;
-using DentalCare.AccesoADatos.Entidades;
-using DentalCare.AccesoADatos.Entidades.Usuarios;
-using DentalCare.AccesoADatos.Entidades.Estado;
 
 namespace DentalCare.AccesoADatos
 {
@@ -26,5 +28,12 @@ namespace DentalCare.AccesoADatos
         public DbSet<EspecialidadEntidad> Especialidades { get; set; }
         public DbSet<EstadoEntidad> Estados { get; set; }
         public DbSet<AspNetUserEntidad> AspNetUsers { get; set; }
+        public DbSet<AspNetUserRolEntidad> AspNetUserRoles { get; set; }
+        public DbSet<AspNetRoles> AspNetRoles { get; set; }
+
+        //Expediente
+        public DbSet<ExpedienteEntidad> Expedientes { get; set; }
+        public DbSet<ConsentimientoEntidad> Consentimientos { get; set; }
+        public DbSet<UsuarioExpedienteEntidad> UsuarioExpedientes { get; set; }
     }
 }

@@ -1,4 +1,10 @@
-﻿using System;
+﻿using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.CrearExpediente;
+using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.ObtenerTodosLosExpedientes;
+using DentalCare.Abstraccion.Modelo.Expedientes;
+using DentalCare.AccesoADatos;
+using DentalCare.LogicaDeNegocio.Expedientes.CrearExpediente;
+using DentalCare.LogicaDeNegocio.Expedientes.ObtenerTodosLosExpedientes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,10 +14,21 @@ namespace DentalCare.UI.Controllers
 {
     public class ExpedienteController : Controller
     {
-        // GET: Expediente
-        public ActionResult Index()
+        private IObtenerTodosLosExpedientesLN _obtenerTodosLosExpedientesLN;
+        private ICrearExpedienteLN _crearExpedienteLN;
+
+        public ExpedienteController()
         {
-            return View();
+            _obtenerTodosLosExpedientesLN = new ObtenerTodosLosExpedientesLN();
+            _crearExpedienteLN = new CrearExpedienteLN();
+        }
+
+
+        // GET: Expediente
+        public ActionResult ObtenerTodosLosExpedientes()
+        {
+            List<ExpedienteDto> lista = _obtenerTodosLosExpedientesLN.Obtener();
+            return View(lista);
         }
 
         // GET: Expediente/Details/5
@@ -21,25 +38,32 @@ namespace DentalCare.UI.Controllers
         }
 
         // GET: Expediente/Create
-        public ActionResult Create()
+        public ActionResult CrearExpediente()
         {
-            return View();
+            var dto = CargarDropdowns(new ExpedienteDto());
+            return View(dto);
         }
 
         // POST: Expediente/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult CrearExpediente(ExpedienteDto dto)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                // TODO: Add insert logic here
+                CargarDropdowns(dto);
+                return View(dto);
+            }
 
-                return RedirectToAction("Index");
-            }
-            catch
+            string error = _crearExpedienteLN.Crear(dto);
+            if (error != null)
             {
-                return View();
+                ModelState.AddModelError(string.Empty, error);
+                CargarDropdowns(dto);
+                return View(dto);
             }
+
+            TempData["Exito"] = "Expediente creado correctamente.";
+            return RedirectToAction("ObtenerTodosLosExpedientes");
         }
 
         // GET: Expediente/Edit/5
@@ -84,6 +108,20 @@ namespace DentalCare.UI.Controllers
             {
                 return View();
             }
+        }
+
+        private ExpedienteDto CargarDropdowns(ExpedienteDto dto)
+        {
+            using (var ctx = new Contexto())
+            {
+                dto.ListaEstados = ctx.Estados
+                    .Select(e => new SelectListItem
+                    {
+                        Value = e.IdEstado.ToString(),
+                        Text = e.NombreEstado
+                    }).ToList();
+            }
+            return dto;
         }
     }
 }

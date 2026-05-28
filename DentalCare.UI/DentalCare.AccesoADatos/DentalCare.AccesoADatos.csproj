@@ -53,13 +53,20 @@
   <ItemGroup>
     <Compile Include="Contexto.cs" />
     <Compile Include="Entidades\Estado\EstadoEntidad.cs" />
+    <Compile Include="Entidades\Expediente\ConsentimientoEntidad.cs" />
+    <Compile Include="Entidades\Expediente\EntidadExpediente.cs" />
+    <Compile Include="Entidades\Expediente\UsuarioExpedienteEntidad.cs" />
     <Compile Include="Entidades\Usuarios\AreaUsuarioEntidad.cs" />
+    <Compile Include="Entidades\Usuarios\AspNetRoles.cs" />
     <Compile Include="Entidades\Usuarios\AspNetUserEntidad.cs" />
+    <Compile Include="Entidades\Usuarios\AspNetUserRoles.cs" />
     <Compile Include="Entidades\Usuarios\CedulaEntidad.cs" />
     <Compile Include="Entidades\Usuarios\CorreoEntidad.cs" />
     <Compile Include="Entidades\Usuarios\EspecialidadEntidad.cs" />
     <Compile Include="Entidades\Usuarios\TelefonoEntidad.cs" />
     <Compile Include="Entidades\Usuarios\UsuariosEntidad.cs" />
+    <Compile Include="Expedientes\AgregarExpediente\CrearExpedienteAD.cs" />
+    <Compile Include="Expedientes\ObtenerTodosLosExpedientes\ObtenerTodosLosExpedientesAD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Usuarios\EditarUsuario\EditarUsuarioAD.cs" />
     <Compile Include="Usuarios\ObtenerTodosLosUsuarios\ObtenerTodoLosUsuariosAD.cs" />

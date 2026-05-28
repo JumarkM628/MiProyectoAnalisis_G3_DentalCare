@@ -1,0 +1,135 @@
+﻿@model DentalCare.Abstraccion.Modelo.Expedientes.ExpedienteDto
+
+@{
+    ViewBag.Title = "CrearExpediente";
+}
+
+<div class="container" style="max-width: 860px; padding: 24px;">
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 style="font-weight:600; color:#2c3e50;">Crear Expediente Clínico</h2>
+            <p class="text-muted">
+                Campos obligatorios marcados con <span class="text-danger">*</span>
+            </p>
+        </div>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""] != null)
+    {
+        <div class="alert alert-danger">
+            @Html.ValidationMessage("")
+        </div>
+    }
+
+    @using (Html.BeginForm("CrearExpediente", "Expediente", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Datos del Paciente</strong></div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(m => m.Identificacion)<span class="text-danger"> *</span>
+                        @Html.TextBoxFor(m => m.Identificacion,
+                            new { @class = "form-control", placeholder = "Solo números — cédula del paciente" })
+                        @Html.ValidationMessageFor(m => m.Identificacion, "", new { @class = "text-danger" })
+                        <small class="text-muted">
+                            El paciente debe estar registrado en el sistema con rol Paciente.
+                        </small>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        @Html.LabelFor(m => m.IdEstado)<span class="text-danger"> *</span>
+                        @Html.DropDownListFor(m => m.IdEstado, Model.ListaEstados,
+                            "-- Seleccione --", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.IdEstado, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default" style="margin-top:16px;">
+            <div class="panel-heading"><strong>Consentimiento Informado</strong></div>
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(m => m.Objetivo)<span class="text-danger"> *</span>
+                        @Html.TextAreaFor(m => m.Objetivo,
+                            new
+                                 {
+                                     @class = "form-control",
+                                     rows = "3",
+                                  placeholder = "Describa el objetivo del tratamiento (solo letras)"
+                                 })
+                        @Html.ValidationMessageFor(m => m.Objetivo, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(m => m.Descripcion)
+                        @Html.TextAreaFor(m => m.Descripcion,
+                            new
+                                 {
+                                     @class = "form-control",
+                                     rows = "3",
+                                  placeholder = "Descripción adicional (opcional)"
+                                 })
+                        @Html.ValidationMessageFor(m => m.Descripcion, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(m => m.Alternativas)<span class="text-danger"> *</span>
+                        @Html.TextAreaFor(m => m.Alternativas,
+                            new
+                                 {
+                                     @class = "form-control",
+                                     rows = "3",
+                                  placeholder = "Alternativas de tratamiento (solo letras)"
+                                 })
+                        @Html.ValidationMessageFor(m => m.Alternativas, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(m => m.Consecuencias)<span class="text-danger"> *</span>
+                        @Html.TextAreaFor(m => m.Consecuencias,
+                            new
+                                 {
+                                     @class = "form-control",
+                                     rows = "3",
+                                  placeholder = "Posibles consecuencias (solo letras)"
+                                 })
+                        @Html.ValidationMessageFor(m => m.Consecuencias, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(m => m.Otro)
+                        @Html.TextAreaFor(m => m.Otro,
+                            new
+                                 {
+                                     @class = "form-control",
+                                     rows = "2",
+                                  placeholder = "Información adicional (opcional)"
+                                 })
+                        @Html.ValidationMessageFor(m => m.Otro, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div style="margin-top:24px;">
+            <button type="submit" class="btn btn-primary">Guardar Expediente</button>
+            @Html.ActionLink("Cancelar", "ObtenerTodosLosExpedientes", "Expediente",
+                null, new { @class = "btn btn-default", style = "margin-left:8px;" })
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
