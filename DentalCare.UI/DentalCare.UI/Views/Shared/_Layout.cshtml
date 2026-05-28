@@ -42,7 +42,7 @@
                     <li>@Html.ActionLink("Login", "Login", "Account", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Registro", "Register", "Account", new { area = "" }, new { @class = "nav-link" })</li>
                 </ul>
-
+                 @Html.Partial("_loginPartial")
             </div>
         </div>
     </nav>
