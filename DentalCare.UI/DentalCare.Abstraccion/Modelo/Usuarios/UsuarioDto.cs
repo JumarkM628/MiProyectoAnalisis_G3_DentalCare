@@ -92,6 +92,9 @@ namespace DentalCare.Abstraccion.Modelo.Usuarios
         [Display(Name = "Usuario del Sistema")]
         public string AspNetUserId { get; set; }
 
+        public string RoleId { get; set; }              
+        public string RoleName { get; set; }               
+        public IEnumerable<SelectListItem> ListaRoles { get; set; } 
         public IEnumerable<SelectListItem> ListaAreas { get; set; }
         public IEnumerable<SelectListItem> ListaEspecialidades { get; set; }
         public IEnumerable<SelectListItem> ListaEstados { get; set; }
