@@ -23,6 +23,7 @@ namespace DentalCare.UI.Controllers
         private IRegistrarUsuariosLN _registrarUsuariosLN;
         private IObtenerUsuarioPorIdLN _obtenerUsuarioPorIdLN;
         private IEditarUsuarioLN _editarUsuarioLN;
+
         public UsuarioController()
         {
             _obtenerTodosLosUsuariosLN = new ObtenerTodosLosUsuariosLN();
@@ -31,28 +32,24 @@ namespace DentalCare.UI.Controllers
             _editarUsuarioLN = new EditarUsuarioLN();
         }
 
-        // GET: Usuario
         public ActionResult ObtenerTodosLosUsuarios()
         {
             List<UsuarioDto> listaUsuarios = _obtenerTodosLosUsuariosLN.Obtener();
             return View(listaUsuarios);
         }
 
-        // GET: Usuario/Details/5
         public ActionResult DetallesDelUsuario(int id)
         {
             UsuarioDto elUsuario = _obtenerUsuarioPorIdLN.Obtener(id);
             return View(elUsuario);
         }
 
-        // GET: Usuario/Create
         public ActionResult RegistrarUsuario()
         {
             var dto = CargarDropdowns(new UsuarioDto());
             return View(dto);
         }
 
-        // POST: Usuario/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult RegistrarUsuario(UsuarioDto dto)
@@ -86,6 +83,20 @@ namespace DentalCare.UI.Controllers
                 return RedirectToAction("ObtenerTodosLosUsuarios");
             }
 
+            // 🔹 Cargar el rol actual del AspNetUser
+            using (var ctx = new Contexto())
+            {
+                var userRole = ctx.AspNetUserRoles
+                    .FirstOrDefault(ur => ur.UserId == dto.AspNetUserId);
+                if (userRole != null)
+                {
+                    dto.RoleId = userRole.RoleId;
+                    // Opcional: también cargar el nombre del rol para mostrarlo
+                    var role = ctx.AspNetRoles.FirstOrDefault(r => r.Id == userRole.RoleId);
+                    dto.RoleName = role?.Name;
+                }
+            }
+
             CargarDropdowns(dto);
             return View(dto);
         }
@@ -114,20 +125,17 @@ namespace DentalCare.UI.Controllers
             return RedirectToAction("ObtenerTodosLosUsuarios");
         }
 
-        // GET: Usuario/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: Usuario/Delete/5
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {
             try
             {
                 // TODO: Add delete logic here
-
                 return RedirectToAction("Index");
             }
             catch
@@ -171,7 +179,6 @@ namespace DentalCare.UI.Controllers
                     new SelectListItem { Value = "NITE",     Text = "NITE"      }
                 };
 
-                // Solo AspNetUsers sin perfil clínico asignado aún
                 var idsVinculados = ctx.Usuarios
                     .Select(u => u.ASPNET_USER_ID)
                     .ToList();
@@ -183,8 +190,14 @@ namespace DentalCare.UI.Controllers
                         Value = u.Id,
                         Text = u.UserName + " (" + u.Email + ")"
                     }).ToList();
-            }
 
+                dto.ListaRoles = ctx.AspNetRoles
+                    .Select(r => new SelectListItem
+                    {
+                        Value = r.Id,
+                        Text = r.Name
+                    }).ToList();
+            }
             return dto;
         }
     }

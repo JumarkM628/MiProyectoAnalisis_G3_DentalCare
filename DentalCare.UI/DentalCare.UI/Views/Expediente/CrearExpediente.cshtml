@@ -33,7 +33,7 @@
                     <div class="col-md-6 form-group">
                         @Html.LabelFor(m => m.Identificacion)<span class="text-danger"> *</span>
                         @Html.TextBoxFor(m => m.Identificacion,
-                            new { @class = "form-control", placeholder = "Solo números — cédula del paciente" })
+                            new { @class = "form-control", placeholder = "" })
                         @Html.ValidationMessageFor(m => m.Identificacion, "", new { @class = "text-danger" })
                         <small class="text-muted">
                             El paciente debe estar registrado en el sistema con rol Paciente.
@@ -61,7 +61,7 @@
                                  {
                                      @class = "form-control",
                                      rows = "3",
-                                  placeholder = "Describa el objetivo del tratamiento (solo letras)"
+                                  placeholder = ""
                                  })
                         @Html.ValidationMessageFor(m => m.Objetivo, "", new { @class = "text-danger" })
                     </div>
@@ -72,7 +72,7 @@
                                  {
                                      @class = "form-control",
                                      rows = "3",
-                                  placeholder = "Descripción adicional (opcional)"
+                                  placeholder = ""
                                  })
                         @Html.ValidationMessageFor(m => m.Descripcion, "", new { @class = "text-danger" })
                     </div>
@@ -86,7 +86,7 @@
                                  {
                                      @class = "form-control",
                                      rows = "3",
-                                  placeholder = "Alternativas de tratamiento (solo letras)"
+                                  placeholder = ""
                                  })
                         @Html.ValidationMessageFor(m => m.Alternativas, "", new { @class = "text-danger" })
                     </div>
@@ -97,7 +97,7 @@
                                  {
                                      @class = "form-control",
                                      rows = "3",
-                                  placeholder = "Posibles consecuencias (solo letras)"
+                                  placeholder = ""
                                  })
                         @Html.ValidationMessageFor(m => m.Consecuencias, "", new { @class = "text-danger" })
                     </div>
@@ -111,7 +111,7 @@
                                  {
                                      @class = "form-control",
                                      rows = "2",
-                                  placeholder = "Información adicional (opcional)"
+                                  placeholder = ""
                                  })
                         @Html.ValidationMessageFor(m => m.Otro, "", new { @class = "text-danger" })
                     </div>
