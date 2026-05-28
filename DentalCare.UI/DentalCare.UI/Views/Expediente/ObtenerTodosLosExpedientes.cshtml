@@ -1,0 +1,102 @@
+﻿@model IEnumerable<DentalCare.Abstraccion.Modelo.Expedientes.ExpedienteDto>
+
+@{
+    ViewBag.Title = "ObtenerTodosLosExpedientes";
+}
+
+<div class="container-fluid" style="padding: 24px;">
+
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h2 style="font-weight:600; color:#2c3e50;">Expedientes Clínicos</h2>
+            <p class="text-muted">Total de expedientes: <strong>@Model.Count()</strong></p>
+        </div>
+        <div class="col-md-4 text-right">
+            @Html.ActionLink("+ Nuevo Expediente", "CrearExpediente", "Expediente",
+                null, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert alert-success">@TempData["Exito"]</div>
+    }
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <input type="text" id="buscador" class="form-control"
+                   placeholder="Buscar por paciente o cédula..."
+                   onkeyup="filtrarTabla()" />
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped" id="tablaExpedientes">
+            <thead class="thead-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(m => m.First().IdExpediente)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().NombrePaciente)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().CedulaPaciente)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().Objetivo)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().Alternativas)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().Consecuencias)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().FechaCreacion)</th>
+                    <th>@Html.DisplayNameFor(m => m.First().NombreEstado)</th>
+                    <th style="min-width:130px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="9" class="text-center text-muted" style="padding:32px;">
+                            No hay expedientes registrados.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var e in Model)
+                    {
+                        <tr>
+                            <td>@e.IdExpediente</td>
+                            <td>@e.NombrePaciente</td>
+                            <td>@(string.IsNullOrEmpty(e.CedulaPaciente) ? "—" : e.CedulaPaciente)</td>
+                            <td>@(string.IsNullOrEmpty(e.Objetivo)      ? "—" : e.Objetivo)</td>
+                            <td>@(string.IsNullOrEmpty(e.Alternativas)  ? "—" : e.Alternativas)</td>
+                            <td>@(string.IsNullOrEmpty(e.Consecuencias) ? "—" : e.Consecuencias)</td>
+                            <td>@(e.FechaCreacion.HasValue ? e.FechaCreacion.Value.ToString("dd/MM/yyyy") : "—")</td>
+                            <td>
+                                <span class="label label-@(e.NombreEstado != null && e.NombreEstado.ToLower() == "activo" ? "success" : "danger")">
+                                    @e.NombreEstado
+                                </span>
+                            </td>
+                            <td>
+                                @Html.ActionLink("Ver", "Details", new { id = e.IdExpediente }, new { @class = "btn btn-info btn-xs" })
+                                @Html.ActionLink("Editar", "Edit", new { id = e.IdExpediente }, new { @class = "btn btn-warning btn-xs" })
+                                @Html.ActionLink("Eliminar", "Delete", new { id = e.IdExpediente },
+                                    new
+                                         {
+                                             @class = "btn btn-danger btn-xs",
+                                          onclick = "return confirm('¿Desea eliminar este expediente?');"
+                                         })
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+    function filtrarTabla() {
+            var filtro = document.getElementById("buscador").value.toLowerCase();
+            document.querySelectorAll("#tablaExpedientes tbody tr").forEach(function (fila) {
+                fila.style.display = fila.innerText.toLowerCase().indexOf(filtro) > -1 ? "" : "none";
+            });
+        }</script>
+}
+
+
