@@ -63,7 +63,6 @@ C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\Dental
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\DentalCare.Abstraccion.dll
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\DentalCare.AccesoADatos.dll
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\System.Web.Mvc.dll
-C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\EntityFramework.dll
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\System.Web.WebPages.dll
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\System.Web.WebPages.Razor.dll
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\System.Web.Razor.dll

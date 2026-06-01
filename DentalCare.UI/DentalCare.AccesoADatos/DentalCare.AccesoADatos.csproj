@@ -69,6 +69,7 @@
     <Compile Include="Expedientes\ObtenerTodosLosExpedientes\ObtenerTodosLosExpedientesAD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Usuarios\EditarUsuario\EditarUsuarioAD.cs" />
+    <Compile Include="Usuarios\EliminarUsuario\EliminarUsuarioAD.cs" />
     <Compile Include="Usuarios\ObtenerTodosLosUsuarios\ObtenerTodoLosUsuariosAD.cs" />
     <Compile Include="Usuarios\ObtenerUsuarioPorId\ObtenerUsuarioPorIdAD.cs" />
     <Compile Include="Usuarios\RegistrarUsuario\RegistrarUsuariosAD.cs" />

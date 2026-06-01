@@ -66,12 +66,14 @@
     <Compile Include="AccesoADatos\Expediente\CrearExpediente\ICrearExpedienteAD.cs" />
     <Compile Include="AccesoADatos\Expediente\ObtenerTodosLosExpedientes\IObtenerTodosLosExpedientesAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\EditarUsuario\IEditarUsuarioAD.cs" />
+    <Compile Include="AccesoADatos\Usuarios\EliminarUsuario\IEliminarUsuarioAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\ObtenerTodosLosUsuarios\IObtenerTodoLosUsuariosAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\ObtenerUsuarioPorId\IObtenerUsuarioPorIdAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\RegistrarUsuarios\IRegistrarUsuariosAD.cs" />
     <Compile Include="LogicaDeNegocio\Expedientes\CrearExpediente\ICrearExpedienteLN.cs" />
     <Compile Include="LogicaDeNegocio\Expedientes\ObtenerTodosLosExpedientes\IObtenerTodosLosExpedientesLN.cs" />
     <Compile Include="LogicaDeNegocio\Usuarios\EditarUsuario\IEditarUsuarioLN.cs" />
+    <Compile Include="LogicaDeNegocio\Usuarios\EliminarUsuario\IEliminarUsuarioLN.cs" />
     <Compile Include="LogicaDeNegocio\Usuarios\ObtenerTodosLosUsuarios\IObtenerTodosLosUsuariosLN.cs" />
     <Compile Include="LogicaDeNegocio\Usuarios\ObtenerUsuarioPorId\IObtenerUsuarioPorIdLN.cs" />
     <Compile Include="LogicaDeNegocio\Usuarios\RegistrarUsuario\IRegistrarUsuariosLN.cs" />

@@ -4,11 +4,14 @@ using DentaCare.LogicaDeNegocio.Usuarios.ObtenerUsuarioPorId;
 using DentaCare.LogicaDeNegocio.Usuarios.RegistrarUsuarios;
 using DentalCare.Abstraccion.AccesoADatos.Usuarios.RegistrarUsuarios;
 using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.EditarUsuario;
+using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.EliminarUsuario;
 using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.ObtenerTodosLosUsuarios;
 using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.ObtenerUsuarioPorId;
 using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.RegistrarUsuario;
 using DentalCare.Abstraccion.Modelo.Usuarios;
 using DentalCare.AccesoADatos;
+using DentalCare.LogicaDeNegocio.Usuarios.EliminarUsuario;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +26,7 @@ namespace DentalCare.UI.Controllers
         private IRegistrarUsuariosLN _registrarUsuariosLN;
         private IObtenerUsuarioPorIdLN _obtenerUsuarioPorIdLN;
         private IEditarUsuarioLN _editarUsuarioLN;
+        private readonly IEliminarUsuarioLN _eliminarUsuarioLN;
 
         public UsuarioController()
         {
@@ -30,6 +34,7 @@ namespace DentalCare.UI.Controllers
             _registrarUsuariosLN = new RegistrarUsuariosLN();
             _obtenerUsuarioPorIdLN = new ObtenerUsuarioPorIdLN();
             _editarUsuarioLN = new EditarUsuarioLN();
+            _eliminarUsuarioLN = new EliminarUsuarioLN();
         }
 
         public ActionResult ObtenerTodosLosUsuarios()
@@ -125,23 +130,31 @@ namespace DentalCare.UI.Controllers
             return RedirectToAction("ObtenerTodosLosUsuarios");
         }
 
-        public ActionResult Delete(int id)
+        public ActionResult EliminarUsuario(int id)
         {
-            return View();
+            UsuarioDto dto = _obtenerUsuarioPorIdLN.Obtener(id);
+            if (dto == null)
+            {
+                TempData["Error"] = "No se encontró el usuario.";
+                return RedirectToAction("ObtenerTodosLosUsuarios");
+            }
+            return View(dto);
         }
 
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult EliminarUsuario(int id, FormCollection collection)
         {
-            try
+            string aspNetUserIdAdmin = User.Identity.GetUserId();
+
+            string error = _eliminarUsuarioLN.Eliminar(id, aspNetUserIdAdmin);
+            if (error != null)
             {
-                // TODO: Add delete logic here
-                return RedirectToAction("Index");
+                TempData["Error"] = error;
+                return RedirectToAction("ObtenerTodosLosUsuarios");
             }
-            catch
-            {
-                return View();
-            }
+
+            TempData["Exito"] = "Usuario eliminado correctamente.";
+            return RedirectToAction("ObtenerTodosLosUsuarios");
         }
 
         private UsuarioDto CargarDropdowns(UsuarioDto dto)
