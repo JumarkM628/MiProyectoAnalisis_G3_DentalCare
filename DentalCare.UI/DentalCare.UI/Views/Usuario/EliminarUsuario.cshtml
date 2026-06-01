@@ -1,0 +1,75 @@
+﻿@model DentalCare.Abstraccion.Modelo.Usuarios.UsuarioDto
+
+@{
+    ViewBag.Title = "EliminarUsuario";
+}
+
+<div class="container" style="max-width: 600px; padding: 24px;">
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 style="font-weight:600; color:#c0392b;">
+                <i class="fa fa-exclamation-triangle"></i>
+                Confirmar Eliminación
+            </h2>
+        </div>
+    </div>
+
+
+    <div class="alert alert-danger">
+        <strong>¿Está seguro que desea eliminar este usuario?</strong><br />
+        Esta acción eliminará permanentemente todos los datos del usuario del sistema.
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading"><strong>Datos del Usuario</strong></div>
+        <div class="panel-body">
+            <table class="table table-condensed" style="margin-bottom:0;">
+                <tr>
+                    <td><strong>@Html.DisplayNameFor(m => m.IdUsuario)</strong></td>
+                    <td>@Model.IdUsuario</td>
+                </tr>
+                <tr>
+                    <td><strong>Nombre Completo</strong></td>
+                    <td>@Model.NombreCompleto</td>
+                </tr>
+                <tr>
+                    <td><strong>@Html.DisplayNameFor(m => m.NumeroCedula)</strong></td>
+                    <td>@(string.IsNullOrEmpty(Model.NumeroCedula) ? "—" : Model.NumeroCedula)</td>
+                </tr>
+                <tr>
+                    <td><strong>@Html.DisplayNameFor(m => m.Correo)</strong></td>
+                    <td>@(string.IsNullOrEmpty(Model.Correo) ? "—" : Model.Correo)</td>
+                </tr>
+                <tr>
+                    <td><strong>@Html.DisplayNameFor(m => m.NombreArea)</strong></td>
+                    <td>@Model.NombreArea</td>
+                </tr>
+                <tr>
+                    <td><strong>@Html.DisplayNameFor(m => m.NombreEstado)</strong></td>
+                    <td>@Model.NombreEstado</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+
+    <p class="text-muted" style="font-size:12px; margin-top:8px;">
+        <i class="fa fa-info-circle"></i>
+        Se registrará automáticamente la fecha, hora y el administrador que realizó esta eliminación.
+    </p>
+
+    @using (Html.BeginForm("EliminarUsuario", "Usuario", new { id = Model.IdUsuario }, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div style="margin-top: 16px;">
+            <button type="submit" class="btn btn-danger">
+                Sí, eliminar usuario
+            </button>
+            @Html.ActionLink("Cancelar", "ObtenerTodosLosUsuarios", "Usuario",
+                null, new { @class = "btn btn-default", style = "margin-left:8px;" })
+        </div>
+    }
+
+</div>
+
