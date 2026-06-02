@@ -1,14 +1,17 @@
-﻿using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.CrearExpediente;
-using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.ObtenerTodosLosExpedientes;
-using DentalCare.Abstraccion.Modelo.Expedientes;
-using DentalCare.AccesoADatos;
-using DentalCare.LogicaDeNegocio.Expedientes.CrearExpediente;
-using DentalCare.LogicaDeNegocio.Expedientes.ObtenerTodosLosExpedientes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using DentaCare.LogicaDeNegocio.Expedientes.CerrarExpediente;
+using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.CerrarExpediente;
+using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.CrearExpediente;
+using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.ObtenerTodosLosExpedientes;
+using DentalCare.Abstraccion.Modelo.Expedientes;
+using DentalCare.AccesoADatos;
+using DentalCare.AccesoADatos.Expedientes.CerrarExpediente;
+using DentalCare.LogicaDeNegocio.Expedientes.CrearExpediente;
+using DentalCare.LogicaDeNegocio.Expedientes.ObtenerTodosLosExpedientes;
 
 namespace DentalCare.UI.Controllers
 {
@@ -16,13 +19,14 @@ namespace DentalCare.UI.Controllers
     {
         private IObtenerTodosLosExpedientesLN _obtenerTodosLosExpedientesLN;
         private ICrearExpedienteLN _crearExpedienteLN;
+        private ICerrarExpedienteLN _cerrarExpedienteLN;
 
         public ExpedienteController()
         {
             _obtenerTodosLosExpedientesLN = new ObtenerTodosLosExpedientesLN();
             _crearExpedienteLN = new CrearExpedienteLN();
+            _cerrarExpedienteLN = new CerrarExpedienteLN(new CerrarExpedienteAD(new Contexto()));
         }
-
 
         // GET: Expediente
         public ActionResult ObtenerTodosLosExpedientes()
@@ -108,6 +112,41 @@ namespace DentalCare.UI.Controllers
             {
                 return View();
             }
+        }
+
+        public ActionResult Cerrar(int id)
+        {
+            var expediente = _cerrarExpedienteLN.ObtenerExpedientePorId(id);
+
+            if (expediente == null)
+                return HttpNotFound();
+
+            if (expediente.IdEstado == 2)
+            {
+                TempData["Error"] = "El expediente ya se encuentra cerrado y no puede modificarse.";
+                return RedirectToAction("ObtenerTodosLosExpedientes");
+            }
+
+            return View(expediente);
+        }
+
+        // POST: Expediente/Cerrar
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Cerrar(int id, string confirmacion)
+        {
+            string nombreDoctora = User.Identity.Name;
+
+            string error = _cerrarExpedienteLN.CerrarExpediente(id, nombreDoctora);
+
+            if (error != null)
+            {
+                TempData["Error"] = error;
+                return RedirectToAction("Cerrar", new { id });
+            }
+
+            TempData["Exito"] = "El expediente fue cerrado correctamente.";
+            return RedirectToAction("ObtenerTodosLosExpedientes");
         }
 
         private ExpedienteDto CargarDropdowns(ExpedienteDto dto)

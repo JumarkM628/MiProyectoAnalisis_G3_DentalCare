@@ -5,10 +5,14 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using DentaCare.LogicaDeNegocio.Usuarios.RecuperarContrasena;
+using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.RecuperarContrasena;
+using DentalCare.Abstraccion.Modelo.RecuperacionContrasena;
+using DentalCare.AccesoADatos.Usuarios.RecuperarContrasena;
+using DentalCare.UI.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using DentalCare.UI.Models;
 
 namespace DentalCare.UI.Controllers
 {
@@ -17,15 +21,18 @@ namespace DentalCare.UI.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private readonly IRecuperarContrasenaLN _recuperarContrasenaLN;
 
         public AccountController()
         {
+            _recuperarContrasenaLN = new RecuperarContrasenaLN(new RecuperarContrasenaAD());
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IRecuperarContrasenaLN recuperarContrasenaLN)
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            _recuperarContrasenaLN = recuperarContrasenaLN;
         }
 
         public ApplicationSignInManager SignInManager
@@ -191,35 +198,29 @@ namespace DentalCare.UI.Controllers
         [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
-            return View();
+            return View(new ForgotPasswordDto());
         }
 
         //
         // POST: /Account/ForgotPassword
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        public ActionResult ForgotPassword(ForgotPasswordDto model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var user = await UserManager.FindByNameAsync(model.Email);
-                if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
-                {
-                    // No revelar que el usuario no existe o que no está confirmado
-                    return View("ForgotPasswordConfirmation");
-                }
-
-                // Para obtener más información sobre cómo habilitar la confirmación de cuentas y el restablecimiento de contraseña, visite https://go.microsoft.com/fwlink/?LinkID=320771
-                // Enviar un correo electrónico con este vínculo
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Restablecer contraseña", "Para restablecer la contraseña, haga clic <a href=\"" + callbackUrl + "\">aquí</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                return View(model);
             }
 
-            // Si llegamos a este punto, es que se ha producido un error y volvemos a mostrar el formulario
-            return View(model);
+            string error = _recuperarContrasenaLN.RecuperarContrasena(model.Email);
+
+            if (error != null)
+            {
+                ModelState.AddModelError("", error);
+                return View(model);
+            }
+
+            return RedirectToAction("ForgotPasswordConfirmation");
         }
 
         //

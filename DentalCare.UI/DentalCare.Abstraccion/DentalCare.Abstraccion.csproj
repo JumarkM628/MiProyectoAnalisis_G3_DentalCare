@@ -37,6 +37,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.Helpers.dll</HintPath>
     </Reference>
@@ -63,27 +64,42 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccesoADatos\Archivo\IArchivoClinicoAD.cs" />
+    <Compile Include="AccesoADatos\Expediente\CerrarExpediente\ICerrarExpedienteAD.cs" />
     <Compile Include="AccesoADatos\Expediente\CrearExpediente\ICrearExpedienteAD.cs" />
     <Compile Include="AccesoADatos\Expediente\ObtenerTodosLosExpedientes\IObtenerTodosLosExpedientesAD.cs" />
+    <Compile Include="AccesoADatos\Expediente\ReabrirExpediente\IReabrirExpedienteAD.cs" />
+    <Compile Include="AccesoADatos\Tratamiento\IEditarPlanTratamientoAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\EditarUsuario\IEditarUsuarioAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\EliminarUsuario\IEliminarUsuarioAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\ObtenerTodosLosUsuarios\IObtenerTodoLosUsuariosAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\ObtenerUsuarioPorId\IObtenerUsuarioPorIdAD.cs" />
+    <Compile Include="AccesoADatos\Usuarios\RecuperarContrasena\IRecuperarContrasenaAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\RegistrarUsuarios\IRegistrarUsuariosAD.cs" />
+    <Compile Include="LogicaDeNegocio\Archivo\IArchivoClinicoLN.cs" />
+    <Compile Include="LogicaDeNegocio\Expedientes\CerrarExpediente\ICerrarExpedienteLN.cs" />
     <Compile Include="LogicaDeNegocio\Expedientes\CrearExpediente\ICrearExpedienteLN.cs" />
     <Compile Include="LogicaDeNegocio\Expedientes\ObtenerTodosLosExpedientes\IObtenerTodosLosExpedientesLN.cs" />
+    <Compile Include="LogicaDeNegocio\Expedientes\ReabrirExpediente\IReabrirExpedienteLN.cs" />
+    <Compile Include="LogicaDeNegocio\Tratamiento\IEditarPlanTratamientoLN.cs" />
     <Compile Include="LogicaDeNegocio\Usuarios\EditarUsuario\IEditarUsuarioLN.cs" />
     <Compile Include="LogicaDeNegocio\Usuarios\EliminarUsuario\IEliminarUsuarioLN.cs" />
     <Compile Include="LogicaDeNegocio\Usuarios\ObtenerTodosLosUsuarios\IObtenerTodosLosUsuariosLN.cs" />
     <Compile Include="LogicaDeNegocio\Usuarios\ObtenerUsuarioPorId\IObtenerUsuarioPorIdLN.cs" />
+    <Compile Include="LogicaDeNegocio\Usuarios\RecuperarContrasena\IRecuperarContrasenaLN.cs" />
     <Compile Include="LogicaDeNegocio\Usuarios\RegistrarUsuario\IRegistrarUsuariosLN.cs" />
+    <Compile Include="Modelo\Archivo\ArchivoClinicoDto.cs" />
+    <Compile Include="Modelo\Bitacora\BitacoraDto.cs" />
     <Compile Include="Modelo\Citas\CitaTDO.cs" />
     <Compile Include="Modelo\Expediente\ExpedienteDto.cs" />
+    <Compile Include="Modelo\RecuperacionContrasena\ForgotPasswordDto.cs" />
+    <Compile Include="Modelo\Tratamiento\PlanTratamientoDto.cs" />
     <Compile Include="Modelo\Usuarios\UsuarioDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

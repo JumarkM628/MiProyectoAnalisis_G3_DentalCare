@@ -11,6 +11,5 @@ namespace DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.CrearExpediente
     {
         string Crear(ExpedienteDto dto);
 
-
     }
 }

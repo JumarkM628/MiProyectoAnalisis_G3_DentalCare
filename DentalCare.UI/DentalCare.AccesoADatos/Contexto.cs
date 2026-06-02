@@ -1,14 +1,17 @@
-﻿using DentalCare.AccesoADatos.Entidades;
-using DentalCare.AccesoADatos.Entidades.Estado;
-using DentalCare.AccesoADatos.Entidades.Expediente;
-using DentalCare.AccesoADatos.Entidades.Expedientes;
-using DentalCare.AccesoADatos.Entidades.Usuarios;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DentalCare.AccesoADatos.Entidades;
+using DentalCare.AccesoADatos.Entidades.Archivo;
+using DentalCare.AccesoADatos.Entidades.Bitacora;
+using DentalCare.AccesoADatos.Entidades.Estado;
+using DentalCare.AccesoADatos.Entidades.Expediente;
+using DentalCare.AccesoADatos.Entidades.Expedientes;
+using DentalCare.AccesoADatos.Entidades.Tratamiento;
+using DentalCare.AccesoADatos.Entidades.Usuarios;
 
 namespace DentalCare.AccesoADatos
 {
@@ -35,5 +38,14 @@ namespace DentalCare.AccesoADatos
         public DbSet<ExpedienteEntidad> Expedientes { get; set; }
         public DbSet<ConsentimientoEntidad> Consentimientos { get; set; }
         public DbSet<UsuarioExpedienteEntidad> UsuarioExpedientes { get; set; }
+
+        // Tratamiento
+        public DbSet<PlanTratamientoEntidad> PlanesTratamiento { get; set; }
+
+        // Archivos Clínicos
+        public DbSet<ArchivoClinicoEntidad> ArchivosClinicos { get; set; }
+
+        // Bitácora
+        public DbSet<BitacoraEntidad> Bitacoras { get; set; }
     }
 }

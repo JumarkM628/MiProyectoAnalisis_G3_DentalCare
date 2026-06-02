@@ -51,11 +51,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Archivo\SubirArchivo\ArchivoClinicoAD.cs" />
     <Compile Include="Contexto.cs" />
+    <Compile Include="Entidades\Archivo\ArchivoClinicoEntidad.cs" />
+    <Compile Include="Entidades\Bitacora\BitacoraEntidad.cs" />
     <Compile Include="Entidades\Estado\EstadoEntidad.cs" />
     <Compile Include="Entidades\Expediente\ConsentimientoEntidad.cs" />
     <Compile Include="Entidades\Expediente\EntidadExpediente.cs" />
     <Compile Include="Entidades\Expediente\UsuarioExpedienteEntidad.cs" />
+    <Compile Include="Entidades\Tratamiento\PlanTratamientoEntidad.cs" />
     <Compile Include="Entidades\Usuarios\AreaUsuarioEntidad.cs" />
     <Compile Include="Entidades\Usuarios\AspNetRoles.cs" />
     <Compile Include="Entidades\Usuarios\AspNetUserEntidad.cs" />
@@ -66,12 +70,16 @@
     <Compile Include="Entidades\Usuarios\TelefonoEntidad.cs" />
     <Compile Include="Entidades\Usuarios\UsuariosEntidad.cs" />
     <Compile Include="Expedientes\AgregarExpediente\CrearExpedienteAD.cs" />
+    <Compile Include="Expedientes\CerrarExpediente\CerrarExpedienteAD.cs" />
     <Compile Include="Expedientes\ObtenerTodosLosExpedientes\ObtenerTodosLosExpedientesAD.cs" />
+    <Compile Include="Expedientes\ReabrirExpediente\ReabrirExpedienteAD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tratamiento\EditarPlanTratamiento\EditarPlanTratamientoAD.cs" />
     <Compile Include="Usuarios\EditarUsuario\EditarUsuarioAD.cs" />
     <Compile Include="Usuarios\EliminarUsuario\EliminarUsuarioAD.cs" />
     <Compile Include="Usuarios\ObtenerTodosLosUsuarios\ObtenerTodoLosUsuariosAD.cs" />
     <Compile Include="Usuarios\ObtenerUsuarioPorId\ObtenerUsuarioPorIdAD.cs" />
+    <Compile Include="Usuarios\RecuperarContrasena\RecuperarContrasenaAD.cs" />
     <Compile Include="Usuarios\RegistrarUsuario\RegistrarUsuariosAD.cs" />
   </ItemGroup>
   <ItemGroup>

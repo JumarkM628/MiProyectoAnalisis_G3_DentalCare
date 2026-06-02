@@ -34,6 +34,7 @@
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,13 +43,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Archivo\SubirArchivo\ArchivoClinicoLN.cs" />
+    <Compile Include="Expedientes\CerrarExpediente\CerrarExpedienteLN.cs" />
     <Compile Include="Expedientes\CrearExpediente\CrearExpedienteLN.cs" />
     <Compile Include="Expedientes\ObtenerTodosLosExpedientes\ObtenerTodosLosExpedientesLN.cs" />
+    <Compile Include="Expedientes\ReabrirExpediente\ReabrirExpedienteLN.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Servicios\Correo\Correo.cs" />
     <Compile Include="Usuarios\EditarUsuario\EditarUsuarioLN.cs" />
     <Compile Include="Usuarios\EliminarUsuario\EliminarUsuarioLN.cs" />
     <Compile Include="Usuarios\ObtenerTodosLosUsuarios\ObtenerTodosLosUsuariosLN.cs" />
     <Compile Include="Usuarios\ObtenerUsuarioPorId\ObtenerUsuarioPorIdLN.cs" />
+    <Compile Include="Usuarios\RecuperarContrasena\RecuperarContrasenaLN.cs" />
     <Compile Include="Usuarios\RegistrarUsuarios\RegistrarUsuariosLN.cs" />
   </ItemGroup>
   <ItemGroup>
