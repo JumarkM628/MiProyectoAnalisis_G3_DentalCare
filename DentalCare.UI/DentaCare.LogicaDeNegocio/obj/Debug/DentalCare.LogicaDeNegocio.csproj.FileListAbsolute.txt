@@ -100,7 +100,6 @@ C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNeg
 C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\DentalCare.Abstraccion.pdb
 C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\DentalCare.AccesoADatos.pdb
 C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\DentalCare.AccesoADatos.dll.config
-C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\EntityFramework.xml
 C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\System.Web.Mvc.xml
 C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\System.Web.WebPages.xml
 C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\System.Web.WebPages.Razor.xml

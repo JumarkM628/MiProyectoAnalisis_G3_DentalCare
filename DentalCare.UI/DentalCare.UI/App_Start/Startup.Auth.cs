@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
@@ -62,6 +63,56 @@ namespace DentalCare.UI
             //    ClientId = "",
             //    ClientSecret = ""
             //});
+
+            // Crear roles y usuario administrador inicial si no existen
+            CreateRolesAndUsers();
+        }
+
+        private void CreateRolesAndUsers()
+        {
+            // Usar el contexto de Identity para crear roles y un usuario admin inicial
+            using (var context = new ApplicationDbContext())
+            {
+                var roleStore = new RoleStore<IdentityRole>(context);
+                var roleManager = new RoleManager<IdentityRole>(roleStore);
+
+                var userStore = new UserStore<ApplicationUser>(context);
+                var userManager = new ApplicationUserManager(userStore);
+
+                // Roles requeridas por la aplicación
+                string[] roles = { "Admin", "Doctor", "Asistente", "Paciente" };
+                foreach (var roleName in roles)
+                {
+                    if (!roleManager.RoleExists(roleName))
+                    {
+                        var roleResult = roleManager.Create(new IdentityRole(roleName));
+                        // Ignorar roleResult detallado aquí; si falla es probable que la BD no esté accesible
+                    }
+                }
+
+                // Crear usuario administrador inicial si no existe
+                string adminEmail = "admin@dentalcare.local";
+                string adminPassword = "Admin@12345"; // Cambiar en producción
+
+                var adminUser = userManager.FindByEmail(adminEmail);
+                if (adminUser == null)
+                {
+                    adminUser = new ApplicationUser { UserName = adminEmail, Email = adminEmail };
+                    var createAdmin = userManager.Create(adminUser, adminPassword);
+                    if (createAdmin.Succeeded)
+                    {
+                        userManager.AddToRole(adminUser.Id, "Admin");
+                    }
+                }
+                else
+                {
+                    // Asegurar que el usuario admin tenga la role Admin
+                    if (!userManager.IsInRole(adminUser.Id, "Admin"))
+                    {
+                        userManager.AddToRole(adminUser.Id, "Admin");
+                    }
+                }
+            }
         }
     }
 }
