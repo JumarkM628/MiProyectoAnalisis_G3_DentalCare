@@ -66,6 +66,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccesoADatos\Archivo\IArchivoClinicoAD.cs" />
+    <Compile Include="AccesoADatos\Expediente\Alerta\GuardarAlerta\IGuardarAlertaAD.cs" />
+    <Compile Include="AccesoADatos\Expediente\Alerta\ObtenerAlertaPorExpediente\IObtenerAlertaPorExpedienteAD.cs" />
     <Compile Include="AccesoADatos\Expediente\CerrarExpediente\ICerrarExpedienteAD.cs" />
     <Compile Include="AccesoADatos\Expediente\CrearExpediente\ICrearExpedienteAD.cs" />
     <Compile Include="AccesoADatos\Expediente\ObtenerTodosLosExpedientes\IObtenerTodosLosExpedientesAD.cs" />
@@ -78,6 +80,8 @@
     <Compile Include="AccesoADatos\Usuarios\RecuperarContrasena\IRecuperarContrasenaAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\RegistrarUsuarios\IRegistrarUsuariosAD.cs" />
     <Compile Include="LogicaDeNegocio\Archivo\IArchivoClinicoLN.cs" />
+    <Compile Include="LogicaDeNegocio\Expedientes\Alertas\GuardarAlerta\IGuardarAlertaLN.cs" />
+    <Compile Include="LogicaDeNegocio\Expedientes\Alertas\ObtenerAlertasPorExpediente\IObtenerAlertaPorExpedienteLN.cs" />
     <Compile Include="LogicaDeNegocio\Expedientes\CerrarExpediente\ICerrarExpedienteLN.cs" />
     <Compile Include="LogicaDeNegocio\Expedientes\CrearExpediente\ICrearExpedienteLN.cs" />
     <Compile Include="LogicaDeNegocio\Expedientes\ObtenerTodosLosExpedientes\IObtenerTodosLosExpedientesLN.cs" />
@@ -92,6 +96,8 @@
     <Compile Include="Modelo\Archivo\ArchivoClinicoDto.cs" />
     <Compile Include="Modelo\Bitacora\BitacoraDto.cs" />
     <Compile Include="Modelo\Citas\CitaTDO.cs" />
+    <Compile Include="Modelo\Expediente\AlertaDto.cs" />
+    <Compile Include="Modelo\Expediente\ExpedienteDetalleDto.cs" />
     <Compile Include="Modelo\Expediente\ExpedienteDto.cs" />
     <Compile Include="Modelo\RecuperacionContrasena\ForgotPasswordDto.cs" />
     <Compile Include="Modelo\Tratamiento\PlanTratamientoDto.cs" />

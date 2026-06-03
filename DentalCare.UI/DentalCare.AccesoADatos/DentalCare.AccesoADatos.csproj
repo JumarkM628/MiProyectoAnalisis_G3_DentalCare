@@ -57,6 +57,7 @@
     <Compile Include="Entidades\Archivo\ArchivoClinicoEntidad.cs" />
     <Compile Include="Entidades\Bitacora\BitacoraEntidad.cs" />
     <Compile Include="Entidades\Estado\EstadoEntidad.cs" />
+    <Compile Include="Entidades\Expediente\AlertaMedicaEntidad.cs" />
     <Compile Include="Entidades\Expediente\ConsentimientoEntidad.cs" />
     <Compile Include="Entidades\Expediente\EntidadExpediente.cs" />
     <Compile Include="Entidades\Expediente\UsuarioExpedienteEntidad.cs" />
@@ -71,6 +72,8 @@
     <Compile Include="Entidades\Usuarios\TelefonoEntidad.cs" />
     <Compile Include="Entidades\Usuarios\UsuariosEntidad.cs" />
     <Compile Include="Expedientes\AgregarExpediente\CrearExpedienteAD.cs" />
+    <Compile Include="Expedientes\Alertas\GuardarAlerta\GuardarAlertaAD.cs" />
+    <Compile Include="Expedientes\Alertas\ObtenerAlertaPorExpediente\ObtenerAlertaPorExpedienteAD.cs" />
     <Compile Include="Expedientes\CerrarExpediente\CerrarExpedienteAD.cs" />
     <Compile Include="Expedientes\ObtenerTodosLosExpedientes\ObtenerTodosLosExpedientesAD.cs" />
     <Compile Include="Expedientes\ReabrirExpediente\ReabrirExpedienteAD.cs" />

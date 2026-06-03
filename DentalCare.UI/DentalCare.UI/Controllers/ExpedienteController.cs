@@ -1,17 +1,22 @@
-﻿using System;
+﻿using DentaCare.LogicaDeNegocio.Expedientes.CerrarExpediente;
+using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.Alertas.GuardarAlerta;
+using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.Alertas.ObtenerAlertasPorExpediente;
+using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.CerrarExpediente;
+using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.CrearExpediente;
+using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.ObtenerTodosLosExpedientes;
+using DentalCare.Abstraccion.Modelo.Alertas;
+using DentalCare.Abstraccion.Modelo.Expedientes;
+using DentalCare.AccesoADatos;
+using DentalCare.AccesoADatos.Expedientes.CerrarExpediente;
+using DentalCare.LogicaDeNegocio.Alertas.ObtenerAlertaPorExpediente;
+using DentalCare.LogicaDeNegocio.Expedientes.Alertas.GuardarAlerta;
+using DentalCare.LogicaDeNegocio.Expedientes.CrearExpediente;
+using DentalCare.LogicaDeNegocio.Expedientes.ObtenerTodosLosExpedientes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using DentaCare.LogicaDeNegocio.Expedientes.CerrarExpediente;
-using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.CerrarExpediente;
-using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.CrearExpediente;
-using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.ObtenerTodosLosExpedientes;
-using DentalCare.Abstraccion.Modelo.Expedientes;
-using DentalCare.AccesoADatos;
-using DentalCare.AccesoADatos.Expedientes.CerrarExpediente;
-using DentalCare.LogicaDeNegocio.Expedientes.CrearExpediente;
-using DentalCare.LogicaDeNegocio.Expedientes.ObtenerTodosLosExpedientes;
 
 namespace DentalCare.UI.Controllers
 {
@@ -20,12 +25,16 @@ namespace DentalCare.UI.Controllers
         private IObtenerTodosLosExpedientesLN _obtenerTodosLosExpedientesLN;
         private ICrearExpedienteLN _crearExpedienteLN;
         private ICerrarExpedienteLN _cerrarExpedienteLN;
+        private IObtenerAlertaPorExpedienteLN _obtenerAlertaLN;
+        private IGuardarAlertaLN _guardarAlertaLN;
 
         public ExpedienteController()
         {
             _obtenerTodosLosExpedientesLN = new ObtenerTodosLosExpedientesLN();
             _crearExpedienteLN = new CrearExpedienteLN();
             _cerrarExpedienteLN = new CerrarExpedienteLN(new CerrarExpedienteAD(new Contexto()));
+            _guardarAlertaLN = new GuardarAlertaLN();
+            _obtenerAlertaLN = new ObtenerAlertaPorExpedienteLN();
         }
 
         // GET: Expediente
@@ -36,9 +45,15 @@ namespace DentalCare.UI.Controllers
         }
 
         // GET: Expediente/Details/5
-        public ActionResult Details(int id)
+        public ActionResult DetallesAlerta(int id)
         {
-            return View();
+            ExpedienteDetalleDto detalle = _obtenerAlertaLN.Obtener(id);
+            if (detalle == null)
+            {
+                TempData["Error"] = "No se encontró el expediente.";
+                return RedirectToAction("ObtenerTodosLosExpedientes");
+            }
+            return View(detalle);
         }
 
         // GET: Expediente/Create
@@ -149,6 +164,46 @@ namespace DentalCare.UI.Controllers
             return RedirectToAction("ObtenerTodosLosExpedientes");
         }
 
+        public ActionResult GuardarAlerta(int id)
+        {
+            ExpedienteDetalleDto detalle = _obtenerAlertaLN.Obtener(id);
+            if (detalle == null)
+            {
+                TempData["Error"] = "No se encontró el expediente.";
+                return RedirectToAction("ObtenerTodosLosExpedientes");
+            }
+
+            AlertaDto dto = detalle.Alerta ?? new AlertaDto { IdExpediente = id };
+            dto.IdExpediente = id;
+            CargarDropdownsAlerta(dto);
+            return View(dto);
+        }
+
+        // POST: Expediente/GuardarAlerta
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult GuardarAlerta(int id, AlertaDto dto)
+        {
+            dto.IdExpediente = id;
+
+            if (!ModelState.IsValid)
+            {
+                CargarDropdownsAlerta(dto);
+                return View(dto);
+            }
+
+            string error = _guardarAlertaLN.Guardar(id, dto);
+            if (error != null)
+            {
+                ModelState.AddModelError(string.Empty, error);
+                CargarDropdownsAlerta(dto);
+                return View(dto);
+            }
+
+            TempData["Exito"] = "Alerta médica guardada correctamente.";
+            return RedirectToAction("DetallesAlerta", new { id });
+        }
+
         private ExpedienteDto CargarDropdowns(ExpedienteDto dto)
         {
             using (var ctx = new Contexto())
@@ -159,6 +214,28 @@ namespace DentalCare.UI.Controllers
                         Value = e.IdEstado.ToString(),
                         Text = e.NombreEstado
                     }).ToList();
+            }
+            return dto;
+        }
+
+        private AlertaDto CargarDropdownsAlerta(AlertaDto dto)
+        {
+            using (var ctx = new Contexto())
+            {
+                dto.ListaEstados = ctx.Estados
+                    .Select(e => new SelectListItem
+                    {
+                        Value = e.IdEstado.ToString(),
+                        Text = e.NombreEstado
+                    }).ToList();
+
+                dto.ListaNivelesRiesgo = new List<SelectListItem>
+                {
+                    new SelectListItem { Value = "Bajo",   Text = "Bajo"   },
+                    new SelectListItem { Value = "Medio",  Text = "Medio"  },
+                    new SelectListItem { Value = "Alto",   Text = "Alto"   },
+                    new SelectListItem { Value = "Crítico",Text = "Crítico" }
+                };
             }
             return dto;
         }

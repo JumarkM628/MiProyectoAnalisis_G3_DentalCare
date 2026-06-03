@@ -288,6 +288,8 @@
     <Content Include="Views\Expediente\ObtenerTodosLosExpedientes.cshtml" />
     <Content Include="Views\Expediente\CrearExpediente.cshtml" />
     <Content Include="Views\Usuario\EliminarUsuario.cshtml" />
+    <Content Include="Views\Expediente\DetallesAlerta.cshtml" />
+    <Content Include="Views\Expediente\GuardarAlerta.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

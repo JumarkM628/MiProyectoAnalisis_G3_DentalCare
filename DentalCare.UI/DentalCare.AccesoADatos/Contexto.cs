@@ -42,6 +42,9 @@ namespace DentalCare.AccesoADatos
         // Tratamiento
         public DbSet<PlanTratamientoEntidad> PlanesTratamiento { get; set; }
 
+        // Alertas
+        public DbSet<AlertaMedicaEntidad> Alertas { get; set; }
+
         // Archivos Clínicos
         public DbSet<ArchivoClinicoEntidad> ArchivosClinicos { get; set; }
 

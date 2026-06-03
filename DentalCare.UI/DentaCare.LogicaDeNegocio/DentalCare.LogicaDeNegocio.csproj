@@ -45,6 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Archivo\SubirArchivo\ArchivoClinicoLN.cs" />
+    <Compile Include="Expedientes\Alertas\GuardarAlerta\GuardarAlertaLN.cs" />
+    <Compile Include="Expedientes\Alertas\ObtenerAlertasPorExpediente\ObtenerAlertaPorExpedienteLN.cs" />
     <Compile Include="Expedientes\CerrarExpediente\CerrarExpedienteLN.cs" />
     <Compile Include="Expedientes\CrearExpediente\CrearExpedienteLN.cs" />
     <Compile Include="Expedientes\ObtenerTodosLosExpedientes\ObtenerTodosLosExpedientesLN.cs" />
