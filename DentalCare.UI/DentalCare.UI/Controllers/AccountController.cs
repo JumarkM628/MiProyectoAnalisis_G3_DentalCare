@@ -204,21 +204,70 @@ namespace DentalCare.UI.Controllers
         //
         // POST: /Account/ForgotPassword
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult ForgotPassword(ForgotPasswordDto model)
+        public async Task<ActionResult> ForgotPassword(ForgotPasswordDto model)
         {
             if (!ModelState.IsValid)
+                return View(model);
+
+            // Escenario 4 — límite de solicitudes via Session
+            int intentos = Session["IntentosRecuperacion"] != null
+                ? (int)Session["IntentosRecuperacion"] : 0;
+
+            DateTime? bloqueoHasta = Session["BloqueoHasta"] as DateTime?;
+
+            if (bloqueoHasta.HasValue && DateTime.Now < bloqueoHasta.Value)
             {
+                int minutosRestantes = (int)(bloqueoHasta.Value - DateTime.Now).TotalMinutes + 1;
+                ModelState.AddModelError("", $"Demasiados intentos. Espere {minutosRestantes} minuto(s) antes de intentar nuevamente.");
                 return View(model);
             }
 
-            string error = _recuperarContrasenaLN.RecuperarContrasena(model.Email);
-
-            if (error != null)
+            // Escenario 2 — correo no registrado
+            string errorCorreo = _recuperarContrasenaLN.RecuperarContrasena(model.Email);
+            if (errorCorreo != null)
             {
-                ModelState.AddModelError("", error);
+                intentos++;
+                Session["IntentosRecuperacion"] = intentos;
+
+                if (intentos >= 3)
+                {
+                    Session["BloqueoHasta"] = DateTime.Now.AddMinutes(15);
+                    Session["IntentosRecuperacion"] = 0;
+                    ModelState.AddModelError("", "Demasiados intentos fallidos. Espere 15 minutos antes de intentar nuevamente.");
+                }
+                else
+                {
+                    ModelState.AddModelError("", errorCorreo);
+                }
+
                 return View(model);
             }
+
+            // Escenario 1 — correo registrado, generar token y enviar
+            // Escenario 3 — token con expiración manejado por Identity
+            var user = await UserManager.FindByNameAsync(model.Email);
+            if (user != null)
+            {
+                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                string callbackUrl = Url.Action(
+                    "ResetPassword", "Account",
+                    new { userId = user.Id, code = code },
+                    protocol: Request.Url.Scheme);
+
+                await UserManager.SendEmailAsync(
+                    user.Id,
+                    "Restablecer contraseña - Clínica Dental Dra. Rebeca",
+                    $"<p>Recibimos una solicitud para restablecer su contraseña.</p>" +
+                    $"<p>Haga clic <a href='{callbackUrl}'>aquí</a> para restablecerla.</p>" +
+                    $"<p>Si no solicitó esto, ignore este correo.</p>" +
+                    $"<p><small>Este enlace expira en 24 horas.</small></p>");
+            }
+
+            // Resetear intentos al éxito
+            Session["IntentosRecuperacion"] = 0;
+            Session["BloqueoHasta"] = null;
 
             return RedirectToAction("ForgotPasswordConfirmation");
         }
@@ -236,7 +285,15 @@ namespace DentalCare.UI.Controllers
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
         {
-            return code == null ? View("Error") : View();
+            if (code == null)
+            {
+                return View("Error");
+            }
+
+            return View(new ResetPasswordViewModel
+            {
+                Code = code
+            });
         }
 
         //

@@ -22,7 +22,7 @@
         </div>
     }
 
-    @using (Html.BeginForm("CrearExpediente", "Expediente", FormMethod.Post))
+    @using (Html.BeginForm("CrearExpediente", "Expediente", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         @Html.AntiForgeryToken()
 
@@ -118,6 +118,26 @@
                 </div>
 
             </div>
+            <div class="panel-heading"><strong>Archivos Clínicos</strong></div>
+
+            <div class="panel-body">
+
+                <div class="alert alert-info" style="margin-bottom:15px;">
+                    Formatos permitidos: <strong>JPG, JPEG, PNG, PDF</strong> — Máximo 50 MB
+                </div>
+
+                <div class="form-group">
+                    <label>Nombre del archivo *</label>
+                    <input type="text" name="NombreArchivo" class="form-control" placeholder="Ej: Radiografía inicial" />
+                </div>
+
+                <div class="form-group">
+                    <label>Seleccionar archivo *</label>
+                    <input type="file" name="ArchivoClinico" class="form-control" />
+                </div>
+
+            </div>
+
         </div>
 
         <div style="margin-top:24px;">
