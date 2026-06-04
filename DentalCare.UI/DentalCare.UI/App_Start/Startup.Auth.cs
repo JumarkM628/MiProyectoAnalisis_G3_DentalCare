@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
@@ -62,6 +63,67 @@ namespace DentalCare.UI
             //    ClientId = "",
             //    ClientSecret = ""
             //});
+
+            // Crear roles y usuario administrador inicial si no existen
+            CreateRolesAndUsers();
+        }
+
+        private void CreateRolesAndUsers()
+        {
+            // Usar el contexto de Identity para crear roles y un usuario admin inicial
+            using (var context = new ApplicationDbContext())
+            {
+                var roleStore = new RoleStore<IdentityRole>(context);
+                var roleManager = new RoleManager<IdentityRole>(roleStore);
+
+                var userStore = new UserStore<ApplicationUser>(context);
+                var userManager = new ApplicationUserManager(userStore);
+
+                // Roles requeridas por la aplicación (incluye Recepcionista)
+                string[] roles = { "Admin", "Doctor", "Asistente", "Paciente", "Recepcionista" };
+                foreach (var roleName in roles)
+                {
+                    if (!roleManager.RoleExists(roleName))
+                    {
+                        roleManager.Create(new IdentityRole(roleName));
+                    }
+                }
+
+                // Usuarios por defecto para cada rol (email -> password)
+                var defaultUsers = new System.Collections.Generic.Dictionary<string, (string Email, string Password)>
+                {
+                    { "Admin", ("admin@dentalcare.local", "Admin@12345") },
+                    { "Recepcionista", ("recepcionista@dentalcare.local", "Recepcionista@12345") },
+                    { "Doctor", ("doctor@dentalcare.local", "Doctor@12345") },
+                    { "Asistente", ("asistente@dentalcare.local", "Asistente@12345") },
+                    { "Paciente", ("paciente@dentalcare.local", "Paciente@12345") }
+                };
+
+                foreach (var kv in defaultUsers)
+                {
+                    var role = kv.Key;
+                    var email = kv.Value.Email;
+                    var password = kv.Value.Password;
+
+                    var user = userManager.FindByEmail(email);
+                    if (user == null)
+                    {
+                        user = new ApplicationUser { UserName = email, Email = email };
+                        var createResult = userManager.Create(user, password);
+                        if (createResult.Succeeded)
+                        {
+                            userManager.AddToRole(user.Id, role);
+                        }
+                    }
+                    else
+                    {
+                        if (!userManager.IsInRole(user.Id, role))
+                        {
+                            userManager.AddToRole(user.Id, role);
+                        }
+                    }
+                }
+            }
         }
     }
 }

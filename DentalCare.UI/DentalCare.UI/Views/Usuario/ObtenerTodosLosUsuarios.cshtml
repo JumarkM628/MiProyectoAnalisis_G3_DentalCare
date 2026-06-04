@@ -97,6 +97,7 @@
                                     new { @class = "btn btn-info btn-xs" })
                                 @Html.ActionLink("Editar", "EditarUsuario", new { id = usuario.IdUsuario },
                                     new { @class = "btn btn-warning btn-xs" })
+                                @Html.ActionLink("Desactivar", "DesactivarUsuario", new { id = usuario.IdUsuario }, new { @class = "btn btn-danger btn-xs", onclick = "return confirm('¿Está seguro de que desea desactivar este usuario?');" })
                                 @Html.ActionLink("Eliminar", "EliminarUsuario", new { id = usuario.IdUsuario },
                                     new
                                          {

@@ -3,3 +3,17 @@
 ################################################################################
 
 /DentalCare.UI/.vs
+
+# Carpetas de compilación de Visual Studio/.NET
+bin/
+obj/
+
+# Archivos de caché de Visual Studio
+*.cache
+
+# Archivos temporales de Visual Studio
+.vs/
+
+
+*.AssemblyReference.cache
+DesignTimeResolveAssemblyReferencesInput.cache

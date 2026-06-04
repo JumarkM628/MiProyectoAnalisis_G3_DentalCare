@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
+using DentalCare.UI.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
-using DentalCare.UI.Models;
 
 namespace DentalCare.UI
 {
@@ -18,7 +20,25 @@ namespace DentalCare.UI
     {
         public Task SendAsync(IdentityMessage message)
         {
-            // Conecte el servicio de correo electrónico aquí para enviar un correo electrónico.
+            var correoOrigen = System.Web.Configuration.WebConfigurationManager
+                                   .AppSettings["CorreoGmail"];
+            var appPassword = System.Web.Configuration.WebConfigurationManager
+                                   .AppSettings["CorreoGmailPassword"];
+
+            var emailMessage = new MimeKit.MimeMessage();
+            emailMessage.From.Add(new MimeKit.MailboxAddress("Clínica Dental Dra. Rebeca", correoOrigen));
+            emailMessage.To.Add(new MimeKit.MailboxAddress("", message.Destination));
+            emailMessage.Subject = message.Subject;
+            emailMessage.Body = new MimeKit.TextPart("html") { Text = message.Body };
+
+            using (var client = new MailKit.Net.Smtp.SmtpClient())
+            {
+                client.Connect("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
+                client.Authenticate(correoOrigen, appPassword);
+                client.Send(emailMessage);
+                client.Disconnect(true);
+            }
+
             return Task.FromResult(0);
         }
     }
