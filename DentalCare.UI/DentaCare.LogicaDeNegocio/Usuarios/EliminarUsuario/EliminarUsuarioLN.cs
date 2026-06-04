@@ -21,7 +21,7 @@ namespace DentalCare.LogicaDeNegocio.Usuarios.EliminarUsuario
         {
 
             var rolAdmin = _contexto.AspNetRoles
-                .FirstOrDefault(r => r.Name == "Administrador");
+                .FirstOrDefault(r => r.Name == "Admin");
 
             if (rolAdmin == null)
                 return "No se encontró el rol Administrador en el sistema.";

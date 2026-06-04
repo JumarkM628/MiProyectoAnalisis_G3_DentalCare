@@ -12,7 +12,7 @@
                 @(Model.IdAlerta > 0 ? "Editar Alerta Médica" : "Agregar Alerta Médica")
             </h2>
             <p class="text-muted">
-                Expediente #@Model.IdExpediente — Paciente: <strong>@Model.NombrePaciente</strong><br />
+                Expediente #@Model.IdExpediente Paciente: <strong>@Model.NombrePaciente</strong><br />
                 Campos obligatorios marcados con <span class="text-danger">*</span>
             </p>
         </div>
@@ -43,7 +43,7 @@
                                  {
                                      @class = "form-control",
                                      rows = "3",
-                                  placeholder = "Ej: Hipertensión, diabetes..."
+                                  placeholder = ""
                                  })
                         @Html.ValidationMessageFor(m => m.AntecedentesMedicos, "", new { @class = "text-danger" })
                     </div>
@@ -54,7 +54,7 @@
                                  {
                                      @class = "form-control",
                                      rows = "3",
-                                  placeholder = "Ej: Penicilina, látex... (opcional)"
+                                  placeholder = ""
                                  })
                         @Html.ValidationMessageFor(m => m.Alergias, "", new { @class = "text-danger" })
                     </div>
@@ -68,7 +68,7 @@
                                  {
                                      @class = "form-control",
                                      rows = "3",
-                                  placeholder = "Medicamentos que toma actualmente (opcional)"
+                                  placeholder = ""
                                  })
                         @Html.ValidationMessageFor(m => m.MedicacionActual, "", new { @class = "text-danger" })
                     </div>
@@ -79,7 +79,7 @@
                                  {
                                      @class = "form-control",
                                      rows = "3",
-                                  placeholder = "Cirugías anteriores (opcional)"
+                                  placeholder = ""
                                  })
                         @Html.ValidationMessageFor(m => m.CirugiasPrevias, "", new { @class = "text-danger" })
                     </div>
@@ -93,7 +93,7 @@
                                  {
                                      @class = "form-control",
                                      rows = "2",
-                                  placeholder = "Tabaco, alcohol, etc. (opcional)"
+                                  placeholder = ""
                                  })
                         @Html.ValidationMessageFor(m => m.Habitos, "", new { @class = "text-danger" })
                     </div>
@@ -104,7 +104,7 @@
                                  {
                                      @class = "form-control",
                                      rows = "2",
-                                  placeholder = "Tratamientos dentales previos (opcional)"
+                                  placeholder = ""
                                  })
                         @Html.ValidationMessageFor(m => m.AntecedentesOdontologicos, "", new { @class = "text-danger" })
                     </div>
@@ -125,7 +125,7 @@
                                  {
                                      @class = "form-control",
                                      rows = "3",
-                                  placeholder = "Motivo principal de la consulta"
+                                  placeholder = ""
                                  })
                         @Html.ValidationMessageFor(m => m.MotivoConsulta, "", new { @class = "text-danger" })
                     </div>
@@ -136,7 +136,7 @@
                                  {
                                      @class = "form-control",
                                      rows = "3",
-                                  placeholder = "Diagnóstico inicial del doctor"
+                                  placeholder = ""
                                  })
                         @Html.ValidationMessageFor(m => m.DiagnosticoInicial, "", new { @class = "text-danger" })
                     </div>
@@ -150,7 +150,7 @@
                                  {
                                      @class = "form-control",
                                      rows = "3",
-                                  placeholder = "Plan de tratamiento propuesto"
+                                  placeholder = ""
                                  })
                         @Html.ValidationMessageFor(m => m.PlanTratamiento, "", new { @class = "text-danger" })
                     </div>

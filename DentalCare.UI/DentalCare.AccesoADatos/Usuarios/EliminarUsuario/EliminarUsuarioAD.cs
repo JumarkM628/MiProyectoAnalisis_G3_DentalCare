@@ -19,7 +19,6 @@ namespace DentalCare.AccesoADatos.Usuarios.EliminarUsuario
             {
                 try
                 {
-
                     var usuario = _contexto.Usuarios
                         .First(u => u.IdUsuario == idUsuario);
 
@@ -27,22 +26,31 @@ namespace DentalCare.AccesoADatos.Usuarios.EliminarUsuario
                     usuario.FechaDeCreacion = DateTime.Now;
                     _contexto.SaveChanges();
 
+                    // Correos
                     var correos = _contexto.Correos
                         .Where(c => c.IdUsuario == idUsuario).ToList();
                     _contexto.Correos.RemoveRange(correos);
                     _contexto.SaveChanges();
 
+                    // Teléfonos
                     var telefonos = _contexto.Telefonos
                         .Where(t => t.IdUsuario == idUsuario).ToList();
                     _contexto.Telefonos.RemoveRange(telefonos);
                     _contexto.SaveChanges();
 
+                    // Cédulas
                     var cedulas = _contexto.Cedulas
                         .Where(c => c.IdUsuario == idUsuario).ToList();
                     _contexto.Cedulas.RemoveRange(cedulas);
                     _contexto.SaveChanges();
 
-                    // Eliminar el usuario principal
+                    // Vinculaciones con expedientes (causa del error)
+                    var expedientes = _contexto.UsuarioExpedientes
+                        .Where(ue => ue.IdUsuario == idUsuario).ToList();
+                    _contexto.UsuarioExpedientes.RemoveRange(expedientes);
+                    _contexto.SaveChanges();
+
+                    // Usuario principal
                     _contexto.Usuarios.Remove(usuario);
                     _contexto.SaveChanges();
 
