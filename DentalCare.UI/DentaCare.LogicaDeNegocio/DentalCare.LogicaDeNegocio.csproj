@@ -53,6 +53,7 @@
     <Compile Include="Expedientes\ReabrirExpediente\ReabrirExpedienteLN.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Servicios\Correo\Correo.cs" />
+    <Compile Include="Usuarios\DesactivarUsuario\DesactivarUsuarioLN.cs" />
     <Compile Include="Usuarios\EditarUsuario\EditarUsuarioLN.cs" />
     <Compile Include="Usuarios\EliminarUsuario\EliminarUsuarioLN.cs" />
     <Compile Include="Usuarios\ObtenerTodosLosUsuarios\ObtenerTodosLosUsuariosLN.cs" />

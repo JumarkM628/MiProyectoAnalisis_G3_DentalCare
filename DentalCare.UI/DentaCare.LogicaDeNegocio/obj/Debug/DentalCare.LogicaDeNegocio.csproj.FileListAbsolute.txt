@@ -33,7 +33,6 @@ C:\Users\werne\OneDrive\Documentos\GitHub\MiProyectoAnalisis_G3_DentalCare\Denta
 C:\Users\werne\OneDrive\Documentos\GitHub\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\DentalCare.Abstraccion.dll
 C:\Users\werne\OneDrive\Documentos\GitHub\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\DentalCare.AccesoADatos.dll
 C:\Users\werne\OneDrive\Documentos\GitHub\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\System.Web.Mvc.dll
-C:\Users\werne\OneDrive\Documentos\GitHub\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\EntityFramework.dll
 C:\Users\werne\OneDrive\Documentos\GitHub\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\System.Web.WebPages.dll
 C:\Users\werne\OneDrive\Documentos\GitHub\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\System.Web.WebPages.Razor.dll
 C:\Users\werne\OneDrive\Documentos\GitHub\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\System.Web.Razor.dll
@@ -43,7 +42,6 @@ C:\Users\werne\OneDrive\Documentos\GitHub\MiProyectoAnalisis_G3_DentalCare\Denta
 C:\Users\werne\OneDrive\Documentos\GitHub\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\DentalCare.AccesoADatos.pdb
 C:\Users\werne\OneDrive\Documentos\GitHub\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\DentalCare.AccesoADatos.dll.config
 C:\Users\werne\OneDrive\Documentos\GitHub\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\System.Web.Mvc.xml
-C:\Users\werne\OneDrive\Documentos\GitHub\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\EntityFramework.xml
 C:\Users\werne\OneDrive\Documentos\GitHub\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\System.Web.WebPages.xml
 C:\Users\werne\OneDrive\Documentos\GitHub\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\System.Web.WebPages.Razor.xml
 C:\Users\werne\OneDrive\Documentos\GitHub\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\System.Web.Razor.xml
