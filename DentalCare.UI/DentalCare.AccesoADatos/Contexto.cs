@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Entity;
 using DentalCare.AccesoADatos.Entidades;
 using DentalCare.AccesoADatos.Entidades.Archivo;
 using DentalCare.AccesoADatos.Entidades.Bitacora;
 using DentalCare.AccesoADatos.Entidades.Estado;
 using DentalCare.AccesoADatos.Entidades.Expediente;
 using DentalCare.AccesoADatos.Entidades.Expedientes;
+using DentalCare.AccesoADatos.Entidades.Odontograma;
 using DentalCare.AccesoADatos.Entidades.Tratamiento;
 using DentalCare.AccesoADatos.Entidades.Usuarios;
 
@@ -50,5 +46,10 @@ namespace DentalCare.AccesoADatos
 
         // Bitácora
         public DbSet<BitacoraEntidad> Bitacoras { get; set; }
+
+        //odontograma
+        public DbSet<OdontogramaEntidad> Odontogramas { get; set; }
+        public DbSet<PiezaDentalEntidad> PiezasDentales { get; set; }
+        public DbSet<OdontogramaDetalleEntidad> OdontogramaDetalles { get; set; }
     }
 }

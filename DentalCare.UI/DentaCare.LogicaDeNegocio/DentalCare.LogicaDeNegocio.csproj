@@ -51,6 +51,8 @@
     <Compile Include="Expedientes\CrearExpediente\CrearExpedienteLN.cs" />
     <Compile Include="Expedientes\ObtenerTodosLosExpedientes\ObtenerTodosLosExpedientesLN.cs" />
     <Compile Include="Expedientes\ReabrirExpediente\ReabrirExpedienteLN.cs" />
+    <Compile Include="Odontograma\RegistrarOdontograma\ObtenerOdontogramaPorExpedienteLN.cs" />
+    <Compile Include="Odontograma\RegistrarOdontograma\RegistrarOdontogramaLN.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Servicios\Correo\Correo.cs" />
     <Compile Include="Usuarios\DesactivarUsuario\DesactivarUsuarioLN.cs" />

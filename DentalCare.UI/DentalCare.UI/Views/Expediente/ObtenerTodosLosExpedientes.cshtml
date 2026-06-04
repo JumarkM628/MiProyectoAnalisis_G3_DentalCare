@@ -73,6 +73,8 @@
                             </td>
                             <td>
                                 @Html.ActionLink("Ver", "DetallesAlerta", new { id = e.IdExpediente }, new { @class = "btn btn-info btn-xs" })
+                                @Html.ActionLink("agregar Odontograma", "RegistrarOdontograma", new { id = e.IdExpediente }, new { @class = "btn btn-success btn-xs" })
+                                @Html.ActionLink("Ver Odontograma", "VerOdontograma", new { id = e.IdExpediente }, new { @class = "btn btn-info btn-xs" })
                                 @Html.ActionLink("Editar", "Edit", new { id = e.IdExpediente }, new { @class = "btn btn-warning btn-xs" })
                                 @Html.ActionLink("Registrar Alerta", "GuardarAlerta", new { id = e.IdExpediente }, new { @class = "btn btn-warning btn-xs" })
                                 @Html.ActionLink("Eliminar", "Delete", new { id = e.IdExpediente },

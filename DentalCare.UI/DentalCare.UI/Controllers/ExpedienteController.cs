@@ -4,14 +4,19 @@ using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.Alertas.ObtenerAlertasP
 using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.CerrarExpediente;
 using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.CrearExpediente;
 using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.ObtenerTodosLosExpedientes;
+using DentalCare.Abstraccion.LogicaDeNegocio.Odontograma.ObtenerOdontogramaPorExpediente;
+using DentalCare.Abstraccion.LogicaDeNegocio.Odontograma.RegistrarOdontograma;
 using DentalCare.Abstraccion.Modelo.Alertas;
 using DentalCare.Abstraccion.Modelo.Expedientes;
+using DentalCare.Abstraccion.Modelo.Odontograma;
 using DentalCare.AccesoADatos;
 using DentalCare.AccesoADatos.Expedientes.CerrarExpediente;
 using DentalCare.LogicaDeNegocio.Alertas.ObtenerAlertaPorExpediente;
 using DentalCare.LogicaDeNegocio.Expedientes.Alertas.GuardarAlerta;
 using DentalCare.LogicaDeNegocio.Expedientes.CrearExpediente;
 using DentalCare.LogicaDeNegocio.Expedientes.ObtenerTodosLosExpedientes;
+using DentalCare.LogicaDeNegocio.Odontograma.ObtenerOdontogramaPorExpediente;
+using DentalCare.LogicaDeNegocio.Odontograma.RegistrarOdontograma;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +33,8 @@ namespace DentalCare.UI.Controllers
         private ICerrarExpedienteLN _cerrarExpedienteLN;
         private IObtenerAlertaPorExpedienteLN _obtenerAlertaLN;
         private IGuardarAlertaLN _guardarAlertaLN;
+        private readonly IRegistrarOdontogramaLN _registrarOdontogramaLN;
+        private readonly IObtenerOdontogramaPorExpedienteLN _obtenerOdontogramaLN;
 
         public ExpedienteController()
         {
@@ -36,16 +43,16 @@ namespace DentalCare.UI.Controllers
             _cerrarExpedienteLN = new CerrarExpedienteLN(new CerrarExpedienteAD(new Contexto()));
             _guardarAlertaLN = new GuardarAlertaLN();
             _obtenerAlertaLN = new ObtenerAlertaPorExpedienteLN();
+            _registrarOdontogramaLN = new RegistrarOdontogramaLN();
+            _obtenerOdontogramaLN = new ObtenerOdontogramaPorExpedienteLN();
         }
 
-        // GET: Expediente
         public ActionResult ObtenerTodosLosExpedientes()
         {
             List<ExpedienteDto> lista = _obtenerTodosLosExpedientesLN.Obtener();
             return View(lista);
         }
 
-        // GET: Expediente/Details/5
         public ActionResult DetallesAlerta(int id)
         {
             ExpedienteDetalleDto detalle = _obtenerAlertaLN.Obtener(id);
@@ -57,14 +64,12 @@ namespace DentalCare.UI.Controllers
             return View(detalle);
         }
 
-        // GET: Expediente/Create
         public ActionResult CrearExpediente()
         {
             var dto = CargarDropdowns(new ExpedienteDto());
             return View(dto);
         }
 
-        // POST: Expediente/Create
         [HttpPost]
         public ActionResult CrearExpediente(ExpedienteDto dto)
         {
@@ -86,20 +91,16 @@ namespace DentalCare.UI.Controllers
             return RedirectToAction("ObtenerTodosLosExpedientes");
         }
 
-        // GET: Expediente/Edit/5
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: Expediente/Edit/5
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
             try
             {
-                // TODO: Add update logic here
-
                 return RedirectToAction("Index");
             }
             catch
@@ -108,20 +109,16 @@ namespace DentalCare.UI.Controllers
             }
         }
 
-        // GET: Expediente/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: Expediente/Delete/5
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {
             try
             {
-                // TODO: Add delete logic here
-
                 return RedirectToAction("Index");
             }
             catch
@@ -146,7 +143,6 @@ namespace DentalCare.UI.Controllers
             return View(expediente);
         }
 
-        // POST: Expediente/Cerrar
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Cerrar(int id, string confirmacion)
@@ -180,7 +176,6 @@ namespace DentalCare.UI.Controllers
             return View(dto);
         }
 
-        // POST: Expediente/GuardarAlerta
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult GuardarAlerta(int id, AlertaDto dto)
@@ -203,6 +198,51 @@ namespace DentalCare.UI.Controllers
 
             TempData["Exito"] = "Alerta médica guardada correctamente.";
             return RedirectToAction("DetallesAlerta", new { id });
+        }
+
+        // GET: Odontograma
+        public ActionResult RegistrarOdontograma(int id)
+        {
+            var dto = new OdontogramaDto { IdExpediente = id };
+            CargarDropdownsOdontograma(dto);
+            return View(dto);
+        }
+
+        // POST: Odontograma
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RegistrarOdontograma(int id, OdontogramaDto dto)
+        {
+            dto.IdExpediente = id;
+
+            if (!ModelState.IsValid)
+            {
+                CargarDropdownsOdontograma(dto);
+                return View(dto);
+            }
+
+            string error = _registrarOdontogramaLN.Registrar(dto);
+            if (error != null)
+            {
+                ModelState.AddModelError(string.Empty, error);
+                CargarDropdownsOdontograma(dto);
+                return View(dto);
+            }
+
+            TempData["Exito"] = "Odontograma registrado correctamente.";
+            return RedirectToAction("DetallesAlerta", new { id });
+        }
+
+        // GET: Ver Odontograma
+        public ActionResult VerOdontograma(int id)
+        {
+            var dto = _obtenerOdontogramaLN.Obtener(id);
+            if (dto == null)
+            {
+                TempData["Error"] = "No se encontró odontograma para este expediente.";
+                return RedirectToAction("ObtenerTodosLosExpedientes");
+            }
+            return View(dto);
         }
 
         private ExpedienteDto CargarDropdowns(ExpedienteDto dto)
@@ -232,11 +272,26 @@ namespace DentalCare.UI.Controllers
 
                 dto.ListaNivelesRiesgo = new List<SelectListItem>
                 {
-                    new SelectListItem { Value = "Bajo",   Text = "Bajo"   },
-                    new SelectListItem { Value = "Medio",  Text = "Medio"  },
-                    new SelectListItem { Value = "Alto",   Text = "Alto"   },
-                    new SelectListItem { Value = "Crítico",Text = "Crítico" }
+                    new SelectListItem { Value = "Bajo",    Text = "Bajo"    },
+                    new SelectListItem { Value = "Medio",   Text = "Medio"   },
+                    new SelectListItem { Value = "Alto",    Text = "Alto"    },
+                    new SelectListItem { Value = "Crítico", Text = "Crítico" }
                 };
+            }
+            return dto;
+        }
+
+        private OdontogramaDto CargarDropdownsOdontograma(OdontogramaDto dto)
+        {
+            using (var ctx = new Contexto())
+            {
+                dto.ListaPiezas = ctx.PiezasDentales
+                    .Where(p => p.IdEstado == 1)
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.IdPieza.ToString(),
+                        Text = "Pieza " + p.NumeroPieza
+                    }).ToList();
             }
             return dto;
         }

@@ -1,0 +1,115 @@
+﻿@model DentalCare.Abstraccion.Modelo.Odontograma.OdontogramaDto
+
+@{
+    ViewBag.Title = "Ver Odontograma";
+}
+
+<div class="container-fluid" style="padding: 24px;">
+
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h2 style="font-weight: 600; color: #2c3e50;">
+                <i class="fa fa-tooth" aria-hidden="true"></i>
+                Odontograma del Paciente
+            </h2>
+            <p class="text-muted">Expediente #@Model.IdExpediente</p>
+        </div>
+        <div class="col-md-4 text-right">
+            @Html.ActionLink("← Volver", "ObtenerTodosLosExpedientes", "Expediente",
+                null, new { @class = "btn btn-default" })
+            @Html.ActionLink("Editar", "RegistrarOdontograma", new { id = Model.IdExpediente },
+                new { @class = "btn btn-warning" })
+        </div>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="panel panel-default">
+        <div class="panel-heading" style="background-color: #2c3e50; color: white;">
+            <h4 style="margin: 0;">Piezas Registradas</h4>
+        </div>
+        <div class="panel-body">
+
+            @if (Model.Detalles == null || !Model.Detalles.Any())
+            {
+                <div class="alert alert-info">
+                    No hay piezas dentales registradas en este odontograma.
+                </div>
+            }
+            else
+            {
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <input type="text" id="buscador" class="form-control"
+                               placeholder="Buscar por pieza o estado..."
+                               onkeyup="filtrarTabla()" />
+                    </div>
+                    <div class="col-md-8 text-right">
+                        <span class="text-muted">
+                            Total piezas registradas: <strong>@Model.Detalles.Count</strong>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped" id="tablaOdontograma">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Pieza Dental</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var detalle in Model.Detalles)
+                            {
+                                string estadoClass;
+                                switch (detalle.EstadoPieza?.ToLower())
+                                {
+                                    case "sana":
+                                        estadoClass = "success";
+                                        break;
+                                    case "caries":
+                                    case "extracción":
+                                        estadoClass = "danger";
+                                        break;
+                                    case "restauración":
+                                    case "corona":
+                                    case "implante":
+                                        estadoClass = "warning";
+                                        break;
+                                    default:
+                                        estadoClass = "default";
+                                        break;
+                                }
+                                <tr>
+                                    <td>@detalle.IdDetalle</td>
+                                    <td>Pieza @detalle.NumeroPieza</td>
+                                    <td>
+                                        <span class="label label-@estadoClass">
+                                            @detalle.EstadoPieza
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function filtrarTabla() {
+            var filtro = document.getElementById("buscador").value.toLowerCase();
+            document.querySelectorAll("#tablaOdontograma tbody tr").forEach(function (fila) {
+                fila.style.display = fila.innerText.toLowerCase().indexOf(filtro) > -1 ? "" : "none";
+            });
+        }
+    </script>
+}

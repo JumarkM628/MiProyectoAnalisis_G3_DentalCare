@@ -72,6 +72,8 @@
     <Compile Include="AccesoADatos\Expediente\CrearExpediente\ICrearExpedienteAD.cs" />
     <Compile Include="AccesoADatos\Expediente\ObtenerTodosLosExpedientes\IObtenerTodosLosExpedientesAD.cs" />
     <Compile Include="AccesoADatos\Expediente\ReabrirExpediente\IReabrirExpedienteAD.cs" />
+    <Compile Include="AccesoADatos\Odontograma\RegistrarOdontograma\IRegistrarOdontogramaAD.cs" />
+    <Compile Include="AccesoADatos\Odontograma\ObtenerOdontogramaPorExpediente\ObtenerOdontogramaPorExpediente.cs" />
     <Compile Include="AccesoADatos\Tratamiento\IEditarPlanTratamientoAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\DesactivarUsuario\IDesactivarUsuarioAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\EditarUsuario\IEditarUsuarioAD.cs" />
@@ -87,6 +89,8 @@
     <Compile Include="LogicaDeNegocio\Expedientes\CrearExpediente\ICrearExpedienteLN.cs" />
     <Compile Include="LogicaDeNegocio\Expedientes\ObtenerTodosLosExpedientes\IObtenerTodosLosExpedientesLN.cs" />
     <Compile Include="LogicaDeNegocio\Expedientes\ReabrirExpediente\IReabrirExpedienteLN.cs" />
+    <Compile Include="LogicaDeNegocio\Odontograma\RegistrarOdontograma\IObtenerOdontogramaPorExpedienteLN.cs" />
+    <Compile Include="LogicaDeNegocio\Odontograma\RegistrarOdontograma\IRegistrarOdontogramaLN.cs" />
     <Compile Include="LogicaDeNegocio\Tratamiento\IEditarPlanTratamientoLN.cs" />
     <Compile Include="LogicaDeNegocio\Usuarios\DesactivarUsuario\IDesactivarUsuarioLN.cs" />
     <Compile Include="LogicaDeNegocio\Usuarios\EditarUsuario\IEditarUsuarioLN.cs" />
@@ -101,6 +105,7 @@
     <Compile Include="Modelo\Expediente\AlertaDto.cs" />
     <Compile Include="Modelo\Expediente\ExpedienteDetalleDto.cs" />
     <Compile Include="Modelo\Expediente\ExpedienteDto.cs" />
+    <Compile Include="Modelo\Odontograma\OdontogramaDto.cs" />
     <Compile Include="Modelo\RecuperacionContrasena\ForgotPasswordDto.cs" />
     <Compile Include="Modelo\Tratamiento\PlanTratamientoDto.cs" />
     <Compile Include="Modelo\Usuarios\UsuarioDto.cs" />

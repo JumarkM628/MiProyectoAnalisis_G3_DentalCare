@@ -323,6 +323,8 @@
     <Content Include="Views\Usuario\EliminarUsuario.cshtml" />
     <Content Include="Views\Expediente\DetallesAlerta.cshtml" />
     <Content Include="Views\Expediente\GuardarAlerta.cshtml" />
+    <Content Include="Views\Expediente\RegistrarOdontograma.cshtml" />
+    <Content Include="Views\Expediente\VerOdontograma.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
