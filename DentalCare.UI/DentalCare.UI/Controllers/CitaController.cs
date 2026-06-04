@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace DentalCare.UI.Controllers
 {
+    [Authorize(Roles = "Admin,Recepcionista,Doctor,Asistente,Paciente")]
     public class CitaController : Controller
     {
         // GET: Cita
