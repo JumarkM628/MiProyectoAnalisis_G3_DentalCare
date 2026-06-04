@@ -8,9 +8,11 @@ using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.EliminarUsuario;
 using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.ObtenerTodosLosUsuarios;
 using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.ObtenerUsuarioPorId;
 using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.RegistrarUsuario;
+using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.DesactivarUsuario;
 using DentalCare.Abstraccion.Modelo.Usuarios;
 using DentalCare.AccesoADatos;
 using DentalCare.LogicaDeNegocio.Usuarios.EliminarUsuario;
+using DentalCare.LogicaDeNegocio.Usuarios.DesactivarUsuario;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -28,6 +30,7 @@ namespace DentalCare.UI.Controllers
         private IObtenerUsuarioPorIdLN _obtenerUsuarioPorIdLN;
         private IEditarUsuarioLN _editarUsuarioLN;
         private readonly IEliminarUsuarioLN _eliminarUsuarioLN;
+        private readonly IDesactivarUsuarioLN _desactivarUsuarioLN;
 
         public UsuarioController()
         {
@@ -36,6 +39,7 @@ namespace DentalCare.UI.Controllers
             _obtenerUsuarioPorIdLN = new ObtenerUsuarioPorIdLN();
             _editarUsuarioLN = new EditarUsuarioLN();
             _eliminarUsuarioLN = new EliminarUsuarioLN();
+            _desactivarUsuarioLN = new DesactivarUsuarioLN();
         }
 
         public ActionResult ObtenerTodosLosUsuarios()
@@ -155,6 +159,19 @@ namespace DentalCare.UI.Controllers
             }
 
             TempData["Exito"] = "Usuario eliminado correctamente.";
+            return RedirectToAction("ObtenerTodosLosUsuarios");
+        }
+
+        public ActionResult DesactivarUsuario(int id)
+        {
+            string error = _desactivarUsuarioLN.Desactivar(id);
+            if (error != null)
+            {
+                TempData["Error"] = error;
+                return RedirectToAction("ObtenerTodosLosUsuarios");
+            }
+
+            TempData["Exito"] = "Usuario desactivado correctamente.";
             return RedirectToAction("ObtenerTodosLosUsuarios");
         }
 

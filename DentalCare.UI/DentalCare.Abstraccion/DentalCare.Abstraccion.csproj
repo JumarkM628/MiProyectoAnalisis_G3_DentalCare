@@ -73,6 +73,7 @@
     <Compile Include="AccesoADatos\Expediente\ObtenerTodosLosExpedientes\IObtenerTodosLosExpedientesAD.cs" />
     <Compile Include="AccesoADatos\Expediente\ReabrirExpediente\IReabrirExpedienteAD.cs" />
     <Compile Include="AccesoADatos\Tratamiento\IEditarPlanTratamientoAD.cs" />
+    <Compile Include="AccesoADatos\Usuarios\DesactivarUsuario\IDesactivarUsuarioAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\EditarUsuario\IEditarUsuarioAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\EliminarUsuario\IEliminarUsuarioAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\ObtenerTodosLosUsuarios\IObtenerTodoLosUsuariosAD.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="LogicaDeNegocio\Expedientes\ObtenerTodosLosExpedientes\IObtenerTodosLosExpedientesLN.cs" />
     <Compile Include="LogicaDeNegocio\Expedientes\ReabrirExpediente\IReabrirExpedienteLN.cs" />
     <Compile Include="LogicaDeNegocio\Tratamiento\IEditarPlanTratamientoLN.cs" />
+    <Compile Include="LogicaDeNegocio\Usuarios\DesactivarUsuario\IDesactivarUsuarioLN.cs" />
     <Compile Include="LogicaDeNegocio\Usuarios\EditarUsuario\IEditarUsuarioLN.cs" />
     <Compile Include="LogicaDeNegocio\Usuarios\EliminarUsuario\IEliminarUsuarioLN.cs" />
     <Compile Include="LogicaDeNegocio\Usuarios\ObtenerTodosLosUsuarios\IObtenerTodosLosUsuariosLN.cs" />

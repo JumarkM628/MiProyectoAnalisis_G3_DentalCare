@@ -82,6 +82,7 @@
     <Compile Include="Usuarios\EditarUsuario\EditarUsuarioAD.cs" />
     <Compile Include="Usuarios\EliminarUsuario\EliminarUsuarioAD.cs" />
     <Compile Include="Usuarios\ObtenerTodosLosUsuarios\ObtenerTodoLosUsuariosAD.cs" />
+    <Compile Include="Usuarios\ObtenerUsuarioPorId\DesactivarUsuarioAD.cs" />
     <Compile Include="Usuarios\ObtenerUsuarioPorId\ObtenerUsuarioPorIdAD.cs" />
     <Compile Include="Usuarios\RecuperarContrasena\RecuperarContrasenaAD.cs" />
     <Compile Include="Usuarios\RegistrarUsuario\RegistrarUsuariosAD.cs" />
