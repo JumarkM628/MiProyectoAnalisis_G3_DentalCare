@@ -9,7 +9,7 @@
     <div class="row mb-3">
         <div class="col-md-8">
             <h2 style="font-weight:600; color:#2c3e50;">
-                Expediente #@Model.Expediente.IdExpediente
+                Expediente @Model.Expediente.IdExpediente
             </h2>
             <p class="text-muted">Paciente: <strong>@Model.Expediente.NombrePaciente</strong></p>
         </div>
@@ -33,8 +33,6 @@
                 <i class="fa fa-exclamation-triangle"></i>
                 ¡ALERTA MÉDICA ACTIVA — Nivel: @Model.Alerta.NivelRiesgoMostrar!
             </strong>
-            <br />
-            Este paciente tiene una alerta médica registrada. Revise la sección de alertas antes de continuar.
         </div>
     }
 
