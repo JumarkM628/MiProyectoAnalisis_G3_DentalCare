@@ -79,37 +79,48 @@ namespace DentalCare.UI
                 var userStore = new UserStore<ApplicationUser>(context);
                 var userManager = new ApplicationUserManager(userStore);
 
-                // Roles requeridas por la aplicación
-                string[] roles = { "Admin", "Doctor", "Asistente", "Paciente" };
+                // Roles requeridas por la aplicación (incluye Recepcionista)
+                string[] roles = { "Admin", "Doctor", "Asistente", "Paciente", "Recepcionista" };
                 foreach (var roleName in roles)
                 {
                     if (!roleManager.RoleExists(roleName))
                     {
-                        var roleResult = roleManager.Create(new IdentityRole(roleName));
-                        // Ignorar roleResult detallado aquí; si falla es probable que la BD no esté accesible
+                        roleManager.Create(new IdentityRole(roleName));
                     }
                 }
 
-                // Crear usuario administrador inicial si no existe
-                string adminEmail = "admin@dentalcare.local";
-                string adminPassword = "Admin@12345"; // Cambiar en producción
+                // Usuarios por defecto para cada rol (email -> password)
+                var defaultUsers = new System.Collections.Generic.Dictionary<string, (string Email, string Password)>
+                {
+                    { "Admin", ("admin@dentalcare.local", "Admin@12345") },
+                    { "Recepcionista", ("recepcionista@dentalcare.local", "Recepcionista@12345") },
+                    { "Doctor", ("doctor@dentalcare.local", "Doctor@12345") },
+                    { "Asistente", ("asistente@dentalcare.local", "Asistente@12345") },
+                    { "Paciente", ("paciente@dentalcare.local", "Paciente@12345") }
+                };
 
-                var adminUser = userManager.FindByEmail(adminEmail);
-                if (adminUser == null)
+                foreach (var kv in defaultUsers)
                 {
-                    adminUser = new ApplicationUser { UserName = adminEmail, Email = adminEmail };
-                    var createAdmin = userManager.Create(adminUser, adminPassword);
-                    if (createAdmin.Succeeded)
+                    var role = kv.Key;
+                    var email = kv.Value.Email;
+                    var password = kv.Value.Password;
+
+                    var user = userManager.FindByEmail(email);
+                    if (user == null)
                     {
-                        userManager.AddToRole(adminUser.Id, "Admin");
+                        user = new ApplicationUser { UserName = email, Email = email };
+                        var createResult = userManager.Create(user, password);
+                        if (createResult.Succeeded)
+                        {
+                            userManager.AddToRole(user.Id, role);
+                        }
                     }
-                }
-                else
-                {
-                    // Asegurar que el usuario admin tenga la role Admin
-                    if (!userManager.IsInRole(adminUser.Id, "Admin"))
+                    else
                     {
-                        userManager.AddToRole(adminUser.Id, "Admin");
+                        if (!userManager.IsInRole(user.Id, role))
+                        {
+                            userManager.AddToRole(user.Id, role);
+                        }
                     }
                 }
             }
