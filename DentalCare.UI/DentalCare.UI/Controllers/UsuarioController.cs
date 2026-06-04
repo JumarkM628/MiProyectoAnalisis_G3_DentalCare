@@ -20,6 +20,7 @@ using System.Web.Mvc;
 
 namespace DentalCare.UI.Controllers
 {
+    [Authorize(Roles = "Admin,Recepcionista")]
     public class UsuarioController : Controller
     {
         private IObtenerTodosLosUsuariosLN _obtenerTodosLosUsuariosLN;

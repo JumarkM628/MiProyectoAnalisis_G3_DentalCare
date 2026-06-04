@@ -143,7 +143,7 @@ namespace DentalCare.UI.Controllers
 
         //
         // GET: /Account/Register
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin,Recepcionista")]
         public ActionResult Register()
         {
             return View();
@@ -152,7 +152,7 @@ namespace DentalCare.UI.Controllers
         //
         // POST: /Account/Register
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin,Recepcionista")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {

@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace DentalCare.UI.Controllers
 {
+    [Authorize(Roles = "Admin,Recepcionista")]
     public class ContabilidadController : Controller
     {
         // GET: Contabilidad/Menu
