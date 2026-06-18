@@ -212,10 +212,10 @@
                     </div>
 
                     <div class="col-md-4 form-group">
-                        @Html.LabelFor(m => m.Hora)
-                        <span class="required">*</span>
-                        @Html.TextBoxFor(m => m.Hora, "{0:HH:mm}", new { @class = "form-control", type = "time" })
-                        @Html.ValidationMessageFor(m => m.Hora, "", new { @class = "text-danger" })
+                        @Html.LabelFor(m => m.HoraString)<span class="text-danger"> *</span>
+                        @Html.TextBoxFor(m => m.HoraString,
+                            new { @class = "form-control", type = "time" })
+                        @Html.ValidationMessageFor(m => m.HoraString, "", new { @class = "text-danger" })
                     </div>
 
                     <div class="col-md-4 form-group">
