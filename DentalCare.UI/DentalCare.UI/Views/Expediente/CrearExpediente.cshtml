@@ -4,15 +4,157 @@
     ViewBag.Title = "CrearExpediente";
 }
 
-<div class="container" style="max-width: 860px; padding: 24px;">
+<style>
 
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <h2 style="font-weight:600; color:#2c3e50;">Crear Expediente Clínico</h2>
-            <p class="text-muted">
-                Campos obligatorios marcados con <span class="text-danger">*</span>
-            </p>
-        </div>
+    body {
+        background: #f4f7fb;
+    }
+
+    .page-header-custom {
+        background: linear-gradient(135deg, #0ea5e9, #2563eb);
+        padding: 30px;
+        border-radius: 20px;
+        color: white;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(37,99,235,.25);
+    }
+
+        .page-header-custom h2 {
+            margin: 0;
+            font-weight: 700;
+            color: white;
+        }
+
+        .page-header-custom p {
+            margin-top: 10px;
+            opacity: .95;
+        }
+
+    .panel {
+        border: none !important;
+        border-radius: 18px !important;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,.08);
+        margin-bottom: 25px;
+    }
+
+    .panel-heading {
+        background: linear-gradient(135deg,#1e3a8a,#2563eb) !important;
+        color: white !important;
+        border: none !important;
+        padding: 18px 22px !important;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .panel-body {
+        background: white;
+        padding: 25px;
+    }
+
+    label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 5px;
+    }
+
+    .form-control {
+        height: 45px;
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        box-shadow: none;
+        transition: all .3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37,99,235,.15);
+        }
+
+    .required {
+        color: #dc2626;
+    }
+
+    .btn-guardar {
+        background: linear-gradient(135deg,#10b981,#059669);
+        border: none;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: .3s;
+    }
+
+        .btn-guardar:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16,185,129,.30);
+        }
+
+    .btn-cancelar {
+        background: #e5e7eb;
+        color: #374151;
+        padding: 12px 24px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+        .btn-cancelar:hover {
+            text-decoration: none;
+            background: #d1d5db;
+            color: #111827;
+        }
+
+    .info-card {
+        background: white;
+        border-radius: 18px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,.05);
+        border-left: 5px solid #2563eb;
+    }
+
+        .info-card strong {
+            color: #2563eb;
+        }
+
+    .acciones {
+        margin-top: 30px;
+        display: flex;
+        gap: 10px;
+    }
+
+    @@media(max-width:768px) {
+
+        .acciones {
+            flex-direction: column;
+        }
+
+        .btn-guardar,
+        .btn-cancelar {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="container" style="max-width:1000px; padding:25px;">
+
+    <div class="page-header-custom">
+        <h2>
+            <i class="glyphicon glyphicon-folder-open"></i>
+            Crear Expediente Clínico
+        </h2>
+
+        <p>
+            Registre la información clínica y documentación del paciente.
+        </p>
+    </div>
+
+    <div class="info-card">
+        <strong>Información:</strong>
+        Los campos marcados con (*) son obligatorios.
     </div>
 
     @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""] != null)
@@ -22,133 +164,260 @@
         </div>
     }
 
-    @using (Html.BeginForm("CrearExpediente", "Expediente", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    @using (Html.BeginForm("CrearExpediente", "Expediente", FormMethod.Post,
+        new { enctype = "multipart/form-data" }))
     {
         @Html.AntiForgeryToken()
 
         <div class="panel panel-default">
-            <div class="panel-heading"><strong>Datos del Paciente</strong></div>
+
+            <div class="panel-heading">
+                <i class="glyphicon glyphicon-user"></i>
+                Datos del Paciente
+            </div>
+
             <div class="panel-body">
+
                 <div class="row">
+
                     <div class="col-md-6 form-group">
-                        @Html.LabelFor(m => m.Identificacion)<span class="text-danger"> *</span>
-                        @Html.TextBoxFor(m => m.Identificacion,
-                            new { @class = "form-control", placeholder = "" })
-                        @Html.ValidationMessageFor(m => m.Identificacion, "", new { @class = "text-danger" })
+
+                        @Html.LabelFor(m => m.Identificacion)
+                        <span class="required">*</span>
+
+                        @Html.TextBoxFor(
+                 m => m.Identificacion,
+                 new { @class = "form-control" })
+
+                        @Html.ValidationMessageFor(
+                 m => m.Identificacion,
+                 "",
+                 new { @class = "text-danger" })
+
                         <small class="text-muted">
                             El paciente debe estar registrado en el sistema con rol Paciente.
                         </small>
+
                     </div>
+
                     <div class="col-md-3 form-group">
-                        @Html.LabelFor(m => m.IdEstado)<span class="text-danger"> *</span>
-                        @Html.DropDownListFor(m => m.IdEstado, Model.ListaEstados,
-                            "-- Seleccione --", new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.IdEstado, "", new { @class = "text-danger" })
+
+                        @Html.LabelFor(m => m.IdEstado)
+                        <span class="required">*</span>
+
+                        @Html.DropDownListFor(
+                 m => m.IdEstado,
+                 Model.ListaEstados,
+                 "-- Seleccione --",
+                 new { @class = "form-control" })
+
+                        @Html.ValidationMessageFor(
+                 m => m.IdEstado,
+                 "",
+                 new { @class = "text-danger" })
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
 
-        <div class="panel panel-default" style="margin-top:16px;">
-            <div class="panel-heading"><strong>Consentimiento Informado</strong></div>
+        <div class="panel panel-default">
+
+            <div class="panel-heading">
+                <i class="glyphicon glyphicon-list-alt"></i>
+                Consentimiento Informado
+            </div>
+
             <div class="panel-body">
 
                 <div class="row">
+
                     <div class="col-md-6 form-group">
-                        @Html.LabelFor(m => m.Objetivo)<span class="text-danger"> *</span>
-                        @Html.TextAreaFor(m => m.Objetivo,
-                            new
-                                 {
-                                     @class = "form-control",
-                                     rows = "3",
-                                  placeholder = ""
-                                 })
-                        @Html.ValidationMessageFor(m => m.Objetivo, "", new { @class = "text-danger" })
+
+                        @Html.LabelFor(m => m.Objetivo)
+                        <span class="required">*</span>
+
+                        @Html.TextAreaFor(
+                 m => m.Objetivo,
+                 new
+                 {
+                     @class = "form-control",
+                     rows = "4"
+                 })
+
+                        @Html.ValidationMessageFor(
+                 m => m.Objetivo,
+                 "",
+                 new { @class = "text-danger" })
+
                     </div>
+
                     <div class="col-md-6 form-group">
+
                         @Html.LabelFor(m => m.Descripcion)
-                        @Html.TextAreaFor(m => m.Descripcion,
-                            new
-                                 {
-                                     @class = "form-control",
-                                     rows = "3",
-                                  placeholder = ""
-                                 })
-                        @Html.ValidationMessageFor(m => m.Descripcion, "", new { @class = "text-danger" })
+
+                        @Html.TextAreaFor(
+                 m => m.Descripcion,
+                 new
+                 {
+                     @class = "form-control",
+                     rows = "4"
+                 })
+
+                        @Html.ValidationMessageFor(
+                 m => m.Descripcion,
+                 "",
+                 new { @class = "text-danger" })
+
                     </div>
+
                 </div>
 
                 <div class="row">
+
                     <div class="col-md-6 form-group">
-                        @Html.LabelFor(m => m.Alternativas)<span class="text-danger"> *</span>
-                        @Html.TextAreaFor(m => m.Alternativas,
-                            new
-                                 {
-                                     @class = "form-control",
-                                     rows = "3",
-                                  placeholder = ""
-                                 })
-                        @Html.ValidationMessageFor(m => m.Alternativas, "", new { @class = "text-danger" })
+
+                        @Html.LabelFor(m => m.Alternativas)
+                        <span class="required">*</span>
+
+                        @Html.TextAreaFor(
+                 m => m.Alternativas,
+                 new
+                 {
+                     @class = "form-control",
+                     rows = "4"
+                 })
+
+                        @Html.ValidationMessageFor(
+                 m => m.Alternativas,
+                 "",
+                 new { @class = "text-danger" })
+
                     </div>
+
                     <div class="col-md-6 form-group">
-                        @Html.LabelFor(m => m.Consecuencias)<span class="text-danger"> *</span>
-                        @Html.TextAreaFor(m => m.Consecuencias,
-                            new
-                                 {
-                                     @class = "form-control",
-                                     rows = "3",
-                                  placeholder = ""
-                                 })
-                        @Html.ValidationMessageFor(m => m.Consecuencias, "", new { @class = "text-danger" })
+
+                        @Html.LabelFor(m => m.Consecuencias)
+                        <span class="required">*</span>
+
+                        @Html.TextAreaFor(
+                 m => m.Consecuencias,
+                 new
+                 {
+                     @class = "form-control",
+                     rows = "4"
+                 })
+
+                        @Html.ValidationMessageFor(
+                 m => m.Consecuencias,
+                 "",
+                 new { @class = "text-danger" })
+
                     </div>
+
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6 form-group">
+
+                    <div class="col-md-12 form-group">
+
                         @Html.LabelFor(m => m.Otro)
-                        @Html.TextAreaFor(m => m.Otro,
-                            new
-                                 {
-                                     @class = "form-control",
-                                     rows = "2",
-                                  placeholder = ""
-                                 })
-                        @Html.ValidationMessageFor(m => m.Otro, "", new { @class = "text-danger" })
+
+                        @Html.TextAreaFor(
+                 m => m.Otro,
+                 new
+                 {
+                     @class = "form-control",
+                     rows = "3"
+                 })
+
+                        @Html.ValidationMessageFor(
+                 m => m.Otro,
+                 "",
+                 new { @class = "text-danger" })
+
                     </div>
-                </div>
 
-            </div>
-            <div class="panel-heading"><strong>Archivos Clínicos</strong></div>
-
-            <div class="panel-body">
-
-                <div class="alert alert-info" style="margin-bottom:15px;">
-                    Formatos permitidos: <strong>JPG, JPEG, PNG, PDF</strong> — Máximo 50 MB
-                </div>
-
-                <div class="form-group">
-                    <label>Nombre del archivo *</label>
-                    <input type="text" name="NombreArchivo" class="form-control" placeholder="Ej: Radiografía inicial" />
-                </div>
-
-                <div class="form-group">
-                    <label>Seleccionar archivo *</label>
-                    <input type="file" name="ArchivoClinico" class="form-control" />
                 </div>
 
             </div>
 
         </div>
 
-        <div style="margin-top:24px;">
-            <button type="submit" class="btn btn-primary">Guardar Expediente</button>
-            @Html.ActionLink("Cancelar", "ObtenerTodosLosExpedientes", "Expediente",
-                null, new { @class = "btn btn-default", style = "margin-left:8px;" })
+        <div class="panel panel-default">
+
+            <div class="panel-heading">
+                <i class="glyphicon glyphicon-paperclip"></i>
+                Archivos Clínicos
+            </div>
+
+            <div class="panel-body">
+
+                <div class="alert alert-info">
+                    <strong>Formatos permitidos:</strong>
+                    JPG, JPEG, PNG y PDF.
+                    <br />
+                    Tamaño máximo permitido: 50 MB.
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 form-group">
+
+                        <label>
+                            Nombre del Archivo
+                            <span class="required">*</span>
+                        </label>
+
+                        <input type="text"
+                               name="NombreArchivo"
+                               class="form-control"
+                               placeholder="Ej: Radiografía Inicial" />
+
+                    </div>
+
+                    <div class="col-md-6 form-group">
+
+                        <label>
+                            Seleccionar Archivo
+                            <span class="required">*</span>
+                        </label>
+
+                        <input type="file"
+                               name="ArchivoClinico"
+                               class="form-control" />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="acciones">
+
+            <button type="submit" class="btn btn-guardar">
+                <i class="glyphicon glyphicon-floppy-disk"></i>
+                Guardar Expediente
+            </button>
+
+            @Html.ActionLink(
+                 "Cancelar",
+                 "ObtenerTodosLosExpedientes",
+                 "Expediente",
+                 null,
+                 new { @class = "btn btn-cancelar" })
+
         </div>
     }
+
 </div>
 
-@section Scripts {
+@section Scripts{
     @Scripts.Render("~/bundles/jqueryval")
 }
 

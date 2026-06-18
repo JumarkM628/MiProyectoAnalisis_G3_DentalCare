@@ -39,25 +39,21 @@
                             <li>@Html.ActionLink("Listado Citas", "ObtenerTodasLasCitas", "Cita", new { area = "" }, new { @class = "nav-link" })</li>
                         }
 
-                        <li>@Html.ActionLink("Citas", "AgregarCita", "Cita", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Citas", "ObtenerTodasLasCitas", "Cita", new { area = "" }, new { @class = "nav-link" })</li>
 
                         if (User.IsInRole("Admin") || User.IsInRole("Recepcionista"))
                         {
                             <li>@Html.ActionLink("Contabilidad", "Menu", "Contabilidad", new { area = "" }, new { @class = "nav-link" })</li>
                         }
 
-                        if (!User.IsInRole("Paciente"))
-                        {
-                            <li>@Html.ActionLink("Expedientes", "ObtenerTodosLosExpedientes", "Expediente", new { area = "" }, new { @class = "nav-link" })</li>
-                            <li>@Html.ActionLink("Inventario", "InventarioIndex", "Inventario", new { area = "" }, new { @class = "nav-link" })</li>
-                        }
+
 
                         if (User.IsInRole("Admin") || User.IsInRole("Recepcionista"))
                         {
                             <li>@Html.ActionLink("Reporteria", "Index", "Reporteria", new { area = "" }, new { @class = "nav-link" })</li>
                             <li>@Html.ActionLink("Usuarios", "ObtenerTodosLosUsuarios", "Usuario", new { area = "" }, new { @class = "nav-link" })</li>
                             <li>@Html.ActionLink("Inventario", "InventarioIndex", "Inventario", new { area = "" }, new { @class = "nav-link" })</li>
-
+                            <li>@Html.ActionLink("Expedientes", "ObtenerTodosLosExpedientes", "Expediente", new { area = "" }, new { @class = "nav-link" })</li>
 
                         }
 
@@ -76,7 +72,7 @@
                         <li>@Html.ActionLink("Register", "Register", "Account", new { area = "" }, new { @class = "nav-link" })</li>
                     }
                 </ul>
-                 @Html.Partial("_loginPartial")
+
             </div>
         </div>
     </nav>

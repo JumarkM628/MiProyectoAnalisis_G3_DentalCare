@@ -1,216 +1,285 @@
-﻿@model DentalCare.Abstraccion.Modelo.Citas.CitaTDO
+﻿@model DentalCare.Abstraccion.Modelo.Citas.CitaDto
 
 @{
-    ViewBag.Title = "Agregar Cita";
+    ViewBag.Title = "AgregarCita";
 }
 
-<main class="full-width-main">
+<style>
 
-    <div class="page-hero">
-        <h1>Agregar Cita</h1>
-        <p>Selecciona el día en el calendario y completa los datos de la cita.</p>
+    body {
+        background: #f4f7fb;
+    }
+
+    .page-header-custom {
+        background: linear-gradient(135deg, #0ea5e9, #2563eb);
+        padding: 30px;
+        border-radius: 20px;
+        color: white;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(37,99,235,.25);
+    }
+
+        .page-header-custom h2 {
+            margin: 0;
+            font-weight: 700;
+            color: white;
+        }
+
+        .page-header-custom p {
+            margin-top: 10px;
+            opacity: .95;
+        }
+
+    .panel {
+        border: none !important;
+        border-radius: 18px !important;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,.08);
+        margin-bottom: 25px;
+    }
+
+    .panel-heading {
+        background: linear-gradient(135deg,#1e3a8a,#2563eb) !important;
+        color: white !important;
+        border: none !important;
+        padding: 18px 22px !important;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .panel-body {
+        background: white;
+        padding: 25px;
+    }
+
+    label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 5px;
+    }
+
+    .form-control {
+        height: 45px;
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        box-shadow: none;
+        transition: all .3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37,99,235,.15);
+        }
+
+    .required {
+        color: #dc2626;
+    }
+
+    .btn-guardar {
+        background: linear-gradient(135deg,#10b981,#059669);
+        border: none;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: .3s;
+    }
+
+        .btn-guardar:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16,185,129,.30);
+        }
+
+    .btn-cancelar {
+        background: #e5e7eb;
+        color: #374151;
+        padding: 12px 24px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+        .btn-cancelar:hover {
+            text-decoration: none;
+            background: #d1d5db;
+            color: #111827;
+        }
+
+    .info-card {
+        background: white;
+        border-radius: 18px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,.05);
+        border-left: 5px solid #2563eb;
+    }
+
+        .info-card strong {
+            color: #2563eb;
+        }
+
+    .acciones {
+        margin-top: 30px;
+        display: flex;
+        gap: 10px;
+    }
+
+    @@media(max-width:768px) {
+
+        .acciones {
+            flex-direction: column;
+        }
+
+        .btn-guardar,
+        .btn-cancelar {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="container" style="max-width:900px; padding:25px;">
+
+    <div class="page-header-custom">
+        <h2>
+            <i class="glyphicon glyphicon-calendar"></i>
+            Registrar Nueva Cita
+        </h2>
+
+        <p>
+            Complete la información requerida para agendar una nueva cita en el sistema.
+        </p>
     </div>
 
-    <section class="full-width-section bg-transparent">
-        <div class="container">
+    <div class="info-card">
+        <strong>Información:</strong>
+        Los campos marcados con (*) son obligatorios.
+    </div>
 
-            @using (Html.BeginForm())
-            {
-                @Html.AntiForgeryToken()
-                @Html.ValidationSummary(true, "", new { @class = "alert-validation" })
+    @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""] != null)
+    {
+        <div class="alert alert-danger">
+            @Html.ValidationMessage("")
+        </div>
+    }
 
-                <!-- Grid inline para evitar conflictos con Bootstrap -->
-                <div style="display: grid; grid-template-columns: 1fr 1.15fr; gap: 28px; align-items: start; max-width: 980px; margin: 0 auto;">
+    @using (Html.BeginForm("AgregarCita", "Cita", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
 
-                    <!-- Columna izquierda: datos -->
-                    <div class="cita-fields">
-                        <h3 class="cita-section-title">Datos de la cita</h3>
+        <div class="panel panel-default">
 
-                        <div class="form-field">
-                            @Html.LabelFor(model => model.descripcion, "Descripción", new { @class = "form-label" })
-                            @Html.TextAreaFor(model => model.descripcion, new { @class = "form-control", rows = 3, placeholder = "Motivo o descripción de la cita..." })
-                            @Html.ValidationMessageFor(model => model.descripcion, "", new { @class = "field-error" })
-                        </div>
+            <div class="panel-heading">
+                <i class="glyphicon glyphicon-user"></i>
+                Datos del Paciente
+            </div>
 
-                        <div class="form-field">
-                            @Html.LabelFor(model => model.Id_Usuario, "ID de Paciente", new { @class = "form-label" })
-                            @Html.EditorFor(model => model.Id_Usuario, new { htmlAttributes = new { @class = "form-control", placeholder = "" } })
-                            @Html.ValidationMessageFor(model => model.Id_Usuario, "", new { @class = "field-error" })
-                        </div>
+            <div class="panel-body">
 
-                        <div class="form-field">
-                            @Html.LabelFor(model => model.Id_Doctor, "ID de Doctor", new { @class = "form-label" })
-                            @Html.EditorFor(model => model.Id_Doctor, new { htmlAttributes = new { @class = "form-control", placeholder = "" } })
-                            @Html.ValidationMessageFor(model => model.Id_Doctor, "", new { @class = "field-error" })
-                        </div>
+                <div class="row">
 
-                        <div class="form-field">
-                            <label class="form-label">Hora de la cita</label>
-                            <select class="form-control" id="horaSelect">
-                                <option value="">-- Selecciona una hora --</option>
-                                <option value="09:00">9:00 AM</option>
-                                <option value="09:30">9:30 AM</option>
-                                <option value="10:00">10:00 AM</option>
-                                <option value="10:30">10:30 AM</option>
-                                <option value="11:00">11:00 AM</option>
-                                <option value="11:30">11:30 AM</option>
-                                <option value="13:00">1:00 PM</option>
-                                <option value="13:30">1:30 PM</option>
-                                <option value="14:00">2:00 PM</option>
-                                <option value="14:30">2:30 PM</option>
-                                <option value="15:00">3:00 PM</option>
-                                <option value="15:30">3:30 PM</option>
-                                <option value="16:00">4:00 PM</option>
-                                <option value="16:30">4:30 PM</option>
-                            </select>
-                        </div>
-
-                        @Html.HiddenFor(model => model.Fecha_Cita, new { id = "Fecha_Cita" })
-
-                        <div class="fecha-resumen">
-                            <span id="fechaTexto">Selecciona un día en el calendario</span>
-                        </div>
-
-                        <div class="form-field">
-                            @Html.LabelFor(model => model.Estado, "Estado de la cita", new { @class = "form-label" })
-                            <div class="toggle-wrapper">
-                                @Html.CheckBoxFor(model => model.Estado, new { @class = "toggle-input", id = "estadoToggle" })
-                                <label for="estadoToggle" class="toggle-label">
-                                    <span class="toggle-track"></span>
-                                    <span class="toggle-text-on">Activa</span>
-                                    <span class="toggle-text-off">Inactiva</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-actions">
-                            @Html.ActionLink("Cancelar", "ObtenerTodasLasCitas", "Cita", null, new { @class = "btn btn-ghost-dark" })
-                            <button type="submit" class="btn btn-primary">Guardar Cita</button>
-                        </div>
-                    </div>
-
-                    <!-- Columna derecha: calendario -->
-                    <div style="position: sticky; top: 80px;">
-                        <div class="calendar-card">
-                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
-                                <button type="button" class="cal-nav" id="prevMonth">&#8249;</button>
-                                <span class="cal-month-label" id="calMonthLabel"></span>
-                                <button type="button" class="cal-nav" id="nextMonth">&#8250;</button>
-                            </div>
-                            <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.72rem; font-weight: 700; color: #6b7f91; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 10px; border-bottom: 1.5px solid #dce7ef; margin-bottom: 8px;">
-                                <span>Dom</span><span>Lun</span><span>Mar</span>
-                                <span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span>
-                            </div>
-                            <div id="calGrid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 8px;"></div>
-                        </div>
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(m => m.CedulaPaciente)
+                        <span class="required">*</span>
+                        @Html.TextBoxFor(m => m.CedulaPaciente, new { @class = "form-control", placeholder = "Ej: 1-2345-6789" })
+                        @Html.ValidationMessageFor(m => m.CedulaPaciente, "", new { @class = "text-danger" })
+                        <small class="text-muted">Ingrese la cédula del paciente para asociarlo a la cita.</small>
                     </div>
 
                 </div>
-            }
+
+            </div>
 
         </div>
-    </section>
 
-</main>
+        <div class="panel panel-default">
+
+            <div class="panel-heading">
+                <i class="glyphicon glyphicon-time"></i>
+                Detalles de la Cita
+            </div>
+
+            <div class="panel-body">
+
+                <div class="row">
+
+                    <div class="col-md-4 form-group">
+                        @Html.LabelFor(m => m.Fecha)
+                        <span class="required">*</span>
+                        @Html.TextBoxFor(m => m.Fecha, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                        @Html.ValidationMessageFor(m => m.Fecha, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col-md-4 form-group">
+                        @Html.LabelFor(m => m.Hora)
+                        <span class="required">*</span>
+                        @Html.TextBoxFor(m => m.Hora, "{0:HH:mm}", new { @class = "form-control", type = "time" })
+                        @Html.ValidationMessageFor(m => m.Hora, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col-md-4 form-group">
+                        @Html.LabelFor(m => m.IdDoctor)
+                        <span class="required">*</span>
+                        @Html.DropDownListFor(
+                            m => m.IdDoctor,
+                            Model.ListaDoctores,
+                            "-- Seleccione doctor --",
+                            new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.IdDoctor, "", new { @class = "text-danger" })
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(m => m.IdMotivo)
+                        <span class="required">*</span>
+                        @Html.DropDownListFor(
+                            m => m.IdMotivo,
+                            Model.ListaMotivos,
+                            "-- Seleccione motivo --",
+                            new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.IdMotivo, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(m => m.IdEstado)
+                        <span class="required">*</span>
+                        @Html.DropDownListFor(
+                            m => m.IdEstado,
+                            Model.ListaEstados,
+                            "-- Seleccione estado --",
+                            new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.IdEstado, "", new { @class = "text-danger" })
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="acciones">
+
+            <button type="submit" class="btn btn-guardar">
+                <i class="glyphicon glyphicon-floppy-disk"></i>
+                Guardar Cita
+            </button>
+
+            @Html.ActionLink(
+                "Cancelar",
+                "ObtenerTodasLasCitas",
+                "Cita",
+                null,
+                new { @class = "btn btn-cancelar" })
+
+        </div>
+    }
+
+</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    <script>
-        (function () {
-            var today = new Date();
-            var current = new Date(today.getFullYear(), today.getMonth(), 1);
-            var selectedDate = null;
-            var monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-            var dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-
-            function buildCalendar() {
-                var grid = document.getElementById('calGrid');
-                var label = document.getElementById('calMonthLabel');
-                grid.innerHTML = '';
-                var year = current.getFullYear();
-                var month = current.getMonth();
-                label.textContent = monthNames[month] + ' ' + year;
-                var firstDay = new Date(year, month, 1).getDay();
-                var daysInMonth = new Date(year, month + 1, 0).getDate();
-
-                for (var i = 0; i < firstDay; i++) {
-                    var empty = document.createElement('div');
-                    empty.style.cssText = 'aspect-ratio:1;';
-                    grid.appendChild(empty);
-                }
-
-                for (var d = 1; d <= daysInMonth; d++) {
-                    var dayEl = document.createElement('div');
-                    dayEl.className = 'cal-day';
-                    dayEl.textContent = d;
-                    var thisDate = new Date(year, month, d);
-                    var isToday = thisDate.toDateString() === today.toDateString();
-                    var todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                    var isPast = thisDate < todayMidnight;
-
-                    if (isToday) dayEl.classList.add('cal-today');
-                    if (isPast) {
-                        dayEl.classList.add('cal-past');
-                    } else {
-                        (function (date, el) {
-                            el.addEventListener('click', function () {
-                                document.querySelectorAll('.cal-day.cal-selected')
-                                    .forEach(function (x) { x.classList.remove('cal-selected'); });
-                                el.classList.add('cal-selected');
-                                selectedDate = date;
-                                actualizarFecha();
-                            });
-                        })(thisDate, dayEl);
-                    }
-
-                    if (selectedDate && thisDate.toDateString() === selectedDate.toDateString()) {
-                        dayEl.classList.add('cal-selected');
-                    }
-
-                    grid.appendChild(dayEl);
-                }
-            }
-
-            function actualizarFecha() {
-                var hora = document.getElementById('horaSelect').value;
-                var texto = document.getElementById('fechaTexto');
-                var hidden = document.getElementById('Fecha_Cita');
-
-                if (!selectedDate) {
-                    texto.textContent = 'Selecciona un día en el calendario';
-                    return;
-                }
-
-                var d = selectedDate.getDate();
-                var m = monthNames[selectedDate.getMonth()];
-                var y = selectedDate.getFullYear();
-                var dn = dayNames[selectedDate.getDay()];
-
-                if (hora) {
-                    texto.textContent = dn + ', ' + d + ' de ' + m + ' ' + y + ' — ' + hora;
-                    var mm = String(selectedDate.getMonth() + 1).padStart(2, '0');
-                    var dd = String(d).padStart(2, '0');
-                    hidden.value = y + '-' + mm + '-' + dd + 'T' + hora + ':00';
-                } else {
-                    texto.textContent = dn + ', ' + d + ' de ' + m + ' ' + y + ' — elige una hora';
-                    hidden.value = '';
-                }
-            }
-
-            document.getElementById('prevMonth').addEventListener('click', function () {
-                current.setMonth(current.getMonth() - 1);
-                buildCalendar();
-            });
-
-            document.getElementById('nextMonth').addEventListener('click', function () {
-                current.setMonth(current.getMonth() + 1);
-                buildCalendar();
-            });
-
-            document.getElementById('horaSelect').addEventListener('change', actualizarFecha);
-
-            buildCalendar();
-        })();
-    </script>
 }

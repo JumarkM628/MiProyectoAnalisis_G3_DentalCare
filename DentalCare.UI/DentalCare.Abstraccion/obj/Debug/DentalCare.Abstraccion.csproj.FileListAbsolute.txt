@@ -108,8 +108,6 @@ C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccio
 C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\DentalCa.A438D635.Up2Date
 C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\DentalCare.Abstraccion.dll
 C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\DentalCare.Abstraccion.pdb
-C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\DentalCare.Abstraccion.csproj.AssemblyReference.cache
-C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\DentalCare.Abstraccion.csproj.CoreCompileInputs.cache
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\bin\Debug\DentalCare.Abstraccion.dll
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\bin\Debug\DentalCare.Abstraccion.pdb
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\bin\Debug\Microsoft.Web.Infrastructure.dll
@@ -131,6 +129,8 @@ C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\Dental
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\bin\Debug\es\System.Web.WebPages.resources.dll
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\bin\Debug\es\System.Web.WebPages.Deployment.resources.dll
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\bin\Debug\es\System.Web.WebPages.Razor.resources.dll
+C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\DentalCare.Abstraccion.csproj.AssemblyReference.cache
+C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\DentalCare.Abstraccion.csproj.CoreCompileInputs.cache
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\DentalCa.A438D635.Up2Date
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\DentalCare.Abstraccion.dll
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.Abstraccion\obj\Debug\DentalCare.Abstraccion.pdb

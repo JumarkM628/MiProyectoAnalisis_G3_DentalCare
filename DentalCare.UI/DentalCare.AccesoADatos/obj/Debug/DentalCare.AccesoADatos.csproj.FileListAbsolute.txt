@@ -118,8 +118,6 @@ C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.AccesoADat
 C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.AccesoADatos\obj\Debug\DentalCa.3302789B.Up2Date
 C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.AccesoADatos\obj\Debug\DentalCare.AccesoADatos.dll
 C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.AccesoADatos\obj\Debug\DentalCare.AccesoADatos.pdb
-C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.AccesoADatos\obj\Debug\DentalCare.AccesoADatos.csproj.AssemblyReference.cache
-C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.AccesoADatos\obj\Debug\DentalCare.AccesoADatos.csproj.CoreCompileInputs.cache
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.AccesoADatos\bin\Debug\DentalCare.AccesoADatos.dll.config
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.AccesoADatos\bin\Debug\DentalCare.AccesoADatos.dll
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.AccesoADatos\bin\Debug\DentalCare.AccesoADatos.pdb
@@ -145,6 +143,8 @@ C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\Dental
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.AccesoADatos\bin\Debug\es\System.Web.WebPages.Razor.resources.dll
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.AccesoADatos\bin\Debug\es\System.Web.Razor.resources.dll
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.AccesoADatos\bin\Debug\es\System.Web.WebPages.Deployment.resources.dll
+C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.AccesoADatos\obj\Debug\DentalCare.AccesoADatos.csproj.AssemblyReference.cache
+C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.AccesoADatos\obj\Debug\DentalCare.AccesoADatos.csproj.CoreCompileInputs.cache
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.AccesoADatos\obj\Debug\DentalCa.3302789B.Up2Date
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.AccesoADatos\obj\Debug\DentalCare.AccesoADatos.dll
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentalCare.AccesoADatos\obj\Debug\DentalCare.AccesoADatos.pdb

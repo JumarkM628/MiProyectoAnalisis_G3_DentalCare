@@ -112,8 +112,6 @@ C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNeg
 C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\obj\Debug\DentalCa.AE773739.Up2Date
 C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\obj\Debug\DentaCare.LogicaDeNegocio.dll
 C:\projects\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\obj\Debug\DentaCare.LogicaDeNegocio.pdb
-C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\obj\Debug\DentalCare.LogicaDeNegocio.csproj.AssemblyReference.cache
-C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\obj\Debug\DentalCare.LogicaDeNegocio.csproj.CoreCompileInputs.cache
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\DentaCare.LogicaDeNegocio.dll
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\DentaCare.LogicaDeNegocio.pdb
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\DentalCare.Abstraccion.dll
@@ -137,6 +135,8 @@ C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\Dental
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\es\System.Web.WebPages.Razor.resources.dll
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\es\System.Web.Razor.resources.dll
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\bin\Debug\es\System.Web.WebPages.Deployment.resources.dll
+C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\obj\Debug\DentalCare.LogicaDeNegocio.csproj.AssemblyReference.cache
+C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\obj\Debug\DentalCare.LogicaDeNegocio.csproj.CoreCompileInputs.cache
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\obj\Debug\DentalCa.AE773739.Up2Date
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\obj\Debug\DentaCare.LogicaDeNegocio.dll
 C:\Users\runli\Documents\TrabajoAnalisis\MiProyectoAnalisis_G3_DentalCare\DentalCare.UI\DentaCare.LogicaDeNegocio\obj\Debug\DentaCare.LogicaDeNegocio.pdb

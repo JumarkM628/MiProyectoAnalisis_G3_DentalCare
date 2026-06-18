@@ -53,9 +53,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Archivo\SubirArchivo\ArchivoClinicoAD.cs" />
+    <Compile Include="Citas\AgregarCita\AgregarCitaAD.cs" />
+    <Compile Include="Citas\ObtenerTodasLasCitas\ObtenerTodasLasCitasAD.cs" />
     <Compile Include="Contexto.cs" />
     <Compile Include="Entidades\Archivo\ArchivoClinicoEntidad.cs" />
     <Compile Include="Entidades\Bitacora\BitacoraEntidad.cs" />
+    <Compile Include="Entidades\Citas\CitaEntidad.cs" />
+    <Compile Include="Entidades\Citas\MotivoCancelacionEntidad.cs" />
+    <Compile Include="Entidades\Citas\MotivoCitaEntidad.cs" />
+    <Compile Include="Entidades\Citas\UsuarioCitaEntidad.cs" />
     <Compile Include="Entidades\Estado\EstadoEntidad.cs" />
     <Compile Include="Entidades\Expediente\AlertaMedicaEntidad.cs" />
     <Compile Include="Entidades\Expediente\ConsentimientoEntidad.cs" />

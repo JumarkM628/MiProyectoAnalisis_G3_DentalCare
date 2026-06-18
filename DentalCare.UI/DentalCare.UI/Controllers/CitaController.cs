@@ -1,4 +1,9 @@
-﻿using DentalCare.Abstraccion.Modelo.Citas;
+﻿using DentaCare.LogicaDeNegocio.Citas.AgregarCita;
+using DentaCare.LogicaDeNegocio.Citas.ObtenerTodasLasCitas;
+using DentalCare.Abstraccion.LogicaDeNegocio.Citas.AgregarCita;
+using DentalCare.Abstraccion.LogicaDeNegocio.Citas.ObtenerTodasLasCitas;
+using DentalCare.Abstraccion.Modelo.Citas;
+using DentalCare.AccesoADatos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,108 +15,105 @@ namespace DentalCare.UI.Controllers
     [Authorize(Roles = "Admin,Recepcionista,Doctor,Asistente,Paciente")]
     public class CitaController : Controller
     {
-        // GET: Cita
+        private readonly IObtenerTodasLasCitasLN _obtenerLN;
+        private readonly IAgregarCitaLN _agregarLN;
+
+        public CitaController()
+        {
+            _obtenerLN = new ObtenerTodasLasCitasLN();
+            _agregarLN = new AgregarCitaLN();
+        }
+
+        // GET: Cita/ObtenerTodasLasCitas
         public ActionResult ObtenerTodasLasCitas()
         {
-            var lista = new List<CitaTDO>()
-    {
-        new CitaTDO
-        {
-            Id_cita = 1,
-            descripcion = "Consulta",
-            Fecha_Cita = DateTime.Now.AddDays(1),
-            Fecha_Registro = DateTime.Now,
-            Fecha_Modificacion = null,
-            Estado = true,
-            Id_Usuario = 1,
-            Id_Doctor = 1
-        },
-        new CitaTDO
-        {
-            Id_cita = 2,
-            descripcion = "Limpieza",
-            Fecha_Cita = DateTime.Now.AddDays(2),
-            Fecha_Registro = DateTime.Now,
-            Fecha_Modificacion = null,
-            Estado = true,
-            Id_Usuario = 2,
-            Id_Doctor = 1
-        }
-    };
-
+            List<CitaDto> lista = _obtenerLN.Obtener();
             return View(lista);
-        }
-
-        // GET: Cita/Details/5
-        public ActionResult DetallesCita(int id)
-        {
-            return View();
         }
 
         // GET: Cita/Create
         public ActionResult AgregarCita()
         {
-            return View();
+            var dto = CargarDropdowns(new CitaDto());
+            return View(dto);
         }
 
         // POST: Cita/Create
         [HttpPost]
-        public ActionResult AgregarCita(FormCollection collection)
+        [ValidateAntiForgeryToken]
+        public ActionResult AgregarCita(CitaDto dto)
         {
-            try
+            ModelState.Remove("Hora");
+            if (!ModelState.IsValid)
             {
-                // TODO: Add insert logic here
+                CargarDropdowns(dto);
+                return View(dto);
+            }
 
-                return RedirectToAction("Index");
-            }
-            catch
+            string error = _agregarLN.Agregar(dto);
+            if (error != null)
             {
-                return View();
+                // Escenario 4: ofrecer opción de registrar paciente
+                if (error.Contains("no está registrado"))
+                    ViewBag.MostrarRegistrarPaciente = true;
+
+                ModelState.AddModelError(string.Empty, error);
+                CargarDropdowns(dto);
+                return View(dto);
             }
+
+            TempData["Exito"] = "Cita registrada correctamente.";
+            return RedirectToAction("ObtenerTodasLasCitas");
         }
 
-        // GET: Cita/Edit/5
-        public ActionResult EditarCita(int id)
+        // ---------------------------------------------------------------
+        // Auxiliar: carga dropdowns
+        // ---------------------------------------------------------------
+        private CitaDto CargarDropdowns(CitaDto dto)
         {
-            return View();
-        }
-
-        // POST: Cita/Edit/5
-        [HttpPost]
-        public ActionResult EditarCita(int id, FormCollection collection)
-        {
-            try
+            using (var ctx = new Contexto())
             {
-                // TODO: Add update logic here
+                // Solo doctores (rol Doctor)
+                var rolDoctor = ctx.AspNetRoles
+                    .FirstOrDefault(r => r.Name == "Doctor");
 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
+                if (rolDoctor != null)
+                {
+                    var idsAspNetDoctores = ctx.AspNetUserRoles
+                        .Where(ur => ur.RoleId == rolDoctor.Id)
+                        .Select(ur => ur.UserId)
+                        .ToList();
 
-        // GET: Cita/Delete/5
-        public ActionResult EliminarCita(int id)
-        {
-            return View();
-        }
+                    dto.ListaDoctores = ctx.Usuarios
+                        .Where(u => idsAspNetDoctores.Contains(u.ASPNET_USER_ID)
+                                 && u.IdEstado == 1)
+                        .Select(u => new SelectListItem
+                        {
+                            Value = u.IdUsuario.ToString(),
+                            Text = u.Nombre + " " + u.PrimerApellido
+                        }).ToList();
+                }
+                else
+                {
+                    dto.ListaDoctores = new List<SelectListItem>();
+                }
 
-        // POST: Cita/Delete/5
-        [HttpPost]
-        public ActionResult EliminarCita(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
+                dto.ListaMotivos = ctx.MotivosCita
+                    .Where(m => m.IdEstado == 1)
+                    .Select(m => new SelectListItem
+                    {
+                        Value = m.IdMotivo.ToString(),
+                        Text = m.Descripcion
+                    }).ToList();
 
-                return RedirectToAction("Index");
+                dto.ListaEstados = ctx.Estados
+                    .Select(e => new SelectListItem
+                    {
+                        Value = e.IdEstado.ToString(),
+                        Text = e.NombreEstado
+                    }).ToList();
             }
-            catch
-            {
-                return View();
-            }
+            return dto;
         }
     }
 }

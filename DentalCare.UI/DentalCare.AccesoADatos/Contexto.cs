@@ -2,6 +2,7 @@
 using DentalCare.AccesoADatos.Entidades;
 using DentalCare.AccesoADatos.Entidades.Archivo;
 using DentalCare.AccesoADatos.Entidades.Bitacora;
+using DentalCare.AccesoADatos.Entidades.Citas;
 using DentalCare.AccesoADatos.Entidades.Estado;
 using DentalCare.AccesoADatos.Entidades.Expediente;
 using DentalCare.AccesoADatos.Entidades.Expedientes;
@@ -51,5 +52,11 @@ namespace DentalCare.AccesoADatos
         public DbSet<OdontogramaEntidad> Odontogramas { get; set; }
         public DbSet<PiezaDentalEntidad> PiezasDentales { get; set; }
         public DbSet<OdontogramaDetalleEntidad> OdontogramaDetalles { get; set; }
+
+        //Citas
+        public DbSet<CitaEntidad> Citas { get; set; }
+        public DbSet<MotivoCitaEntidad> MotivosCita { get; set; }
+        public DbSet<UsuarioCitaEntidad> UsuarioCitas { get; set; }
+        public DbSet<MotivoCancelacionEntidad> MotivoCancelacionCita { get; set; }
     }
 }
