@@ -325,6 +325,7 @@
     <Content Include="Views\Expediente\GuardarAlerta.cshtml" />
     <Content Include="Views\Expediente\RegistrarOdontograma.cshtml" />
     <Content Include="Views\Expediente\VerOdontograma.cshtml" />
+    <Content Include="Views\Cita\SolicitarCitaUsuario.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

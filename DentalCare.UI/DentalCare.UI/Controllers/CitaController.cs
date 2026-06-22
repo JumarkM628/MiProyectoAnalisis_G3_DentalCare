@@ -66,6 +66,42 @@ namespace DentalCare.UI.Controllers
             return RedirectToAction("ObtenerTodasLasCitas");
         }
 
+        // GET: Cita/SolicitarCita
+        public ActionResult SolicitarCitaUsuario()
+        {
+            var dto = CargarDropdowns(new CitaDto { IdEstado = 1 }); // Activo por defecto
+            return View(dto);
+        }
+
+        // POST: Cita/SolicitarCita
+        // Reutiliza exactamente la misma lógica de AgregarCitaLN
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SolicitarCitaUsuario(CitaDto dto)
+        {
+            ModelState.Remove("Hora");
+
+            if (!ModelState.IsValid)
+            {
+                CargarDropdowns(dto);
+                return View(dto);
+            }
+
+            string error = _agregarLN.Agregar(dto);
+            if (error != null)
+            {
+                if (error.Contains("no está registrado"))
+                    ViewBag.MostrarRegistrarPaciente = true;
+
+                ModelState.AddModelError(string.Empty, error);
+                CargarDropdowns(dto);
+                return View(dto);
+            }
+
+            TempData["Exito"] = "¡Tu cita fue registrada correctamente! Te esperamos.";
+            return RedirectToAction("ObtenerTodasLasCitas");
+        }
+
         // ---------------------------------------------------------------
         // Auxiliar: carga dropdowns
         // ---------------------------------------------------------------
