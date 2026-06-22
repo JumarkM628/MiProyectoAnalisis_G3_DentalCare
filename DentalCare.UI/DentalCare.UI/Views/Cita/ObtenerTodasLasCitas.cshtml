@@ -8,67 +8,44 @@
 
     <!-- Header -->
     <div class="usuarios-header">
-
         <div>
             <h1 class="usuarios-titulo">
                 <i class="fa fa-calendar"></i>
                 Citas Registradas
             </h1>
-
             <p class="usuarios-subtitulo">
-                Total registradas:
-                <strong>@(Model?.Count ?? 0)</strong>
+                Total registradas: <strong>@(Model?.Count ?? 0)</strong>
             </p>
         </div>
-
         <div>
-            @Html.ActionLink(
-                "+ Nueva Cita",
-                "AgregarCita",
-                "Cita",
-                null,
-                new { @class = "btn-usuario-primary" }
-            )
+            @Html.ActionLink("+ Nueva Cita", "AgregarCita", "Cita",
+                     null, new { @class = "btn-usuario-primary" })
         </div>
-
     </div>
 
     @if (TempData["Exito"] != null)
     {
-        <div class="alert alert-success">
-            @TempData["Exito"]
-        </div>
+        <div class="alert alert-success">@TempData["Exito"]</div>
     }
-
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger">
-            @TempData["Error"]
-        </div>
+        <div class="alert alert-danger">@TempData["Error"]</div>
     }
 
     <!-- Buscador -->
     <div class="usuarios-filtros">
-
         <div class="buscador-wrapper">
             <i class="fa fa-search"></i>
-
-            <input type="text"
-                   id="buscador"
-                   class="usuario-input"
+            <input type="text" id="buscador" class="usuario-input"
                    placeholder="Buscar por paciente, doctor o motivo..."
                    onkeyup="filtrarTabla()" />
         </div>
-
     </div>
 
     <!-- Tabla -->
     <div class="usuarios-table-wrapper">
-
         <div class="usuarios-table-card">
-
             <table class="usuarios-table" id="tablaCitas">
-
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -81,9 +58,7 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-
                 <tbody>
-
                     @if (Model == null || !Model.Any())
                     {
                         <tr>
@@ -96,109 +71,95 @@
                     {
                         foreach (var c in Model)
                         {
+                            // Determinar la clase CSS del badge según el estado
+                            string badgeClass = "estado-inactivo";
+                            if (c.NombreEstado == "Activo" || c.NombreEstado == "Confirmada")
+                            {
+                                badgeClass = "estado-activo";
+                            }
+                            else if (c.NombreEstado == "Pendiente")
+                            {
+                                badgeClass = "estado-pendiente";
+                            }
+                            else if (c.NombreEstado == "Cancelada")
+                            {
+                                badgeClass = "estado-cancelada";
+                            }
+                            else if (c.NombreEstado == "Rechazada")
+                            {
+                                badgeClass = "estado-rechazada";
+                            }
+
                             <tr>
-
-                                <td class="td-id">
-                                    @c.IdCita
-                                </td>
-
-                                <td>
-                                    @c.NombrePaciente
-                                </td>
-
-                                <td>
-                                    @c.NombreDoctor
-                                </td>
-
+                                <td class="td-id">@c.IdCita</td>
+                                <td>@c.NombrePaciente</td>
+                                <td>@c.NombreDoctor</td>
                                 <td class="td-muted">
-                                    @(c.Fecha.HasValue
-                                        ? c.Fecha.Value.ToString("dd/MM/yyyy")
-                                        : "—")
+                                    @(c.Fecha.HasValue ? c.Fecha.Value.ToString("dd/MM/yyyy") : "—")
                                 </td>
-
                                 <td>
-                                    @(string.IsNullOrEmpty(c.HoraString)
-                                        ? "—"
-                                        : c.HoraString)
+                                    @(string.IsNullOrEmpty(c.HoraString) ? "—" : c.HoraString)
                                 </td>
-
+                                <td>@c.NombreMotivo</td>
                                 <td>
-                                    @c.NombreMotivo
-                                </td>
-
-                                <td>
-
-                                    @{
-                                        bool activo =
-                                            !string.IsNullOrEmpty(c.NombreEstado) &&
-                                            c.NombreEstado.ToLower() == "activo";
-                                    }
-
-                                    <span class="estado-badge @(activo ? "estado-activo" : "estado-inactivo")">
+                                    <span class="estado-badge @badgeClass">
                                         @c.NombreEstado
                                     </span>
-
                                 </td>
-
                                 <td>
-
                                     <div class="acciones-row">
 
-                                        @Html.ActionLink(
-                                            "Ver",
-                                            "Details",
-                                            new { id = c.IdCita },
-                                            new { @class = "accion-btn accion-ver" })
+                                        @Html.ActionLink("Ver", "Details",
+                                                 new { id = c.IdCita },
+                                                 new { @class = "accion-btn accion-ver" })
 
-                                        @Html.ActionLink(
-                                            "Editar",
-                                            "Edit",
-                                            new { id = c.IdCita },
-                                            new { @class = "accion-btn accion-editar" })
-
-                                        @Html.ActionLink(
-                                            "Cancelar",
-                                            "Delete",
-                                            new { id = c.IdCita },
-                                            new
+                                        @* Confirmar: solo si está Pendiente o Activo *@
+                                        @if (c.NombreEstado == "Pendiente" || c.NombreEstado == "Activo")
+                                        {
+                                            using (Html.BeginForm("Confirmar", "Cita",
+                                                new { id = c.IdCita }, FormMethod.Post,
+                                                new { style = "display:inline;" }))
                                             {
-                                                @class = "accion-btn accion-eliminar",
-                                                onclick = "return confirm('¿Desea cancelar esta cita?');"
-                                            })
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit"
+                                                        class="accion-btn accion-confirmar"
+                                                        onclick="return confirm('¿Confirmar esta cita?');">
+                                                    Confirmar
+                                                </button>
+                                            }
+                                        }
+
+                                        @* Cancelar: si no está ya cancelada o rechazada *@
+                                        @if (c.NombreEstado != "Cancelada" && c.NombreEstado != "Rechazada")
+                                        {
+                                            @Html.ActionLink("Cancelar", "Cancelar", new { id = c.IdCita }, new { @class = "accion-btn accion-cancelar" })
+                                        }
+
+                                        @* Rechazar: solo si está Pendiente *@
+                                        @if (c.NombreEstado == "Pendiente")
+                                        {
+                                            @Html.ActionLink("Rechazar", "Rechazar", new { id = c.IdCita }, new { @class = "accion-btn accion-eliminar" })
+                                        }
 
                                     </div>
-
                                 </td>
-
                             </tr>
                         }
                     }
-
                 </tbody>
-
             </table>
 
             <div class="usuarios-empty" id="emptyMsg" style="display:none;">
                 No se encontraron citas.
             </div>
-
         </div>
-
     </div>
 
     <!-- Paginación -->
     <div class="pagination-container">
-
-        <button id="prevBtn" onclick="cambiarPagina(-1)">
-            ← Anterior
-        </button>
-
+        <button id="prevBtn" onclick="cambiarPagina(-1)">← Anterior</button>
         <span id="paginaActual"></span>
-
-        <button id="nextBtn" onclick="cambiarPagina(1)">
-            Siguiente →
-        </button>
-
+        <button id="nextBtn" onclick="cambiarPagina(1)">Siguiente →</button>
     </div>
 
 </div>
@@ -323,6 +284,7 @@
         color: #6b7280;
     }
 
+    /* Badges de estado */
     .estado-badge {
         display: inline-block;
         padding: 5px 12px;
@@ -343,6 +305,25 @@
         border: 1px solid #f0a0a0;
     }
 
+    .estado-pendiente {
+        background: #fff8e1;
+        color: #b45309;
+        border: 1px solid #f59e0b;
+    }
+
+    .estado-cancelada {
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #d97706;
+    }
+
+    .estado-rechazada {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #ef4444;
+    }
+
+    /* Botones de acción */
     .acciones-row {
         display: flex;
         flex-wrap: wrap;
@@ -357,6 +338,8 @@
         font-size: .75rem;
         font-weight: 600;
         transition: .2s;
+        border: none;
+        cursor: pointer;
     }
 
         .accion-btn:hover {
@@ -368,7 +351,11 @@
         background: #3498db;
     }
 
-    .accion-editar {
+    .accion-confirmar {
+        background: #27ae60;
+    }
+
+    .accion-cancelar {
         background: #f39c12;
     }
 
@@ -430,7 +417,6 @@
 </style>
 
 @section Scripts {
-
     <script>
         let paginaActual = 1;
         const filasPorPagina = 10;
@@ -459,7 +445,6 @@
 
             document.getElementById("paginaActual").innerText =
                 "Página " + paginaActual + " de " + totalPaginas;
-
             document.getElementById("prevBtn").disabled = (paginaActual === 1);
             document.getElementById("nextBtn").disabled = (paginaActual >= totalPaginas);
         }
@@ -496,5 +481,4 @@
             mostrarPagina();
         });
     </script>
-
 }

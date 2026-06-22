@@ -1,6 +1,8 @@
 ﻿using DentaCare.LogicaDeNegocio.Citas.AgregarCita;
+using DentaCare.LogicaDeNegocio.Citas.CambiarEstadoCita;
 using DentaCare.LogicaDeNegocio.Citas.ObtenerTodasLasCitas;
 using DentalCare.Abstraccion.LogicaDeNegocio.Citas.AgregarCita;
+using DentalCare.Abstraccion.LogicaDeNegocio.Citas.CambiarEstadoCita;
 using DentalCare.Abstraccion.LogicaDeNegocio.Citas.ObtenerTodasLasCitas;
 using DentalCare.Abstraccion.Modelo.Citas;
 using DentalCare.AccesoADatos;
@@ -17,11 +19,13 @@ namespace DentalCare.UI.Controllers
     {
         private readonly IObtenerTodasLasCitasLN _obtenerLN;
         private readonly IAgregarCitaLN _agregarLN;
+        private readonly ICambiarEstadoCitaLN _cambiarEstadoLN;
 
         public CitaController()
         {
             _obtenerLN = new ObtenerTodasLasCitasLN();
             _agregarLN = new AgregarCitaLN();
+            _cambiarEstadoLN = new CambiarEstadoCitaLN();
         }
 
         // GET: Cita/ObtenerTodasLasCitas
@@ -38,7 +42,6 @@ namespace DentalCare.UI.Controllers
             return View(dto);
         }
 
-        // POST: Cita/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AgregarCita(CitaDto dto)
@@ -53,10 +56,8 @@ namespace DentalCare.UI.Controllers
             string error = _agregarLN.Agregar(dto);
             if (error != null)
             {
-                // Escenario 4: ofrecer opción de registrar paciente
                 if (error.Contains("no está registrado"))
                     ViewBag.MostrarRegistrarPaciente = true;
-
                 ModelState.AddModelError(string.Empty, error);
                 CargarDropdowns(dto);
                 return View(dto);
@@ -66,41 +67,76 @@ namespace DentalCare.UI.Controllers
             return RedirectToAction("ObtenerTodasLasCitas");
         }
 
-        // GET: Cita/SolicitarCita
-        public ActionResult SolicitarCitaUsuario()
+        // GET: Confirmación de cancelación
+        public ActionResult Cancelar(int id)
         {
-            var dto = CargarDropdowns(new CitaDto { IdEstado = 1 }); // Activo por defecto
-            return View(dto);
+            var lista = _obtenerLN.Obtener();
+            var cita = lista.FirstOrDefault(c => c.IdCita == id);
+            if (cita == null)
+            {
+                TempData["Error"] = "No se encontró la cita.";
+                return RedirectToAction("ObtenerTodasLasCitas");
+            }
+            // Usar la vista existente "CancelarConfirmado"
+            return View("CancelarConfirmado", cita);
         }
 
-        // POST: Cita/SolicitarCita
-        // Reutiliza exactamente la misma lógica de AgregarCitaLN
+        // POST: Procesar cancelación (sin ActionName)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult SolicitarCitaUsuario(CitaDto dto)
+        public ActionResult CancelarConfirmado(int id)
         {
-            ModelState.Remove("Hora");
-
-            if (!ModelState.IsValid)
-            {
-                CargarDropdowns(dto);
-                return View(dto);
-            }
-
-            string error = _agregarLN.Agregar(dto);
+            string error = _cambiarEstadoLN.Cancelar(id);
             if (error != null)
             {
-                if (error.Contains("no está registrado"))
-                    ViewBag.MostrarRegistrarPaciente = true;
-
-                ModelState.AddModelError(string.Empty, error);
-                CargarDropdowns(dto);
-                return View(dto);
+                TempData["Error"] = error;
+                return RedirectToAction("ObtenerTodasLasCitas");
             }
-
-            TempData["Exito"] = "¡Tu cita fue registrada correctamente! Te esperamos.";
+            TempData["Exito"] = "Cita cancelada correctamente.";
             return RedirectToAction("ObtenerTodasLasCitas");
         }
+
+        // GET: Confirmación de rechazo
+        public ActionResult Rechazar(int id)
+        {
+            var lista = _obtenerLN.Obtener();
+            var cita = lista.FirstOrDefault(c => c.IdCita == id);
+            if (cita == null)
+            {
+                TempData["Error"] = "No se encontró la cita.";
+                return RedirectToAction("ObtenerTodasLasCitas");
+            }
+            // Usar la vista existente "RechazarConfirmado"
+            return View("RechazarConfirmado", cita);
+        }
+
+        // POST: Procesar rechazo (sin ActionName)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RechazarConfirmado(int id)
+        {
+            string error = _cambiarEstadoLN.Rechazar(id);
+            if (error != null)
+            {
+                TempData["Error"] = error;
+                return RedirectToAction("ObtenerTodasLasCitas");
+            }
+            TempData["Exito"] = "Cita rechazada. Se notificó al paciente por correo.";
+            return RedirectToAction("ObtenerTodasLasCitas");
+        }
+
+        // POST: Confirmar (ya funcionaba)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Confirmar(int id)
+        {
+            string error = _cambiarEstadoLN.Confirmar(id);
+            TempData[error != null ? "Error" : "Exito"] =
+                error ?? "Cita confirmada correctamente.";
+            return RedirectToAction("ObtenerTodasLasCitas");
+        }
+
+
 
         // ---------------------------------------------------------------
         // Auxiliar: carga dropdowns

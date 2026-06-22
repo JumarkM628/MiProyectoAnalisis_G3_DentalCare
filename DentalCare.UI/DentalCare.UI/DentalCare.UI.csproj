@@ -326,6 +326,8 @@
     <Content Include="Views\Expediente\RegistrarOdontograma.cshtml" />
     <Content Include="Views\Expediente\VerOdontograma.cshtml" />
     <Content Include="Views\Cita\SolicitarCitaUsuario.cshtml" />
+    <Content Include="Views\Cita\CancelarConfirmado.cshtml" />
+    <Content Include="Views\Cita\RechazarConfirmado.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

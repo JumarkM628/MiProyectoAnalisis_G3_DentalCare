@@ -1,0 +1,46 @@
+﻿@model DentalCare.Abstraccion.Modelo.Citas.CitaDto
+
+@{
+    ViewBag.Title = "RechazarConfirmado";
+}
+
+<div class="container" style="max-width:560px; padding:24px;">
+
+    <h2 style="font-weight:600; color:#c0392b;">
+        <i class="fa fa-ban"></i> Confirmar Rechazo
+    </h2>
+
+    @* Escenario 2: mensaje de confirmación *@
+    <div class="alert alert-danger" style="margin-top:16px;">
+        <strong>¿Está seguro que desea rechazar esta solicitud de cita?</strong><br />
+        Se notificará al paciente por correo electrónico.
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading"><strong>Datos de la Cita</strong></div>
+        <div class="panel-body">
+            <table class="table table-condensed" style="margin-bottom:0;">
+                <tr><td><strong>ID Cita</strong></td><td>@Model.IdCita</td></tr>
+                <tr><td><strong>Paciente</strong></td><td>@Model.NombrePaciente</td></tr>
+                <tr><td><strong>Doctor</strong></td><td>@Model.NombreDoctor</td></tr>
+                <tr><td><strong>Fecha</strong></td><td>@(Model.Fecha.HasValue ? Model.Fecha.Value.ToString("dd/MM/yyyy") : "—")</td></tr>
+                <tr><td><strong>Hora</strong></td><td>@Model.HoraString</td></tr>
+                <tr><td><strong>Motivo</strong></td><td>@Model.NombreMotivo</td></tr>
+            </table>
+        </div>
+    </div>
+
+    @using (Html.BeginForm("RechazarConfirmado", "Cita", new { id = Model.IdCita }, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div style="margin-top:16px;">
+            <button type="submit" class="btn btn-danger">
+                Sí, rechazar solicitud
+            </button>
+            @Html.ActionLink("Volver", "ObtenerTodasLasCitas", "Cita",
+                null, new { @class = "btn btn-default", style = "margin-left:8px;" })
+        </div>
+    }
+</div>
+
+

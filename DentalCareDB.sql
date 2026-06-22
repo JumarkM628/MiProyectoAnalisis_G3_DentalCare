@@ -538,3 +538,9 @@ ADD CONSTRAINT CITAS_DOCTOR_FK FOREIGN KEY (ID_DOCTOR)
 (5, 'Ortodoncia', 1),
 (6, 'Endodoncia', 1),
 (7, 'Revisión', 1);
+
+INSERT INTO FIDE_ESTADO_TB (ID_ESTADO, NOMBRE_ESTADO) VALUES
+(3, 'Cancelada'),
+(4, 'Rechazada'),
+(5, 'Pendiente'),
+(6, 'Confirmada')
