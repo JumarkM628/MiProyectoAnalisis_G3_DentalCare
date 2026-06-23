@@ -328,6 +328,7 @@
     <Content Include="Views\Cita\SolicitarCitaUsuario.cshtml" />
     <Content Include="Views\Cita\CancelarConfirmado.cshtml" />
     <Content Include="Views\Cita\RechazarConfirmado.cshtml" />
+    <Content Include="Views\Cita\Editar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -24,9 +24,8 @@ namespace DentaCare.LogicaDeNegocio.Citas.CambiarEstadoCita
         public string Cancelar(int idCita)
         {
             if (!_cambiarAD.ExisteCita(idCita))
-                return "No se encontró la cita indicada.";
-
-            // ID 2 = motivo cancelación "Sin cancelación" que ya existe
+                return "No se encontró la cita.";
+            // Usar el nombre "Cancelada"
             _cambiarAD.CambiarEstado(idCita, CambiarEstadoCitaAD.ESTADO_CANCELADA, 1);
             return null;
         }
@@ -35,24 +34,48 @@ namespace DentaCare.LogicaDeNegocio.Citas.CambiarEstadoCita
         public string Rechazar(int idCita)
         {
             if (!_cambiarAD.ExisteCita(idCita))
-                return "No se encontró la cita indicada.";
-
+                return "No se encontró la cita.";
             _cambiarAD.CambiarEstado(idCita, CambiarEstadoCitaAD.ESTADO_RECHAZADA, 1);
-
-            // Notificar al paciente por correo (Escenario 4)
-            string correo = _cambiarAD.ObtenerCorreoPaciente(idCita);
-            if (!string.IsNullOrEmpty(correo))
-                EnviarCorreoRechazo(correo, idCita);
-
+            // ... notificación por correo ...
             return null;
         }
 
         public string Confirmar(int idCita)
         {
             if (!_cambiarAD.ExisteCita(idCita))
-                return "No se encontró la cita indicada.";
-
+                return "No se encontró la cita.";
             _cambiarAD.CambiarEstado(idCita, CambiarEstadoCitaAD.ESTADO_CONFIRMADA, 1);
+            return null;
+        }
+        public string Asistir(int idCita, TimeSpan horaInicio)
+        {
+            if (!_cambiarAD.ExisteCita(idCita))
+                return "No se encontró la cita.";
+            _cambiarAD.RegistrarAsistencia(idCita, horaInicio);
+            return null;
+        }
+
+        public string Finalizar(int idCita, TimeSpan horaFin)
+        {
+            if (!_cambiarAD.ExisteCita(idCita))
+                return "No se encontró la cita.";
+            _cambiarAD.RegistrarFinalizacion(idCita, horaFin);
+            return null;
+        }
+
+        public string EditarEstado(int idCita, string nuevoEstado, int motivoCancelacion = 1)
+        {
+            if (!_cambiarAD.ExisteCita(idCita))
+                return "No se encontró la cita.";
+            _cambiarAD.CambiarEstado(idCita, nuevoEstado, motivoCancelacion);
+            return null;
+        }
+
+        public string Ausente(int idCita)
+        {
+            if (!_cambiarAD.ExisteCita(idCita))
+                return "No se encontró la cita.";
+            _cambiarAD.RegistrarAusencia(idCita);
             return null;
         }
 

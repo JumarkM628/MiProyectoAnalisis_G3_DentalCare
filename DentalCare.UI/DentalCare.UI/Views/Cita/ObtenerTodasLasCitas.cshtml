@@ -89,6 +89,18 @@
                             {
                                 badgeClass = "estado-rechazada";
                             }
+                            else if (c.NombreEstado == "Asistida")
+                            {
+                                badgeClass = "estado-asistida";
+                            }
+                            else if (c.NombreEstado == "Ausente")
+                            {
+                                badgeClass = "estado-ausente";
+                            }
+                            else if (c.NombreEstado == "Finalizada")
+                            {
+                                badgeClass = "estado-finalizada";
+                            }
 
                             <tr>
                                 <td class="td-id">@c.IdCita</td>
@@ -109,6 +121,7 @@
                                 <td>
                                     <div class="acciones-row">
 
+                                        @* Ver *@
                                         @Html.ActionLink("Ver", "Details",
                                                  new { id = c.IdCita },
                                                  new { @class = "accion-btn accion-ver" })
@@ -139,6 +152,48 @@
                                         @if (c.NombreEstado == "Pendiente")
                                         {
                                             @Html.ActionLink("Rechazar", "Rechazar", new { id = c.IdCita }, new { @class = "accion-btn accion-eliminar" })
+                                        }
+
+                                        @* Asistir: solo si está Confirmada o Activo *@
+                                        @if (c.NombreEstado == "Confirmada" || c.NombreEstado == "Activo")
+                                        {
+                                            using (Html.BeginForm("Asistir", "Cita", new { id = c.IdCita }, FormMethod.Post, new { style = "display:inline;" }))
+                                            {
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="accion-btn accion-asistir" onclick="return confirm('¿Registrar asistencia? Se guardará la hora de inicio.');">
+                                                    Asistió
+                                                </button>
+                                            }
+                                        }
+
+                                        @* Ausente: solo si está Confirmada o Activo *@
+                                        @if (c.NombreEstado == "Confirmada" || c.NombreEstado == "Activo")
+                                        {
+                                            using (Html.BeginForm("Ausente", "Cita", new { id = c.IdCita }, FormMethod.Post, new { style = "display:inline;" }))
+                                            {
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="accion-btn accion-ausente" onclick="return confirm('¿Registrar inasistencia?');">
+                                                    No Asistió
+                                                </button>
+                                            }
+                                        }
+
+                                        @* Finalizar: solo si está Asistida *@
+                                        @if (c.NombreEstado == "Asistida")
+                                        {
+                                            using (Html.BeginForm("Finalizar", "Cita", new { id = c.IdCita }, FormMethod.Post, new { style = "display:inline;" }))
+                                            {
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="accion-btn accion-finalizar" onclick="return confirm('¿Finalizar tratamiento? Se registrará la hora de fin.');">
+                                                    Finalizar
+                                                </button>
+                                            }
+                                        }
+
+                                        @* Editar: solo para roles con permisos *@
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Recepcionista") || User.IsInRole("Doctor") || User.IsInRole("Asistente"))
+                                        {
+                                            @Html.ActionLink("Editar", "Editar", new { id = c.IdCita }, new { @class = "accion-btn accion-editar" })
                                         }
 
                                     </div>
@@ -323,6 +378,24 @@
         border: 1px solid #ef4444;
     }
 
+    .estado-asistida {
+        background: #d1f7d1;
+        color: #0b6e0b;
+        border: 1px solid #2ecc71;
+    }
+
+    .estado-ausente {
+        background: #fdebd0;
+        color: #a04000;
+        border: 1px solid #e67e22;
+    }
+
+    .estado-finalizada {
+        background: #d5d5fd;
+        color: #2c3e50;
+        border: 1px solid #9b59b6;
+    }
+
     /* Botones de acción */
     .acciones-row {
         display: flex;
@@ -340,6 +413,9 @@
         transition: .2s;
         border: none;
         cursor: pointer;
+        display: inline-block;
+        text-align: center;
+        white-space: nowrap;
     }
 
         .accion-btn:hover {
@@ -361,6 +437,22 @@
 
     .accion-eliminar {
         background: #e74c3c;
+    }
+
+    .accion-asistir {
+        background: #2ecc71;
+    }
+
+    .accion-ausente {
+        background: #e67e22;
+    }
+
+    .accion-finalizar {
+        background: #9b59b6;
+    }
+
+    .accion-editar {
+        background: #34495e;
     }
 
     .usuarios-empty {

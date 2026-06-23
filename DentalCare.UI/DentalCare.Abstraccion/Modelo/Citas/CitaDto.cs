@@ -55,6 +55,10 @@ namespace DentalCare.Abstraccion.Modelo.Citas
         [Display(Name = "Estado")]
         public int IdEstado { get; set; }
 
+        public TimeSpan? HoraInicio { get; set; }
+        public TimeSpan? HoraFin { get; set; }
+        public DateTime? FechaModificacion { get; set; }
+
         public IEnumerable<SelectListItem> ListaDoctores { get; set; }
         public IEnumerable<SelectListItem> ListaMotivos { get; set; }
         public IEnumerable<SelectListItem> ListaEstados { get; set; }

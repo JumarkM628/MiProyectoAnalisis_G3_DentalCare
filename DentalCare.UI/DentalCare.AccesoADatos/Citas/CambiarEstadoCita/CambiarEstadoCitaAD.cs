@@ -11,11 +11,14 @@ namespace DentalCare.AccesoADatos.Citas.CambiarEstadoCita
     {
         private readonly Contexto _contexto;
 
-        public const int ESTADO_ACTIVO = 1;
-        public const int ESTADO_CANCELADA = 3;
-        public const int ESTADO_RECHAZADA = 4;
-        public const int ESTADO_PENDIENTE = 5;
-        public const int ESTADO_CONFIRMADA = 6;
+        public const string ESTADO_ACTIVO = "Activo";
+        public const string ESTADO_CANCELADA = "Cancelada";
+        public const string ESTADO_RECHAZADA = "Rechazada";
+        public const string ESTADO_PENDIENTE = "Pendiente";
+        public const string ESTADO_CONFIRMADA = "Confirmada";
+        public const string ESTADO_ASISTIDA = "Asistida";     
+        public const string ESTADO_AUSENTE = "Ausente";        
+        public const string ESTADO_FINALIZADA = "Finalizada";
 
         public CambiarEstadoCitaAD()
         {
@@ -23,23 +26,86 @@ namespace DentalCare.AccesoADatos.Citas.CambiarEstadoCita
         }
 
 
-        public void CambiarEstado(int idCita, int idEstado, int idMotivoCancelacion)
+        private int ObtenerIdEstado(string nombreEstado)
         {
-            using (var transaccion = _contexto.Database.BeginTransaction())
+            var estado = _contexto.Estados.FirstOrDefault(e => e.NombreEstado == nombreEstado);
+            if (estado == null)
+                throw new Exception($"El estado '{nombreEstado}' no existe en la base de datos.");
+            return estado.IdEstado;
+        }
+
+        // Cambiar estado usando el nombre, no el ID
+        public void CambiarEstado(int idCita, string nombreEstado, int idMotivoCancelacion = 1)
+        {
+            int idEstado = ObtenerIdEstado(nombreEstado);
+            using (var trans = _contexto.Database.BeginTransaction())
             {
                 try
                 {
                     var cita = _contexto.Citas.First(c => c.IdCita == idCita);
                     cita.IdEstado = idEstado;
                     cita.IdCancelacion = idMotivoCancelacion;
+                    cita.Fecha = DateTime.Now;
                     _contexto.SaveChanges();
-                    transaccion.Commit();
+                    trans.Commit();
                 }
-                catch
+                catch { trans.Rollback(); throw; }
+            }
+        }
+
+        // Registrar asistencia (actualiza hora_inicio)
+        public void RegistrarAsistencia(int idCita, TimeSpan horaInicio)
+        {
+            int idEstado = ObtenerIdEstado(ESTADO_ASISTIDA);
+            using (var trans = _contexto.Database.BeginTransaction())
+            {
+                try
                 {
-                    transaccion.Rollback();
-                    throw;
+                    var cita = _contexto.Citas.First(c => c.IdCita == idCita);
+                    cita.IdEstado = idEstado;
+                    cita.Hora = horaInicio;
+                    cita.Fecha = DateTime.Now;
+                    _contexto.SaveChanges();
+                    trans.Commit();
                 }
+                catch { trans.Rollback(); throw; }
+            }
+        }
+
+        // Registrar ausencia (no guarda hora)
+        public void RegistrarAusencia(int idCita)
+        {
+            int idEstado = ObtenerIdEstado(ESTADO_AUSENTE);
+            using (var trans = _contexto.Database.BeginTransaction())
+            {
+                try
+                {
+                    var cita = _contexto.Citas.First(c => c.IdCita == idCita);
+                    cita.IdEstado = idEstado;
+                    cita.Fecha = DateTime.Now;
+                    _contexto.SaveChanges();
+                    trans.Commit();
+                }
+                catch { trans.Rollback(); throw; }
+            }
+        }
+
+        // Registrar finalización (actualiza hora_fin)
+        public void RegistrarFinalizacion(int idCita, TimeSpan horaFin)
+        {
+            int idEstado = ObtenerIdEstado(ESTADO_FINALIZADA);
+            using (var trans = _contexto.Database.BeginTransaction())
+            {
+                try
+                {
+                    var cita = _contexto.Citas.First(c => c.IdCita == idCita);
+                    cita.IdEstado = idEstado;
+                    cita.Hora = horaFin;
+                    cita.Fecha = DateTime.Now;
+                    _contexto.SaveChanges();
+                    trans.Commit();
+                }
+                catch { trans.Rollback(); throw; }
             }
         }
 

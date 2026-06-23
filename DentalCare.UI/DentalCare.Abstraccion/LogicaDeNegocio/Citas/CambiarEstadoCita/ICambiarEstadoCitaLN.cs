@@ -11,5 +11,9 @@ namespace DentalCare.Abstraccion.LogicaDeNegocio.Citas.CambiarEstadoCita
         string Cancelar(int idCita);
         string Rechazar(int idCita);
         string Confirmar(int idCita);
+        string Asistir(int idCita, TimeSpan horaInicio);
+        string Finalizar(int idCita, TimeSpan horaFin);
+        string EditarEstado(int idCita, string nuevoEstado, int motivoCancelacion = 1);
+        string Ausente(int idCita);
     }
 }

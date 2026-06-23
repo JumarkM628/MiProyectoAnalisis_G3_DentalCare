@@ -136,6 +136,96 @@ namespace DentalCare.UI.Controllers
             return RedirectToAction("ObtenerTodasLasCitas");
         }
 
+        public ActionResult Editar(int id)
+        {
+            var lista = _obtenerLN.Obtener();
+            var cita = lista.FirstOrDefault(c => c.IdCita == id);
+            if (cita == null)
+            {
+                TempData["Error"] = "No se encontró la cita.";
+                return RedirectToAction("ObtenerTodasLasCitas");
+            }
+            // Cargar dropdowns con los datos de la cita
+            var dto = CargarDropdowns(cita);
+            return View(dto);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Editar(CitaDto dto)
+        {
+            ModelState.Remove("Hora");
+            if (!ModelState.IsValid)
+            {
+                CargarDropdowns(dto);
+                return View(dto);
+            }
+
+            // Obtener el nombre del estado a partir del IdEstado seleccionado
+            string nombreEstado = ObtenerNombreEstado(dto.IdEstado);
+            if (string.IsNullOrEmpty(nombreEstado))
+            {
+                TempData["Error"] = "Estado inválido.";
+                CargarDropdowns(dto);
+                return View(dto);
+            }
+
+            string error = _cambiarEstadoLN.EditarEstado(dto.IdCita, nombreEstado, 1);
+            if (error != null)
+            {
+                TempData["Error"] = error;
+                CargarDropdowns(dto);
+                return View(dto);
+            }
+
+            TempData["Exito"] = "La cita fue actualizada correctamente.";
+            return RedirectToAction("ObtenerTodasLasCitas");
+        }
+
+        // Método auxiliar para obtener nombre de estado por ID
+        private string ObtenerNombreEstado(int idEstado)
+        {
+            using (var ctx = new Contexto())
+            {
+                var estado = ctx.Estados.FirstOrDefault(e => e.IdEstado == idEstado);
+                return estado?.NombreEstado;
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Asistir(int id)
+        {
+            TimeSpan horaInicio = DateTime.Now.TimeOfDay;
+            string error = _cambiarEstadoLN.Asistir(id, horaInicio);
+            TempData[error != null ? "Error" : "Exito"] =
+                error ?? "Asistencia registrada correctamente.";
+            return RedirectToAction("ObtenerTodasLasCitas");
+        }
+
+        // POST: Ausente
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Ausente(int id)
+        {
+            string error = _cambiarEstadoLN.Ausente(id);
+            TempData[error != null ? "Error" : "Exito"] =
+                error ?? "Ausencia registrada correctamente.";
+            return RedirectToAction("ObtenerTodasLasCitas");
+        }
+
+        // POST: Finalizar
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Finalizar(int id)
+        {
+            TimeSpan horaFin = DateTime.Now.TimeOfDay;
+            string error = _cambiarEstadoLN.Finalizar(id, horaFin);
+            TempData[error != null ? "Error" : "Exito"] =
+                error ?? "Cita finalizada correctamente.";
+            return RedirectToAction("ObtenerTodasLasCitas");
+        }
+
 
 
         // ---------------------------------------------------------------
