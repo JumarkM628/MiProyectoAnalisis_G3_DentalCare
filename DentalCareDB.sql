@@ -544,3 +544,8 @@ INSERT INTO FIDE_ESTADO_TB (ID_ESTADO, NOMBRE_ESTADO) VALUES
 (4, 'Rechazada'),
 (5, 'Pendiente'),
 (6, 'Confirmada')
+
+INSERT INTO FIDE_ESTADO_TB (ID_ESTADO, NOMBRE_ESTADO) VALUES
+(7, 'Ausente'),
+(8, 'Asistida'),
+(9, 'Finalizada')

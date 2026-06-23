@@ -1,11 +1,14 @@
 ﻿using DentaCare.LogicaDeNegocio.Citas.AgregarCita;
 using DentaCare.LogicaDeNegocio.Citas.CambiarEstadoCita;
+using DentaCare.LogicaDeNegocio.Citas.ObtenerCitasPaciente;
 using DentaCare.LogicaDeNegocio.Citas.ObtenerTodasLasCitas;
 using DentalCare.Abstraccion.LogicaDeNegocio.Citas.AgregarCita;
 using DentalCare.Abstraccion.LogicaDeNegocio.Citas.CambiarEstadoCita;
+using DentalCare.Abstraccion.LogicaDeNegocio.Citas.ObtenerCitasPaciente;
 using DentalCare.Abstraccion.LogicaDeNegocio.Citas.ObtenerTodasLasCitas;
 using DentalCare.Abstraccion.Modelo.Citas;
 using DentalCare.AccesoADatos;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,12 +23,14 @@ namespace DentalCare.UI.Controllers
         private readonly IObtenerTodasLasCitasLN _obtenerLN;
         private readonly IAgregarCitaLN _agregarLN;
         private readonly ICambiarEstadoCitaLN _cambiarEstadoLN;
+        private readonly IObtenerCitasPacienteLN _obtenerPacienteLN;
 
         public CitaController()
         {
             _obtenerLN = new ObtenerTodasLasCitasLN();
             _agregarLN = new AgregarCitaLN();
             _cambiarEstadoLN = new CambiarEstadoCitaLN();
+            _obtenerPacienteLN = new ObtenerCitasPacienteLN();
         }
 
         // GET: Cita/ObtenerTodasLasCitas
@@ -224,6 +229,52 @@ namespace DentalCare.UI.Controllers
             TempData[error != null ? "Error" : "Exito"] =
                 error ?? "Cita finalizada correctamente.";
             return RedirectToAction("ObtenerTodasLasCitas");
+        }
+
+        //-----------------paciente
+
+        // GET: Cita/MisCitas
+        // Escenario 4: historial de citas del paciente logueado
+        [Authorize(Roles = "Paciente")]
+        public ActionResult MisCitas()
+        {
+            string aspNetUserId = User.Identity.GetUserId();
+            var lista = _obtenerPacienteLN.ObtenerPorPaciente(aspNetUserId);
+            return View(lista);
+        }
+
+        // GET: Cita/CancelarMiCita/5
+        // Escenario 4: confirmación antes de cancelar
+        [Authorize(Roles = "Paciente")]
+        public ActionResult CancelarMiCita(int id)
+        {
+            string aspNetUserId = User.Identity.GetUserId();
+            var lista = _obtenerPacienteLN.ObtenerPorPaciente(aspNetUserId);
+            var cita = lista.FirstOrDefault(c => c.IdCita == id);
+
+            if (cita == null)
+            {
+                TempData["Error"] = "No se encontró la cita o no te pertenece.";
+                return RedirectToAction("MisCitas");
+            }
+
+            return View(cita);
+        }
+
+        // POST: Cita/CancelarMiCita/5
+        [HttpPost, ActionName("CancelarMiCita")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Paciente")]
+        public ActionResult CancelarMiCitaConfirmado(int id)
+        {
+            string error = _cambiarEstadoLN.Cancelar(id);
+            if (error != null)
+            {
+                TempData["Error"] = error;
+                return RedirectToAction("MisCitas");
+            }
+            TempData["Exito"] = "Tu cita fue cancelada correctamente.";
+            return RedirectToAction("MisCitas");
         }
 
 

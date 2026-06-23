@@ -56,6 +56,12 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.5.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Hangfire.Core, Version=1.8.23.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.Core.1.8.23\lib\net46\Hangfire.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Hangfire.SqlServer, Version=1.8.23.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.SqlServer.1.8.23\lib\net451\Hangfire.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="MailKit, Version=4.17.0.0, Culture=neutral, PublicKeyToken=4e064fe7c44a8f1b, processorArchitecture=MSIL">
       <HintPath>..\packages\MailKit.4.17.0\lib\net48\MailKit.dll</HintPath>
     </Reference>
@@ -329,6 +335,8 @@
     <Content Include="Views\Cita\CancelarConfirmado.cshtml" />
     <Content Include="Views\Cita\RechazarConfirmado.cshtml" />
     <Content Include="Views\Cita\Editar.cshtml" />
+    <Content Include="Views\Cita\MisCitas.cshtml" />
+    <Content Include="Views\Cita\CancelarMiCita.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
