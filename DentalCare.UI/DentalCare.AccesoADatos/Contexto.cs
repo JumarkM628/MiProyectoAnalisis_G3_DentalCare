@@ -7,6 +7,8 @@ using DentalCare.AccesoADatos.Entidades.Estado;
 using DentalCare.AccesoADatos.Entidades.Expediente;
 using DentalCare.AccesoADatos.Entidades.Expedientes;
 using DentalCare.AccesoADatos.Entidades.Odontograma;
+using DentalCare.AccesoADatos.Entidades.Procedimiento;
+using DentalCare.AccesoADatos.Entidades.Producto;
 using DentalCare.AccesoADatos.Entidades.Tratamiento;
 using DentalCare.AccesoADatos.Entidades.Usuarios;
 
@@ -58,5 +60,12 @@ namespace DentalCare.AccesoADatos
         public DbSet<MotivoCitaEntidad> MotivosCita { get; set; }
         public DbSet<UsuarioCitaEntidad> UsuarioCitas { get; set; }
         public DbSet<MotivoCancelacionEntidad> MotivoCancelacionCita { get; set; }
+
+        //Producto
+        public DbSet<ProductoEntidad> Productos { get; set; }
+        public DbSet<UsoProductoEntidad> UsoProductos { get; set; }
+        public DbSet<ProcedimientoEntidad> Procedimientos { get; set; }
+        public DbSet<ComprasProductoEntidad> ComprasProducto { get; set; }
+        public DbSet<ProveedorProductoEntidad> ProveedorProductos { get; set; }
     }
 }

@@ -1,42 +1,42 @@
-﻿using DentalCare.Abstraccion.AccesoADatos.Citas.CambiarEstadoCita;
-using DentalCare.Abstraccion.LogicaDeNegocio.Citas.CambiarEstadoCita;
-using DentalCare.AccesoADatos.Citas.CambiarEstadoCita;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using DentalCare.Abstraccion.AccesoADatos.Citas.CambiarEstadoCita;
+using DentalCare.Abstraccion.AccesoADatos.UsoProducto;
+using DentalCare.Abstraccion.LogicaDeNegocio.Citas.CambiarEstadoCita;
+using DentalCare.AccesoADatos;
+using DentalCare.AccesoADatos.Citas.CambiarEstadoCita;
+using DentalCare.AccesoADatos.UsoProducto.RegistrarUsoProducto;
 
 namespace DentaCare.LogicaDeNegocio.Citas.CambiarEstadoCita
 {
     public class CambiarEstadoCitaLN : ICambiarEstadoCitaLN
     {
         private readonly ICambiarEstadoCitaAD _cambiarAD;
+        private readonly IRegistrarUsoProductoAD _usoProductoAD;
 
         public CambiarEstadoCitaLN()
         {
             _cambiarAD = new CambiarEstadoCitaAD();
-        }
+            _usoProductoAD = new RegistrarUsoProductoAD(new Contexto());
 
-        // Escenario 1 y 3: cancelar — libera el horario cambiando estado
+        }
         public string Cancelar(int idCita)
         {
             if (!_cambiarAD.ExisteCita(idCita))
                 return "No se encontró la cita.";
-            // Usar el nombre "Cancelada"
             _cambiarAD.CambiarEstado(idCita, CambiarEstadoCitaAD.ESTADO_CANCELADA, 1);
             return null;
         }
-
-        // Escenario 4: rechazar y notificar al paciente por correo
         public string Rechazar(int idCita)
         {
             if (!_cambiarAD.ExisteCita(idCita))
                 return "No se encontró la cita.";
             _cambiarAD.CambiarEstado(idCita, CambiarEstadoCitaAD.ESTADO_RECHAZADA, 1);
-            // ... notificación por correo ...
             return null;
         }
 
@@ -59,6 +59,10 @@ namespace DentaCare.LogicaDeNegocio.Citas.CambiarEstadoCita
         {
             if (!_cambiarAD.ExisteCita(idCita))
                 return "No se encontró la cita.";
+
+            if (!_usoProductoAD.ExisteUsoRegistrado(idCita))
+                return "No se puede finalizar la cita: debe registrar los materiales utilizados antes de continuar.";
+
             _cambiarAD.RegistrarFinalizacion(idCita, horaFin);
             return null;
         }
@@ -78,10 +82,6 @@ namespace DentaCare.LogicaDeNegocio.Citas.CambiarEstadoCita
             _cambiarAD.RegistrarAusencia(idCita);
             return null;
         }
-
-        // ---------------------------------------------------------------
-        // Envío de correo de notificación al paciente (Escenario 4)
-        // ---------------------------------------------------------------
         private void EnviarCorreoRechazo(string destinatario, int idCita)
         {
             try
@@ -92,8 +92,7 @@ namespace DentaCare.LogicaDeNegocio.Citas.CambiarEstadoCita
                     cliente.UseDefaultCredentials = false;
                     cliente.Credentials = new NetworkCredential(
                         "dentalcaremailtester@gmail.com",
-                        "hwubwchnhlnubilz"); // igual que en IdentityConfig
-
+                        "hwubwchnhlnubilz"); 
                     var correo = new MailMessage
                     {
                         From = new MailAddress("mirandacjumark23@gmail.com", "DentalCare"),
@@ -115,7 +114,6 @@ namespace DentaCare.LogicaDeNegocio.Citas.CambiarEstadoCita
             }
             catch
             {
-                // Si falla el correo no interrumpimos el flujo principal
             }
         }
     }

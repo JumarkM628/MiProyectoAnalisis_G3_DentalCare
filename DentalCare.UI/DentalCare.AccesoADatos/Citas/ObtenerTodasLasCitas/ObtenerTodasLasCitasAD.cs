@@ -21,8 +21,6 @@ namespace DentalCare.AccesoADatos.Citas.ObtenerTodasLasCitas
         {
             var rawData = (
                 from cita in _contexto.Citas
-
-                    // Paciente via FIDE_USUARIO_CITA_TB
                 join uc in _contexto.UsuarioCitas
                     on cita.IdCita equals uc.IdCita into ucGrupo
                 from uc in ucGrupo.DefaultIfEmpty()
@@ -30,17 +28,13 @@ namespace DentalCare.AccesoADatos.Citas.ObtenerTodasLasCitas
                 join paciente in _contexto.Usuarios
                     on uc.IdUsuario equals paciente.IdUsuario into pacienteGrupo
                 from paciente in pacienteGrupo.DefaultIfEmpty()
-
-                    // Doctor via ID_DOCTOR
                 join doctor in _contexto.Usuarios
                     on cita.IdDoctor equals doctor.IdUsuario into doctorGrupo
                 from doctor in doctorGrupo.DefaultIfEmpty()
 
-                    // Motivo
                 join motivo in _contexto.MotivosCita
                     on cita.IdMotivo equals motivo.IdMotivo
 
-                // Estado
                 join estado in _contexto.Estados
                     on cita.IdEstado equals estado.IdEstado
 

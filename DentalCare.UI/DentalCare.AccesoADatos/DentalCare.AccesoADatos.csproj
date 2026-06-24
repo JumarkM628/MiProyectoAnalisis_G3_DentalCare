@@ -71,6 +71,11 @@
     <Compile Include="Entidades\Odontograma\OdontogramaDetalleEntidad.cs" />
     <Compile Include="Entidades\Odontograma\OdontogramaEntidad.cs" />
     <Compile Include="Entidades\Odontograma\PiezaDentalEntidad.cs" />
+    <Compile Include="Entidades\Procedimiento\ProcedimientoEntidad.cs" />
+    <Compile Include="Entidades\Producto\ComprasProductoEntidad.cs" />
+    <Compile Include="Entidades\Producto\ProductoEntidad.cs" />
+    <Compile Include="Entidades\Producto\ProveedorProductoEntidad.cs" />
+    <Compile Include="Entidades\Producto\UsoProductoEntidad.cs" />
     <Compile Include="Entidades\Tratamiento\PlanTratamientoEntidad.cs" />
     <Compile Include="Entidades\Usuarios\AreaUsuarioEntidad.cs" />
     <Compile Include="Entidades\Usuarios\AspNetRoles.cs" />
@@ -89,8 +94,13 @@
     <Compile Include="Expedientes\ReabrirExpediente\ReabrirExpedienteAD.cs" />
     <Compile Include="Odontograma\ObtenerOdontogramaPorExpediente\ObtenerOdontogramaPorExpedienteAD.cs" />
     <Compile Include="Odontograma\RegistrarOdontograma\RegistrarOdontogramaAD.cs" />
+    <Compile Include="Producto\EditarProducto\EditarProductoAD.cs" />
+    <Compile Include="Producto\RegistrarProducto\RegistrarProductoAD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reporteria\Producto\ReporteLotesAD.cs" />
+    <Compile Include="Reporteria\Producto\ReporteProductosAD.cs" />
     <Compile Include="Tratamiento\EditarPlanTratamiento\EditarPlanTratamientoAD.cs" />
+    <Compile Include="UsoProducto\RegistrarUsoProducto\RegistrarUsoProductoAD.cs" />
     <Compile Include="Usuarios\EditarUsuario\EditarUsuarioAD.cs" />
     <Compile Include="Usuarios\EliminarUsuario\EliminarUsuarioAD.cs" />
     <Compile Include="Usuarios\ObtenerTodosLosUsuarios\ObtenerTodoLosUsuariosAD.cs" />

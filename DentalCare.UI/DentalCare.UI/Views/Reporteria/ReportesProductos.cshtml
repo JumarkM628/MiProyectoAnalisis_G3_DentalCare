@@ -1,0 +1,141 @@
+﻿
+@{
+    ViewBag.Title = "Reportes de Productos";
+}
+
+<div class="rep-layout">
+
+    <aside class="rep-sidebar">
+        <h3 class="rep-sidebar-titulo">Reportes de Productos</h3>
+
+        <div class="rep-grupo">
+            <span class="rep-grupo-label">Por Producto</span>
+            <a href="#" class="rep-link" data-url="@Url.Action("ProductosMasUtilizados", "Reporteria")">Más utilizados</a>
+            <a href="#" class="rep-link" data-url="@Url.Action("ProductosMenosUtilizados", "Reporteria")">Menos utilizados</a>
+            <a href="#" class="rep-link" data-url="@Url.Action("ProductosMasComprados", "Reporteria")">Más comprados</a>
+            <a href="#" class="rep-link" data-url="@Url.Action("ProductosMenosComprados", "Reporteria")">Menos comprados</a>
+            <a href="#" class="rep-link" data-url="@Url.Action("HistorialPorTratamiento", "Reporteria")">Historial por tratamiento</a>
+        </div>  
+        <div class="rep-grupo">
+            <span class="rep-grupo-label">Por Lote</span>
+            <a href="#" class="rep-link" data-url="@Url.Action("LotesMasUtilizados", "Reporteria")">Más utilizados</a>
+            <a href="#" class="rep-link" data-url="@Url.Action("LotesMenosUtilizados", "Reporteria")">Menos utilizados</a>
+            <a href="#" class="rep-link" data-url="@Url.Action("LotesMasComprados", "Reporteria")">Más comprados</a>
+            <a href="#" class="rep-link" data-url="@Url.Action("LotesMenosComprados", "Reporteria")">Menos comprados</a>
+            <a href="#" class="rep-link" data-url="@Url.Action("HistorialLotePorTratamiento", "Reporteria")">Historial por tratamiento</a>
+        </div>
+
+        <div style="margin-top: 24px;">
+            @Html.ActionLink("← Volver a Reportería", "Index", "Reporteria", null, new { @class = "btn btn-secondary btn-sm" })
+        </div>
+    </aside>
+
+    <section class="rep-contenido" id="contenido-reporte">
+        <div class="rep-placeholder">
+            <p>Seleccione una opción del menú para ver el reporte.</p>
+        </div>
+    </section>
+
+</div>
+
+<style>
+    .rep-layout {
+        display: flex;
+        min-height: 70vh;
+        gap: 0;
+    }
+
+    .rep-sidebar {
+        width: 260px;
+        flex-shrink: 0;
+        background: #f0f4f8;
+        padding: 24px 16px;
+        border-right: 1px solid #dce7ef;
+    }
+
+    .rep-sidebar-titulo {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1e2d3d;
+        margin-bottom: 20px;
+    }
+
+    .rep-grupo {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 24px;
+    }
+
+    .rep-grupo-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #8a9bb0;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+
+    .rep-link {
+        padding: 9px 12px;
+        border-radius: 8px;
+        color: #1e2d3d;
+        text-decoration: none;
+        font-size: 0.88rem;
+        margin-bottom: 2px;
+        transition: background 0.15s;
+    }
+
+        .rep-link:hover {
+            background: #e0eef7;
+            text-decoration: none;
+        }
+
+        .rep-link.activo {
+            background: #1abcb0;
+            color: #fff;
+            font-weight: 600;
+        }
+
+    .rep-contenido {
+        flex: 1;
+        padding: 32px;
+    }
+
+    .rep-placeholder {
+        text-align: center;
+        color: #8a9bb0;
+        padding: 60px 20px;
+    }
+
+    @@media (max-width: 768px) {
+        .rep-layout {
+            flex-direction: column;
+        }
+
+        .rep-sidebar {
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid #dce7ef;
+        }
+    }
+</style>
+
+<script>$(document).ready(function () {
+        $('.rep-link').on('click', function (e) {
+            e.preventDefault();
+
+            var url = $(this).data('url');
+
+            $('.rep-link').removeClass('activo');
+            $(this).addClass('activo');
+
+            $('#contenido-reporte').html('<p class="rep-placeholder">Cargando...</p>');
+
+            $.get(url, function (data) {
+                $('#contenido-reporte').html(data);
+            }).fail(function () {
+                $('#contenido-reporte').html('<p class="rep-placeholder">Error al cargar el reporte.</p>');
+            });
+        });
+    });</script>
+

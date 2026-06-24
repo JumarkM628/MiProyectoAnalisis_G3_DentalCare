@@ -3,38 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using DentaCare.LogicaDeNegocio.Producto.EditarProducto;
+using DentalCare.Abstraccion.LogicaDeNegocio.Producto;
+using DentalCare.Abstraccion.Modelo.Producto;
+using DentalCare.AccesoADatos;
+using DentalCare.AccesoADatos.Producto.EditarProducto;
 
 namespace DentalCare.UI.Controllers
 {
     [Authorize(Roles = "Admin,Recepcionista,Doctor,Asistente")]
     public class InventarioController : Controller
     {
+        private readonly IEditarProductoLN _editarProductoLN;
+
+        public InventarioController()
+        {
+            _editarProductoLN = new EditarProductoLN(new EditarProductoAD(new Contexto()));
+        }
+
         // GET: Inventario
         public ActionResult InventarioIndex()
         {
             return View();
         }
 
-        // GET: Inventario/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
 
-        // GET: Inventario/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Inventario/Create
         [HttpPost]
         public ActionResult Create(FormCollection collection)
         {
             try
             {
-                // TODO: Add insert logic here
-
                 return RedirectToAction("Index");
             }
             catch
@@ -43,42 +50,48 @@ namespace DentalCare.UI.Controllers
             }
         }
 
-        // GET: Inventario/Edit/5
+        [Authorize(Roles = "Doctor,Admin")]
         public ActionResult Edit(int id)
         {
-            return View();
+            var producto = _editarProductoLN.ObtenerProductoPorId(id);
+            if (producto == null)
+                return HttpNotFound();
+
+            return View(producto);
         }
 
-        // POST: Inventario/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Doctor,Admin")]
+        public ActionResult Edit(ProductoDto model)
         {
-            try
-            {
-                // TODO: Add update logic here
+            if (!ModelState.IsValid)
+                return View(model);
 
-                return RedirectToAction("Index");
-            }
-            catch
+            string nombreUsuario = User.Identity.Name;
+
+            string error = _editarProductoLN.EditarProducto(model, nombreUsuario);
+
+            if (error != null)
             {
-                return View();
+                ModelState.AddModelError("", error);
+                return View(model);
             }
+
+            TempData["Exito"] = "El inventario fue actualizado correctamente.";
+            return RedirectToAction("InventarioIndex");
         }
 
-        // GET: Inventario/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: Inventario/Delete/5
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {
             try
             {
-                // TODO: Add delete logic here
-
                 return RedirectToAction("Index");
             }
             catch

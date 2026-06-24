@@ -1,16 +1,20 @@
-﻿using DentaCare.LogicaDeNegocio.Citas.AgregarCita;
-using DentaCare.LogicaDeNegocio.Citas.CambiarEstadoCita;
-using DentaCare.LogicaDeNegocio.Citas.ObtenerTodasLasCitas;
-using DentalCare.Abstraccion.LogicaDeNegocio.Citas.AgregarCita;
-using DentalCare.Abstraccion.LogicaDeNegocio.Citas.CambiarEstadoCita;
-using DentalCare.Abstraccion.LogicaDeNegocio.Citas.ObtenerTodasLasCitas;
-using DentalCare.Abstraccion.Modelo.Citas;
-using DentalCare.AccesoADatos;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using DentaCare.LogicaDeNegocio.Citas.AgregarCita;
+using DentaCare.LogicaDeNegocio.Citas.CambiarEstadoCita;
+using DentaCare.LogicaDeNegocio.Citas.ObtenerTodasLasCitas;
+using DentaCare.LogicaDeNegocio.UsoProducto.RegistrarUsoProducto;
+using DentalCare.Abstraccion.LogicaDeNegocio.Citas.AgregarCita;
+using DentalCare.Abstraccion.LogicaDeNegocio.Citas.CambiarEstadoCita;
+using DentalCare.Abstraccion.LogicaDeNegocio.Citas.ObtenerTodasLasCitas;
+using DentalCare.Abstraccion.LogicaDeNegocio.UsoProducto;
+using DentalCare.Abstraccion.Modelo.Citas;
+using DentalCare.Abstraccion.Modelo.Producto.UsoProducto;
+using DentalCare.AccesoADatos;
+using DentalCare.AccesoADatos.UsoProducto.RegistrarUsoProducto;
 
 namespace DentalCare.UI.Controllers
 {
@@ -20,12 +24,14 @@ namespace DentalCare.UI.Controllers
         private readonly IObtenerTodasLasCitasLN _obtenerLN;
         private readonly IAgregarCitaLN _agregarLN;
         private readonly ICambiarEstadoCitaLN _cambiarEstadoLN;
+        private readonly IRegistrarUsoProductoLN _usoProductoLN;
 
         public CitaController()
         {
             _obtenerLN = new ObtenerTodasLasCitasLN();
             _agregarLN = new AgregarCitaLN();
             _cambiarEstadoLN = new CambiarEstadoCitaLN();
+            _usoProductoLN = new RegistrarUsoProductoLN(new RegistrarUsoProductoAD(new Contexto()));
         }
 
         // GET: Cita/ObtenerTodasLasCitas
@@ -226,7 +232,58 @@ namespace DentalCare.UI.Controllers
             return RedirectToAction("ObtenerTodasLasCitas");
         }
 
+        public ActionResult RegistrarProductos(int id)
+        {
+            var lista = _obtenerLN.Obtener();
+            var cita = lista.FirstOrDefault(c => c.IdCita == id);
+            if (cita == null)
+            {
+                TempData["Error"] = "No se encontró la cita.";
+                return RedirectToAction("ObtenerTodasLasCitas");
+            }
 
+            ViewBag.IdCita = id;
+            ViewBag.NombrePaciente = cita.NombrePaciente; // ajusta según el nombre real de la propiedad en CitaDto
+
+            var productosUsados = _usoProductoLN.ObtenerProductosUsadosPorCita(id);
+
+            using (var ctx = new Contexto())
+            {
+                ViewBag.ListaProductos = ctx.Productos
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.ID_PRODUCTO.ToString(),
+                        Text = p.NOMBRE_PRODUCTO
+                    }).ToList();
+            }
+
+            return View(productosUsados);
+        }
+
+        // POST: Cita/RegistrarProductos
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RegistrarProductos(UsoProductoDto dto)
+        {
+            if (dto.Cantidad <= 0 || dto.IdProducto == 0)
+            {
+                TempData["Error"] = "Debe seleccionar un producto y una cantidad válida.";
+                return RedirectToAction("RegistrarProductos", new { id = dto.IdCita });
+            }
+
+            string error = _usoProductoLN.RegistrarUso(dto);
+
+            if (error != null)
+            {
+                TempData["Error"] = error;
+            }
+            else
+            {
+                TempData["Exito"] = "Producto registrado correctamente.";
+            }
+
+            return RedirectToAction("RegistrarProductos", new { id = dto.IdCita });
+        }
 
         // ---------------------------------------------------------------
         // Auxiliar: carga dropdowns

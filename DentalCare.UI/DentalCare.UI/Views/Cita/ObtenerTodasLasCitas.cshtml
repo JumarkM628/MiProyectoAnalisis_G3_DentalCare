@@ -177,6 +177,11 @@
                                                 </button>
                                             }
                                         }
+                                        @* Registrar Productos: disponible cuando está Asistida (antes de finalizar) *@
+                                        @if (c.NombreEstado == "Asistida")
+                                        {
+                                            @Html.ActionLink("Registrar Productos", "RegistrarProductos", new { id = c.IdCita }, new { @class = "accion-btn accion-productos" })
+                                        }
 
                                         @* Finalizar: solo si está Asistida *@
                                         @if (c.NombreEstado == "Asistida")

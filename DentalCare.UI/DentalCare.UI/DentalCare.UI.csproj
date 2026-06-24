@@ -329,6 +329,19 @@
     <Content Include="Views\Cita\CancelarConfirmado.cshtml" />
     <Content Include="Views\Cita\RechazarConfirmado.cshtml" />
     <Content Include="Views\Cita\Editar.cshtml" />
+    <Content Include="Views\Reporteria\ProductosMasUtilizados.cshtml" />
+    <Content Include="Views\Reporteria\ProductosMenosUtilizados.cshtml" />
+    <Content Include="Views\Reporteria\ProductosMasComprados.cshtml" />
+    <Content Include="Views\Reporteria\ProductosMenosComprados.cshtml" />
+    <Content Include="Views\Reporteria\HistorialPorTratamiento.cshtml" />
+    <Content Include="Views\Reporteria\LotesMasUtilizados.cshtml" />
+    <Content Include="Views\Reporteria\LotesMenosUtilizados.cshtml" />
+    <Content Include="Views\Reporteria\LotesMasComprados.cshtml" />
+    <Content Include="Views\Reporteria\LotesMenosComprados.cshtml" />
+    <Content Include="Views\Reporteria\HistorialLotePorTratamiento.cshtml" />
+    <Content Include="Views\Reporteria\ReportesProductos.cshtml" />
+    <Content Include="Views\Cita\RegistrarProductos.cshtml" />
+    <Content Include="Views\Inventario\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
