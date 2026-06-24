@@ -68,6 +68,7 @@
     <Compile Include="AccesoADatos\Archivo\IArchivoClinicoAD.cs" />
     <Compile Include="AccesoADatos\Citas\AgregarCita\IAgregarCitaAD.cs" />
     <Compile Include="AccesoADatos\Citas\CambiarEstadoCita\ICambiarEstadoCitaAD.cs" />
+    <Compile Include="AccesoADatos\Citas\ObtenerCitaPaciente\IObtenerCitasPacienteAD.cs" />
     <Compile Include="AccesoADatos\Citas\ObtenerTodasLasCitas\IObtenerTodasLasCitasAD.cs" />
     <Compile Include="AccesoADatos\Expediente\Alerta\GuardarAlerta\IGuardarAlertaAD.cs" />
     <Compile Include="AccesoADatos\Expediente\Alerta\ObtenerAlertaPorExpediente\IObtenerAlertaPorExpedienteAD.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="LogicaDeNegocio\Archivo\IArchivoClinicoLN.cs" />
     <Compile Include="LogicaDeNegocio\Citas\AgregarCita\IAgregarCitaLN.cs" />
     <Compile Include="LogicaDeNegocio\Citas\CambiarEstadoCita\ICambiarEstadoCitaLN.cs" />
+    <Compile Include="LogicaDeNegocio\Citas\ObtenerCitasPaciente\IObtenerCitasPacienteLN.cs" />
     <Compile Include="LogicaDeNegocio\Citas\ObtenerTodasLasCitas\IObtenerTodasLasCitasLN.cs" />
     <Compile Include="LogicaDeNegocio\Expedientes\Alertas\GuardarAlerta\IGuardarAlertaLN.cs" />
     <Compile Include="LogicaDeNegocio\Expedientes\Alertas\ObtenerAlertasPorExpediente\IObtenerAlertaPorExpedienteLN.cs" />

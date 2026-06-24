@@ -1,0 +1,46 @@
+﻿@model DentalCare.Abstraccion.Modelo.Citas.CitaDto
+
+@{
+    ViewBag.Title = "CancelarMiCita";
+}
+
+<div class="container" style="max-width:560px; padding:24px;">
+
+    <h2 style="font-weight:600; color:#c0392b;">
+        <i class="fa fa-times-circle"></i> Cancelar Cita
+    </h2>
+
+    <div class="alert alert-warning" style="margin-top:16px;">
+        <strong>¿Estás seguro que querés cancelar esta cita?</strong><br />
+        El horario quedará disponible y tendrás que solicitar una nueva cita si cambiás de opinión.
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading"><strong>Detalle de la Cita</strong></div>
+        <div class="panel-body">
+            <table class="table table-condensed" style="margin-bottom:0;">
+                <tr><td><strong>ID</strong></td><td>@Model.IdCita</td></tr>
+                <tr><td><strong>Doctor</strong></td><td>@Model.NombreDoctor</td></tr>
+                <tr><td><strong>Fecha</strong></td><td>@(Model.Fecha.HasValue ? Model.Fecha.Value.ToString("dd/MM/yyyy") : "—")</td></tr>
+                <tr><td><strong>Hora</strong></td><td>@Model.HoraString</td></tr>
+                <tr><td><strong>Motivo</strong></td><td>@Model.NombreMotivo</td></tr>
+                <tr><td><strong>Estado</strong></td><td>@Model.NombreEstado</td></tr>
+            </table>
+        </div>
+    </div>
+
+    @using (Html.BeginForm("CancelarMiCita", "Cita",
+        new { id = Model.IdCita }, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div style="margin-top:16px;">
+            <button type="submit" class="btn btn-danger">
+                Sí, cancelar mi cita
+            </button>
+            @Html.ActionLink("Volver a mis citas", "MisCitas", "Cita",
+                null, new { @class = "btn btn-default", style = "margin-left:8px;" })
+        </div>
+    }
+</div>
+
+

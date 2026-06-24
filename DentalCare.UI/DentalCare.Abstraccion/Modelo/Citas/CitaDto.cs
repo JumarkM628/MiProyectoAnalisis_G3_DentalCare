@@ -25,6 +25,9 @@ namespace DentalCare.Abstraccion.Modelo.Citas
         [Display(Name = "Estado")]
         public string NombreEstado { get; set; }
 
+         
+        public string CorreoPaciente { get; set; }
+
 
         [Required(ErrorMessage = "La cédula del paciente es obligatoria.")]
         [RegularExpression(@"^\d+$", ErrorMessage = "La identificación solo puede contener números.")]

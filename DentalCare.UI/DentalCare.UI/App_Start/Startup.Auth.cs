@@ -1,11 +1,16 @@
-﻿using System;
+﻿using DentaCare.LogicaDeNegocio.Citas.RecordatorioCitaServicios;
+using DentalCare.UI.Models;
+// ========== AGREGADO: usings para Hangfire ==========
+using Hangfire;
+using Hangfire.SqlServer;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
-using DentalCare.UI.Models;
+using System;
+// ===================================================
 
 namespace DentalCare.UI
 {
@@ -34,7 +39,7 @@ namespace DentalCare.UI
                         validateInterval: TimeSpan.FromMinutes(30),
                         regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager))
                 }
-            });            
+            });
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
             // Permite que la aplicación almacene temporalmente la información del usuario cuando se verifica el segundo factor en el proceso de autenticación de dos factores.
@@ -66,7 +71,42 @@ namespace DentalCare.UI
 
             // Crear roles y usuario administrador inicial si no existen
             CreateRolesAndUsers();
+
+            // ========== AGREGADO: Inicializar Hangfire ==========
+            ConfigureHangfire(app);
+            // ===================================================
         }
+
+        // ========== AGREGADO: Método para configurar Hangfire ==========
+        private void ConfigureHangfire(IAppBuilder app)
+        {
+            // Obtener la cadena de conexión desde Web.config (asegúrate de que exista con el nombre "DentalCareConnection")
+            var connectionString = System.Configuration.ConfigurationManager
+                .ConnectionStrings["Contexto"]?.ConnectionString;
+
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                // Si no está definida, puedes usar la misma cadena que usa Entity Framework (ejemplo)
+                // O simplemente lanzar una excepción para que sepas que falta.
+                throw new Exception("La cadena de conexión 'DentalCareConnection' no está definida en Web.config.");
+            }
+
+            GlobalConfiguration.Configuration
+                .UseSqlServerStorage(connectionString);
+
+            // Registrar el servidor de Hangfire
+            app.UseHangfireServer();
+
+            // Dashboard de Hangfire (accesible en /hangfire)
+            app.UseHangfireDashboard("/hangfire");
+
+            // Tarea recurrente cada hora para enviar recordatorios de citas
+            RecurringJob.AddOrUpdate<RecordatorioCitaServicio>(
+                "recordatorio-citas-24h",
+                servicio => servicio.EnviarRecordatorios(),
+                Cron.Hourly); // Cada hora verifica si hay citas en las próximas 24h
+        }
+        // ================================================================
 
         private void CreateRolesAndUsers()
         {

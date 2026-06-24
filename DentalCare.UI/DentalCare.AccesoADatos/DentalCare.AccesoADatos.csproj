@@ -55,6 +55,7 @@
     <Compile Include="Archivo\SubirArchivo\ArchivoClinicoAD.cs" />
     <Compile Include="Citas\AgregarCita\AgregarCitaAD.cs" />
     <Compile Include="Citas\CambiarEstadoCita\CambiarEstadoCitaAD.cs" />
+    <Compile Include="Citas\ObtenerCitaPaciente\ObtenerCitasPacienteAD.cs" />
     <Compile Include="Citas\ObtenerTodasLasCitas\ObtenerTodasLasCitasAD.cs" />
     <Compile Include="Contexto.cs" />
     <Compile Include="Entidades\Archivo\ArchivoClinicoEntidad.cs" />
