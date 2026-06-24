@@ -247,6 +247,24 @@ namespace DentalCare.UI.Controllers
                 return RedirectToAction("ObtenerTodasLasCitas");
             }
 
+            ViewBag.IdCita = id;
+            ViewBag.NombrePaciente = cita.NombrePaciente; // ajusta según el nombre real de la propiedad en CitaDto
+
+            var productosUsados = _usoProductoLN.ObtenerProductosUsadosPorCita(id);
+
+            using (var ctx = new Contexto())
+            {
+                ViewBag.ListaProductos = ctx.Productos
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.ID_PRODUCTO.ToString(),
+                        Text = p.NOMBRE_PRODUCTO
+                    }).ToList();
+            }
+
+            return View(productosUsados);
+        }
+
         //-----------------paciente
 
         // GET: Cita/MisCitas
@@ -293,25 +311,8 @@ namespace DentalCare.UI.Controllers
             return RedirectToAction("MisCitas");
         }
 
-            ViewBag.IdCita = id;
-            ViewBag.NombrePaciente = cita.NombrePaciente; // ajusta según el nombre real de la propiedad en CitaDto
 
-            var productosUsados = _usoProductoLN.ObtenerProductosUsadosPorCita(id);
-
-            using (var ctx = new Contexto())
-            {
-                ViewBag.ListaProductos = ctx.Productos
-                    .Select(p => new SelectListItem
-                    {
-                        Value = p.ID_PRODUCTO.ToString(),
-                        Text = p.NOMBRE_PRODUCTO
-                    }).ToList();
-            }
-
-            return View(productosUsados);
-        }
-
-        // POST: Cita/RegistrarProductos
+            // POST: Cita/RegistrarProductos
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult RegistrarProductos(UsoProductoDto dto)
