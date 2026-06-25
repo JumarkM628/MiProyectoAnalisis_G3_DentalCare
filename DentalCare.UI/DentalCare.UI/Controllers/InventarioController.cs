@@ -58,6 +58,8 @@ namespace DentalCare.UI.Controllers
                 CargarDropdowns();
                 return View(model);
             }
+
+            // Obtener usuario logueado (ASP.NET Identity)
             using (var ctx = new Contexto())
             {
                 string aspNetUserId = User.Identity.GetUserId();
@@ -103,15 +105,44 @@ namespace DentalCare.UI.Controllers
             ViewBag.Proveedores = proveedores;
         }
 
-        [Authorize(Roles = "Doctor,Admin")]
-        public ActionResult Edit(int id)
-        {
-            var producto = _editarProductoLN.ObtenerProductoPorId(id);
-            if (producto == null)
-                return HttpNotFound();
+        // =========================
+        // EDITAR PRODUCTO
+        // =========================
 
-            CargarDropdowns();
-            return View(producto);
+        [Authorize(Roles = "Doctor,Admin")]
+        public ActionResult Edit(int? id)
+        {
+            if (id == null)
+                return RedirectToAction("InventarioIndex");
+
+            using (var contexto = new Contexto())
+            {
+                var producto = contexto.Productos.Find(id);
+
+                if (producto == null)
+                    return HttpNotFound();
+
+                var dto = new ProductoDto
+                {
+                    IdProducto = producto.ID_PRODUCTO,
+                    CodigoProducto = producto.CODIGO_PRODUCTO,
+                    NombreProducto = producto.NOMBRE_PRODUCTO,
+                    Descripcion = producto.DESCRIPCION,
+                    IdCategoria = producto.ID_CATEGORIA,
+                    UnidadMedida = producto.UNIDAD_MEDIDA,
+                    CantidadActual = producto.STOCK_ACTUAL ?? 0,
+                    CantidadMinima = producto.STOCK_MINIMO ?? 0,
+                    Lote = producto.LOTE,
+                    FechaVencimiento = producto.FECHA_VENCIMIENTO ?? DateTime.Now,
+                    IdProveedor = contexto.ProveedorProductos
+                        .Where(x => x.IdProducto == producto.ID_PRODUCTO)
+                        .Select(x => x.IdProveedor)
+                        .FirstOrDefault()
+                };
+
+                CargarDropdowns();
+                return View(dto);
+            }
         }
 
         [HttpPost]
@@ -125,20 +156,41 @@ namespace DentalCare.UI.Controllers
                 return View(model);
             }
 
-            string nombreUsuario = User.Identity.Name;
-
-            string error = _editarProductoLN.EditarProducto(model, nombreUsuario);
-
-            if (error != null)
+            using (var contexto = new Contexto())
             {
-                ModelState.AddModelError("", error);
-                CargarDropdowns();
-                return View(model);
+                var producto = contexto.Productos.Find(model.IdProducto);
+
+                if (producto == null)
+                    return HttpNotFound();
+
+                producto.CODIGO_PRODUCTO = model.CodigoProducto;
+                producto.NOMBRE_PRODUCTO = model.NombreProducto;
+                producto.DESCRIPCION = model.Descripcion;
+                producto.ID_CATEGORIA = model.IdCategoria;
+                producto.UNIDAD_MEDIDA = model.UnidadMedida;
+                producto.STOCK_ACTUAL = model.CantidadActual;
+                producto.STOCK_MINIMO = model.CantidadMinima;
+                producto.LOTE = model.Lote;
+                producto.FECHA_VENCIMIENTO = model.FechaVencimiento;
+
+                var rel = contexto.ProveedorProductos
+                    .FirstOrDefault(x => x.IdProducto == model.IdProducto);
+
+                if (rel != null)
+                {
+                    rel.IdProveedor = model.IdProveedor;
+                }
+
+                contexto.SaveChanges();
             }
 
             TempData["Exito"] = "El inventario fue actualizado correctamente.";
             return RedirectToAction("InventarioIndex");
         }
+
+        // =========================
+        // DELETE (sin implementar aún)
+        // =========================
 
         public ActionResult Delete(int id)
         {
@@ -150,7 +202,7 @@ namespace DentalCare.UI.Controllers
         {
             try
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("InventarioIndex");
             }
             catch
             {

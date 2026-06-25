@@ -1,4 +1,5 @@
 ﻿@model DentalCare.Abstraccion.Modelo.Producto.ProductoDto
+
 @{
     ViewBag.Title = "Editar Producto";
 }
@@ -22,24 +23,77 @@
                 <h4 class="trat-seccion-titulo">Datos del Producto</h4>
 
                 <div class="trat-fila">
+
                     <div class="trat-campo">
-                        @Html.LabelFor(model => model.CodigoProducto, "Código de Producto", new { @class = "trat-label" })
-                        @Html.TextBoxFor(model => model.CodigoProducto, new { @class = "trat-input" })
-                        @Html.ValidationMessageFor(model => model.CodigoProducto, "", new { @class = "trat-error" })
+                        @Html.LabelFor(m => m.CodigoProducto, "Código de Producto", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.CodigoProducto, new { @class = "trat-input" })
+                        @Html.ValidationMessageFor(m => m.CodigoProducto, "", new { @class = "trat-error" })
                     </div>
 
                     <div class="trat-campo">
-                        @Html.LabelFor(model => model.NombreProducto, "Nombre del Producto", new { @class = "trat-label" })
-                        @Html.TextBoxFor(model => model.NombreProducto, new { @class = "trat-input" })
-                        @Html.ValidationMessageFor(model => model.NombreProducto, "", new { @class = "trat-error" })
+                        @Html.LabelFor(m => m.NombreProducto, "Nombre del Producto", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.NombreProducto, new { @class = "trat-input" })
+                        @Html.ValidationMessageFor(m => m.NombreProducto, "", new { @class = "trat-error" })
                     </div>
+
                 </div>
 
-                <div class="trat-campo-full">
-                    @Html.LabelFor(model => model.CantidadActual, "Cantidad Actual", new { @class = "trat-label" })
-                    @Html.TextBoxFor(model => model.CantidadActual, new { @class = "trat-input", type = "number" })
-                    @Html.ValidationMessageFor(model => model.CantidadActual, "", new { @class = "trat-error" })
+                <div class="trat-fila">
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.Descripcion, "Descripción", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.Descripcion, new { @class = "trat-input" })
+                    </div>
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.UnidadMedida, "Unidad de Medida", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.UnidadMedida, new { @class = "trat-input" })
+                    </div>
+
                 </div>
+
+                <div class="trat-fila">
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.CantidadActual, "Cantidad Actual", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.CantidadActual, new { @class = "trat-input", type = "number" })
+                    </div>
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.CantidadMinima, "Cantidad Mínima", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.CantidadMinima, new { @class = "trat-input", type = "number" })
+                    </div>
+
+                </div>
+
+                <div class="trat-fila">
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.Lote, "Lote", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.Lote, new { @class = "trat-input" })
+                    </div>
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.FechaVencimiento, "Fecha de Vencimiento", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.FechaVencimiento, "{0:yyyy-MM-dd}", new { @class = "trat-input", type = "date" })
+                    </div>
+
+                </div>
+
+                <div class="trat-fila">
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.IdCategoria, "Categoría", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.IdCategoria, new { @class = "trat-input" })
+                    </div>
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.IdProveedor, "Proveedor", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.IdProveedor, new { @class = "trat-input" })
+                    </div>
+
+                </div>
+
             </div>
 
             <div class="trat-botones">
