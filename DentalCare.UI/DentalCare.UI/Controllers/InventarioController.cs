@@ -8,6 +8,7 @@ using DentaCare.LogicaDeNegocio.Producto.RegistrarProducto;
 using DentalCare.Abstraccion.LogicaDeNegocio.Producto;
 using DentalCare.Abstraccion.Modelo.Producto;
 using DentalCare.AccesoADatos;
+using Microsoft.AspNet.Identity;
 using DentalCare.AccesoADatos.Producto.EditarProducto;
 using DentalCare.AccesoADatos.Producto.RegistrarProducto;
 
@@ -54,8 +55,16 @@ namespace DentalCare.UI.Controllers
                 CargarDropdowns();
                 return View(model);
             }
+            using (var ctx = new Contexto())
+            {
+                string aspNetUserId = User.Identity.GetUserId();
+                var usuarioActual = ctx.Usuarios.FirstOrDefault(u => u.ASPNET_USER_ID == aspNetUserId);
 
-            string nombreUsuario = User.Identity.Name;
+                if (usuarioActual != null)
+                {
+                    model.RegistradoPor = usuarioActual.IdUsuario;
+                }
+            }
 
             string error = _registrarProductoLN.RegistrarProducto(model);
 

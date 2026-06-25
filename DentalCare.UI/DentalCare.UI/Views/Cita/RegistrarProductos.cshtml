@@ -3,27 +3,26 @@
     ViewBag.Title = "Registrar Productos Usados";
 }
 
-<div class="inv-page">
+<div class="usuarios-page">
 
-    <div class="inv-header">
-        <h1 class="inv-titulo">Productos Usados</h1>
-        <p class="text-muted">Cita #@ViewBag.IdCita — Paciente: @ViewBag.NombrePaciente</p>
+    <div class="usuarios-header">
+        <div>
+            <h1 class="usuarios-titulo">
+                <i class="fa fa-flask"></i> Productos Usados
+            </h1>
+            <p class="usuarios-subtitulo">
+                Cita #@ViewBag.IdCita — Paciente: <strong>@ViewBag.NombrePaciente</strong>
+            </p>
+        </div>
     </div>
 
     @if (TempData["Exito"] != null)
     {
-        <div class="alerta-item alerta-exito">
-            <span class="alerta-dot verde"></span>
-            <span>@TempData["Exito"]</span>
-        </div>
+        <div class="alert alert-success">@TempData["Exito"]</div>
     }
-
     @if (TempData["Error"] != null)
     {
-        <div class="alerta-item alerta-rojo">
-            <span class="alerta-dot rojo"></span>
-            <span>@TempData["Error"]</span>
-        </div>
+        <div class="alert alert-danger">@TempData["Error"]</div>
     }
 
     <!-- Formulario para agregar producto -->
@@ -32,31 +31,39 @@
         @Html.AntiForgeryToken()
         @Html.Hidden("IdCita", (int)ViewBag.IdCita)
 
-        <div class="exp-table-card trat-form-card">
-            <h4 class="trat-seccion-titulo">Agregar Producto Usado</h4>
+        <div class="usuarios-table-card" style="padding: 24px; margin-bottom: 24px;">
+            <h4 style="font-weight:700; color:#1f2937; margin-bottom:16px;">Agregar Producto Usado</h4>
 
-            <div class="trat-fila">
-                <div class="trat-campo">
-                    <label class="trat-label">Producto</label>
-                    @Html.DropDownList("IdProducto", (IEnumerable<SelectListItem>)ViewBag.ListaProductos, "-- Seleccione --", new { @class = "trat-input" })
+            <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px;">
+                <div style="flex:1; min-width:220px;">
+                    <label style="font-size:.8rem; font-weight:700; color:#1f2937; display:block; margin-bottom:6px;">Producto</label>
+                    @Html.DropDownList("IdProducto", (IEnumerable<SelectListItem>)ViewBag.ListaProductos, "-- Seleccione --", new { @class = "usuario-input" })
                 </div>
 
-                <div class="trat-campo">
-                    <label class="trat-label">Cantidad</label>
-                    <input type="number" name="Cantidad" min="1" class="trat-input" placeholder="Ej: 2" />
+                <div style="flex:1; min-width:160px;">
+                    <label style="font-size:.8rem; font-weight:700; color:#1f2937; display:block; margin-bottom:6px;">Cantidad</label>
+                    <input type="number" name="Cantidad" min="1" class="usuario-input" placeholder="Ej: 2" />
                 </div>
             </div>
 
-            <div class="trat-botones">
-                <input type="submit" value="Registrar Producto" class="btn-inv-primary" />
-            </div>
+            <input type="submit" value="Registrar Producto" class="btn-usuario-primary" />
         </div>
     }
 
-    <!-- Tabla de productos ya registrados -->
-    <div class="exp-table-wrapper" style="margin-top: 24px;">
-        <div class="exp-table-card">
-            <table class="exp-table">
+    <!-- Buscador -->
+    <div class="usuarios-filtros">
+        <div class="buscador-wrapper">
+            <i class="fa fa-search"></i>
+            <input type="text" id="buscador" class="usuario-input"
+                   placeholder="Buscar por producto..."
+                   onkeyup="filtrarTabla()" />
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="usuarios-table-wrapper">
+        <div class="usuarios-table-card">
+            <table class="usuarios-table" id="tablaProductosUsados">
                 <thead>
                     <tr>
                         <th>Producto</th>
@@ -64,10 +71,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (!Model.Any())
+                    @if (Model == null || !Model.Any())
                     {
                         <tr>
-                            <td colspan="2" class="text-center text-muted" style="padding:24px;">
+                            <td colspan="2" class="usuarios-empty-row">
                                 Aún no se han registrado productos para esta cita.
                             </td>
                         </tr>
@@ -78,42 +85,259 @@
                         {
                             <tr>
                                 <td>@item.NombreProducto</td>
-                                <td>@item.Cantidad</td>
+                                <td><span class="estado-badge estado-activo">@item.Cantidad</span></td>
                             </tr>
                         }
                     }
                 </tbody>
             </table>
+
+            <div class="usuarios-empty" id="emptyMsg" style="display:none;">
+                No se encontraron productos.
+            </div>
         </div>
     </div>
 
+    <div class="pagination-container">
+        <button id="prevBtn" onclick="cambiarPagina(-1)">← Anterior</button>
+        <span id="paginaActual"></span>
+        <button id="nextBtn" onclick="cambiarPagina(1)">Siguiente →</button>
+    </div>
+
     <div style="margin-top: 20px;">
-        @Html.ActionLink("← Volver a Citas", "ObtenerTodasLasCitas", "Cita", null, new { @class = "btn-inv-cancelar" })
+        @Html.ActionLink("← Volver a Citas", "ObtenerTodasLasCitas", "Cita", null, new { @class = "btn-usuario-primary" })
     </div>
 
 </div>
 
 <style>
-    .trat-form-card {
-        padding: 28px;
+    .usuarios-page {
+        min-height: 100vh;
+        padding: 40px 32px 60px;
+    }
+
+    .usuarios-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+
+    .usuarios-titulo {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #000;
+        margin: 0;
+    }
+
+    .usuarios-subtitulo {
+        margin-top: 6px;
+        color: #6b7280;
+    }
+
+    .btn-usuario-primary {
+        background: #8FFDFF;
+        color: #000;
+        text-decoration: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: .2s;
+        border: none;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+        .btn-usuario-primary:hover {
+            background: #6EA0FF;
+            color: #fff;
+            text-decoration: none;
+        }
+
+    .usuarios-filtros {
+        margin-bottom: 20px;
+    }
+
+    .buscador-wrapper {
+        position: relative;
+        max-width: 450px;
+    }
+
+        .buscador-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 13px;
+            color: #999;
+        }
+
+    .usuario-input {
+        width: 100%;
+        padding: 12px 15px 12px 40px;
+        border-radius: 10px;
+        border: 1px solid #dcdcdc;
+        outline: none;
+    }
+
+        .usuario-input:focus {
+            border-color: #1abcb0;
+        }
+
+    .usuarios-table-wrapper {
         border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(0,0,0,.08);
     }
 
-    .alerta-exito {
+    .usuarios-table-card {
+        background: white;
+        overflow-x: auto;
+    }
+
+    .usuarios-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .usuarios-table thead tr {
+            background: #f5f7fa;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .usuarios-table th {
+            padding: 14px;
+            text-align: left;
+            font-size: .8rem;
+            font-weight: 700;
+            color: #1f2937;
+            white-space: nowrap;
+        }
+
+        .usuarios-table td {
+            padding: 14px;
+            border-bottom: 1px solid #edf2f7;
+            color: #374151;
+            vertical-align: middle;
+        }
+
+        .usuarios-table tbody tr:hover {
+            background: #f8fffe;
+        }
+
+    .estado-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 50px;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+
+    .estado-activo {
         background: #e6f9f7;
-        border: 1px solid #1abcb0;
         color: #0f6e56;
-        margin-bottom: 16px;
-        padding: 12px 18px;
-        border-radius: 10px;
+        border: 1px solid #1abcb0;
     }
 
-    .alerta-rojo {
-        background: rgba(220, 53, 53, 0.08);
-        border: 1px solid rgba(220, 53, 53, 0.4);
-        color: #9b2020;
-        margin-bottom: 16px;
-        padding: 12px 18px;
-        border-radius: 10px;
+    .usuarios-empty {
+        text-align: center;
+        padding: 35px;
+        color: #6b7280;
+    }
+
+    .usuarios-empty-row {
+        text-align: center;
+        padding: 30px;
+        color: #6b7280;
+    }
+
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+        .pagination-container button {
+            border: none;
+            background: #1abcb0;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+        }
+
+            .pagination-container button:disabled {
+                opacity: .4;
+                cursor: not-allowed;
+            }
+
+    #paginaActual {
+        font-weight: 600;
+    }
+
+    @@media(max-width:768px) {
+        .usuarios-page {
+            padding: 20px 15px;
+        }
+
+        .usuarios-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
     }
 </style>
+
+@section Scripts {
+    <script>let paginaActual = 1;
+        const filasPorPagina = 10;
+
+        function obtenerFilasVisibles() {
+            return Array.from(document.querySelectorAll("#tablaProductosUsados tbody tr"))
+                .filter(fila => fila.style.display !== "none" && !fila.classList.contains("usuarios-empty-row"));
+        }
+
+        function mostrarPagina() {
+            let filas = obtenerFilasVisibles();
+            let totalPaginas = Math.ceil(filas.length / filasPorPagina);
+            if (totalPaginas === 0) totalPaginas = 1;
+
+            filas.forEach((fila, index) => {
+                fila.style.display = (index >= (paginaActual - 1) * filasPorPagina && index < paginaActual * filasPorPagina) ? "" : "none";
+            });
+
+            document.getElementById("paginaActual").innerText = "Página " + paginaActual + " de " + totalPaginas;
+            document.getElementById("prevBtn").disabled = (paginaActual === 1);
+            document.getElementById("nextBtn").disabled = (paginaActual >= totalPaginas);
+        }
+
+        function cambiarPagina(direccion) {
+            let filas = obtenerFilasVisibles();
+            let totalPaginas = Math.ceil(filas.length / filasPorPagina);
+            paginaActual += direccion;
+            if (paginaActual < 1) paginaActual = 1;
+            if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+            mostrarPagina();
+        }
+
+        function filtrarTabla() {
+            let filtro = document.getElementById("buscador").value.toLowerCase();
+            let filas = document.querySelectorAll("#tablaProductosUsados tbody tr");
+            let visibles = 0;
+
+            filas.forEach(function (fila) {
+                if (fila.classList.contains("usuarios-empty-row")) return;
+                let mostrar = fila.innerText.toLowerCase().includes(filtro);
+                fila.style.display = mostrar ? "" : "none";
+                if (mostrar) visibles++;
+            });
+
+            document.getElementById("emptyMsg").style.display = visibles === 0 ? "block" : "none";
+            paginaActual = 1;
+            mostrarPagina();
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            mostrarPagina();
+        });</script>
+}
