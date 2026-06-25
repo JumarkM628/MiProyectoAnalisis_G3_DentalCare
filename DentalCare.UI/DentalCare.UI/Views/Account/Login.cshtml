@@ -1,64 +1,162 @@
 ﻿@using DentalCare.UI.Models
 @model LoginViewModel
+
 @{
     ViewBag.Title = "Iniciar sesión";
 }
 
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <div class="row">
-        <div class="col-md-8">
-            <section id="loginForm">
-                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
-                {
-                    @Html.AntiForgeryToken()
-                    <h4>Utilice una cuenta local para iniciar sesión.</h4>
-                    <hr />
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    <div class="row">
-                        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-10">
-                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div class="row">
-                        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-10">
-                            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="offset-md-2 col-md-10">
-                            <div class="checkbox">
-                                @Html.CheckBoxFor(m => m.RememberMe)
-                                @Html.LabelFor(m => m.RememberMe)
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="offset-md-2 col-md-10">
-                            <input type="submit" value="Iniciar sesión" class="btn btn-outline-dark" />
-                        </div>
-                    </div>
-                    <p>
-                        @Html.ActionLink("Registrarse como usuario nuevo", "Register")
-                    </p>
-                     
-                        <p>
-                            @Html.ActionLink("¿Ha olvidado su contraseña?", "ForgotPassword")
-                        </p>
-                }
-            </section>
-        </div>
-        <div class="col-md-4">
-            <section id="socialLoginForm">
-                @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
-            </section>
-        </div>
+<style>
+    body {
+        background: white;
+        min-height: 100vh;
+    }
+
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 85vh;
+    }
+
+    .login-card {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .login-title {
+        text-align: center;
+        color: #2C3E50;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .login-subtitle {
+        text-align: center;
+        color: #6c757d;
+        margin-bottom: 30px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #2C3E50;
+        margin-bottom: 5px;
+    }
+
+    .form-control {
+        border-radius: 12px;
+        padding: 12px;
+        border: 1px solid #dcdcdc;
+        margin-bottom: 15px;
+    }
+
+        .form-control:focus {
+            border-color: #5CCCCC;
+            box-shadow: 0 0 0 0.2rem rgba(92,204,204,.25);
+        }
+
+    .btn-login {
+        width: 100%;
+        background: #5CCCCC;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 12px;
+        font-weight: bold;
+        transition: .3s;
+    }
+
+        .btn-login:hover {
+            background: #49b8b8;
+            color: white;
+        }
+
+    .login-links {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+        .login-links a {
+            color: #5CCCCC;
+            text-decoration: none;
+            font-weight: 500;
+            display: block;
+            margin-top: 8px;
+        }
+
+            .login-links a:hover {
+                text-decoration: underline;
+            }
+
+    .checkbox {
+        margin-bottom: 20px;
+    }
+
+    .text-danger {
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="login-container">
+    <div class="login-card">
+
+        <h2 class="login-title">DentalCare</h2>
+        <p class="login-subtitle">Inicia sesión para continuar</p>
+
+        @using (Html.BeginForm("Login", "Account",
+            new { ReturnUrl = ViewBag.ReturnUrl },
+            FormMethod.Post,
+            new { role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div>
+                <label class="form-label">Correo electrónico</label>
+                @Html.TextBoxFor(m => m.Email,
+                    new
+                    {
+                        @class = "form-control",
+                        placeholder = "Ingrese su correo"
+                    })
+
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+            </div>
+
+            <div>
+                <label class="form-label">Contraseña</label>
+                @Html.PasswordFor(m => m.Password,
+                    new
+                    {
+                        @class = "form-control",
+                        placeholder = "Ingrese su contraseña"
+                    })
+
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="checkbox">
+                <label>
+                    @Html.CheckBoxFor(m => m.RememberMe)
+                    Recordarme
+                </label>
+            </div>
+
+            <input type="submit"
+                   value="Iniciar sesión"
+                   class="btn btn-login" />
+
+            <div class="login-links">
+                @Html.ActionLink("Registrarse como usuario nuevo", "Register")
+                @Html.ActionLink("¿Ha olvidado su contraseña?", "ForgotPassword")
+            </div>
+        }
     </div>
-</main>
+</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
