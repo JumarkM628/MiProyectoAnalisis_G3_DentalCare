@@ -41,6 +41,7 @@ namespace DentalCare.AccesoADatos.Producto.RegistrarProducto
                 // REGISTRADO_POR = dto.RegistradoPor
             };
             _contexto.Productos.Add(entidad);
+            System.Diagnostics.Debug.WriteLine("IdCategoria recibido: " + dto.IdCategoria);
             _contexto.SaveChanges();
             _contexto.ProveedorProductos.Add(new ProveedorProductoEntidad
             {

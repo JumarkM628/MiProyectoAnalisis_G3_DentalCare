@@ -29,7 +29,8 @@ namespace DentalCare.UI.Controllers
         // GET: Inventario
         public ActionResult InventarioIndex()
         {
-            return View();
+            var productos = new List<ProductoDto>(); //
+            return View(productos);
         }
 
         public ActionResult Details(int id)
