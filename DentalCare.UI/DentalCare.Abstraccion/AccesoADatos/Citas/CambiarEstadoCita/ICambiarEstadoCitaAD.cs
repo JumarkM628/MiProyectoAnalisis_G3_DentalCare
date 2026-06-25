@@ -10,6 +10,7 @@ namespace DentalCare.Abstraccion.AccesoADatos.Citas.CambiarEstadoCita
     {
 
         void CambiarEstado(int idCita, string nombreEstado, int idMotivoCancelacion = 1);
+        void CancelarConMotivo(int idCita, string motivoTexto); 
         void RegistrarAsistencia(int idCita, TimeSpan horaInicio);
         void RegistrarAusencia(int idCita);
         void RegistrarFinalizacion(int idCita, TimeSpan horaFin);

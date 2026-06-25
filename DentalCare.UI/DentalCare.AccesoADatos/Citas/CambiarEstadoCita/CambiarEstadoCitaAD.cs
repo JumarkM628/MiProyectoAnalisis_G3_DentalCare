@@ -1,4 +1,5 @@
 ﻿using DentalCare.Abstraccion.AccesoADatos.Citas.CambiarEstadoCita;
+using DentalCare.AccesoADatos.Entidades.Citas; // 👈 nuevo: para usar MotivoCancelacionEntidad
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,8 +17,8 @@ namespace DentalCare.AccesoADatos.Citas.CambiarEstadoCita
         public const string ESTADO_RECHAZADA = "Rechazada";
         public const string ESTADO_PENDIENTE = "Pendiente";
         public const string ESTADO_CONFIRMADA = "Confirmada";
-        public const string ESTADO_ASISTIDA = "Asistida";     
-        public const string ESTADO_AUSENTE = "Ausente";        
+        public const string ESTADO_ASISTIDA = "Asistida";
+        public const string ESTADO_AUSENTE = "Ausente";
         public const string ESTADO_FINALIZADA = "Finalizada";
 
         public CambiarEstadoCitaAD()
@@ -47,6 +48,40 @@ namespace DentalCare.AccesoADatos.Citas.CambiarEstadoCita
                     cita.IdCancelacion = idMotivoCancelacion;
                     cita.Fecha = DateTime.Now;
                     _contexto.SaveChanges();
+                    trans.Commit();
+                }
+                catch { trans.Rollback(); throw; }
+            }
+        }
+
+        // 👇 NUEVO: Cancelar guardando el motivo como texto libre
+        public void CancelarConMotivo(int idCita, string motivoTexto)
+        {
+            int idEstado = ObtenerIdEstado(ESTADO_CANCELADA);
+            using (var trans = _contexto.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Calcular el siguiente ID manualmente (la tabla no es autoincremental)
+                    int nuevoId = _contexto.MotivoCancelacionCita.Any()
+                        ? _contexto.MotivoCancelacionCita.Max(m => m.IdCancelacion) + 1
+                        : 1;
+
+                    var motivo = new MotivoCancelacionEntidad
+                    {
+                        IdCancelacion = nuevoId,
+                        Descripcion = motivoTexto,
+                        IdEstado = 1 // estado "Activo" del registro de motivo
+                    };
+                    _contexto.MotivoCancelacionCita.Add(motivo);
+                    _contexto.SaveChanges(); 
+
+                    var cita = _contexto.Citas.First(c => c.IdCita == idCita);
+                    cita.IdEstado = idEstado;
+                    cita.IdCancelacion = nuevoId;
+                    cita.Fecha = DateTime.Now;
+                    _contexto.SaveChanges(); 
+
                     trans.Commit();
                 }
                 catch { trans.Rollback(); throw; }

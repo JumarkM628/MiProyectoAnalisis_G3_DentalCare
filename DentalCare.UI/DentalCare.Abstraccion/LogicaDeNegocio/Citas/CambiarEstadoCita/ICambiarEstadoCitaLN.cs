@@ -8,7 +8,7 @@ namespace DentalCare.Abstraccion.LogicaDeNegocio.Citas.CambiarEstadoCita
 {
     public interface ICambiarEstadoCitaLN
     {
-        string Cancelar(int idCita);
+        string Cancelar(int idCita, string motivoCancelacion); 
         string Rechazar(int idCita);
         string Confirmar(int idCita);
         string Asistir(int idCita, TimeSpan horaInicio);

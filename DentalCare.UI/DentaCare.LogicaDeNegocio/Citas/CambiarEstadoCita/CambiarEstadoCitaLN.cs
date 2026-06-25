@@ -25,13 +25,20 @@ namespace DentaCare.LogicaDeNegocio.Citas.CambiarEstadoCita
             _usoProductoAD = new RegistrarUsoProductoAD(new Contexto());
 
         }
-        public string Cancelar(int idCita)
+
+        // 👇 MODIFICADO: ahora recibe y valida el motivo de cancelación
+        public string Cancelar(int idCita, string motivoCancelacion)
         {
             if (!_cambiarAD.ExisteCita(idCita))
                 return "No se encontró la cita.";
-            _cambiarAD.CambiarEstado(idCita, CambiarEstadoCitaAD.ESTADO_CANCELADA, 1);
+
+            if (string.IsNullOrWhiteSpace(motivoCancelacion))
+                return "Debe indicar el motivo de la cancelación.";
+
+            _cambiarAD.CancelarConMotivo(idCita, motivoCancelacion.Trim());
             return null;
         }
+
         public string Rechazar(int idCita)
         {
             if (!_cambiarAD.ExisteCita(idCita))
@@ -92,7 +99,7 @@ namespace DentaCare.LogicaDeNegocio.Citas.CambiarEstadoCita
                     cliente.UseDefaultCredentials = false;
                     cliente.Credentials = new NetworkCredential(
                         "dentalcaremailtester@gmail.com",
-                        "hwubwchnhlnubilz"); 
+                        "hwubwchnhlnubilz");
                     var correo = new MailMessage
                     {
                         From = new MailAddress("mirandacjumark23@gmail.com", "DentalCare"),

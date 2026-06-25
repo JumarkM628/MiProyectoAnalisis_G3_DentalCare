@@ -95,13 +95,13 @@ namespace DentalCare.UI.Controllers
         // POST: Procesar cancelación (sin ActionName)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CancelarConfirmado(int id)
+        public ActionResult CancelarConfirmado(int id, string motivoCancelacion)
         {
-            string error = _cambiarEstadoLN.Cancelar(id);
+            string error = _cambiarEstadoLN.Cancelar(id, motivoCancelacion);
             if (error != null)
             {
                 TempData["Error"] = error;
-                return RedirectToAction("ObtenerTodasLasCitas");
+                return RedirectToAction("Cancelar", new { id }); 
             }
             TempData["Exito"] = "Cita cancelada correctamente.";
             return RedirectToAction("ObtenerTodasLasCitas");
@@ -301,7 +301,7 @@ namespace DentalCare.UI.Controllers
         [Authorize(Roles = "Paciente")]
         public ActionResult CancelarMiCitaConfirmado(int id)
         {
-            string error = _cambiarEstadoLN.Cancelar(id);
+            string error = _cambiarEstadoLN.Cancelar(id, "Cancelada por el paciente");
             if (error != null)
             {
                 TempData["Error"] = error;
@@ -312,7 +312,7 @@ namespace DentalCare.UI.Controllers
         }
 
 
-            // POST: Cita/RegistrarProductos
+        // POST: Cita/RegistrarProductos
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult RegistrarProductos(UsoProductoDto dto)

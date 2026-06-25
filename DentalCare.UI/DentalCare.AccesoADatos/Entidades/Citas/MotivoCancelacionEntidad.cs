@@ -8,6 +8,7 @@ namespace DentalCare.AccesoADatos.Entidades.Citas
     {
         [Key]
         [Column("ID_CANCELACION")]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)] 
         public int IdCancelacion { get; set; }
 
         [Column("DESCRIPCION")]
