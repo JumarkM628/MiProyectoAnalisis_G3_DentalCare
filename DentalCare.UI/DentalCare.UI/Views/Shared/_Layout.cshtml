@@ -36,15 +36,16 @@
                         @* secciones para usuarios con rol Paciente *@
                         if (User.IsInRole("Paciente"))
                         {
-                            <li>@Html.ActionLink("Realizar Citas", "SolicitarCitaUsuario", "Cita", new { area = "" }, new { @class = "nav-link" })</li>
+                            
                             <li>@Html.ActionLink("Ver Citas", "MisCitas", "Cita", new { area = "" }, new { @class = "nav-link" })</li>
                         }
 
-                        <li>@Html.ActionLink("Citas", "ObtenerTodasLasCitas", "Cita", new { area = "" }, new { @class = "nav-link" })</li>
+
 
                         if (User.IsInRole("Admin") || User.IsInRole("Recepcionista"))
                         {
                             <li>@Html.ActionLink("Contabilidad", "Menu", "Contabilidad", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>@Html.ActionLink("Citas", "ObtenerTodasLasCitas", "Cita", new { area = "" }, new { @class = "nav-link" })</li>
                         }
 
 
@@ -55,6 +56,7 @@
                             <li>@Html.ActionLink("Usuarios", "ObtenerTodosLosUsuarios", "Usuario", new { area = "" }, new { @class = "nav-link" })</li>
                             <li>@Html.ActionLink("Inventario", "InventarioIndex", "Inventario", new { area = "" }, new { @class = "nav-link" })</li>
                             <li>@Html.ActionLink("Expedientes", "ObtenerTodosLosExpedientes", "Expediente", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>@Html.ActionLink("Citas", "ObtenerTodasLasCitas", "Cita", new { area = "" }, new { @class = "nav-link" })</li>
 
                         }
 

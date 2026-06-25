@@ -348,6 +348,8 @@
     <Content Include="Views\Reporteria\ReportesProductos.cshtml" />
     <Content Include="Views\Cita\RegistrarProductos.cshtml" />
     <Content Include="Views\Inventario\Edit.cshtml" />
+    <Content Include="Views\Cita\CancelarMiCita.cshtml" />
+    <Content Include="Views\Cita\MisCitas.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -27,7 +27,7 @@
             {
                 <br />
                 @Html.ActionLink("Registrar paciente ahora", "Create", "Usuario",
-                    null, new { @class = "btn btn-sm btn-warning", style = "margin-top:8px;" })
+                         null, new { @class = "btn btn-sm btn-warning", style = "margin-top:8px;" })
             }
         </div>
     }
@@ -58,7 +58,7 @@
                             @Html.LabelFor(m => m.CedulaPaciente)
                             <span class="text-danger"> *</span>
                             @Html.TextBoxFor(m => m.CedulaPaciente,
-                                new { @class = "form-control", placeholder = "Cédula del paciente" })
+                                     new { @class = "form-control", placeholder = "Cédula del paciente" })
                             @Html.ValidationMessageFor(m => m.CedulaPaciente, "", new { @class = "text-danger" })
                         </div>
 
@@ -66,13 +66,13 @@
                             @Html.LabelFor(m => m.Fecha)
                             <span class="text-danger"> *</span>
                             @Html.TextBoxFor(m => m.Fecha, "{0:yyyy-MM-dd}",
-                                new
-                                {
-                                    @class = "form-control",
-                                    type = "date",
-                                    id = "inputFecha",
-                                    @readonly = "readonly"
-                                })
+                                     new
+                                     {
+                                         @class = "form-control",
+                                         type = "date",
+                                         id = "inputFecha",
+                                         @readonly = "readonly"
+                                     })
                             @Html.ValidationMessageFor(m => m.Fecha, "", new { @class = "text-danger" })
                             <small class="text-muted">Seleccioná un día en el calendario.</small>
                         </div>
@@ -81,7 +81,7 @@
                             @Html.LabelFor(m => m.HoraString)
                             <span class="text-danger"> *</span>
                             @Html.TextBoxFor(m => m.HoraString,
-                                new { @class = "form-control", type = "time" })
+                                     new { @class = "form-control", type = "time" })
                             @Html.ValidationMessageFor(m => m.HoraString, "", new { @class = "text-danger" })
                         </div>
 
@@ -89,7 +89,7 @@
                             @Html.LabelFor(m => m.IdDoctor)
                             <span class="text-danger"> *</span>
                             @Html.DropDownListFor(m => m.IdDoctor, Model.ListaDoctores,
-                                "-- Seleccione doctor --", new { @class = "form-control" })
+                                     "-- Seleccione doctor --", new { @class = "form-control" })
                             @Html.ValidationMessageFor(m => m.IdDoctor, "", new { @class = "text-danger" })
                         </div>
 
@@ -97,7 +97,7 @@
                             @Html.LabelFor(m => m.IdMotivo)
                             <span class="text-danger"> *</span>
                             @Html.DropDownListFor(m => m.IdMotivo, Model.ListaMotivos,
-                                "-- Seleccione motivo --", new { @class = "form-control" })
+                                     "-- Seleccione motivo --", new { @class = "form-control" })
                             @Html.ValidationMessageFor(m => m.IdMotivo, "", new { @class = "text-danger" })
                         </div>
 
@@ -109,8 +109,8 @@
                             Confirmar Cita
                         </button>
 
-                        @Html.ActionLink("Cancelar", "ObtenerTodasLasCitas", "Cita",
-                            null, new { @class = "btn btn-default btn-block", style = "margin-top:8px;" })
+                        @Html.ActionLink("Cancelar", "MisCitas", "Cita",
+                                 null, new { @class = "btn btn-default btn-block", style = "margin-top:8px;" })
                     }
 
                 </div>
@@ -126,8 +126,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/locale/es.js"></script>
 
-    <script>
-        $(document).ready(function () {
+    <script>$(document).ready(function () {
 
             var fechaSeleccionada = $('#inputFecha').val();
 
@@ -182,6 +181,6 @@
                 }
             });
 
-        });
-    </script>
+        });</script>
 }
+
