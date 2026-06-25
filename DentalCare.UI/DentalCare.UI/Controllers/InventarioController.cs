@@ -30,8 +30,11 @@ namespace DentalCare.UI.Controllers
         // GET: Inventario
         public ActionResult InventarioIndex()
         {
-            var productos = new List<ProductoDto>(); //
-            return View(productos);
+            using (var contexto = new Contexto())
+            {
+                var productos = contexto.Productos.ToList();
+                return View(productos);
+            }
         }
 
         public ActionResult Details(int id)
