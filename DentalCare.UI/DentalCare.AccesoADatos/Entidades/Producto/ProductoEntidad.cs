@@ -8,6 +8,7 @@ namespace DentalCare.AccesoADatos.Entidades.Producto
     public class ProductoEntidad
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int ID_PRODUCTO { get; set; }
         public string CODIGO_PRODUCTO { get; set; }
         public string NOMBRE_PRODUCTO { get; set; }

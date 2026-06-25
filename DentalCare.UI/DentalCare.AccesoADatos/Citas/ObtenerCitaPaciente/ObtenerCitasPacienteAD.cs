@@ -54,7 +54,6 @@ namespace DentalCare.AccesoADatos.Citas.ObtenerCitaPaciente
                 {
                     cita.IdCita,
                     cita.Fecha,
-                    cita.Hora,
                     cita.IdDoctor,
                     cita.IdMotivo,
                     cita.IdEstado,
@@ -70,8 +69,6 @@ namespace DentalCare.AccesoADatos.Citas.ObtenerCitaPaciente
             {
                 IdCita = r.IdCita,
                 Fecha = r.Fecha,
-                Hora = r.Hora,
-                HoraString = r.Hora.HasValue ? r.Hora.Value.ToString(@"hh\:mm") : "—",
                 IdDoctor = r.IdDoctor ?? 0,
                 IdMotivo = r.IdMotivo,
                 IdEstado = r.IdEstado,
@@ -80,7 +77,6 @@ namespace DentalCare.AccesoADatos.Citas.ObtenerCitaPaciente
                 NombreEstado = r.NombreEstado
             })
             .OrderByDescending(c => c.Fecha)
-            .ThenBy(c => c.Hora)
             .ToList();
         }
 
@@ -120,7 +116,6 @@ namespace DentalCare.AccesoADatos.Citas.ObtenerCitaPaciente
                 {
                     cita.IdCita,
                     cita.Fecha,
-                    cita.Hora,
                     cita.IdEstado,
                     NombrePaciente = paciente != null
                         ? paciente.Nombre + " " + paciente.PrimerApellido
@@ -134,8 +129,6 @@ namespace DentalCare.AccesoADatos.Citas.ObtenerCitaPaciente
             {
                 IdCita = r.IdCita,
                 Fecha = r.Fecha,
-                Hora = r.Hora,
-                HoraString = r.Hora.HasValue ? r.Hora.Value.ToString(@"hh\:mm") : "—",
                 IdEstado = r.IdEstado,
                 NombrePaciente = r.NombrePaciente,
                 CorreoPaciente = r.CorreoPaciente,

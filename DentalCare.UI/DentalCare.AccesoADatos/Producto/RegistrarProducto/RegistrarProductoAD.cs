@@ -19,8 +19,14 @@ namespace DentalCare.AccesoADatos.Producto.RegistrarProducto
         }
         public bool GuardarNuevoProducto(ProductoDto dto)
         {
+            // Generar el siguiente ID_PRODUCTO
+            int nuevoId = _contexto.Productos.Any() 
+                ? _contexto.Productos.Max(p => p.ID_PRODUCTO) + 1 
+                : 1;
+
             var entidad = new ProductoEntidad
             {
+                ID_PRODUCTO = nuevoId,
                 CODIGO_PRODUCTO = dto.CodigoProducto,
                 NOMBRE_PRODUCTO = dto.NombreProducto,
                 DESCRIPCION = dto.Descripcion,
@@ -30,8 +36,9 @@ namespace DentalCare.AccesoADatos.Producto.RegistrarProducto
                 STOCK_MINIMO = dto.CantidadMinima,
                 LOTE = dto.Lote,
                 FECHA_VENCIMIENTO = dto.FechaVencimiento,
-                ID_ESTADO = 1, 
-                REGISTRADO_POR = dto.RegistradoPor
+                ID_ESTADO = 1
+
+                // REGISTRADO_POR = dto.RegistradoPor
             };
             _contexto.Productos.Add(entidad);
             _contexto.SaveChanges();
