@@ -1,0 +1,130 @@
+﻿@model DentalCare.Abstraccion.Modelo.Pagos.PagoDto
+
+@{
+    ViewBag.Title = "Registrar Pago";
+}
+
+<div class="usuarios-page" style="max-width:600px; margin:0 auto;">
+
+    <div class="usuarios-header">
+        <div>
+            <h1 class="usuarios-titulo">
+                <i class="fa fa-money"></i> Registrar Pago
+            </h1>
+            <p class="usuarios-subtitulo">
+                Completá los datos del pago para la cita seleccionada.
+            </p>
+        </div>
+    </div>
+
+    @* Escenario 2: errores de validación *@
+    @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""] != null)
+    {
+        <div class="alert alert-danger">
+            @Html.ValidationMessage("")
+        </div>
+    }
+
+    @using (Html.BeginForm("RegistrarPago", "Pago", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Datos del Pago</strong></div>
+            <div class="panel-body">
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.IdCitaForm)
+                    <span class="text-danger"> *</span>
+                    @Html.TextBoxFor(m => m.IdCitaForm,
+                             new { @class = "form-control", placeholder = "Número de cita" })
+                    @Html.ValidationMessageFor(m => m.IdCitaForm, "", new { @class = "text-danger" })
+                    <small class="text-muted">Solo se pueden registrar pagos de citas finalizadas.</small>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Monto)
+                    <span class="text-danger"> *</span>
+                    @Html.TextBoxFor(m => m.Monto,
+                             new { @class = "form-control", placeholder = "0.00", type = "number", step = "0.01", min = "0.01" })
+                    @Html.ValidationMessageFor(m => m.Monto, "", new { @class = "text-danger" })
+                </div>
+
+                @* Escenario 3: selección de método de pago *@
+                <div class="form-group">
+                    @Html.LabelFor(m => m.IdMetodoPago)
+                    <span class="text-danger"> *</span>
+                    @Html.DropDownListFor(m => m.IdMetodoPago, Model.ListaMetodosPago,
+                             "-- Seleccione método --", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.IdMetodoPago, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.IdEstado)
+                    <span class="text-danger"> *</span>
+                    @Html.DropDownListFor(m => m.IdEstado, Model.ListaEstados,
+                             "-- Seleccione --", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.IdEstado, "", new { @class = "text-danger" })
+                </div>
+
+            </div>
+        </div>
+
+        @* Escenario 4: botón de confirmación *@
+        <div style="margin-top:20px;">
+            <button type="submit" class="btn-usuario-primary">
+                Confirmar Pago
+            </button>
+            @Html.ActionLink("Cancelar", "HistorialPagos", "Pago",
+                     null, new { @class = "btn btn-default", style = "margin-left:8px;" })
+        </div>
+    }
+</div>
+
+<style>
+    .panel {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .panel-heading {
+        background: #f5f7fa;
+        padding: 12px 16px;
+        border-bottom: 1px solid #ddd;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .panel-body {
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .btn-default {
+        background: #f0f0f0;
+        color: #333;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-default:hover {
+            background: #ddd;
+        }
+</style>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

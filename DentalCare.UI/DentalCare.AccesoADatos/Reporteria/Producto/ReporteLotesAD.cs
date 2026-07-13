@@ -82,17 +82,17 @@ namespace DentalCare.AccesoADatos.Reporteria.Producto
             return (from uso in _contexto.UsoProductos
                     join prod in _contexto.Productos on uso.ID_PRODUCTO equals prod.ID_PRODUCTO
                     join proc in _contexto.Procedimientos on uso.ID_PROCEDIMIENTO equals proc.ID_PROCEDIMIENTO
-                    join trat in _contexto.PlanesTratamiento on proc.ID_TRATAMIENTO equals trat.ID_TRATAMIENTO
+                    join trat in _contexto.PlanesTratamiento on proc.ID_TRATAMIENTO equals trat.IdTratamiento
                     group new { uso, trat } by new
                     {
-                        trat.DESCRIPCION,
+                        trat.Descripcion,
                         prod.NOMBRE_PRODUCTO,
                         prod.LOTE
                     }
                     into g
                     select new HistorialLoteTratamientoDto
                     {
-                        NombreTratamiento = g.Key.DESCRIPCION,
+                        NombreTratamiento = g.Key.Descripcion,
                         NombreProducto = g.Key.NOMBRE_PRODUCTO,
                         Lote = g.Key.LOTE,
                         CantidadTotal = g.Sum(x => x.uso.CANTIDAD ?? 0)

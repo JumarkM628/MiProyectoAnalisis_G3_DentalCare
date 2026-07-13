@@ -24,11 +24,11 @@ namespace DentalCare.AccesoADatos.Tratamiento.EditarPlanTratamiento
 
             return new PlanTratamientoDto
             {
-                Id = entidad.ID_TRATAMIENTO,
-                Diagnostico = entidad.DESCRIPCION,
-                Tratamiento = entidad.DESCRIPCION,
-                Estado = entidad.ID_ESTADO == 1 ? "Activo" : "Inactivo",
-                FechaInicio = entidad.FECHA_INICIO ?? DateTime.MinValue
+                Id = entidad.IdTratamiento,
+                Diagnostico = entidad.Descripcion,
+                Tratamiento = entidad.Descripcion,
+                Estado = entidad.IdEstado == 1 ? "Activo" : "Inactivo",
+                FechaInicio = entidad.FechaInicio ?? DateTime.MinValue
             };
         }
 
@@ -37,7 +37,7 @@ namespace DentalCare.AccesoADatos.Tratamiento.EditarPlanTratamiento
             var entidad = _contexto.PlanesTratamiento.Find(dto.Id);
             if (entidad == null) return false;
 
-            entidad.DESCRIPCION = dto.Diagnostico;
+            entidad.Descripcion = dto.Diagnostico;
 
             _contexto.SaveChanges();
             return true;

@@ -78,10 +78,14 @@
     <Compile Include="AccesoADatos\Expediente\ReabrirExpediente\IReabrirExpedienteAD.cs" />
     <Compile Include="AccesoADatos\Odontograma\RegistrarOdontograma\IRegistrarOdontogramaAD.cs" />
     <Compile Include="AccesoADatos\Odontograma\ObtenerOdontogramaPorExpediente\ObtenerOdontogramaPorExpediente.cs" />
+    <Compile Include="AccesoADatos\Pago\ObtenerPago\IObtenerPagosAD.cs" />
+    <Compile Include="AccesoADatos\Pago\RegistrarPago\IRegistrarPagoAD.cs" />
     <Compile Include="AccesoADatos\Producto\IEditarProductoAD.cs" />
     <Compile Include="AccesoADatos\Producto\IRegistrarProductoAD.cs" />
     <Compile Include="AccesoADatos\Reporteria\Producto\IReporteLotesAD.cs" />
     <Compile Include="AccesoADatos\Reporteria\Producto\IReporteProductosAD.cs" />
+    <Compile Include="AccesoADatos\Tratamiento\AgregarTratamiento\IRegistrarTratamientoAD.cs" />
+    <Compile Include="AccesoADatos\Tratamiento\ObtenerTratamientoPorCita\IObtenerTratamientosPorCitaAD.cs" />
     <Compile Include="AccesoADatos\Tratamiento\IEditarPlanTratamientoAD.cs" />
     <Compile Include="AccesoADatos\UsoProducto\IRegistrarUsoProductoAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\DesactivarUsuario\IDesactivarUsuarioAD.cs" />
@@ -104,11 +108,15 @@
     <Compile Include="LogicaDeNegocio\Expedientes\ReabrirExpediente\IReabrirExpedienteLN.cs" />
     <Compile Include="LogicaDeNegocio\Odontograma\RegistrarOdontograma\IObtenerOdontogramaPorExpedienteLN.cs" />
     <Compile Include="LogicaDeNegocio\Odontograma\RegistrarOdontograma\IRegistrarOdontogramaLN.cs" />
+    <Compile Include="LogicaDeNegocio\Pago\ObtenerPago\IObtenerPagosLN.cs" />
+    <Compile Include="LogicaDeNegocio\Pago\RegistrarPago\IRegistrarPagoLN.cs" />
     <Compile Include="LogicaDeNegocio\Producto\IEditarProductoLN.cs" />
     <Compile Include="LogicaDeNegocio\Producto\IRegistrarProductoLN.cs" />
     <Compile Include="LogicaDeNegocio\Reporteria\Producto\IReporteLotesLN.cs" />
     <Compile Include="LogicaDeNegocio\Reporteria\Producto\IReporteProductosLN.cs" />
     <Compile Include="LogicaDeNegocio\Tratamiento\IEditarPlanTratamientoLN.cs" />
+    <Compile Include="LogicaDeNegocio\Tratamiento\ObtenerTratamiento\IObtenerTratamientosPorCitaLN.cs" />
+    <Compile Include="LogicaDeNegocio\Tratamiento\RegistrarTratamiento\IRegistrarTratamientoLN.cs" />
     <Compile Include="LogicaDeNegocio\UsoProducto\IRegistrarUsoProductoLN.cs" />
     <Compile Include="LogicaDeNegocio\Usuarios\DesactivarUsuario\IDesactivarUsuarioLN.cs" />
     <Compile Include="LogicaDeNegocio\Usuarios\EditarUsuario\IEditarUsuarioLN.cs" />
@@ -124,6 +132,7 @@
     <Compile Include="Modelo\Expediente\ExpedienteDetalleDto.cs" />
     <Compile Include="Modelo\Expediente\ExpedienteDto.cs" />
     <Compile Include="Modelo\Odontograma\OdontogramaDto.cs" />
+    <Compile Include="Modelo\Pago\PagoDto.cs" />
     <Compile Include="Modelo\Producto\ProductoDto.cs" />
     <Compile Include="Modelo\Producto\UsoProducto\UsoProductoDto.cs" />
     <Compile Include="Modelo\RecuperacionContrasena\ForgotPasswordDto.cs" />
@@ -132,6 +141,7 @@
     <Compile Include="Modelo\Reporteria\ProductoFrecuenciaDto.cs" />
     <Compile Include="Modelo\Reporteria\ProductoLoteFrecuenciaDto.cs" />
     <Compile Include="Modelo\Tratamiento\PlanTratamientoDto.cs" />
+    <Compile Include="Modelo\Tratamiento\TratamientoDto.cs" />
     <Compile Include="Modelo\Usuarios\UsuarioDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

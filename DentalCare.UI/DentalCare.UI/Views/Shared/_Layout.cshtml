@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Clínica Dental Dra. Rebeca</title>
-  
+
     <link href="~/Content/DentalCare.css?v=3" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
     @Scripts.Render("~/bundles/modernizr")
@@ -14,94 +14,143 @@
     <!-- Navbar -->
     <nav class="main-nav">
         <div class="nav-inner">
-            <!-- Título centrado -->
+
+            <!-- Título -->
             <div class="navbar-title">
                 Clínica dental y especialidades Dra. Rebeca
             </div>
-                
 
-
-            <!-- Botón hamburguesa móvil -->
-            <button class="nav-toggler" data-bs-toggle="collapse" data-bs-target="#mainNavLinks" aria-controls="mainNavLinks" aria-expanded="false" aria-label="Toggle navigation">
+            <!-- Botón hamburguesa -->
+            <button class="nav-toggler" data-bs-toggle="collapse" data-bs-target="#mainNavLinks"
+                    aria-controls="mainNavLinks" aria-expanded="false" aria-label="Toggle navigation">
                 <span></span><span></span><span></span>
             </button>
 
-            <!-- Links centrados -->
+            <!-- Menú -->
             <div class="nav-links-wrapper" id="mainNavLinks">
                 <ul class="nav-links">
-                    <li>@Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+
+                    <li>
+                        @Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })
+                    </li>
 
                     @if (User.Identity.IsAuthenticated)
                     {
-                        @* secciones para usuarios con rol Paciente *@
                         if (User.IsInRole("Paciente"))
                         {
-                            
-                            <li>@Html.ActionLink("Ver Citas", "MisCitas", "Cita", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>
+                                @Html.ActionLink("Ver Citas", "MisCitas", "Cita", new { area = "" }, new { @class = "nav-link" })
+                            </li>
                         }
-
-
 
                         if (User.IsInRole("Admin") || User.IsInRole("Recepcionista"))
                         {
-                            <li>@Html.ActionLink("Contabilidad", "Menu", "Contabilidad", new { area = "" }, new { @class = "nav-link" })</li>
-                            <li>@Html.ActionLink("Citas", "ObtenerTodasLasCitas", "Cita", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>
+                                @Html.ActionLink("Reporteria", "Index", "Reporteria", new { area = "" }, new { @class = "nav-link" })
+                            </li>
+
+                            <li>
+                                @Html.ActionLink("Usuarios", "ObtenerTodosLosUsuarios", "Usuario", new { area = "" }, new { @class = "nav-link" })
+                            </li>
+
+                            <li>
+                                @Html.ActionLink("Inventario", "InventarioIndex", "Inventario", new { area = "" }, new { @class = "nav-link" })
+                            </li>
+
+                            <li>
+                                @Html.ActionLink("Expedientes", "ObtenerTodosLosExpedientes", "Expediente", new { area = "" }, new { @class = "nav-link" })
+                            </li>
+
+                            <li>
+                                @Html.ActionLink("Citas", "ObtenerTodasLasCitas", "Cita", new { area = "" }, new { @class = "nav-link" })
+                            </li>
+
+                            <li>
+                                @Html.ActionLink("Contabilidad", "Menu", "Contabilidad", new { area = "" }, new { @class = "nav-link" })
+                            </li>
                         }
 
+                        <li>
+                            @Html.ActionLink("Acerca de", "About", "Home", new { area = "" }, new { @class = "nav-link" })
+                        </li>
 
+                        <li>
+                            @Html.ActionLink("Contacto", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })
+                        </li>
 
-                        if (User.IsInRole("Admin") || User.IsInRole("Recepcionista"))
-                        {
-                            <li>@Html.ActionLink("Reporteria", "Index", "Reporteria", new { area = "" }, new { @class = "nav-link" })</li>
-                            <li>@Html.ActionLink("Usuarios", "ObtenerTodosLosUsuarios", "Usuario", new { area = "" }, new { @class = "nav-link" })</li>
-                            <li>@Html.ActionLink("Inventario", "InventarioIndex", "Inventario", new { area = "" }, new { @class = "nav-link" })</li>
-                            <li>@Html.ActionLink("Expedientes", "ObtenerTodosLosExpedientes", "Expediente", new { area = "" }, new { @class = "nav-link" })</li>
-                            <li>@Html.ActionLink("Citas", "ObtenerTodasLasCitas", "Cita", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>
+                            <span class="nav-link">
+                                Hola @User.Identity.Name
+                            </span>
+                        </li>
 
-                        }
+                        <li>
+                            @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", style = "display:inline;" }))
+                            {
+                                @Html.AntiForgeryToken()
 
-
-                        <li>@Html.ActionLink("Acerca de", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Contacto", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-
-                        @* Muestra logout/user *@
+                                <a href="javascript:document.getElementById('logoutForm').submit();" class="nav-link">
+                                    Cerrar sesión
+                                </a>
+                            }
+                        </li>
                     }
                     else
                     {
-                        @* Sin login *@
-                        <li>@Html.ActionLink("Acerca de", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Contacto", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Login", "Login", "Account", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Register", "Register", "Account", new { area = "" }, new { @class = "nav-link" })</li>
-                    }
-                </ul>
+                        <li>
+                            @Html.ActionLink("Acerca de", "About", "Home", new { area = "" }, new { @class = "nav-link" })
+                        </li>
 
+                        <li>
+                            @Html.ActionLink("Contacto", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })
+                        </li>
+
+                        <li>
+                            @Html.ActionLink("Login", "Login", "Account", new { area = "" }, new { @class = "nav-link" })
+                        </li>
+
+                        <li>
+                            @Html.ActionLink("Register", "Register", "Account", new { area = "" }, new { @class = "nav-link" })
+                        </li>
+                    }
+
+                </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Page Content -->
+    <!-- Contenido -->
     <div class="page-wrapper">
         @RenderBody()
 
         <footer class="site-footer">
             <div class="footer-inner">
                 <div class="footer-brand">
-                    <span>Clínica Dental y Especialidades<br><strong>Dra. Rebeca</strong></span>
+                    <span>
+                        Clínica Dental y Especialidades<br>
+                        <strong>Dra. Rebeca</strong>
+                    </span>
                 </div>
+
                 <p class="footer-tagline">Sonríe con confianza</p>
-                <p class="footer-copy">&copy; @DateTime.Now.Year — Todos los derechos reservados</p>
+
+                <p class="footer-copy">
+                    &copy; @DateTime.Now.Year — Todos los derechos reservados
+                </p>
             </div>
         </footer>
     </div>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+
     @RenderSection("scripts", required: false)
-    <script>document.querySelector('.nav-toggler').addEventListener('click', function () {
+
+    <script>
+        document.querySelector('.nav-toggler').addEventListener('click', function () {
             document.getElementById('mainNavLinks').classList.toggle('open');
-        });</script>
+        });
+    </script>
+
 </body>
 </html>
-
-
