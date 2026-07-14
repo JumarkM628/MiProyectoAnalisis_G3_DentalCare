@@ -45,6 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Archivo\SubirArchivo\ArchivoClinicoLN.cs" />
+    <Compile Include="Catalogo\ActualizarCosto\ActualizarCostoLN.cs" />
+    <Compile Include="Catalogo\ObtenerCatalogo\ObtenerCatalogoLN.cs" />
     <Compile Include="Citas\AgregarCita\AgregarCitaLN.cs" />
     <Compile Include="Citas\CambiarEstadoCita\CambiarEstadoCitaLN.cs" />
     <Compile Include="Citas\ObtenerCitasPaciente\ObtenerCitasPacienteLN.cs" />
@@ -56,8 +58,11 @@
     <Compile Include="Expedientes\CrearExpediente\CrearExpedienteLN.cs" />
     <Compile Include="Expedientes\ObtenerTodosLosExpedientes\ObtenerTodosLosExpedientesLN.cs" />
     <Compile Include="Expedientes\ReabrirExpediente\ReabrirExpedienteLN.cs" />
+    <Compile Include="Gastos\ObtenerGastosLN\ObtenerGastosLN.cs" />
+    <Compile Include="Gastos\RegistrarGasto\RegistrarGastoLN.cs" />
     <Compile Include="Odontograma\RegistrarOdontograma\ObtenerOdontogramaPorExpedienteLN.cs" />
     <Compile Include="Odontograma\RegistrarOdontograma\RegistrarOdontogramaLN.cs" />
+    <Compile Include="Pago\ActualizarEstadoPago\ActualizarEstadoPagoLN.cs" />
     <Compile Include="Pago\ObtenerPago\ObtenerPagosLN.cs" />
     <Compile Include="Pago\RegistrarPago\RegistrarPagoLN.cs" />
     <Compile Include="Producto\EditarProducto\EditarProductoLN.cs" />

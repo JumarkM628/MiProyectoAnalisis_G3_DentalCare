@@ -1,0 +1,706 @@
+﻿@model List<DentalCare.Abstraccion.Modelo.Gasto.GastoDto>
+@{
+    ViewBag.Title = "Gastos de la Clínica";
+
+    var gastos = Model ?? new List<DentalCare.Abstraccion.Modelo.Gasto.GastoDto>();
+
+    decimal totalGastos = gastos.Sum(g => g.MontoMostrar);
+
+    var porCategoria = gastos
+        .GroupBy(g => g.Categoria)
+        .Select(g => new
+        {
+            Cat = g.Key,
+            Total = g.Sum(x => x.MontoMostrar)
+        })
+        .OrderByDescending(g => g.Total)
+        .ToList();
+}
+
+<style>
+    .gs-page {
+        padding: 32px 0;
+    }
+
+    .gs-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+    }
+
+    .gs-header-left h1 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0C1B33;
+        margin: 0 0 4px;
+    }
+
+    .gs-header-left p {
+        font-size: 13px;
+        color: #6B7A99;
+        margin: 0;
+    }
+
+    /* Métricas */
+    .metricas-grid {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .metrica-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 18px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .metrica-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #8896B0;
+        text-transform: uppercase;
+        letter-spacing: .07em;
+    }
+
+    .metrica-valor {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0C1B33;
+    }
+
+    .metrica-sub {
+        font-size: 12px;
+        color: #6B7A99;
+    }
+
+    /* Tabs */
+    .tabs-row {
+        display: flex;
+        gap: 6px;
+        border-bottom: 1px solid #E8ECF4;
+        margin-bottom: 20px;
+    }
+
+    .tab-btn {
+        padding: 10px 18px;
+        border: none;
+        background: none;
+        font-size: 13px;
+        font-weight: 600;
+        color: #6B7A99;
+        cursor: pointer;
+        font-family: inherit;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+    }
+
+        .tab-btn:hover {
+            color: #185FA5;
+        }
+
+        .tab-btn.activo {
+            color: #185FA5;
+            border-bottom-color: #185FA5;
+        }
+
+    /* Card y filtros */
+    .gs-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 20px;
+    }
+
+    .gs-card-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: #8896B0;
+        text-transform: uppercase;
+        letter-spacing: .07em;
+        margin-bottom: 16px;
+    }
+
+    .filtros-row {
+        display: flex;
+        gap: 12px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+    }
+
+    .filtro-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+        .filtro-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #3D4D6B;
+        }
+
+        .filtro-group input,
+        .filtro-group select {
+            border: 1px solid #DDE1EC;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #0C1B33;
+            background: #fff;
+            font-family: inherit;
+            min-width: 140px;
+        }
+
+            .filtro-group input:focus,
+            .filtro-group select:focus {
+                outline: none;
+                border-color: #378ADD;
+            }
+
+    .btn-nuevo {
+        padding: 9px 18px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: none;
+        background: #185FA5;
+        color: #fff;
+        cursor: pointer;
+        font-family: inherit;
+        margin-left: auto;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-nuevo:hover {
+            background: #0C447C;
+            color: #fff;
+            text-decoration: none;
+        }
+
+    .btn-limpiar {
+        padding: 9px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        color: #3D4D6B;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+        .btn-limpiar:hover {
+            background: #F5F6FA;
+        }
+
+    .btn-secundario {
+        padding: 9px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        color: #3D4D6B;
+        cursor: pointer;
+        font-family: inherit;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-secundario:hover {
+            background: #F5F6FA;
+            text-decoration: none;
+            color: #3D4D6B;
+        }
+
+    /* Tabla */
+    .gs-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+        .gs-table thead tr {
+            border-bottom: 2px solid #E8ECF4;
+        }
+
+        .gs-table th {
+            text-align: left;
+            padding: 10px 12px;
+            color: #8896B0;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            white-space: nowrap;
+        }
+
+        .gs-table td {
+            padding: 12px;
+            color: #3D4D6B;
+            border-bottom: 1px solid #F0F2F8;
+            vertical-align: middle;
+        }
+
+        .gs-table tbody tr:hover {
+            background: #F9FAFC;
+        }
+
+        .gs-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+    .td-desc {
+        font-weight: 600;
+        color: #0C1B33;
+    }
+
+    .td-right {
+        text-align: right;
+        font-weight: 600;
+        color: #0C1B33;
+    }
+
+    /* Badges categoría */
+    .badge-cat {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        white-space: nowrap;
+    }
+
+    .badge-Insumos {
+        background: #E6F1FB;
+        color: #185FA5;
+    }
+
+    .badge-Servicios {
+        background: #F0EBFB;
+        color: #6B3FA0;
+    }
+
+    .badge-Salarios {
+        background: #EAF3DE;
+        color: #3B6D11;
+    }
+
+    .badge-Equipos {
+        background: #FAEEDA;
+        color: #854F0B;
+    }
+
+    .badge-Administrativo {
+        background: #E6F7F3;
+        color: #1A7A5E;
+    }
+
+    .badge-Mantenimiento {
+        background: #FFF4E0;
+        color: #8A5E00;
+    }
+
+    .badge-Otros {
+        background: #F5F6FA;
+        color: #6B7A99;
+    }
+
+    /* Estado gasto */
+    .badge-estado-Activo {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #EAF3DE;
+        color: #3B6D11;
+    }
+
+    .badge-estado-Inactivo {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #FCEBEB;
+        color: #A0291E;
+    }
+
+    /* Resumen */
+    .resumen-cats {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 12px;
+    }
+
+    .cat-item {
+        background: #F9FAFC;
+        border: 1px solid #E8ECF4;
+        border-radius: 10px;
+        padding: 14px 16px;
+    }
+
+    .cat-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .cat-item-nombre {
+        font-size: 13px;
+        font-weight: 600;
+        color: #0C1B33;
+    }
+
+    .cat-item-monto {
+        font-size: 14px;
+        font-weight: 700;
+        color: #0C1B33;
+    }
+
+    .barra-bg {
+        background: #E8ECF4;
+        border-radius: 20px;
+        height: 5px;
+    }
+
+    .barra-fill {
+        border-radius: 20px;
+        height: 5px;
+    }
+
+    /* Paginación */
+    .paginacion-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 14px;
+        font-size: 13px;
+        color: #6B7A99;
+    }
+
+    .pag-btns {
+        display: flex;
+        gap: 6px;
+    }
+
+    .pag-btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        color: #3D4D6B;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+        .pag-btn:hover {
+            background: #F5F6FA;
+        }
+
+        .pag-btn.activo {
+            background: #185FA5;
+            color: #fff;
+            border-color: #185FA5;
+        }
+
+    /* Alert */
+    .alert-custom {
+        display: none;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        margin-bottom: 20px;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .alert-custom.show {
+            display: flex;
+        }
+
+    .alert-success-custom {
+        background: #EAF3DE;
+        color: #3B6D11;
+        border: 1px solid #97C459;
+    }
+
+    .alert-danger-custom {
+        background: #FCEBEB;
+        color: #A0291E;
+        border: 1px solid #F5C6C6;
+    }
+
+    .alert-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+        flex-shrink: 0;
+    }
+
+    @@media(max-width:900px) {
+        .metricas-grid {
+            grid-template-columns: repeat(2,1fr);
+        }
+
+        .resumen-cats {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .gs-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .filtros-row {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .btn-nuevo {
+            margin-left: 0;
+        }
+    }
+</style>
+
+<div class="container gs-page">
+
+    <!-- HEADER -->
+    <div class="d-flex align-items-center gap-2">
+        <a href="@Url.Action("Menu", "Contabilidad")" class="btn-secundario ms-2">&#8592; Volver</a>
+    </div>
+    <div class="gs-header">
+        <div class="gs-header-left">
+            <h1>Gastos de la clínica</h1>
+            <p>Registrá y gestioná todos los egresos operativos</p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+            @Html.ActionLink("+ Registrar Gasto", "RegistrarGasto", "Gasto", null, new { @class = "btn-nuevo" })
+        </div>
+    </div>
+
+    <!-- ALERTAS -->
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert-custom alert-success-custom show">
+            <div class="alert-dot"></div>
+            <span>@TempData["Exito"]</span>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert-custom alert-danger-custom show">
+            <div class="alert-dot"></div>
+            <span>@TempData["Error"]</span>
+        </div>
+    }
+
+    <!-- MÉTRICAS -->
+    <div class="metricas-grid">
+        <div class="metrica-card">
+            <div class="metrica-label">Total Gastos</div>
+            <div class="metrica-valor">&#8353; @totalGastos.ToString("N0")</div>
+            <div class="metrica-sub">@(Model?.Count ?? 0) registros</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Mayor Categoría</div>
+            @if (porCategoria.Any())
+            {
+                <div class="metrica-valor" style="font-size:16px;">@porCategoria.First().Cat</div>
+                <div class="metrica-sub">&#8353; @porCategoria.First().Total.ToString("N0")</div>
+            }
+            else
+            {
+                <div class="metrica-valor" style="font-size:16px;">—</div>
+            }
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Categorías</div>
+            <div class="metrica-valor">@porCategoria.Count</div>
+            <div class="metrica-sub">tipos de gasto registrados</div>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs-row">
+        <button class="tab-btn activo" onclick="cambiarTab(this,'lista')">Lista de gastos</button>
+        <button class="tab-btn" onclick="cambiarTab(this,'resumen')">Resumen por categoría</button>
+    </div>
+
+    <!-- TAB LISTA -->
+    <div id="tabLista">
+        <div class="gs-card" style="padding:18px 24px 0;">
+            <div class="filtros-row">
+                <div class="filtro-group">
+                    <label>Buscar</label>
+                    <input type="text" id="inputBuscar" placeholder="Concepto..." oninput="filtrarTabla()" />
+                </div>
+                <div class="filtro-group">
+                    <label>Categoría</label>
+                    <select id="selCat" onchange="filtrarTabla()">
+                        <option value="">Todas</option>
+                        <option>Insumos</option>
+                        <option>Servicios</option>
+                        <option>Salarios</option>
+                        <option>Equipos</option>
+                        <option>Mantenimiento</option>
+                        <option>Administrativo</option>
+                        <option>Otros</option>
+                    </select>
+                </div>
+                <button class="btn-limpiar" onclick="limpiarFiltros()">&#x2715; Limpiar</button>
+            </div>
+
+            <div style="overflow-x:auto;">
+                <table class="gs-table" id="tablaGastos">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Concepto</th>
+                            <th>Categoría</th>
+                            <th style="text-align:right;">Monto (&#8353;)</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model == null || !Model.Any())
+                        {
+                            <tr>
+                                <td colspan="6" style="text-align:center; padding:24px; color:#8896B0;">
+                                    No hay gastos registrados.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var g in Model)
+                            {
+                                string catClass = "badge-" + (g.Categoria ?? "Otros").Replace(" ", "");
+                                <tr>
+                                    <td style="color:#8896B0; font-size:11px;">@g.IdGasto</td>
+                                    <td class="td-desc">@g.DescripcionMostrar</td>
+                                    <td>
+                                        <span class="badge-cat @catClass">@g.Categoria</span>
+                                    </td>
+                                    <td class="td-right">&#8353; @g.MontoMostrar.ToString("N0")</td>
+                                    <td>@(g.FechaMostrar.HasValue ? g.FechaMostrar.Value.ToString("dd/MM/yyyy") : "—")</td>
+                                    <td>
+                                        <span class="badge-estado-@g.NombreEstado">@g.NombreEstado</span>
+                                    </td>
+                                </tr>
+                            }
+                            <tr style="background:#fff0f0;">
+                                <td colspan="3" style="text-align:right; padding:12px; font-weight:700; color:#0C1B33;">
+                                    TOTAL:
+                                </td>
+                                <td class="td-right" style="color:#A0291E; font-size:15px;">
+                                    &#8353; @totalGastos.ToString("N0")
+                                </td>
+                                <td colspan="2"></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="paginacion-row" style="padding:12px 0 16px;">
+                <span id="pagInfo">@(Model?.Count ?? 0) gastos</span>
+                <div class="pag-btns">
+                    <button class="pag-btn" onclick="cambiarPag(-1)">&#8592;</button>
+                    <button class="pag-btn activo" id="pag1">1</button>
+                    <button class="pag-btn" id="pag2" style="display:none;">2</button>
+                    <button class="pag-btn" onclick="cambiarPag(1)">&#8594;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB RESUMEN -->
+    <div id="tabResumen" style="display:none;">
+        <div class="gs-card">
+            <div class="gs-card-title">Distribución de gastos por categoría</div>
+            <div class="resumen-cats">
+                @if (porCategoria.Any())
+                {
+                    string[] colores = { "#185FA5", "#6B3FA0", "#3B6D11", "#854F0B", "#1A7A5E", "#8A5E00", "#6B7A99" };
+                    int ci = 0;
+                    foreach (var cat in porCategoria)
+                    {
+                        decimal pct = totalGastos > 0 ? Math.Round(cat.Total / totalGastos * 100) : 0;
+                        string color = colores[ci % colores.Length];
+                        ci++;
+                        <div class="cat-item">
+                            <div class="cat-item-header">
+                                <span class="cat-item-nombre">@cat.Cat</span>
+                                <span class="cat-item-monto">&#8353; @cat.Total.ToString("N0")</span>
+                            </div>
+                            <div class="barra-bg">
+                                <div class="barra-fill" style="width:@pct%; background:@color;"></div>
+                            </div>
+                            <div style="font-size:11px; color:#8896B0; margin-top:4px;">@pct% del total</div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p style="color:#8896B0; grid-column:1/-1;">No hay datos de categorías.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        // Filtrado del lado del cliente
+        var porPag = 10;
+        var pag = 1;
+
+        function filtrarTabla() {
+            var b = document.getElementById('inputBuscar').value.toLowerCase();
+            var cat = document.getElementById('selCat').value.toLowerCase();
+            var filas = document.querySelectorAll('#tablaGastos tbody tr:not(:last-child)');
+            var v = 0;
+
+            filas.forEach(function (fila) {
+                var txt = fila.innerText.toLowerCase();
+                var matchB = txt.includes(b);
+                var matchCat = !cat || txt.includes(cat);
+                var mostrar = matchB && matchCat;
+                fila.style.display = mostrar ? '' : 'none';
+                if (mostrar) v++;
+            });
+
+            document.getElementById('pagInfo').textContent = v + ' gastos';
+            document.getElementById('pag2').style.display = v > porPag ? '' : 'none';
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('inputBuscar').value = '';
+            document.getElementById('selCat').value = '';
+            filtrarTabla();
+        }
+
+        function cambiarPag(d) { pag = Math.max(1, pag + d); }
+        function cambiarTab(el, tab) {
+            document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('activo'); });
+            el.classList.add('activo');
+            document.getElementById('tabLista').style.display = tab === 'lista' ? '' : 'none';
+            document.getElementById('tabResumen').style.display = tab === 'resumen' ? '' : 'none';
+        }
+    </script>
+}

@@ -1,130 +1,686 @@
 ﻿@model DentalCare.Abstraccion.Modelo.Pagos.PagoDto
-
 @{
-    ViewBag.Title = "Registrar Pago";
+    ViewBag.Title = "Registro de Pago";
 }
 
-<div class="usuarios-page" style="max-width:600px; margin:0 auto;">
+<style>
+    .rp-page {
+        padding: 32px 0
+    }
 
-    <div class="usuarios-header">
-        <div>
-            <h1 class="usuarios-titulo">
-                <i class="fa fa-money"></i> Registrar Pago
-            </h1>
-            <p class="usuarios-subtitulo">
-                Completá los datos del pago para la cita seleccionada.
-            </p>
+    .rp-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px
+    }
+
+    .rp-header-left h1 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0C1B33;
+        margin: 0 0 4px
+    }
+
+    .rp-header-left p {
+        font-size: 13px;
+        color: #6B7A99;
+        margin: 0
+    }
+
+    .rp-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 20px
+    }
+
+    .rp-card-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: #8896B0;
+        text-transform: uppercase;
+        letter-spacing: .07em;
+        margin-bottom: 16px
+    }
+
+    .form-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px
+    }
+
+    .form-full {
+        grid-column: 1/-1
+    }
+
+    .fg {
+        display: flex;
+        flex-direction: column;
+        gap: 5px
+    }
+
+        .fg label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #3D4D6B
+        }
+
+            .fg label span {
+                color: #E24B4A
+            }
+
+        .fg input, .fg select {
+            border: 1px solid #DDE1EC;
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 14px;
+            color: #0C1B33;
+            background: #fff;
+            font-family: inherit;
+            transition: border-color .15s
+        }
+
+            .fg input:focus, .fg select:focus {
+                outline: none;
+                border-color: #378ADD
+            }
+
+            .fg input.err, .fg select.err {
+                border-color: #E24B4A
+            }
+
+    .err-msg {
+        font-size: 12px;
+        color: #E24B4A;
+        display: none;
+        margin-top: 2px
+    }
+
+    .chips-row {
+        display: grid;
+        grid-template-columns: repeat(4,1fr);
+        gap: 12px;
+        margin-top: 16px
+    }
+
+    .chip {
+        background: #F5F6FA;
+        border-radius: 10px;
+        padding: 10px 14px
+    }
+
+        .chip .chip-label {
+            font-size: 11px;
+            color: #8896B0;
+            margin-bottom: 3px
+        }
+
+        .chip .chip-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0C1B33
+        }
+
+    .badge-estado {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: #EAF3DE;
+        color: #3B6D11
+    }
+
+    .trat-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        margin-top: 12px
+    }
+
+        .trat-table th {
+            text-align: left;
+            padding: 8px 10px;
+            color: #8896B0;
+            font-weight: 600;
+            font-size: 11px;
+            border-bottom: 1px solid #E8ECF4;
+            text-transform: uppercase;
+            letter-spacing: .05em
+        }
+
+        .trat-table td {
+            padding: 10px;
+            color: #3D4D6B;
+            border-bottom: 1px solid #F0F2F8
+        }
+
+        .trat-table tr:last-child td {
+            border-bottom: none
+        }
+
+    .td-right {
+        text-align: right;
+        font-weight: 600;
+        color: #0C1B33
+    }
+
+    .btn-eliminar {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #E24B4A;
+        font-size: 13px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: inherit
+    }
+
+        .btn-eliminar:hover {
+            background: #FCEBEB
+        }
+
+    .resumen-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #F5F6FA;
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-top: 14px
+    }
+
+        .resumen-total .label {
+            font-size: 13px;
+            color: #6B7A99;
+            font-weight: 500
+        }
+
+        .resumen-total .value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0C1B33
+        }
+
+    .empty-trat {
+        text-align: center;
+        padding: 20px;
+        color: #8896B0;
+        font-size: 13px;
+        border: 1px dashed #DDE1EC;
+        border-radius: 10px;
+        margin-top: 12px
+    }
+
+    .metodos-grid {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 10px
+    }
+
+    .metodo-btn {
+        border: 1px solid #DDE1EC;
+        border-radius: 10px;
+        padding: 12px 8px;
+        text-align: center;
+        cursor: pointer;
+        font-size: 13px;
+        color: #6B7A99;
+        background: #fff;
+        transition: all .15s;
+        font-family: inherit;
+        font-weight: 500
+    }
+
+        .metodo-btn:hover {
+            background: #F5F6FA;
+            border-color: #B5D4F4
+        }
+
+        .metodo-btn.activo {
+            border-color: #185FA5;
+            background: #E6F1FB;
+            color: #185FA5;
+            font-weight: 600
+        }
+
+    .metodo-icono {
+        display: block;
+        margin: 0 auto 6px;
+        width: 20px;
+        height: 20px
+    }
+
+    .alert-custom {
+        display: none;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        margin-bottom: 20px;
+        align-items: center;
+        gap: 10px
+    }
+
+        .alert-custom.show {
+            display: flex
+        }
+
+    .alert-warning-custom {
+        background: #FAEEDA;
+        color: #854F0B;
+        border: 1px solid #EF9F27
+    }
+
+    .alert-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+        flex-shrink: 0
+    }
+
+    .btn-row {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 8px
+    }
+
+    .btn-secundario {
+        padding: 9px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        color: #3D4D6B;
+        cursor: pointer;
+        font-family: inherit;
+        text-decoration: none;
+        display: inline-block
+    }
+
+        .btn-secundario:hover {
+            background: #F5F6FA;
+            text-decoration: none;
+            color: #3D4D6B
+        }
+
+    .btn-primario {
+        padding: 9px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        background: #185FA5;
+        color: #fff;
+        cursor: pointer;
+        font-family: inherit
+    }
+
+        .btn-primario:hover {
+            background: #0C447C
+        }
+
+    .btn-agregar {
+        padding: 9px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid #185FA5;
+        background: #E6F1FB;
+        color: #185FA5;
+        cursor: pointer;
+        font-family: inherit;
+        white-space: nowrap
+    }
+
+        .btn-agregar:hover {
+            background: #B5D4F4
+        }
+
+    .modal-backdrop-custom {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(12,27,51,.45);
+        z-index: 1050;
+        align-items: center;
+        justify-content: center
+    }
+
+        .modal-backdrop-custom.show {
+            display: flex
+        }
+
+    .modal-box {
+        background: #fff;
+        border-radius: 16px;
+        padding: 36px 32px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center
+    }
+
+    .modal-check-circle {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #EAF3DE;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px
+    }
+
+    .modal-box h4 {
+        font-size: 17px;
+        font-weight: 700;
+        color: #0C1B33;
+        margin-bottom: 8px
+    }
+
+    .modal-box p {
+        font-size: 13px;
+        color: #6B7A99;
+        line-height: 1.6;
+        margin-bottom: 24px
+    }
+
+    .modal-btns {
+        display: flex;
+        gap: 10px;
+        justify-content: center
+    }
+
+    @@media(max-width:768px) {
+        .chips-row {
+            grid-template-columns: repeat(2,1fr)
+        }
+
+        .form-grid-2 {
+            grid-template-columns: 1fr
+        }
+
+        .metodos-grid {
+            grid-template-columns: 1fr
+        }
+
+        .form-full {
+            grid-column: 1
+        }
+
+        .rp-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px
+        }
+    }
+</style>
+
+<div class="container rp-page">
+
+    <div class="rp-header">
+        <div class="rp-header-left">
+            <h1>Registro de pago</h1>
+            <p>Seleccioná el paciente, agregá los tratamientos y registrá el pago</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a href="@Url.Action("Menu", "Contabilidad")" class="btn-secundario ms-2">&#8592; Volver</a>
         </div>
     </div>
 
-    @* Escenario 2: errores de validación *@
-    @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""] != null)
-    {
-        <div class="alert alert-danger">
-            @Html.ValidationMessage("")
-        </div>
-    }
+    <div class="alert-custom alert-warning-custom" id="alertaGlobal">
+        <div class="alert-dot"></div>
+        <span id="alertaTexto">Debe completar todos los campos obligatorios.</span>
+    </div>
 
-    @using (Html.BeginForm("RegistrarPago", "Pago", FormMethod.Post))
+    @using (Html.BeginForm("RegistrarPago", "Pago", FormMethod.Post, new { id = "formPago" }))
     {
         @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.IdMetodoPago, new { id = "hiddenMetodo" })
+        @Html.HiddenFor(m => m.Monto, new { id = "hiddenMonto" })
+        @Html.HiddenFor(m => m.IdCitaForm, new { id = "hiddenCita" })
+        @Html.HiddenFor(m => m.IdEstado)
 
-        <div class="panel panel-default">
-            <div class="panel-heading"><strong>Datos del Pago</strong></div>
-            <div class="panel-body">
-
-                <div class="form-group">
-                    @Html.LabelFor(m => m.IdCitaForm)
-                    <span class="text-danger"> *</span>
-                    @Html.TextBoxFor(m => m.IdCitaForm,
-                             new { @class = "form-control", placeholder = "Número de cita" })
-                    @Html.ValidationMessageFor(m => m.IdCitaForm, "", new { @class = "text-danger" })
-                    <small class="text-muted">Solo se pueden registrar pagos de citas finalizadas.</small>
+        <!-- PASO 1 -->
+        <div class="rp-card">
+            <div class="rp-card-title">Paso 1 &middot; Selección de paciente y cita</div>
+            <div class="form-grid-2">
+                <div class="fg">
+                    <label>Paciente <span>*</span></label>
+                    <select id="selectPaciente" onchange="cargarCitas()">
+                        <option value="">-- Seleccionar paciente --</option>
+                        @foreach (var p in Model.ListaPacientes)
+                        {
+                            <option value="@p.Value" data-nombre="@p.Text">@p.Text</option>
+                        }
+                    </select>
+                    <span class="err-msg" id="errPaciente">Debe seleccionar un paciente.</span>
                 </div>
-
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Monto)
-                    <span class="text-danger"> *</span>
-                    @Html.TextBoxFor(m => m.Monto,
-                             new { @class = "form-control", placeholder = "0.00", type = "number", step = "0.01", min = "0.01" })
-                    @Html.ValidationMessageFor(m => m.Monto, "", new { @class = "text-danger" })
+                <div class="fg">
+                    <label>Cita finalizada <span>*</span></label>
+                    <select id="selectCita" onchange="mostrarInfoCita()" disabled>
+                        <option value="">-- Primero seleccioná un paciente --</option>
+                    </select>
+                    <span class="err-msg" id="errCita">Debe seleccionar una cita.</span>
                 </div>
-
-                @* Escenario 3: selección de método de pago *@
-                <div class="form-group">
-                    @Html.LabelFor(m => m.IdMetodoPago)
-                    <span class="text-danger"> *</span>
-                    @Html.DropDownListFor(m => m.IdMetodoPago, Model.ListaMetodosPago,
-                             "-- Seleccione método --", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.IdMetodoPago, "", new { @class = "text-danger" })
+            </div>
+            <div id="infoCita" style="display:none;">
+                <div class="chips-row">
+                    <div class="chip"><div class="chip-label">Paciente</div><div class="chip-value" id="chipPaciente">—</div></div>
+                    <div class="chip"><div class="chip-label">Cita #</div><div class="chip-value" id="chipCita">—</div></div>
+                    <div class="chip"><div class="chip-label">Fecha</div><div class="chip-value" id="chipFecha">—</div></div>
+                    <div class="chip"><div class="chip-label">Estado</div><div class="chip-value"><span class="badge-estado">Finalizada</span></div></div>
                 </div>
-
-                <div class="form-group">
-                    @Html.LabelFor(m => m.IdEstado)
-                    <span class="text-danger"> *</span>
-                    @Html.DropDownListFor(m => m.IdEstado, Model.ListaEstados,
-                             "-- Seleccione --", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.IdEstado, "", new { @class = "text-danger" })
-                </div>
-
             </div>
         </div>
 
-        @* Escenario 4: botón de confirmación *@
-        <div style="margin-top:20px;">
-            <button type="submit" class="btn-usuario-primary">
-                Confirmar Pago
-            </button>
-            @Html.ActionLink("Cancelar", "HistorialPagos", "Pago",
-                     null, new { @class = "btn btn-default", style = "margin-left:8px;" })
+        <!-- PASO 2 -->
+        <div class="rp-card">
+            <div class="rp-card-title">Paso 2 &middot; Tratamientos realizados</div>
+            <div class="form-grid-2">
+                <div class="fg">
+                    <label>Tratamiento</label>
+                    <select id="selectTratamiento">
+                        <option value="">-- Seleccionar --</option>
+                        @foreach (var t in Model.ListaCatalogo)
+                        {
+                            <option value="@t.Value">@t.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="fg">
+                    <label>Costo (&#8353;)</label>
+                    <input type="number" id="costoTrat" placeholder="0" min="0" />
+                </div>
+                <div class="fg" style="justify-content:flex-end;">
+                    <label style="visibility:hidden;">x</label>
+                    <button type="button" class="btn-agregar" onclick="agregarTratamiento()">+ Agregar tratamiento</button>
+                </div>
+            </div>
+            <div id="listaTratamientos">
+                <div class="empty-trat">Aún no se han agregado tratamientos.</div>
+            </div>
+            <div class="resumen-total" id="resumenTotal" style="display:none;">
+                <span class="label">Total a pagar</span>
+                <span class="value" id="totalPagar">&#8353;0</span>
+            </div>
         </div>
+
+        <!-- PASO 3 -->
+        <div class="rp-card">
+            <div class="rp-card-title">Paso 3 &middot; Método de pago</div>
+            <div class="metodos-grid">
+                @foreach (var m in Model.ListaMetodosPago)
+                {
+                    <button type="button" class="metodo-btn"
+                            data-id="@m.Value" data-nombre="@m.Text"
+                            onclick="seleccionarMetodo(this)">
+                        @if (m.Text == "Efectivo")
+                        {
+                            <svg class="metodo-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" /><line x1="1" y1="10" x2="23" y2="10" /></svg>
+                        }
+                        else if (m.Text == "Tarjeta")
+                        {
+                            <svg class="metodo-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" /><line x1="1" y1="10" x2="23" y2="10" /><line x1="5" y1="15" x2="9" y2="15" /></svg>
+                        }
+                        else
+                        {
+                            <svg class="metodo-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></svg>
+                        }
+                        @m.Text
+                    </button>
+                }
+            </div>
+            <span class="err-msg" id="errMetodo" style="margin-top:8px;">Debe seleccionar un método de pago.</span>
+            <div class="btn-row" style="margin-top:20px;">
+                @Html.ActionLink("Cancelar", "HistorialPagos", "Pago", null, new { @class = "btn-secundario" })
+                <button type="button" class="btn-primario" onclick="validarYConfirmar()">Confirmar pago</button>
+            </div>
+        </div>
+
+        <button type="submit" id="btnSubmit" style="display:none;"></button>
     }
 </div>
 
-<style>
-    .panel {
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
-
-    .panel-heading {
-        background: #f5f7fa;
-        padding: 12px 16px;
-        border-bottom: 1px solid #ddd;
-        border-radius: 8px 8px 0 0;
-    }
-
-    .panel-body {
-        padding: 20px;
-    }
-
-    .form-group {
-        margin-bottom: 16px;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 8px 12px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }
-
-    .btn-default {
-        background: #f0f0f0;
-        color: #333;
-        padding: 8px 16px;
-        border-radius: 4px;
-        text-decoration: none;
-        display: inline-block;
-    }
-
-        .btn-default:hover {
-            background: #ddd;
-        }
-</style>
+<!-- MODAL -->
+<div class="modal-backdrop-custom" id="modalConfirmacion">
+    <div class="modal-box">
+        <div class="modal-check-circle">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3B6D11" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+        </div>
+        <h4>¿Confirmar este pago?</h4>
+        <p id="modalDetalle">Verificá los datos antes de guardar.</p>
+        <div class="modal-btns">
+            <button class="btn-secundario" onclick="document.getElementById('modalConfirmacion').classList.remove('show')">Revisar</button>
+            <button class="btn-primario" onclick="document.getElementById('btnSubmit').click()">Sí, registrar</button>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+<script>
+        // Datos de citas por paciente cargados desde la BD via Razor
+        var citasData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+        (Model.ListaCitas ?? Enumerable.Empty<SelectListItem>())
+            .Select(c => new
+            {
+                value = c.Value,
+                text = c.Text
+            })
+            .ToList()
+    ));
+
+        // Para el dropdown de citas filtrar por paciente necesitamos
+        // cargar todas las citas finalizadas y mostrarlas todas por ahora
+        // (con dropdown sin AJAX)
+        function cargarCitas() {
+            var sel = document.getElementById('selectCita');
+            sel.innerHTML = '<option value="">-- Seleccionar cita --</option>';
+            citasData.forEach(function(c) {
+                var opt = document.createElement('option');
+                opt.value = c.value;
+                opt.textContent = c.text;
+                sel.appendChild(opt);
+            });
+            sel.disabled = false;
+            document.getElementById('infoCita').style.display = 'none';
+            document.getElementById('errPaciente').style.display = 'none';
+        }
+
+        function mostrarInfoCita() {
+            var pac = document.getElementById('selectPaciente');
+            var cit = document.getElementById('selectCita');
+            if (!cit.value) { document.getElementById('infoCita').style.display = 'none'; return; }
+            var opt = pac.options[pac.selectedIndex];
+            document.getElementById('chipPaciente').textContent = opt ? opt.text : '—';
+            document.getElementById('chipCita').textContent     = cit.value;
+            document.getElementById('chipFecha').textContent    = cit.options[cit.selectedIndex].text.split('—')[1]?.trim() || '—';
+            document.getElementById('hiddenCita').value         = cit.value;
+            document.getElementById('infoCita').style.display   = 'block';
+            document.getElementById('errCita').style.display    = 'none';
+        }
+
+        // Tratamientos
+        var tratamientos = [];
+        document.getElementById('selectTratamiento').addEventListener('change', function() {
+            var val = this.value;
+            document.getElementById('costoTrat').value = val ? val.split('|')[1] : '';
+        });
+
+        function agregarTratamiento() {
+            var sel   = document.getElementById('selectTratamiento');
+            var costo = parseFloat(document.getElementById('costoTrat').value);
+            if (!sel.value) { alert('Seleccioná un tratamiento.'); return; }
+            var nombre = sel.options[sel.selectedIndex].text.split('(')[0].trim();
+            tratamientos.push({ nombre: nombre, costo: costo || 0 });
+            renderTratamientos();
+            sel.value = ''; document.getElementById('costoTrat').value = '';
+        }
+
+        function eliminarTratamiento(i) { tratamientos.splice(i,1); renderTratamientos(); }
+
+        function renderTratamientos() {
+            var lista = document.getElementById('listaTratamientos');
+            var res   = document.getElementById('resumenTotal');
+            if (tratamientos.length === 0) {
+                lista.innerHTML = '<div class="empty-trat">Aún no se han agregado tratamientos.</div>';
+                res.style.display = 'none';
+                document.getElementById('hiddenMonto').value = 0;
+                return;
+            }
+            var total = tratamientos.reduce(function(s,t){ return s+t.costo; },0);
+            var html  = '<table class="trat-table"><thead><tr><th>Tratamiento</th><th style="text-align:right">Costo</th><th></th></tr></thead><tbody>';
+            tratamientos.forEach(function(t,i){
+                html += '<tr><td>'+t.nombre+'</td><td class="td-right">&#8353;'+t.costo.toLocaleString('es-CR')+'</td>'
+                      + '<td><button class="btn-eliminar" type="button" onclick="eliminarTratamiento('+i+')">&#x2715;</button></td></tr>';
+            });
+            html += '</tbody></table>';
+            lista.innerHTML = html;
+            document.getElementById('totalPagar').innerHTML = '&#8353;'+total.toLocaleString('es-CR');
+            document.getElementById('hiddenMonto').value = total;
+            res.style.display = 'flex';
+        }
+
+        // Método de pago
+        function seleccionarMetodo(el) {
+            document.querySelectorAll('.metodo-btn').forEach(function(b){ b.classList.remove('activo'); });
+            el.classList.add('activo');
+            document.getElementById('hiddenMetodo').value = el.getAttribute('data-id');
+            document.getElementById('errMetodo').style.display = 'none';
+        }
+
+        // Validar y confirmar
+        function validarYConfirmar() {
+            var pac    = document.getElementById('selectPaciente').value;
+            var cita   = document.getElementById('hiddenCita').value;
+            var monto  = parseFloat(document.getElementById('hiddenMonto').value);
+            var metodo = document.getElementById('hiddenMetodo').value;
+            var errores = [];
+
+            document.getElementById('errPaciente').style.display = !pac ? 'block' : 'none';
+            document.getElementById('errCita').style.display     = !cita ? 'block' : 'none';
+            document.getElementById('errMetodo').style.display   = !metodo ? 'block' : 'none';
+
+            if (!pac)    errores.push('paciente');
+            if (!cita)   errores.push('cita');
+            if (tratamientos.length === 0) { alert('Agregá al menos un tratamiento.'); return; }
+            if (!monto || monto <= 0) { alert('El monto debe ser mayor a cero.'); return; }
+            if (!metodo) errores.push('método de pago');
+
+            if (errores.length > 0) {
+                document.getElementById('alertaTexto').textContent = 'Completá: ' + errores.join(', ');
+                document.getElementById('alertaGlobal').classList.add('show');
+                return;
+            }
+
+            var nombreMetodo = document.querySelector('.metodo-btn.activo')?.textContent.trim() || '—';
+            document.getElementById('modalDetalle').textContent =
+                'Cita #' + cita + ' · Monto: ₡' + monto.toLocaleString('es-CR') + ' · Método: ' + nombreMetodo;
+            document.getElementById('modalConfirmacion').classList.add('show');
+        }
+</script>
 }

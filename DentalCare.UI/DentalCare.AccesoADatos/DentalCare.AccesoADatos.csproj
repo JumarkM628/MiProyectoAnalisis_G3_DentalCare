@@ -53,6 +53,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Archivo\SubirArchivo\ArchivoClinicoAD.cs" />
+    <Compile Include="Catalogo\ActualizarCosto\ActualizarCostoAD.cs" />
+    <Compile Include="Catalogo\ObtenerCatalogo\ObtenerCatalogoAD.cs" />
     <Compile Include="Citas\AgregarCita\AgregarCitaAD.cs" />
     <Compile Include="Citas\CambiarEstadoCita\CambiarEstadoCitaAD.cs" />
     <Compile Include="Citas\ObtenerCitaPaciente\ObtenerCitasPacienteAD.cs" />
@@ -69,6 +71,7 @@
     <Compile Include="Entidades\Expediente\ConsentimientoEntidad.cs" />
     <Compile Include="Entidades\Expediente\EntidadExpediente.cs" />
     <Compile Include="Entidades\Expediente\UsuarioExpedienteEntidad.cs" />
+    <Compile Include="Entidades\Gasto\GastoEntidad.cs" />
     <Compile Include="Entidades\Odontograma\OdontogramaDetalleEntidad.cs" />
     <Compile Include="Entidades\Odontograma\OdontogramaEntidad.cs" />
     <Compile Include="Entidades\Odontograma\PiezaDentalEntidad.cs" />
@@ -82,6 +85,7 @@
     <Compile Include="Entidades\Producto\ProductoEntidad.cs" />
     <Compile Include="Entidades\Producto\ProveedorProductoEntidad.cs" />
     <Compile Include="Entidades\Producto\UsoProductoEntidad.cs" />
+    <Compile Include="Entidades\Tratamiento\Catalogo\CatalogoTratamientoEntidad.cs" />
     <Compile Include="Entidades\Tratamiento\PlanTratamientoEntidad.cs" />
     <Compile Include="Entidades\Usuarios\AreaUsuarioEntidad.cs" />
     <Compile Include="Entidades\Usuarios\AspNetRoles.cs" />
@@ -98,6 +102,9 @@
     <Compile Include="Expedientes\CerrarExpediente\CerrarExpedienteAD.cs" />
     <Compile Include="Expedientes\ObtenerTodosLosExpedientes\ObtenerTodosLosExpedientesAD.cs" />
     <Compile Include="Expedientes\ReabrirExpediente\ReabrirExpedienteAD.cs" />
+    <Compile Include="Pago\ActualizarEstadoPago\ActualizarEstadoPagoAD.cs" />
+    <Compile Include="Gastos\ObtenerGastos\ObtenerGastosAD.cs" />
+    <Compile Include="Gastos\RegistrarGasto\RegistrarGastoAD.cs" />
     <Compile Include="Odontograma\ObtenerOdontogramaPorExpediente\ObtenerOdontogramaPorExpedienteAD.cs" />
     <Compile Include="Odontograma\RegistrarOdontograma\RegistrarOdontogramaAD.cs" />
     <Compile Include="Pago\ObtenerPago\ObtenerPagosAD.cs" />

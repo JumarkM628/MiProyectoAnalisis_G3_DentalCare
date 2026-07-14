@@ -1,10 +1,12 @@
 ﻿using DentalCare.AccesoADatos.Entidades;
 using DentalCare.AccesoADatos.Entidades.Archivo;
 using DentalCare.AccesoADatos.Entidades.Bitacora;
+using DentalCare.AccesoADatos.Entidades.Catalogo;
 using DentalCare.AccesoADatos.Entidades.Citas;
 using DentalCare.AccesoADatos.Entidades.Estado;
 using DentalCare.AccesoADatos.Entidades.Expediente;
 using DentalCare.AccesoADatos.Entidades.Expedientes;
+using DentalCare.AccesoADatos.Entidades.Gastos;
 using DentalCare.AccesoADatos.Entidades.Odontograma;
 using DentalCare.AccesoADatos.Entidades.Pago;
 using DentalCare.AccesoADatos.Entidades.Procedimiento;
@@ -41,6 +43,7 @@ namespace DentalCare.AccesoADatos
 
         // Tratamiento
         public DbSet<PlanTratamientoEntidad> PlanesTratamiento { get; set; }
+        public DbSet<CatalogoTratamientoEntidad> CatalogoTratamientos { get; set; }
 
         // Alertas
         public DbSet<AlertaMedicaEntidad> Alertas { get; set; }
@@ -75,5 +78,8 @@ namespace DentalCare.AccesoADatos
         public DbSet<ContabilidadEntidad> Contabilidades { get; set; }
         public DbSet<ContabilidadCitaEntidad> ContabilidadCitas { get; set; }
         public DbSet<ContabilidadPacienteEntidad> ContabilidadPacientes { get; set; }
+
+        //Gastos
+        public DbSet<GastoEntidad> Gastos { get; set; }
     }
 }

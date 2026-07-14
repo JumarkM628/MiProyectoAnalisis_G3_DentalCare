@@ -1,350 +1,420 @@
 ﻿@model List<DentalCare.Abstraccion.Modelo.Pagos.PagoDto>
-
 @{
-    ViewBag.Title = "Historial de Pagos";
+    ViewBag.Title = "Estado de Pagos";
+    decimal totalCobrado = Model != null ? Model.Where(p => p.NombreEstado == "Activo").Sum(p => p.Monto) : 0;
+    decimal totalPendiente = Model != null ? Model.Where(p => p.NombreEstado == "Pendiente").Sum(p => p.Monto) : 0;
+    int conDeuda = Model != null ? Model.Where(p => p.NombreEstado == "Pendiente").Select(p => p.NombrePaciente).Distinct().Count() : 0;
 }
-
-<div class="usuarios-page">
-
-    <div class="usuarios-header">
-        <div>
-            <h1 class="usuarios-titulo">
-                <i class="fa fa-bar-chart"></i> Historial Financiero
-            </h1>
-            <p class="usuarios-subtitulo">
-                Total de pagos registrados: <strong>@(Model?.Count ?? 0)</strong>
-                &nbsp;|&nbsp;
-                Total ingresos:
-                <strong>₡ @(Model != null ? Model.Sum(p => p.Monto).ToString("N2") : "0.00")</strong>
-            </p>
-        </div>
-        <div>
-            @Html.ActionLink("+ Registrar Pago", "RegistrarPago", "Pago",
-                     null, new { @class = "btn-usuario-primary" })
-        </div>
-    </div>
-
-    @if (TempData["Exito"] != null)
-    {
-        <div class="alert alert-success">@TempData["Exito"]</div>
-    }
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">@TempData["Error"]</div>
-    }
-
-    <div class="usuarios-filtros">
-        <div class="buscador-wrapper">
-            <i class="fa fa-search"></i>
-            <input type="text" id="buscador" class="usuario-input"
-                   placeholder="Buscar por paciente, método o cita..."
-                   onkeyup="filtrarTabla()" />
-        </div>
-    </div>
-
-    <div class="usuarios-table-wrapper">
-        <div class="usuarios-table-card">
-            <table class="usuarios-table" id="tablaHistorial">
-                <thead>
-                    <tr>
-                        <th>ID Pago</th>
-                        <th>Paciente</th>
-                        <th>Cita</th>
-                        <th>Monto</th>
-                        <th>Método de Pago</th>
-                        <th>Fecha</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model == null || !Model.Any())
-                    {
-                        <tr>
-                            <td colspan="7" class="usuarios-empty-row">
-                                No hay pagos registrados.
-                            </td>
-                        </tr>
-                    }
-                    else
-                    {
-                        foreach (var p in Model)
-                        {
-                            <tr>
-                                <td class="td-id">@p.IdContabilidad</td>
-                                <td>@p.NombrePaciente</td>
-                                <td class="td-id">#@p.IdCita</td>
-                                <td><strong>₡ @p.Monto.ToString("N2")</strong></td>
-                                <td>
-                                    @{
-                                        string iconoMetodo = "fa-money";
-
-                                        if (p.NombreMetodoPago == "Tarjeta")
-                                        {
-                                            iconoMetodo = "fa-credit-card";
-                                        }
-
-                                        if (p.NombreMetodoPago == "SINPE")
-                                        {
-                                            iconoMetodo = "fa-mobile";
-                                        }
-                                    }
-                                    <i class="fa @iconoMetodo"></i> @p.NombreMetodoPago
-                                </td>
-                                <td class="td-muted">
-                                    @(p.FechaPago.HasValue ? p.FechaPago.Value.ToString("dd/MM/yyyy HH:mm") : "—")
-                                </td>
-                                <td>
-                                    <span class="estado-badge estado-activo">
-                                        @p.NombreEstado
-                                    </span>
-                                </td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
-            <div class="usuarios-empty" id="emptyMsg" style="display:none;">
-                No se encontraron pagos.
-            </div>
-        </div>
-    </div>
-
-    <div class="pagination-container">
-        <button id="prevBtn" onclick="cambiarPagina(-1)">← Anterior</button>
-        <span id="paginaActual"></span>
-        <button id="nextBtn" onclick="cambiarPagina(1)">Siguiente →</button>
-    </div>
-
-</div>
-
 <style>
-    .usuarios-page {
-        min-height: 100vh;
-        padding: 40px 32px 60px;
+    .ep-page {
+        padding: 32px 0
     }
 
-    .usuarios-header {
+    .ep-header {
         display: flex;
+        align-items: center;
         justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 20px;
-        margin-bottom: 25px;
+        margin-bottom: 28px
     }
 
-    .usuarios-titulo {
-        font-size: 2.2rem;
+    .ep-header-left h1 {
+        font-size: 22px;
         font-weight: 700;
-        color: #000;
-        margin: 0;
+        color: #0C1B33;
+        margin: 0 0 4px
     }
 
-    .usuarios-subtitulo {
-        margin-top: 6px;
-        color: #6b7280;
+    .ep-header-left p {
+        font-size: 13px;
+        color: #6B7A99;
+        margin: 0
     }
 
-    .btn-usuario-primary {
-        background: #8FFDFF;
-        color: #000;
-        text-decoration: none;
-        padding: 10px 16px;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: .2s;
+    .metricas-grid {
+        display: grid;
+        grid-template-columns: repeat(4,1fr);
+        gap: 14px;
+        margin-bottom: 20px
     }
 
-        .btn-usuario-primary:hover {
-            background: #6EA0FF;
-            color: #fff;
-            text-decoration: none;
-        }
-
-    .usuarios-filtros {
-        margin-bottom: 20px;
+    .metrica-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 18px 20px
     }
 
-    .buscador-wrapper {
-        position: relative;
-        max-width: 450px;
-    }
-
-        .buscador-wrapper i {
-            position: absolute;
-            left: 14px;
-            top: 13px;
-            color: #999;
-        }
-
-    .usuario-input {
-        width: 100%;
-        padding: 12px 15px 12px 40px;
-        border-radius: 10px;
-        border: 1px solid #dcdcdc;
-        outline: none;
-    }
-
-        .usuario-input:focus {
-            border-color: #1abcb0;
-        }
-
-    .usuarios-table-wrapper {
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 8px 30px rgba(0,0,0,.08);
-    }
-
-    .usuarios-table-card {
-        background: white;
-        overflow-x: auto;
-    }
-
-    .usuarios-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-        .usuarios-table thead tr {
-            background: #f5f7fa;
-            border-bottom: 2px solid #e5e7eb;
-        }
-
-        .usuarios-table th {
-            padding: 14px;
-            text-align: left;
-            font-size: .8rem;
-            font-weight: 700;
-            color: #1f2937;
-            white-space: nowrap;
-        }
-
-        .usuarios-table td {
-            padding: 14px;
-            border-bottom: 1px solid #edf2f7;
-            color: #374151;
-            vertical-align: middle;
-        }
-
-        .usuarios-table tbody tr:hover {
-            background: #f8fffe;
-        }
-
-    .td-id {
+    .metrica-label {
+        font-size: 11px;
         font-weight: 700;
+        color: #8896B0;
+        text-transform: uppercase;
+        letter-spacing: .07em
     }
 
-    .td-muted {
-        color: #6b7280;
-    }
-
-    .estado-badge {
-        display: inline-block;
-        padding: 5px 12px;
-        border-radius: 50px;
-        font-size: .75rem;
+    .metrica-valor {
+        font-size: 22px;
         font-weight: 700;
+        color: #0C1B33;
+        margin: 4px 0
     }
 
-    .estado-activo {
-        background: #e6f9f7;
-        color: #0f6e56;
-        border: 1px solid #1abcb0;
+    .metrica-sub {
+        font-size: 12px;
+        color: #6B7A99
     }
 
-    .usuarios-empty {
-        text-align: center;
-        padding: 35px;
-        color: #6b7280;
+    .ep-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 20px
     }
 
-    .usuarios-empty-row {
-        text-align: center;
-        padding: 30px;
-        color: #6b7280;
-    }
-
-    .pagination-container {
+    .filtros-row {
         display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 15px;
-        margin-top: 20px;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+        align-items: flex-end
     }
 
-        .pagination-container button {
-            border: none;
-            background: #1abcb0;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 8px;
+    .fg {
+        display: flex;
+        flex-direction: column;
+        gap: 4px
+    }
+
+        .fg label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #3D4D6B
         }
 
-            .pagination-container button:disabled {
-                opacity: .4;
-                cursor: not-allowed;
+        .fg input, .fg select {
+            border: 1px solid #DDE1EC;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 13px;
+            font-family: inherit;
+            min-width: 160px
+        }
+
+            .fg input:focus, .fg select:focus {
+                outline: none;
+                border-color: #378ADD
             }
 
-    #paginaActual {
-        font-weight: 600;
+    .ep-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px
     }
 
-    @@media(max-width:768px) {
-        .usuarios-page {
-            padding: 20px 15px;
+        .ep-table th {
+            text-align: left;
+            padding: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #8896B0;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            border-bottom: 2px solid #E8ECF4
         }
 
-        .usuarios-header {
+        .ep-table td {
+            padding: 12px;
+            border-bottom: 1px solid #F0F2F8;
+            color: #3D4D6B;
+            vertical-align: middle
+        }
+
+        .ep-table tbody tr:hover {
+            background: #F9FAFC
+        }
+
+    .td-right {
+        text-align: right;
+        font-weight: 600;
+        color: #0C1B33
+    }
+
+    .badge-pagado {
+        background: #EAF3DE;
+        color: #3B6D11;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600
+    }
+
+    .badge-pendiente {
+        background: #FAEEDA;
+        color: #854F0B;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600
+    }
+
+    .badge-inactivo {
+        background: #F5F6FA;
+        color: #6B7A99;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600
+    }
+
+    .btn-accion {
+        border: none;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-family: inherit;
+        text-decoration: none;
+        display: inline-block
+    }
+
+    .btn-ver {
+        background: #E6F1FB;
+        color: #185FA5
+    }
+
+        .btn-ver:hover {
+            background: #B5D4F4;
+            text-decoration: none;
+            color: #185FA5
+        }
+
+    .btn-pendiente {
+        background: #FAEEDA;
+        color: #854F0B
+    }
+
+        .btn-pendiente:hover {
+            background: #F5CFA0;
+            text-decoration: none;
+            color: #854F0B
+        }
+
+    .btn-pagado {
+        background: #EAF3DE;
+        color: #3B6D11
+    }
+
+        .btn-pagado:hover {
+            background: #C7E5A5;
+            text-decoration: none;
+            color: #3B6D11
+        }
+
+    .alert-custom {
+        display: none;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        margin-bottom: 20px;
+        align-items: center;
+        gap: 10px
+    }
+
+        .alert-custom.show {
+            display: flex
+        }
+
+    .alert-success-custom {
+        background: #EAF3DE;
+        color: #3B6D11;
+        border: 1px solid #97C459
+    }
+
+    .alert-danger-custom {
+        background: #FCEBEB;
+        color: #A0291E;
+        border: 1px solid #F5C6C6
+    }
+
+    .alert-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+        flex-shrink: 0
+    }
+
+    .btn-nuevo {
+        padding: 9px 18px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: none;
+        background: #185FA5;
+        color: #fff;
+        cursor: pointer;
+        font-family: inherit;
+        text-decoration: none;
+        display: inline-block
+    }
+
+        .btn-nuevo:hover {
+            background: #0C447C;
+            text-decoration: none;
+            color: #fff
+        }
+
+    .btn-limpiar {
+        padding: 9px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        color: #3D4D6B;
+        cursor: pointer;
+        font-family: inherit
+    }
+
+    @@media(max-width:900px) {
+        .metricas-grid {
+            grid-template-columns: repeat(2,1fr)
+        }
+
+        .ep-header {
             flex-direction: column;
-            align-items: stretch;
+            align-items: flex-start;
+            gap: 12px
         }
     }
 </style>
 
+<div class="container ep-page">
+    <div class="d-flex align-items-center gap-2">
+        <a href="@Url.Action("Menu", "Contabilidad")" class="btn-secundario ms-2">&#8592; Volver</a>
+    </div>
+    <div class="ep-header">
+        <div class="ep-header-left">
+            <h1>Estado de pagos</h1>
+            <p>Controlá los pagos de tratamientos de los pacientes</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+            @Html.ActionLink("+ Registrar Pago", "RegistrarPago", "Pago", null, new { @class = "btn-nuevo" })
+            @Html.ActionLink("Costos", "CostosTratamiento", "Catalogo", null, new { @class = "btn-nuevo", style = "background:#3B6D11;" })
+        </div>
+    </div>
+
+    @if (TempData["Exito"] != null)
+    {<div class="alert-custom alert-success-custom show"><div class="alert-dot"></div><span>@TempData["Exito"]</span></div>}
+    @if (TempData["Error"] != null)
+    {<div class="alert-custom alert-danger-custom show"><div class="alert-dot"></div><span>@TempData["Error"]</span></div>}
+
+    <div class="metricas-grid">
+        <div class="metrica-card">
+            <div class="metrica-label">Cobrado</div>
+            <div class="metrica-valor">&#8353; @totalCobrado.ToString("N0")</div>
+            <div class="metrica-sub">pagos completados</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Pendiente</div>
+            <div class="metrica-valor">&#8353; @totalPendiente.ToString("N0")</div>
+            <div class="metrica-sub">por cobrar</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Total registros</div>
+            <div class="metrica-valor">@(Model?.Count ?? 0)</div>
+            <div class="metrica-sub">pagos en total</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Pacientes con deuda</div>
+            <div class="metrica-valor">@conDeuda</div>
+            <div class="metrica-sub">con pagos pendientes</div>
+        </div>
+    </div>
+
+    <div class="ep-card">
+        <div class="filtros-row">
+            <div class="fg"><label>Buscar</label><input type="text" id="buscar" placeholder="Paciente o cita..." oninput="filtrar()" /></div>
+            <div class="fg">
+                <label>Estado</label>
+                <select id="estado" onchange="filtrar()">
+                    <option value="">Todos</option>
+                    <option value="Activo">Pagado</option>
+                    <option value="Pendiente">Pendiente</option>
+                </select>
+            </div>
+            <button class="btn-limpiar" onclick="limpiar()">&#x2715; Limpiar</button>
+        </div>
+
+        <table class="ep-table" id="tablaHistorial">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Paciente</th>
+                    <th>Cita</th>
+                    <th>Método</th>
+                    <th>Fecha</th>
+                    <th class="td-right">Monto</th>
+                    <th>Estado</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model == null || !Model.Any())
+                {
+                    <tr><td colspan="8" style="text-align:center;padding:24px;color:#8896B0;">No hay pagos registrados.</td></tr>
+                }
+                else
+                {
+                    foreach (var p in Model)
+                    {
+                        string badge = p.NombreEstado == "Activo" ? "badge-pagado"
+                                     : p.NombreEstado == "Pendiente" ? "badge-pendiente"
+                                     : "badge-inactivo";
+                        string textoEstado = p.NombreEstado == "Activo" ? "Pagado" : p.NombreEstado;
+                        <tr data-buscar="@p.NombrePaciente.ToLower() @p.IdCita" data-estado="@p.NombreEstado">
+                            <td style="color:#8896B0;font-size:11px;">@p.IdContabilidad</td>
+                            <td style="font-weight:600;color:#0C1B33;">@p.NombrePaciente</td>
+                            <td>#@p.IdCita</td>
+                            <td>@p.NombreMetodoPago</td>
+                            <td style="color:#6B7A99;">@(p.FechaPago.HasValue ? p.FechaPago.Value.ToString("dd/MM/yyyy") : "—")</td>
+                            <td class="td-right">&#8353; @p.Monto.ToString("N0")</td>
+                            <td><span class="@badge">@textoEstado</span></td>
+                            <td style="display:flex;gap:5px;">
+                                @if (p.NombreEstado == "Activo")
+                                {
+                                    @Html.ActionLink("Pendiente", "MarcarPendiente", new { id = p.IdContabilidad }, new { @class = "btn-accion btn-pendiente" })
+                                }
+                                @if (p.NombreEstado == "Pendiente")
+                                {
+                                    @Html.ActionLink("Marcar pagado", "MarcarPagado", new { id = p.IdContabilidad }, new { @class = "btn-accion btn-pagado" })
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
 @section Scripts {
-    <script>let paginaActual = 1;
-        const filasPorPagina = 10;
-
-        function obtenerFilasVisibles() {
-            return Array.from(
-                document.querySelectorAll("#tablaHistorial tbody tr")
-            ).filter(fila =>
-                fila.style.display !== "none" &&
-                !fila.classList.contains("usuarios-empty-row"));
-        }
-
-        function mostrarPagina() {
-            let filas = obtenerFilasVisibles();
-            let totalPaginas = Math.ceil(filas.length / filasPorPagina);
-            if (totalPaginas === 0) totalPaginas = 1;
-            filas.forEach((fila, index) => {
-                fila.style.visibility = (index >= (paginaActual-1)*filasPorPagina &&
-                    index < paginaActual*filasPorPagina) ? "" : "collapse";
+    <script>
+        function filtrar() {
+            var b = document.getElementById('buscar').value.toLowerCase();
+            var e = document.getElementById('estado').value;
+            document.querySelectorAll('#tablaHistorial tbody tr').forEach(function (fila) {
+                var matchB = fila.getAttribute('data-buscar')?.includes(b) ?? true;
+                var matchE = !e || fila.getAttribute('data-estado') === e;
+                fila.style.display = (matchB && matchE) ? '' : 'none';
             });
-            document.getElementById("paginaActual").innerText =
-                "Página " + paginaActual + " de " + totalPaginas;
-            document.getElementById("prevBtn").disabled = (paginaActual === 1);
-            document.getElementById("nextBtn").disabled = (paginaActual >= totalPaginas);
         }
-
-        function cambiarPagina(dir) {
-            let total = Math.ceil(obtenerFilasVisibles().length / filasPorPagina);
-            paginaActual = Math.max(1, Math.min(paginaActual + dir, total));
-            mostrarPagina();
+        function limpiar() {
+            document.getElementById('buscar').value = '';
+            document.getElementById('estado').value = '';
+            filtrar();
         }
-
-        function filtrarTabla() {
-            let filtro = document.getElementById("buscador").value.toLowerCase();
-            let visibles = 0;
-            document.querySelectorAll("#tablaHistorial tbody tr").forEach(fila => {
-                if (fila.classList.contains("usuarios-empty-row")) return;
-                let mostrar = fila.innerText.toLowerCase().includes(filtro);
-                fila.style.display = mostrar ? "" : "none";
-                if (mostrar) visibles++;
-            });
-            document.getElementById("emptyMsg").style.display = visibles === 0 ? "block" : "none";
-            paginaActual = 1;
-            mostrarPagina();
-        }
-
-        document.addEventListener("DOMContentLoaded", () => mostrarPagina());</script>
+    </script>
 }

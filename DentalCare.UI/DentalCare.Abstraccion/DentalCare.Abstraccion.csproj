@@ -66,6 +66,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccesoADatos\Archivo\IArchivoClinicoAD.cs" />
+    <Compile Include="AccesoADatos\Catalogo\ActualizarCosto\IActualizarCostoAD.cs" />
+    <Compile Include="AccesoADatos\Catalogo\ObtenerCatalogoAD\IObtenerCatalogoAD.cs" />
     <Compile Include="AccesoADatos\Citas\AgregarCita\IAgregarCitaAD.cs" />
     <Compile Include="AccesoADatos\Citas\CambiarEstadoCita\ICambiarEstadoCitaAD.cs" />
     <Compile Include="AccesoADatos\Citas\ObtenerCitaPaciente\IObtenerCitasPacienteAD.cs" />
@@ -76,6 +78,9 @@
     <Compile Include="AccesoADatos\Expediente\CrearExpediente\ICrearExpedienteAD.cs" />
     <Compile Include="AccesoADatos\Expediente\ObtenerTodosLosExpedientes\IObtenerTodosLosExpedientesAD.cs" />
     <Compile Include="AccesoADatos\Expediente\ReabrirExpediente\IReabrirExpedienteAD.cs" />
+    <Compile Include="AccesoADatos\Pago\ActualizarEstadoPago\IActualizarEstadoPagoAD.cs" />
+    <Compile Include="AccesoADatos\Gastos\ObtenerGastos\IObtenerGastosAD.cs" />
+    <Compile Include="AccesoADatos\Gastos\RegistrarGastos\IRegistrarGastoAD.cs" />
     <Compile Include="AccesoADatos\Odontograma\RegistrarOdontograma\IRegistrarOdontogramaAD.cs" />
     <Compile Include="AccesoADatos\Odontograma\ObtenerOdontogramaPorExpediente\ObtenerOdontogramaPorExpediente.cs" />
     <Compile Include="AccesoADatos\Pago\ObtenerPago\IObtenerPagosAD.cs" />
@@ -96,6 +101,8 @@
     <Compile Include="AccesoADatos\Usuarios\RecuperarContrasena\IRecuperarContrasenaAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\RegistrarUsuarios\IRegistrarUsuariosAD.cs" />
     <Compile Include="LogicaDeNegocio\Archivo\IArchivoClinicoLN.cs" />
+    <Compile Include="LogicaDeNegocio\Catalogo\ActualizarCosto\IActualizarCostoLN.cs" />
+    <Compile Include="LogicaDeNegocio\Catalogo\ObtenerCatalogo\IObtenerCatalogoLN.cs" />
     <Compile Include="LogicaDeNegocio\Citas\AgregarCita\IAgregarCitaLN.cs" />
     <Compile Include="LogicaDeNegocio\Citas\CambiarEstadoCita\ICambiarEstadoCitaLN.cs" />
     <Compile Include="LogicaDeNegocio\Citas\ObtenerCitasPaciente\IObtenerCitasPacienteLN.cs" />
@@ -106,8 +113,11 @@
     <Compile Include="LogicaDeNegocio\Expedientes\CrearExpediente\ICrearExpedienteLN.cs" />
     <Compile Include="LogicaDeNegocio\Expedientes\ObtenerTodosLosExpedientes\IObtenerTodosLosExpedientesLN.cs" />
     <Compile Include="LogicaDeNegocio\Expedientes\ReabrirExpediente\IReabrirExpedienteLN.cs" />
+    <Compile Include="LogicaDeNegocio\Gastos\ObtenerGastos\IObtenerGastosLN.cs" />
+    <Compile Include="LogicaDeNegocio\Gastos\RegistrarGasto\IRegistrarGastoLN.cs" />
     <Compile Include="LogicaDeNegocio\Odontograma\RegistrarOdontograma\IObtenerOdontogramaPorExpedienteLN.cs" />
     <Compile Include="LogicaDeNegocio\Odontograma\RegistrarOdontograma\IRegistrarOdontogramaLN.cs" />
+    <Compile Include="LogicaDeNegocio\Pago\ActualizarEstadoPago\IActualizarEstadoPagoLN.cs" />
     <Compile Include="LogicaDeNegocio\Pago\ObtenerPago\IObtenerPagosLN.cs" />
     <Compile Include="LogicaDeNegocio\Pago\RegistrarPago\IRegistrarPagoLN.cs" />
     <Compile Include="LogicaDeNegocio\Producto\IEditarProductoLN.cs" />
@@ -132,6 +142,7 @@
     <Compile Include="Modelo\Expediente\ExpedienteDetalleDto.cs" />
     <Compile Include="Modelo\Expediente\ExpedienteDto.cs" />
     <Compile Include="Modelo\Odontograma\OdontogramaDto.cs" />
+    <Compile Include="Modelo\Gasto\GastoDto.cs" />
     <Compile Include="Modelo\Pago\PagoDto.cs" />
     <Compile Include="Modelo\Producto\ProductoDto.cs" />
     <Compile Include="Modelo\Producto\UsoProducto\UsoProductoDto.cs" />
@@ -140,6 +151,7 @@
     <Compile Include="Modelo\Reporteria\HistorialTratamientoDto.cs" />
     <Compile Include="Modelo\Reporteria\ProductoFrecuenciaDto.cs" />
     <Compile Include="Modelo\Reporteria\ProductoLoteFrecuenciaDto.cs" />
+    <Compile Include="Modelo\Tratamiento\CatalogoDto.cs" />
     <Compile Include="Modelo\Tratamiento\PlanTratamientoDto.cs" />
     <Compile Include="Modelo\Tratamiento\TratamientoDto.cs" />
     <Compile Include="Modelo\Usuarios\UsuarioDto.cs" />

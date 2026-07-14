@@ -210,9 +210,11 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ArchivoController.cs" />
+    <Compile Include="Controllers\CatalogoController.cs" />
     <Compile Include="Controllers\CitaController.cs" />
     <Compile Include="Controllers\ContabilidadController.cs" />
     <Compile Include="Controllers\ExpedienteController.cs" />
+    <Compile Include="Controllers\GastoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InventarioController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -357,6 +359,12 @@
     <Content Include="Views\Pago\HistorialPagos.cshtml" />
     <Content Include="Views\Tratamiento\ResumenCita.cshtml" />
     <Content Include="Views\Tratamiento\RegistrarTratamiento.cshtml" />
+    <Content Include="Views\Gasto\RegistrarGasto.cshtml" />
+    <Content Include="Views\Gasto\ReporteGastos.cshtml" />
+    <Content Include="Views\Pago\MarcarPendiente.cshtml" />
+    <Content Include="Views\Pago\MarcarPagado.cshtml" />
+    <Content Include="Views\Catalogo\CostosTratamiento.cshtml" />
+    <Content Include="Views\Catalogo\EditarCosto.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
