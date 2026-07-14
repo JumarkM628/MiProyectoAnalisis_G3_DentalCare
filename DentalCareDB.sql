@@ -569,3 +569,35 @@ ADD ID_CITA INT NULL;
 ALTER TABLE FIDE_TRATAMIENTO_TB
 ADD CONSTRAINT TRATAMIENTO_CITA_FK FOREIGN KEY (ID_CITA)
     REFERENCES FIDE_CITAS_TB (ID_CITA);
+
+-- Catálogo de tipos de tratamiento con costo base
+CREATE TABLE FIDE_CATALOGO_TRATAMIENTO_TB (
+    ID_CATALOGO    INT          NOT NULL,
+    NOMBRE         VARCHAR(150) NOT NULL,
+    CATEGORIA      VARCHAR(50)  NULL,
+    DURACION_MIN   INT          NULL,
+    COSTO          DECIMAL(10,2) NOT NULL,
+    COSTO_ANTERIOR DECIMAL(10,2) NULL,
+    ID_ESTADO      INT          NOT NULL,
+    FECHA_ACTUALIZACION DATE    NULL,
+    CONSTRAINT PK_CATALOGO_TRATAMIENTO PRIMARY KEY (ID_CATALOGO),
+    CONSTRAINT CATALOGO_ESTADO_FK FOREIGN KEY (ID_ESTADO)
+        REFERENCES FIDE_ESTADO_TB (ID_ESTADO)
+);
+
+-- Datos base del catálogo
+INSERT INTO FIDE_CATALOGO_TRATAMIENTO_TB VALUES
+(1,  'Limpieza dental',          'Preventivo',  45,  35000,  30000, 1, GETDATE()),
+(2,  'Blanqueamiento',           'Estético',    60,  45000,  42000, 1, GETDATE()),
+(3,  'Radiografía periapical',   'Preventivo',  15,  12000,  10000, 1, GETDATE()),
+(4,  'Extracción dental simple', 'Cirugía',     30,  25000,  25000, 1, GETDATE()),
+(5,  'Ortodoncia (mensualidad)', 'Ortodoncia',  30,  55000,  50000, 1, GETDATE()),
+(6,  'Resina dental',            'Restaurador', 50,  30000,  28000, 1, GETDATE()),
+(7,  'Endodoncia',               'Endodoncia',  90,  80000,  75000, 1, GETDATE()),
+(8,  'Corona de porcelana',      'Restaurador', 120, 95000,  90000, 1, GETDATE()),
+(9,  'Implante dental',          'Cirugía',     180, 350000, 320000,1, GETDATE()),
+(10, 'Profilaxis infantil',      'Preventivo',  30,  18000,  15000, 1, GETDATE()),
+(11, 'Blanqueamiento láser',     'Estético',    90,  75000,  70000, 1, GETDATE()),
+(12, 'Puente dental (3 piezas)', 'Restaurador', 90,  120000, 110000,1, GETDATE()),
+(13, 'Extracción muela juicio',  'Cirugía',     60,  40000,  38000, 1, GETDATE()),
+(14, 'Sellante dental',          'Preventivo',  20,  8000,   8000,  1, GETDATE());
