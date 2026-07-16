@@ -116,6 +116,44 @@ namespace DentalCare.UI.Controllers
             return View();
         }
 
+        // GET: Reporteria/ReportesTratamientos
+        public ActionResult ReportesTratamientos()
+        {
+            // Por ahora reutilizamos una vista existente como marcador de posición
+            return View("ReportesProductos");
+        }
+
+        // GET: Reporteria/ReportesInventario
+        public ActionResult ReportesInventario()
+        {
+            return View("Inventario");
+        }
+
+        // GET: Reporteria/ReportesProductosUtilizados
+        public ActionResult ReportesProductosUtilizados()
+        {
+            return View("ReportesProductos");
+        }
+
+        // GET: Reporteria/ReportesPagos
+        public ActionResult ReportesPagos()
+        {
+            return View("Pagos");
+        }
+
+        // GET: Reporteria/ReportesPacientesAtendidos
+        public ActionResult ReportesPacientesAtendidos()
+        {
+            return View("Pacientes");
+        }
+
+        // GET: Reporteria/ReportesUsuarios
+        public ActionResult ReportesUsuarios()
+        {
+            // Reutilizamos la vista de usuario existente por ahora
+            return View("~/Views/Usuario/ObtenerTodosLosUsuarios.cshtml");
+        }
+
         // GET: Reporteria/CitasPorPeriodo?desde=yyyy-MM-dd&hasta=yyyy-MM-dd
         public ActionResult CitasPorPeriodo(DateTime? desde, DateTime? hasta)
         {
