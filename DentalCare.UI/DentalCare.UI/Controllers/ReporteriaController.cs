@@ -176,7 +176,38 @@ namespace DentalCare.UI.Controllers
         // GET: Reporteria/ReportesProductosUtilizados
         public ActionResult ReportesProductosUtilizados()
         {
-            return View("ReportesProductos");
+            using (var contexto = new Contexto())
+            {
+                var lista = contexto.UsoProductos.OrderBy(u => u.ID_USO).ToList();
+
+                var sb = new System.Text.StringBuilder();
+                sb.AppendLine("<!DOCTYPE html>");
+                sb.AppendLine("<html lang=\"es\">\n<head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Reporte de Productos Utilizados - Clínica Dental</title>\n    <link href=\"/Content/DentalCare.css?v=3\" rel=\"stylesheet\" />\n</head>\n<body>");
+
+                sb.AppendLine("<div class=\"page-wrapper\">\n<nav class=\"main-nav\">\n  <div class=\"nav-inner\">\n    <div class=\"navbar-title\">Clínica dental y especialidades</div>\n    <div class=\"nav-links-wrapper\" id=\"mainNavLinks\">\n      <ul class=\"nav-links\">\n        <li><a class=\"nav-link\" href=\"/\">Inicio</a></li>\n        <li><a class=\"nav-link\" href=\"/Reporteria\">Reporteria</a></li>\n      </ul>\n    </div>\n  </div>\n</nav>");
+
+                sb.AppendLine("<div class=\"usuarios-page\">\n  <div class=\"usuarios-header\">\n    <div>\n      <h1 class=\"usuarios-titulo\">Reporte de Productos Utilizados</h1>\n      <p class=\"usuarios-subtitulo\">Listado completo de la tabla FIDE_USO_PRODUCTO_TB</p>\n    </div>\n    <div>\n      <a href=\"/Reporteria\" class=\"btn-usuario-primary\">← Volver a Reportería</a>\n    </div>\n  </div>\n  <section class=\"usuarios-table-card rep-contenido\">\n");
+
+                if (lista == null || !lista.Any())
+                {
+                    sb.AppendLine("<p class=\"rep-placeholder\">No hay registros en FIDE_USO_PRODUCTO_TB.</p>");
+                }
+                else
+                {
+                    sb.AppendLine("<table class=\"table\" style=\"width:100%;border-collapse:collapse;\"><thead><tr><th>ID_USO</th><th>ID_PRODUCTO</th><th>ID_PROCEDIMIENTO</th><th>CANTIDAD</th><th>ID_ESTADO</th></tr></thead><tbody>");
+                    foreach (var r in lista)
+                    {
+                        sb.AppendLine($"<tr><td>{r.ID_USO}</td><td>{r.ID_PRODUCTO}</td><td>{r.ID_PROCEDIMIENTO}</td><td>{(r.CANTIDAD.HasValue? r.CANTIDAD.Value.ToString() : "")}</td><td>{r.ID_ESTADO}</td></tr>");
+                    }
+                    sb.AppendLine("</tbody></table>");
+                }
+
+                sb.AppendLine("</section>\n</div>\n<footer class=\"site-footer\">\n  <div class=\"footer-inner\">\n    <div class=\"footer-brand\">\n      <span>Clínica Dental y Especialidades</span>\n    </div>\n    <p class=\"footer-copy\">&copy; " + DateTime.Now.Year + "</p>\n  </div>\n</footer>\n</div>");
+
+                sb.AppendLine("</body></html>");
+
+                return Content(sb.ToString(), "text/html");
+            }
         }
 
         // GET: Reporteria/ReportesPagos
