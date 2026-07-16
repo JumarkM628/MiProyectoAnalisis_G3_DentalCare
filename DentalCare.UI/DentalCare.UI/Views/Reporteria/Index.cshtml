@@ -1,27 +1,60 @@
 ﻿@{
-    ViewBag.Title = "Reportes de Citas";
+    ViewBag.Title = "Reportería";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container" style="padding:24px;">
-    <h1>Reporte de Citas</h1>
-    <p>Consulte la actividad de atención en la clínica por un periodo determinado.</p>
+    <h1>Reportería</h1>
+    <p>Seleccione el tipo de reporte que desea consultar.</p>
 
-    <form method="get" action="/Reporteria/CitasPorPeriodo" class="form-inline" style="gap:8px; display:flex; align-items:center; flex-wrap:wrap;">
-        <div class="form-group">
-            <label for="desde" style="margin-right:6px;">Desde</label>
-            <input type="date" id="desde" name="desde" class="form-control" required />
+    <div class="row" style="margin-top:18px;">
+        <div class="col-md-4" style="margin-bottom:12px;">
+            <a href="/Reporteria/ReportesCitas" class="card" style="display:block;padding:18px;border:1px solid #e3e3e3;border-radius:8px;text-decoration:none;color:inherit;">
+                <h4>Reporte de Citas</h4>
+                <p>Consultar citas por periodo.</p>
+            </a>
         </div>
-        <div class="form-group">
-            <label for="hasta" style="margin-left:12px; margin-right:6px;">Hasta</label>
-            <input type="date" id="hasta" name="hasta" class="form-control" required />
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary" style="margin-left:12px;">Consultar</button>
-        </div>
-    </form>
 
-    <div style="margin-top:18px;">
-        <small>Los resultados se mostrarán en la página de resultados tras pulsar "Consultar".</small>
+        <div class="col-md-4" style="margin-bottom:12px;">
+            <a href="#" class="card disabled" style="display:block;padding:18px;border:1px solid #e3e3e3;border-radius:8px;text-decoration:none;color:inherit;">
+                <h4>Reporte de Tratamientos</h4>
+                <p>(Próximamente)</p>
+            </a>
+        </div>
+
+        <div class="col-md-4" style="margin-bottom:12px;">
+            <a href="#" class="card disabled" style="display:block;padding:18px;border:1px solid #e3e3e3;border-radius:8px;text-decoration:none;color:inherit;">
+                <h4>Reporte de Inventario</h4>
+                <p>(Próximamente)</p>
+            </a>
+        </div>
+
+        <div class="col-md-4" style="margin-bottom:12px;">
+            <a href="#" class="card disabled" style="display:block;padding:18px;border:1px solid #e3e3e3;border-radius:8px;text-decoration:none;color:inherit;">
+                <h4>Reporte de Productos Utilizados</h4>
+                <p>(Próximamente)</p>
+            </a>
+        </div>
+
+        <div class="col-md-4" style="margin-bottom:12px;">
+            <a href="#" class="card disabled" style="display:block;padding:18px;border:1px solid #e3e3e3;border-radius:8px;text-decoration:none;color:inherit;">
+                <h4>Reporte de Pagos</h4>
+                <p>(Próximamente)</p>
+            </a>
+        </div>
+
+        <div class="col-md-4" style="margin-bottom:12px;">
+            <a href="#" class="card disabled" style="display:block;padding:18px;border:1px solid #e3e3e3;border-radius:8px;text-decoration:none;color:inherit;">
+                <h4>Reporte de Pacientes Atendidos</h4>
+                <p>(Próximamente)</p>
+            </a>
+        </div>
+
+        <div class="col-md-4" style="margin-bottom:12px;">
+            <a href="#" class="card disabled" style="display:block;padding:18px;border:1px solid #e3e3e3;border-radius:8px;text-decoration:none;color:inherit;">
+                <h4>Reporte de Usuarios</h4>
+                <p>(Próximamente)</p>
+            </a>
+        </div>
     </div>
 </div>
