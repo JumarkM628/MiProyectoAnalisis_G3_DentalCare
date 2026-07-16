@@ -7,7 +7,7 @@
 
 <style>
     body {
-        background:  white;
+        background: linear-gradient(135deg, #16302D 0%, #1F6B75 50%, #2C8C99 100%);
         min-height: 100vh;
     }
 
@@ -16,51 +16,52 @@
         justify-content: center;
         align-items: center;
         min-height: 85vh;
+        padding: 24px;
     }
 
     .login-card {
         background: white;
         padding: 40px;
         border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        box-shadow: 0 20px 50px rgba(15,45,42,0.35);
         width: 100%;
         max-width: 500px;
     }
 
     .login-title {
         text-align: center;
-        color: #2C3E50;
+        color: #16302D;
         font-weight: bold;
         margin-bottom: 10px;
     }
 
     .login-subtitle {
         text-align: center;
-        color: #6c757d;
+        color: #52706C;
         margin-bottom: 30px;
     }
 
     .form-label {
         font-weight: 600;
-        color: #2C3E50;
+        color: #16302D;
         margin-bottom: 5px;
     }
 
     .form-control {
         border-radius: 12px;
         padding: 12px;
-        border: 1px solid #dcdcdc;
+        border: 1px solid #CFE8E6;
         margin-bottom: 15px;
     }
 
         .form-control:focus {
-            border-color: #5CCCCC;
-            box-shadow: 0 0 0 0.2rem rgba(92,204,204,.25);
+            border-color: #2C8C99;
+            box-shadow: 0 0 0 0.2rem rgba(44,140,153,.25);
         }
 
     .btn-login {
         width: 100%;
-        background: #5CCCCC;
+        background: linear-gradient(135deg, #2C8C99 0%, #1F6B75 100%);
         color: white;
         border: none;
         border-radius: 12px;
@@ -70,26 +71,50 @@
     }
 
         .btn-login:hover {
-            background: #49b8b8;
+            background: linear-gradient(135deg, #1F6B75 0%, #16302D 100%);
             color: white;
         }
 
     .login-links {
-        text-align: center;
-        margin-top: 20px;
+        margin-top: 26px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
     }
 
         .login-links a {
-            color: #5CCCCC;
             text-decoration: none;
-            font-weight: 500;
-            display: block;
-            margin-top: 8px;
+            font-weight: 700;
+            text-align: center;
+            padding: 11px 16px;
+            border-radius: 50px;
+            transition: .2s;
         }
 
-            .login-links a:hover {
-                text-decoration: underline;
-            }
+    .link-register {
+        background: rgba(127,216,206,0.18);
+        color: #1F6B75;
+        border: 1.5px solid #7FD8CE;
+    }
+
+        .link-register:hover {
+            background: #7FD8CE;
+            color: #16302D;
+            text-decoration: none;
+        }
+
+    .link-forgot {
+        background: rgba(224,80,80,0.10);
+        color: #C0392B;
+        border: 1.5px solid #E88585;
+    }
+
+        .link-forgot:hover {
+            background: #E05050;
+            color: white;
+            border-color: #E05050;
+            text-decoration: none;
+        }
 
     .checkbox {
         margin-bottom: 20px;
@@ -151,8 +176,8 @@
                    class="btn btn-login" />
 
             <div class="login-links">
-                @Html.ActionLink("Registrarse como usuario nuevo", "Register")
-                @Html.ActionLink("¿Ha olvidado su contraseña?", "ForgotPassword")
+                @Html.ActionLink("Registrarse como usuario nuevo", "Register", null, new { @class = "link-register" })
+                @Html.ActionLink("¿Ha olvidado su contraseña?", "ForgotPassword", null, new { @class = "link-forgot" })
             </div>
         }
     </div>

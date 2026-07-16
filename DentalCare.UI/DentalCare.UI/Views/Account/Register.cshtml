@@ -6,7 +6,7 @@
 
 <style>
     body {
-        background: white;
+        background: linear-gradient(135deg, #16302D 0%, #1F6B75 50%, #2C8C99 100%);
         min-height: 100vh;
     }
 
@@ -15,27 +15,28 @@
         justify-content: center;
         align-items: center;
         min-height: 85vh;
+        padding: 24px;
     }
 
     .register-card {
         background: white;
         padding: 40px;
         border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        box-shadow: 0 20px 50px rgba(15,45,42,0.35);
         width: 100%;
         max-width: 550px;
     }
 
     .register-title {
         text-align: center;
-        color: #2C3E50;
+        color: #16302D;
         font-weight: bold;
         margin-bottom: 10px;
     }
 
     .register-subtitle {
         text-align: center;
-        color: #6c757d;
+        color: #52706C;
         margin-bottom: 30px;
     }
 
@@ -43,24 +44,24 @@
         display: block;
         margin-bottom: 6px;
         font-weight: 600;
-        color: #2C3E50;
+        color: #16302D;
     }
 
     .form-control {
         border-radius: 12px;
         padding: 12px;
-        border: 1px solid #dcdcdc;
+        border: 1px solid #CFE8E6;
         margin-bottom: 18px;
     }
 
         .form-control:focus {
-            border-color: #5CCCCC;
-            box-shadow: 0 0 0 0.2rem rgba(92,204,204,.25);
+            border-color: #2C8C99;
+            box-shadow: 0 0 0 0.2rem rgba(44,140,153,.25);
         }
 
     .btn-register {
         width: 100%;
-        background: #5CCCCC;
+        background: linear-gradient(135deg, #2C8C99 0%, #1F6B75 100%);
         color: white;
         border: none;
         border-radius: 12px;
@@ -70,23 +71,31 @@
     }
 
         .btn-register:hover {
-            background: #49b8b8;
+            background: linear-gradient(135deg, #1F6B75 0%, #16302D 100%);
             color: white;
         }
 
     .login-link {
+        margin-top: 26px;
         text-align: center;
-        margin-top: 20px;
     }
 
         .login-link a {
-            color: #5CCCCC;
+            display: inline-block;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 700;
+            padding: 11px 24px;
+            border-radius: 50px;
+            background: rgba(127,216,206,0.18);
+            color: #1F6B75;
+            border: 1.5px solid #7FD8CE;
+            transition: .2s;
         }
 
             .login-link a:hover {
-                text-decoration: underline;
+                background: #7FD8CE;
+                color: #16302D;
+                text-decoration: none;
             }
 
     .text-danger {
