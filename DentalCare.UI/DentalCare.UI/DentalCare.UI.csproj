@@ -365,6 +365,8 @@
     <Content Include="Views\Pago\MarcarPagado.cshtml" />
     <Content Include="Views\Catalogo\CostosTratamiento.cshtml" />
     <Content Include="Views\Catalogo\EditarCosto.cshtml" />
+    <Content Include="Views\Reporteria\ReportesCitas.cshtml" />
+    <Content Include="Views\Reporteria\CitasPorPeriodo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

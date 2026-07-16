@@ -5,6 +5,10 @@ using System.Web;
 using System.Web.Mvc;
 using DentaCare.LogicaDeNegocio.Reporteria.Producto;
 using DentalCare.Abstraccion.LogicaDeNegocio.Reporteria.Producto;
+using DentaCare.LogicaDeNegocio.Reporteria.Citas;
+using DentalCare.Abstraccion.LogicaDeNegocio.Reporteria.Citas;
+using DentalCare.Abstraccion.Modelo.Reporteria;
+using DentalCare.AccesoADatos.Citas.Reporteria;
 using DentalCare.AccesoADatos;
 using DentalCare.AccesoADatos.Reporteria.Producto;
 
@@ -15,11 +19,13 @@ namespace DentalCare.UI.Controllers
     {
         private readonly IReporteProductosLN _reporteProductosLN;
         private readonly IReporteLotesLN _reporteLotesLN;
+        private readonly IReporteCitasLN _reporteCitasLN;
 
         public ReporteriaController()
         {
             _reporteProductosLN = new ReporteProductosLN(new ReporteProductosAD(new Contexto()));
             _reporteLotesLN = new ReporteLotesLN(new ReporteLotesAD(new Contexto()));
+            _reporteCitasLN = new ReporteCitasLN(new ReporteCitasAD(new Contexto()));
         }
 
         // GET: Reporteria
@@ -102,6 +108,22 @@ namespace DentalCare.UI.Controllers
         {
             var lista = _reporteLotesLN.ObtenerHistorialLotePorTratamiento();
             return PartialView(lista);
+        }
+
+        // GET: Reporteria/ReportesCitas
+        public ActionResult ReportesCitas()
+        {
+            return View();
+        }
+
+        // GET: Reporteria/CitasPorPeriodo?desde=yyyy-MM-dd&hasta=yyyy-MM-dd
+        public ActionResult CitasPorPeriodo(DateTime? desde, DateTime? hasta)
+        {
+            if (!desde.HasValue || !hasta.HasValue)
+                return View(new List<CitaReporteDto>());
+
+            var lista = _reporteCitasLN.ObtenerPorPeriodo(desde.Value, hasta.Value);
+            return View(lista);
         }
 
 

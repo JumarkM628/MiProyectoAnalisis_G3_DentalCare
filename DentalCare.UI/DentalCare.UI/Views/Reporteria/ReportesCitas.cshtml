@@ -1,0 +1,25 @@
+@{
+    ViewBag.Title = "Reportes de Citas";
+}
+
+<div class="reportes-page">
+    <h1>Reporte de Citas por Periodo</h1>
+
+    <form method="get" action="/Reporteria/CitasPorPeriodo">
+        <div>
+            <label>Desde</label>
+            <input type="date" name="desde" required />
+        </div>
+        <div>
+            <label>Hasta</label>
+            <input type="date" name="hasta" required />
+        </div>
+        <div>
+            <button type="submit">Consultar</button>
+        </div>
+    </form>
+
+    <div style="margin-top:20px;">
+        @* Los resultados se muestran en la vista CitasPorPeriodo *@
+    </div>
+</div>

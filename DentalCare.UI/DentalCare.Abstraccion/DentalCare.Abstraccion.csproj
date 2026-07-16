@@ -72,6 +72,7 @@
     <Compile Include="AccesoADatos\Citas\CambiarEstadoCita\ICambiarEstadoCitaAD.cs" />
     <Compile Include="AccesoADatos\Citas\ObtenerCitaPaciente\IObtenerCitasPacienteAD.cs" />
     <Compile Include="AccesoADatos\Citas\ObtenerTodasLasCitas\IObtenerTodasLasCitasAD.cs" />
+    <Compile Include="AccesoADatos\Citas\Reporteria\IReporteCitasAD.cs" />
     <Compile Include="AccesoADatos\Expediente\Alerta\GuardarAlerta\IGuardarAlertaAD.cs" />
     <Compile Include="AccesoADatos\Expediente\Alerta\ObtenerAlertaPorExpediente\IObtenerAlertaPorExpedienteAD.cs" />
     <Compile Include="AccesoADatos\Expediente\CerrarExpediente\ICerrarExpedienteAD.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="LogicaDeNegocio\Pago\RegistrarPago\IRegistrarPagoLN.cs" />
     <Compile Include="LogicaDeNegocio\Producto\IEditarProductoLN.cs" />
     <Compile Include="LogicaDeNegocio\Producto\IRegistrarProductoLN.cs" />
+    <Compile Include="LogicaDeNegocio\Reporteria\Citas\IReporteCitasLN.cs" />
     <Compile Include="LogicaDeNegocio\Reporteria\Producto\IReporteLotesLN.cs" />
     <Compile Include="LogicaDeNegocio\Reporteria\Producto\IReporteProductosLN.cs" />
     <Compile Include="LogicaDeNegocio\Tratamiento\IEditarPlanTratamientoLN.cs" />
@@ -147,6 +149,7 @@
     <Compile Include="Modelo\Producto\ProductoDto.cs" />
     <Compile Include="Modelo\Producto\UsoProducto\UsoProductoDto.cs" />
     <Compile Include="Modelo\RecuperacionContrasena\ForgotPasswordDto.cs" />
+    <Compile Include="Modelo\Reporteria\CitaReporteDto.cs" />
     <Compile Include="Modelo\Reporteria\HistorialLoteTratamientoDto.cs" />
     <Compile Include="Modelo\Reporteria\HistorialTratamientoDto.cs" />
     <Compile Include="Modelo\Reporteria\ProductoFrecuenciaDto.cs" />
