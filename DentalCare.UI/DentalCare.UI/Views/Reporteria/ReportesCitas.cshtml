@@ -1,25 +1,94 @@
 @{
-    ViewBag.Title = "Reportes de Citas";
+    ViewBag.Title = "Reporte de Citas";
 }
 
-<div class="reportes-page">
-    <h1>Reporte de Citas por Periodo</h1>
+<div class="usuarios-page">
 
-    <form method="get" action="/Reporteria/CitasPorPeriodo">
-        <div>
-            <label>Desde</label>
-            <input type="date" name="desde" required />
-        </div>
-        <div>
-            <label>Hasta</label>
-            <input type="date" name="hasta" required />
-        </div>
-        <div>
-            <button type="submit">Consultar</button>
-        </div>
-    </form>
+    <div class="container" style="max-width:1100px; margin:0 auto;">
 
-    <div style="margin-top:20px;">
-        @* Los resultados se muestran en la vista CitasPorPeriodo *@
+        <div class="usuarios-header">
+            <div>
+                <h1 class="usuarios-titulo">
+                    <i class="fa fa-calendar-alt"></i> Reporte de Citas
+                </h1>
+                <p class="usuarios-subtitulo">
+                    Consulta las citas realizadas dentro de un periodo especifico.
+                </p>
+            </div>
+
+            @Html.ActionLink("← Volver", "Index", "Reporteria", null,
+                new { @class = "btn-usuario-primary" })
+        </div>
+
+        <div class="usuarios-table-card" style="padding:30px; margin-top:25px;">
+
+            <h4 style="margin-bottom:25px;">
+                <i class="fa fa-filter"></i> Filtros de Busqueda
+            </h4>
+
+            <form method="get" action="/Reporteria/CitasPorPeriodo">
+
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <label><strong>Fecha Desde</strong></label>
+                        <input type="date"
+                               class="form-control"
+                               name="desde"
+                               required />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label><strong>Fecha Hasta</strong></label>
+                        <input type="date"
+                               class="form-control"
+                               name="hasta"
+                               required />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label style="visibility:hidden;">Buscar</label>
+                        <button type="submit"
+                                class="btn btn-primary btn-block">
+                            <i class="fa fa-search"></i>
+                            Consultar Reporte
+                        </button>
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <div class="usuarios-table-card" style="padding:30px; margin-top:30px;">
+
+            <h4 style="margin-bottom:25px;">
+                <i class="fa fa-table"></i> Resultados
+            </h4>
+
+            <div id="resultado-citas">
+
+                <div class="text-center" style="padding:70px 20px;">
+
+                    <i class="fa fa-calendar-check-o"
+                       style="font-size:60px;color:#c7c7c7;"></i>
+
+                    <h4 style="margin-top:20px;">
+                        No hay resultados para mostrar
+                    </h4>
+
+                    <p class="text-muted">
+                        Selecciona un rango de fechas y presiona
+                        <strong>Consultar Reporte</strong>.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
+
 </div>

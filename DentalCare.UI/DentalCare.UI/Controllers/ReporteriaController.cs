@@ -116,11 +116,55 @@ namespace DentalCare.UI.Controllers
             return View();
         }
 
-        // GET: Reporteria/ReportesTratamientos
-        public ActionResult ReportesTratamientos()
+        // GET: Reporteria/ReportesTratamientos?desde=yyyy-MM-dd&hasta=yyyy-MM-dd
+        public ActionResult ReportesTratamientos(DateTime? desde, DateTime? hasta)
         {
-            // Por ahora reutilizamos una vista existente como marcador de posición
-            return View("ReportesProductos");
+            using (var contexto = new Contexto())
+            {
+                var query = contexto.PlanesTratamiento.AsQueryable();
+
+                if (desde.HasValue)
+                    query = query.Where(t => t.FechaInicio >= desde.Value);
+
+                if (hasta.HasValue)
+                    query = query.Where(t => t.FechaInicio <= hasta.Value);
+
+                var lista = query.OrderBy(t => t.FechaInicio).ToList();
+
+                // Generar página completa (usa mismo layout/estilos del proyecto) para evitar crear archivos de vista
+                var sb = new System.Text.StringBuilder();
+                sb.AppendLine("<!DOCTYPE html>");
+                sb.AppendLine("<html lang=\"es\">\n<head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Reportes de Tratamientos - Clínica Dental Dra. Rebeca</title>\n    <link href=\"/Content/DentalCare.css?v=3\" rel=\"stylesheet\" />\n    <link href=\"https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap\" rel=\"stylesheet\" />\n</head>\n<body>");
+
+                // Navbar (copiado del layout)
+                sb.AppendLine("<nav class=\"main-nav\">\n  <div class=\"nav-inner\">\n    <div class=\"navbar-title\">Clínica dental y especialidades Dra. Rebeca</div>\n    <div class=\"nav-links-wrapper\" id=\"mainNavLinks\">\n      <ul class=\"nav-links\">\n        <li><a class=\"nav-link\" href=\"/\">Inicio</a></li>\n        <li><a class=\"nav-link\" href=\"/Reporteria\">Reporteria</a></li>\n      </ul>\n    </div>\n  </div>\n</nav>");
+
+                // Contenido
+                sb.AppendLine("<div class=\"page-wrapper\">\n<div class=\"usuarios-page\">\n  <div class=\"usuarios-header\">\n    <div>\n      <h1 class=\"usuarios-titulo\"><i class=\"fa fa-tooth\"></i> Reportes de Tratamientos</h1>\n      <p class=\"usuarios-subtitulo\">Ver el historial de tratamientos y filtrarlo por fecha.</p>\n    </div>\n    <div>\n      <a href=\"/Reporteria\" class=\"btn-usuario-primary\">← Volver a Reportería</a>\n    </div>\n  </div>\n  <section class=\"usuarios-table-card rep-contenido\">\n    <form method=\"get\" action=\"/Reporteria/ReportesTratamientos\" class=\"form-inline\">\n      <label>Desde: <input type=\"date\" name=\"desde\" /></label>\n      <label style=\"margin-left:12px;\">Hasta: <input type=\"date\" name=\"hasta\" /></label>\n      <button type=\"submit\" class=\"btn-usuario-primary\" style=\"margin-left:12px;\">Filtrar</button>\n    </form>");
+
+                if (lista == null || !lista.Any())
+                {
+                    sb.AppendLine("<p class=\"rep-placeholder\" style=\"margin-top:20px;\">No hay tratamientos para mostrar.</p>");
+                }
+                else
+                {
+                    sb.AppendLine("<table class=\"table\" style=\"margin-top:16px; width:100%; border-collapse:collapse;\"><thead><tr><th>ID_TRATAMIENTO</th><th>DESCRIPCION</th><th>FECHA_INICIO</th><th>FECHA_FIN</th><th>ID_ESTADO</th><th>MONTO</th><th>ID_CITA</th></tr></thead><tbody>");
+                    foreach (var t in lista)
+                    {
+                        sb.AppendLine($"<tr><td>{t.IdTratamiento}</td><td>{System.Net.WebUtility.HtmlEncode(t.Descripcion)}</td><td>{(t.FechaInicio.HasValue? t.FechaInicio.Value.ToString("yyyy-MM-dd") : "")}</td><td>{(t.FechaFin.HasValue? t.FechaFin.Value.ToString("yyyy-MM-dd") : "")}</td><td>{t.IdEstado}</td><td>{(t.Monto.HasValue? t.Monto.Value.ToString("F2") : "")}</td><td>{(t.IdCita.HasValue? t.IdCita.ToString() : "")}</td></tr>");
+                    }
+                    sb.AppendLine("</tbody></table>");
+                }
+
+                // Footer (copiado del layout)
+                sb.AppendLine("</section>\n</div>\n<footer class=\"site-footer\">\n  <div class=\"footer-inner\">\n    <div class=\"footer-brand\">\n      <span>Clínica Dental y Especialidades<br><strong>Dra. Rebeca</strong></span>\n    </div>\n    <p class=\"footer-tagline\">Sonríe con confianza</p>\n    <p class=\"footer-copy\">&copy; " + DateTime.Now.Year + " — Todos los derechos reservados</p>\n  </div>\n</footer>\n</div>");
+
+                sb.AppendLine("<script src=\"/Scripts/jquery-3.6.0.min.js\"></script>");
+                sb.AppendLine("<script src=\"/Scripts/bootstrap.min.js\"></script>");
+                sb.AppendLine("</body></html>");
+
+                return Content(sb.ToString(), "text/html");
+            }
         }
 
         // GET: Reporteria/ReportesInventario
