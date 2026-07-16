@@ -4,104 +4,298 @@
     ViewBag.Title = "DetallesAlerta";
 }
 
-<div class="container" style="max-width: 900px; padding: 24px;">
+<style>
+    .card-custom {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(0,0,0,.08);
+        margin-bottom: 20px;
+        overflow: hidden;
+        border: none;
+    }
 
-    <div class="row mb-3">
+    .card-header-custom {
+        background: linear-gradient(135deg,#3498db,#2c3e50);
+        color: white;
+        padding: 15px 20px;
+    }
+
+        .card-header-custom h4 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+    .card-body-custom {
+        padding: 20px;
+    }
+
+    .info-item {
+        margin-bottom: 15px;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #2c3e50;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .info-value {
+        color: #555;
+        line-height: 1.5;
+    }
+
+    .badge-custom {
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-success-custom {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .badge-danger-custom {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .badge-warning-custom {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .alert-medica {
+        border-radius: 12px;
+        padding: 18px;
+        margin-bottom: 20px;
+        font-size: 15px;
+        border-left: 6px solid;
+    }
+
+    .alert-critica {
+        background: #fdeaea;
+        border-color: #dc3545;
+        color: #721c24;
+    }
+
+    .alert-media {
+        background: #fff8e5;
+        border-color: #ffc107;
+        color: #856404;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .expediente-header {
+        background: linear-gradient(135deg,#3498db,#2980b9);
+        color: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 25px;
+    }
+
+        .expediente-header h2 {
+            margin-top: 0;
+            font-weight: 600;
+        }
+
+    .btn-action {
+        border-radius: 8px;
+    }
+</style>
+
+
+<div class="expediente-header">
+
+    <div class="row">
         <div class="col-md-8">
-            <h2 style="font-weight:600; color:#2c3e50;">
-                Expediente @Model.Expediente.IdExpediente
+            <h2>
+                <i class="fa fa-folder-open"></i>
+                Expediente #@Model.Expediente.IdExpediente
             </h2>
-            <p class="text-muted">Paciente: <strong>@Model.Expediente.NombrePaciente</strong></p>
+
+            <p style="margin:0;font-size:16px;">
+                Paciente:
+                <strong>@Model.Expediente.NombrePaciente</strong>
+            </p>
         </div>
+
         <div class="col-md-4 text-right">
-            @Html.ActionLink("← Volver", "ObtenerTodosLosExpedientes", "Expediente",
-                null, new { @class = "btn btn-default" })
-        </div>
-    </div>
-
-    @if (TempData["Exito"] != null)
-    {
-        <div class="alert alert-success">@TempData["Exito"]</div>
-    }
-
-    @* Escenario 3: notificación automática si hay alerta activa *@
-    @if (Model.TieneAlertaActiva)
-    {
-        <div class="alert alert-@(Model.Alerta.NivelRiesgoMostrar == "Crítico" || Model.Alerta.NivelRiesgoMostrar == "Alto" ? "danger" : "warning")"
-             style="border-left: 6px solid; font-size: 15px;">
-            <strong>
-                <i class="fa fa-exclamation-triangle"></i>
-                ¡ALERTA MÉDICA ACTIVA — Nivel: @Model.Alerta.NivelRiesgoMostrar!
-            </strong>
-        </div>
-    }
-
-    <!-- SECCIÓN: Datos del Consentimiento -->
-    <div class="panel panel-default">
-        <div class="panel-heading"><strong>Consentimiento Informado</strong></div>
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <p><strong>Cédula:</strong> @(string.IsNullOrEmpty(Model.Expediente.CedulaPaciente) ? "—" : Model.Expediente.CedulaPaciente)</p>
-                    <p><strong>Objetivo:</strong> @(string.IsNullOrEmpty(Model.Expediente.Objetivo) ? "—" : Model.Expediente.Objetivo)</p>
-                    <p><strong>Descripción:</strong> @(string.IsNullOrEmpty(Model.Expediente.Descripcion) ? "—" : Model.Expediente.Descripcion)</p>
-                    <p><strong>Alternativas:</strong> @(string.IsNullOrEmpty(Model.Expediente.Alternativas) ? "—" : Model.Expediente.Alternativas)</p>
-                </div>
-                <div class="col-md-6">
-                    <p><strong>Consecuencias:</strong> @(string.IsNullOrEmpty(Model.Expediente.Consecuencias) ? "—" : Model.Expediente.Consecuencias)</p>
-                    <p><strong>Otro:</strong> @(string.IsNullOrEmpty(Model.Expediente.Otro) ? "—" : Model.Expediente.Otro)</p>
-                    <p><strong>Estado:</strong> <span class="label label-@(Model.Expediente.NombreEstado == "Activo" ? "success" : "danger")">@Model.Expediente.NombreEstado</span></p>
-                    <p><strong>Fecha Creación:</strong> @(Model.Expediente.FechaCreacion.HasValue ? Model.Expediente.FechaCreacion.Value.ToString("dd/MM/yyyy") : "—")</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SECCIÓN: Alerta Médica -->
-    <div class="panel panel-@(Model.TieneAlertaActiva ? (Model.Alerta.NivelRiesgoMostrar == "Crítico" || Model.Alerta.NivelRiesgoMostrar == "Alto" ? "danger" : "warning") : "default")"
-         style="margin-top:16px;">
-        <div class="panel-heading">
-            <strong>Alerta Médica</strong>
-            <span style="float:right;">
-                @Html.ActionLink(
-                    Model.Alerta != null ? "Editar Alerta" : "Agregar Alerta",
-                    "GuardarAlerta", "Expediente",
-                    new { id = Model.Expediente.IdExpediente },
-                    new { @class = "btn btn-sm btn-primary" })
-            </span>
-        </div>
-        <div class="panel-body">
-            @if (Model.Alerta == null || string.IsNullOrEmpty(Model.Alerta.AntecedentesMedicos))
-            {
-                <p class="text-muted">No hay alerta médica registrada para este expediente.</p>
-            }
-            else
-            {
-                <div class="row">
-                    <div class="col-md-6">
-                        <p>
-                            <strong>Nivel de Riesgo:</strong>
-                            <span class="label label-@(Model.Alerta.NivelRiesgoMostrar == "Crítico" || Model.Alerta.NivelRiesgoMostrar == "Alto" ? "danger" : "warning")">
-                                @Model.Alerta.NivelRiesgoMostrar
-                            </span>
-                        </p>
-                        <p><strong>Antecedentes Médicos:</strong> @Model.Alerta.AntecedentesMedicos</p>
-                        <p><strong>Alergias:</strong> @(string.IsNullOrEmpty(Model.Alerta.Alergias) ? "—" : Model.Alerta.Alergias)</p>
-                        <p><strong>Medicación Actual:</strong> @(string.IsNullOrEmpty(Model.Alerta.MedicacionActual) ? "—" : Model.Alerta.MedicacionActual)</p>
-                        <p><strong>Cirugías Previas:</strong> @(string.IsNullOrEmpty(Model.Alerta.CirugiasPrevias) ? "—" : Model.Alerta.CirugiasPrevias)</p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Hábitos:</strong> @(string.IsNullOrEmpty(Model.Alerta.Habitos) ? "—" : Model.Alerta.Habitos)</p>
-                        <p><strong>Antecedentes Odontológicos:</strong> @(string.IsNullOrEmpty(Model.Alerta.AntecedentesOdontologicos) ? "—" : Model.Alerta.AntecedentesOdontologicos)</p>
-                        <p><strong>Motivo de Consulta:</strong> @Model.Alerta.MotivoConsulta</p>
-                        <p><strong>Diagnóstico Inicial:</strong> @Model.Alerta.DiagnosticoInicial</p>
-                        <p><strong>Plan de Tratamiento:</strong> @Model.Alerta.PlanTratamiento</p>
-                    </div>
-                </div>
-            }
+            @Html.ActionLink(
+                "← Volver",
+                "ObtenerTodosLosExpedientes",
+                "Expediente",
+                null,
+                new { @class = "btn btn-default btn-action" })
         </div>
     </div>
 
 </div>
 
+@if (Model.TieneAlertaActiva)
+{
+    <div class="alert-medica @(Model.Alerta.NivelRiesgoMostrar == "Crítico" || Model.Alerta.NivelRiesgoMostrar == "Alto"
+                                ? "alert-critica"
+                                : "alert-media")">
 
+        <h4 style="margin-top:0;">
+            <i class="fa fa-exclamation-triangle"></i>
+            ALERTA MÉDICA ACTIVA
+        </h4>
+
+        <strong>Nivel de riesgo:</strong>
+        @Model.Alerta.NivelRiesgoMostrar
+    </div>
+}
+
+<div class="card-custom">
+
+    <div class="card-header-custom">
+        <h4>
+            <i class="fa fa-file-text-o"></i>
+            Consentimiento Informado
+        </h4>
+    </div>
+
+    <div class="card-body-custom">
+
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <div class="info-item">
+                    <span class="info-label">Cédula</span>
+                    <span class="info-value">
+                        @(string.IsNullOrEmpty(Model.Expediente.CedulaPaciente)
+                            ? "—"
+                            : Model.Expediente.CedulaPaciente)
+                    </span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Objetivo</span>
+                    <span class="info-value">
+                        @(string.IsNullOrEmpty(Model.Expediente.Objetivo)
+                            ? "—"
+                            : Model.Expediente.Objetivo)
+                    </span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Descripción</span>
+                    <span class="info-value">
+                        @(string.IsNullOrEmpty(Model.Expediente.Descripcion)
+                            ? "—"
+                            : Model.Expediente.Descripcion)
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <div class="info-item">
+                    <span class="info-label">Alternativas</span>
+                    <span class="info-value">
+                        @(string.IsNullOrEmpty(Model.Expediente.Alternativas)
+                            ? "—"
+                            : Model.Expediente.Alternativas)
+                    </span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Consecuencias</span>
+                    <span class="info-value">
+                        @(string.IsNullOrEmpty(Model.Expediente.Consecuencias)
+                            ? "—"
+                            : Model.Expediente.Consecuencias)
+                    </span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Estado</span>
+
+                    <span class="badge-custom @(Model.Expediente.NombreEstado == "Activo"
+                            ? "badge-success-custom"
+                            : "badge-danger-custom")">
+
+                        @Model.Expediente.NombreEstado
+                    </span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Fecha de creación</span>
+
+                    <span class="info-value">
+                        @(Model.Expediente.FechaCreacion.HasValue
+                            ? Model.Expediente.FechaCreacion.Value.ToString("dd/MM/yyyy")
+                            : "—")
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card-custom">
+
+    <div class="card-header-custom">
+
+        <div class="row">
+
+            <div class="col-md-8">
+                <h4>
+                    <i class="fa fa-heartbeat"></i>
+                    Alerta Médica
+                </h4>
+            </div>
+
+            <div class="col-md-4 text-right">
+                @Html.ActionLink(
+                    Model.Alerta != null ? "Editar Alerta" : "Agregar Alerta",
+                    "GuardarAlerta",
+                    "Expediente",
+                    new { id = Model.Expediente.IdExpediente },
+                    new { @class = "btn btn-warning btn-sm" })
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card-body-custom">
+
+        @if (Model.Alerta == null || string.IsNullOrEmpty(Model.Alerta.AntecedentesMedicos))
+        {
+            <div class="text-center text-muted" style="padding:20px;">
+                <i class="fa fa-info-circle fa-2x"></i>
+                <br /><br />
+                No hay alerta médica registrada.
+            </div>
+        }
+        else
+        {
+            <!-- AQUÍ dejas tu contenido actual de antecedentes,
+                 alergias, medicación, diagnóstico, etc. -->
+
+        }
+
+    </div>
+
+</div>
+
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+}

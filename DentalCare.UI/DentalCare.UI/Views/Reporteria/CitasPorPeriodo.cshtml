@@ -1,0 +1,42 @@
+@model List<DentalCare.Abstraccion.Modelo.Reporteria.CitaReporteDto>
+
+@{
+    ViewBag.Title = "Citas por periodo";
+}
+
+<h2>Resultados</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <div>No se encontraron citas en el periodo seleccionado.</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Paciente</th>
+                <th>Doctor</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Motivo</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td>@c.IdCita</td>
+                    <td>@c.NombrePaciente</td>
+                    <td>@c.NombreDoctor</td>
+                    <td>@(c.Fecha.HasValue ? c.Fecha.Value.ToString("dd/MM/yyyy") : "—")</td>
+                    <td>@c.HoraString</td>
+                    <td>@c.NombreMotivo</td>
+                    <td>@c.NombreEstado</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

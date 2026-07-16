@@ -1,0 +1,198 @@
+﻿@{
+    ViewBag.Title = "Reportes de Productos";
+}
+
+<div class="usuarios-page">
+
+    <div class="usuarios-header">
+        <div>
+            <h1 class="usuarios-titulo">
+                <i class="fa fa-bar-chart"></i> Reportes de Productos
+            </h1>
+            <p class="usuarios-subtitulo">Seleccione una categoría y un reporte para visualizar los datos.</p>
+        </div>
+        <div>
+            @Html.ActionLink("← Volver a Reportería", "Index", "Reporteria", null, new { @class = "btn-usuario-primary" })
+        </div>
+    </div>
+
+    <div class="rep-layout">
+
+        <aside class="rep-sidebar">
+
+            <div class="rep-grupo">
+                <span class="rep-grupo-label">📦 Reportes por Producto</span>
+                <a href="#" class="rep-link" data-url="@Url.Action("ProductosMasUtilizados", "Reporteria")">Más utilizados</a>
+                <a href="#" class="rep-link" data-url="@Url.Action("ProductosMenosUtilizados", "Reporteria")">Menos utilizados</a>
+                <a href="#" class="rep-link" data-url="@Url.Action("ProductosMasComprados", "Reporteria")">Más comprados</a>
+                <a href="#" class="rep-link" data-url="@Url.Action("ProductosMenosComprados", "Reporteria")">Menos comprados</a>
+                <a href="#" class="rep-link" data-url="@Url.Action("HistorialPorTratamiento", "Reporteria")">Historial por tratamiento</a>
+            </div>
+
+            <div class="rep-grupo">
+                <span class="rep-grupo-label">🧪 Reportes por Lote (Trazabilidad Sanitaria)</span>
+                <a href="#" class="rep-link" data-url="@Url.Action("LotesMasUtilizados", "Reporteria")">Más utilizados</a>
+                <a href="#" class="rep-link" data-url="@Url.Action("LotesMenosUtilizados", "Reporteria")">Menos utilizados</a>
+                <a href="#" class="rep-link" data-url="@Url.Action("LotesMasComprados", "Reporteria")">Más comprados</a>
+                <a href="#" class="rep-link" data-url="@Url.Action("LotesMenosComprados", "Reporteria")">Menos comprados</a>
+                <a href="#" class="rep-link" data-url="@Url.Action("HistorialLotePorTratamiento", "Reporteria")">Historial por tratamiento</a>
+            </div>
+
+        </aside>
+
+        <section class="usuarios-table-card rep-contenido" id="contenido-reporte">
+            <div class="rep-placeholder">
+                <p>Seleccione una opción del menú para ver el reporte.</p>
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+<style>
+    .usuarios-page {
+        min-height: 100vh;
+        padding: 40px 32px 60px;
+    }
+
+    .usuarios-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+
+    .usuarios-titulo {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #000;
+        margin: 0;
+    }
+
+    .usuarios-subtitulo {
+        margin-top: 6px;
+        color: #6b7280;
+    }
+
+    .btn-usuario-primary {
+        background: #8FFDFF;
+        color: #000;
+        text-decoration: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: .2s;
+    }
+
+        .btn-usuario-primary:hover {
+            background: #6EA0FF;
+            color: #fff;
+            text-decoration: none;
+        }
+
+    .rep-layout {
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+    }
+
+    .rep-sidebar {
+        width: 280px;
+        flex-shrink: 0;
+        background: #f5f7fa;
+        padding: 20px 16px;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0,0,0,.06);
+    }
+
+    .rep-grupo {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 22px;
+    }
+
+        .rep-grupo:last-child {
+            margin-bottom: 0;
+        }
+
+    .rep-grupo-label {
+        font-size: .76rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #6b7280;
+        margin-bottom: 8px;
+        letter-spacing: .4px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .rep-link {
+        padding: 9px 10px;
+        border-radius: 8px;
+        color: #1f2937;
+        text-decoration: none;
+        font-size: .87rem;
+        margin-bottom: 2px;
+        transition: all .2s ease;
+    }
+
+        .rep-link:hover {
+            background: #8FFDFF;
+            color: #000;
+            text-decoration: none;
+        }
+
+        .rep-link.activo {
+            background: #8FFDFF;
+            color: #000;
+            font-weight: 700;
+            border-left: 4px solid #6EA0FF;
+            box-shadow: 0 2px 8px rgba(143, 253, 255, .4);
+        }
+
+    .rep-contenido {
+        flex: 1;
+        padding: 28px;
+        min-height: 50vh;
+    }
+
+    .rep-placeholder {
+        text-align: center;
+        color: #8a9bb0;
+        padding: 60px 20px;
+    }
+
+    @@media (max-width: 768px) {
+        .rep-layout {
+            flex-direction: column;
+        }
+
+        .rep-sidebar {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        $('.rep-link').on('click', function (e) {
+            e.preventDefault();
+
+            var url = $(this).data('url');
+
+            $('.rep-link').removeClass('activo');
+            $(this).addClass('activo');
+
+            $('#contenido-reporte').html('<p class="rep-placeholder">Cargando...</p>');
+
+            $.get(url, function (data) {
+                $('#contenido-reporte').html(data);
+            }).fail(function () {
+                $('#contenido-reporte').html('<p class="rep-placeholder">Error al cargar el reporte.</p>');
+            });
+        });
+    });
+</script>

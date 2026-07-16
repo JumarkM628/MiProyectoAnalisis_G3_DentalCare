@@ -1,0 +1,47 @@
+﻿@model List<DentalCare.Abstraccion.Modelo.Reporteria.HistorialLoteTratamientoDto>
+
+<h3 class="rep-titulo">Historial de Lotes por Tratamiento</h3>
+
+<div class="exp-table-card">
+    <table class="exp-table">
+        <thead>
+            <tr>
+                <th>Tratamiento</th>
+                <th>Producto</th>
+                <th>Lote</th>
+                <th>Cantidad Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="4" class="text-center" style="padding:24px; color:#8a9bb0;">
+                        No hay historial registrado.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="td-nombre">@item.NombreTratamiento</td>
+                        <td>@item.NombreProducto</td>
+                        <td>@item.Lote</td>
+                        <td><span class="stock-num stock-ok">@item.CantidadTotal</span></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .rep-titulo {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1e2d3d;
+        margin-bottom: 16px;
+    }
+</style>

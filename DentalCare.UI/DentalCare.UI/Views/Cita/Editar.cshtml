@@ -1,0 +1,83 @@
+﻿@model DentalCare.Abstraccion.Modelo.Citas.CitaDto
+
+@{
+    ViewBag.Title = "Editar";
+}
+
+<div class="usuarios-page" style="max-width:700px; margin:0 auto;">
+    <div class="usuarios-header">
+        <h1 class="usuarios-titulo">
+            <i class="fa fa-pencil"></i> Editar Cita #@Model.IdCita
+        </h1>
+    </div>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.IdCita)
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.IdDoctor, "Doctor")
+            @Html.DropDownListFor(m => m.IdDoctor, Model.ListaDoctores, "Seleccione doctor", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.IdDoctor)
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.IdMotivo, "Motivo")
+            @Html.DropDownListFor(m => m.IdMotivo, Model.ListaMotivos, "Seleccione motivo", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.IdMotivo)
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.IdEstado, "Estado")
+            @Html.DropDownListFor(m => m.IdEstado, Model.ListaEstados, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.IdEstado)
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Fecha, "Fecha")
+            @Html.TextBoxFor(m => m.Fecha, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+            @Html.ValidationMessageFor(m => m.Fecha)
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.HoraString, "Hora")
+            @Html.TextBoxFor(m => m.HoraString, new { @class = "form-control", placeholder = "HH:mm" })
+            @Html.ValidationMessageFor(m => m.HoraString)
+        </div>
+
+        <div class="form-group" style="margin-top:20px;">
+            <button type="submit" class="btn-usuario-primary">Guardar cambios</button>
+            @Html.ActionLink("Volver", "ObtenerTodasLasCitas", null, new { @class = "btn btn-default" })
+        </div>
+    }
+</div>
+
+<style>
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .btn-default {
+        background: #f0f0f0;
+        color: #333;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        display: inline-block;
+        margin-left: 10px;
+    }
+
+        .btn-default:hover {
+            background: #ddd;
+        }
+</style>
+

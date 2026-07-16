@@ -4,18 +4,159 @@
     ViewBag.Title = "GuardarAlerta";
 }
 
-<div class="container" style="max-width: 900px; padding: 24px;">
 
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <h2 style="font-weight:600; color:#2c3e50;">
-                @(Model.IdAlerta > 0 ? "Editar Alerta Médica" : "Agregar Alerta Médica")
-            </h2>
-            <p class="text-muted">
-                Expediente #@Model.IdExpediente Paciente: <strong>@Model.NombrePaciente</strong><br />
-                Campos obligatorios marcados con <span class="text-danger">*</span>
-            </p>
-        </div>
+<style>
+
+    body {
+        background: #f4f7fb;
+    }
+
+    .page-header-custom {
+        background: linear-gradient(135deg, #0ea5e9, #2563eb);
+        padding: 30px;
+        border-radius: 20px;
+        color: white;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(37,99,235,.25);
+    }
+
+        .page-header-custom h2 {
+            margin: 0;
+            font-weight: 700;
+            color: white;
+        }
+
+        .page-header-custom p {
+            margin-top: 10px;
+            opacity: .95;
+        }
+
+    .panel {
+        border: none !important;
+        border-radius: 18px !important;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,.08);
+        margin-bottom: 25px;
+    }
+
+    .panel-heading {
+        background: linear-gradient(135deg,#1e3a8a,#2563eb) !important;
+        color: white !important;
+        border: none !important;
+        padding: 18px 22px !important;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .panel-body {
+        background: white;
+        padding: 25px;
+    }
+
+    label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 5px;
+    }
+
+    .form-control {
+        height: 45px;
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        box-shadow: none;
+        transition: all .3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37,99,235,.15);
+        }
+
+    .required {
+        color: #dc2626;
+    }
+
+    .btn-guardar {
+        background: linear-gradient(135deg,#10b981,#059669);
+        border: none;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: .3s;
+    }
+
+        .btn-guardar:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16,185,129,.30);
+        }
+
+    .btn-cancelar {
+        background: #e5e7eb;
+        color: #374151;
+        padding: 12px 24px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+        .btn-cancelar:hover {
+            text-decoration: none;
+            background: #d1d5db;
+            color: #111827;
+        }
+
+    .info-card {
+        background: white;
+        border-radius: 18px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,.05);
+        border-left: 5px solid #2563eb;
+    }
+
+        .info-card strong {
+            color: #2563eb;
+        }
+
+    .acciones {
+        margin-top: 30px;
+        display: flex;
+        gap: 10px;
+    }
+
+    @@media(max-width:768px) {
+
+        .acciones {
+            flex-direction: column;
+        }
+
+        .btn-guardar,
+        .btn-cancelar {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="container" style="max-width:1000px; padding:25px;">
+
+    <div class="page-header-custom">
+        <h2>
+            <i class="glyphicon glyphicon-warning-sign"></i>
+            @(Model.IdAlerta > 0 ? "Editar Alerta Médica" : "Agregar Alerta Médica")
+        </h2>
+
+        <p>
+            Expediente #@Model.IdExpediente -
+            Paciente: <strong>@Model.NombrePaciente</strong>
+        </p>
+    </div>
+
+    <div class="info-card">
+        <strong>Información:</strong>
+        Los campos marcados con (*) son obligatorios.
     </div>
 
     @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""] != null)
@@ -25,163 +166,294 @@
         </div>
     }
 
-    @using (Html.BeginForm("GuardarAlerta", "Expediente", new { id = Model.IdExpediente }, FormMethod.Post))
+    @using (Html.BeginForm("GuardarAlerta", "Expediente",
+        new { id = Model.IdExpediente },
+        FormMethod.Post))
     {
         @Html.AntiForgeryToken()
+
         @Html.HiddenFor(m => m.IdAlerta)
         @Html.HiddenFor(m => m.IdExpediente)
 
         <div class="panel panel-default">
-            <div class="panel-heading"><strong>Historia Clínica</strong></div>
+
+            <div class="panel-heading">
+                <i class="glyphicon glyphicon-list-alt"></i>
+                Historia Clínica
+            </div>
+
             <div class="panel-body">
 
                 <div class="row">
+
                     <div class="col-md-6 form-group">
-                        @Html.LabelFor(m => m.AntecedentesMedicos)<span class="text-danger"> *</span>
-                        @Html.TextAreaFor(m => m.AntecedentesMedicos,
+
+                        @Html.LabelFor(m => m.AntecedentesMedicos)
+                        <span class="required">*</span>
+
+                        @Html.TextAreaFor(
+                            m => m.AntecedentesMedicos,
                             new
-                                 {
-                                     @class = "form-control",
-                                     rows = "3",
-                                  placeholder = ""
-                                 })
-                        @Html.ValidationMessageFor(m => m.AntecedentesMedicos, "", new { @class = "text-danger" })
+                            {
+                                @class = "form-control",
+                                rows = "4"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.AntecedentesMedicos,
+                            "",
+                            new { @class = "text-danger" })
+
                     </div>
+
                     <div class="col-md-6 form-group">
+
                         @Html.LabelFor(m => m.Alergias)
-                        @Html.TextAreaFor(m => m.Alergias,
+
+                        @Html.TextAreaFor(
+                            m => m.Alergias,
                             new
-                                 {
-                                     @class = "form-control",
-                                     rows = "3",
-                                  placeholder = ""
-                                 })
-                        @Html.ValidationMessageFor(m => m.Alergias, "", new { @class = "text-danger" })
+                            {
+                                @class = "form-control",
+                                rows = "4"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.Alergias,
+                            "",
+                            new { @class = "text-danger" })
+
                     </div>
+
                 </div>
 
                 <div class="row">
+
                     <div class="col-md-6 form-group">
+
                         @Html.LabelFor(m => m.MedicacionActual)
-                        @Html.TextAreaFor(m => m.MedicacionActual,
+
+                        @Html.TextAreaFor(
+                            m => m.MedicacionActual,
                             new
-                                 {
-                                     @class = "form-control",
-                                     rows = "3",
-                                  placeholder = ""
-                                 })
-                        @Html.ValidationMessageFor(m => m.MedicacionActual, "", new { @class = "text-danger" })
+                            {
+                                @class = "form-control",
+                                rows = "4"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.MedicacionActual,
+                            "",
+                            new { @class = "text-danger" })
+
                     </div>
+
                     <div class="col-md-6 form-group">
+
                         @Html.LabelFor(m => m.CirugiasPrevias)
-                        @Html.TextAreaFor(m => m.CirugiasPrevias,
+
+                        @Html.TextAreaFor(
+                            m => m.CirugiasPrevias,
                             new
-                                 {
-                                     @class = "form-control",
-                                     rows = "3",
-                                  placeholder = ""
-                                 })
-                        @Html.ValidationMessageFor(m => m.CirugiasPrevias, "", new { @class = "text-danger" })
+                            {
+                                @class = "form-control",
+                                rows = "4"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.CirugiasPrevias,
+                            "",
+                            new { @class = "text-danger" })
+
                     </div>
+
                 </div>
 
                 <div class="row">
+
                     <div class="col-md-6 form-group">
+
                         @Html.LabelFor(m => m.Habitos)
-                        @Html.TextAreaFor(m => m.Habitos,
+
+                        @Html.TextAreaFor(
+                            m => m.Habitos,
                             new
-                                 {
-                                     @class = "form-control",
-                                     rows = "2",
-                                  placeholder = ""
-                                 })
-                        @Html.ValidationMessageFor(m => m.Habitos, "", new { @class = "text-danger" })
+                            {
+                                @class = "form-control",
+                                rows = "3"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.Habitos,
+                            "",
+                            new { @class = "text-danger" })
+
                     </div>
+
                     <div class="col-md-6 form-group">
+
                         @Html.LabelFor(m => m.AntecedentesOdontologicos)
-                        @Html.TextAreaFor(m => m.AntecedentesOdontologicos,
+
+                        @Html.TextAreaFor(
+                            m => m.AntecedentesOdontologicos,
                             new
-                                 {
-                                     @class = "form-control",
-                                     rows = "2",
-                                  placeholder = ""
-                                 })
-                        @Html.ValidationMessageFor(m => m.AntecedentesOdontologicos, "", new { @class = "text-danger" })
+                            {
+                                @class = "form-control",
+                                rows = "3"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.AntecedentesOdontologicos,
+                            "",
+                            new { @class = "text-danger" })
+
                     </div>
+
                 </div>
 
             </div>
+
         </div>
 
-        <div class="panel panel-default" style="margin-top:16px;">
-            <div class="panel-heading"><strong>Consulta Actual</strong></div>
+        <div class="panel panel-default">
+
+            <div class="panel-heading">
+                <i class="glyphicon glyphicon-heart"></i>
+                Consulta Actual
+            </div>
+
             <div class="panel-body">
 
                 <div class="row">
+
                     <div class="col-md-6 form-group">
-                        @Html.LabelFor(m => m.MotivoConsulta)<span class="text-danger"> *</span>
-                        @Html.TextAreaFor(m => m.MotivoConsulta,
+
+                        @Html.LabelFor(m => m.MotivoConsulta)
+                        <span class="required">*</span>
+
+                        @Html.TextAreaFor(
+                            m => m.MotivoConsulta,
                             new
-                                 {
-                                     @class = "form-control",
-                                     rows = "3",
-                                  placeholder = ""
-                                 })
-                        @Html.ValidationMessageFor(m => m.MotivoConsulta, "", new { @class = "text-danger" })
+                            {
+                                @class = "form-control",
+                                rows = "4"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.MotivoConsulta,
+                            "",
+                            new { @class = "text-danger" })
+
                     </div>
+
                     <div class="col-md-6 form-group">
-                        @Html.LabelFor(m => m.DiagnosticoInicial)<span class="text-danger"> *</span>
-                        @Html.TextAreaFor(m => m.DiagnosticoInicial,
+
+                        @Html.LabelFor(m => m.DiagnosticoInicial)
+                        <span class="required">*</span>
+
+                        @Html.TextAreaFor(
+                            m => m.DiagnosticoInicial,
                             new
-                                 {
-                                     @class = "form-control",
-                                     rows = "3",
-                                  placeholder = ""
-                                 })
-                        @Html.ValidationMessageFor(m => m.DiagnosticoInicial, "", new { @class = "text-danger" })
+                            {
+                                @class = "form-control",
+                                rows = "4"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.DiagnosticoInicial,
+                            "",
+                            new { @class = "text-danger" })
+
                     </div>
+
                 </div>
 
                 <div class="row">
+
                     <div class="col-md-6 form-group">
-                        @Html.LabelFor(m => m.PlanTratamiento)<span class="text-danger"> *</span>
-                        @Html.TextAreaFor(m => m.PlanTratamiento,
+
+                        @Html.LabelFor(m => m.PlanTratamiento)
+                        <span class="required">*</span>
+
+                        @Html.TextAreaFor(
+                            m => m.PlanTratamiento,
                             new
-                                 {
-                                     @class = "form-control",
-                                     rows = "3",
-                                  placeholder = ""
-                                 })
-                        @Html.ValidationMessageFor(m => m.PlanTratamiento, "", new { @class = "text-danger" })
+                            {
+                                @class = "form-control",
+                                rows = "4"
+                            })
+
+                        @Html.ValidationMessageFor(
+                            m => m.PlanTratamiento,
+                            "",
+                            new { @class = "text-danger" })
+
                     </div>
+
                     <div class="col-md-3 form-group">
-                        @Html.LabelFor(m => m.NivelRiesgo)<span class="text-danger"> *</span>
-                        @Html.DropDownListFor(m => m.NivelRiesgo, Model.ListaNivelesRiesgo,
-                            "-- Seleccione --", new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.NivelRiesgo, "", new { @class = "text-danger" })
+
+                        @Html.LabelFor(m => m.NivelRiesgo)
+                        <span class="required">*</span>
+
+                        @Html.DropDownListFor(
+                            m => m.NivelRiesgo,
+                            Model.ListaNivelesRiesgo,
+                            "-- Seleccione --",
+                            new { @class = "form-control" })
+
+                        @Html.ValidationMessageFor(
+                            m => m.NivelRiesgo,
+                            "",
+                            new { @class = "text-danger" })
+
                     </div>
+
                     <div class="col-md-3 form-group">
-                        @Html.LabelFor(m => m.IdEstado)<span class="text-danger"> *</span>
-                        @Html.DropDownListFor(m => m.IdEstado, Model.ListaEstados,
-                            "-- Seleccione --", new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.IdEstado, "", new { @class = "text-danger" })
+
+                        @Html.LabelFor(m => m.IdEstado)
+                        <span class="required">*</span>
+
+                        @Html.DropDownListFor(
+                            m => m.IdEstado,
+                            Model.ListaEstados,
+                            "-- Seleccione --",
+                            new { @class = "form-control" })
+
+                        @Html.ValidationMessageFor(
+                            m => m.IdEstado,
+                            "",
+                            new { @class = "text-danger" })
+
                     </div>
+
                 </div>
 
             </div>
+
         </div>
 
-        <div style="margin-top:24px;">
-            <button type="submit" class="btn btn-primary">Guardar Alerta</button>
-            @Html.ActionLink("Cancelar", "DetallesAlerta", "Expediente",
+        <div class="acciones">
+
+            <button type="submit" class="btn btn-guardar">
+                <i class="glyphicon glyphicon-floppy-disk"></i>
+                Guardar Alerta
+            </button>
+
+            @Html.ActionLink(
+                "Cancelar",
+                "DetallesAlerta",
+                "Expediente",
                 new { id = Model.IdExpediente },
-                new { @class = "btn btn-default", style = "margin-left:8px;" })
+                new { @class = "btn btn-cancelar" })
+
         </div>
     }
+
 </div>
 
-@section Scripts {
+@section Scripts{
     @Scripts.Render("~/bundles/jqueryval")
 }
+
 
 

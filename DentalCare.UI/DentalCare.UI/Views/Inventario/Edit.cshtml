@@ -1,0 +1,197 @@
+﻿@model DentalCare.Abstraccion.Modelo.Producto.ProductoDto
+
+@{
+    ViewBag.Title = "Editar Producto";
+}
+
+<div class="inv-page">
+
+    <div class="inv-header">
+        <h1 class="inv-titulo">Editar Producto</h1>
+    </div>
+
+    @Html.ValidationSummary(false, "", new { @class = "alerta-item alerta-rojo" })
+
+    @using (Html.BeginForm("Edit", "Inventario", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.IdProducto)
+
+        <div class="exp-table-card trat-form-card">
+
+            <div class="trat-seccion">
+                <h4 class="trat-seccion-titulo">Datos del Producto</h4>
+
+                <div class="trat-fila">
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.CodigoProducto, "Código de Producto", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.CodigoProducto, new { @class = "trat-input" })
+                        @Html.ValidationMessageFor(m => m.CodigoProducto, "", new { @class = "trat-error" })
+                    </div>
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.NombreProducto, "Nombre del Producto", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.NombreProducto, new { @class = "trat-input" })
+                        @Html.ValidationMessageFor(m => m.NombreProducto, "", new { @class = "trat-error" })
+                    </div>
+
+                </div>
+
+                <div class="trat-fila">
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.Descripcion, "Descripción", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.Descripcion, new { @class = "trat-input" })
+                    </div>
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.UnidadMedida, "Unidad de Medida", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.UnidadMedida, new { @class = "trat-input" })
+                    </div>
+
+                </div>
+
+                <div class="trat-fila">
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.CantidadActual, "Cantidad Actual", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.CantidadActual, new { @class = "trat-input", type = "number" })
+                    </div>
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.CantidadMinima, "Cantidad Mínima", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.CantidadMinima, new { @class = "trat-input", type = "number" })
+                    </div>
+
+                </div>
+
+                <div class="trat-fila">
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.Lote, "Lote", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.Lote, new { @class = "trat-input" })
+                    </div>
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.FechaVencimiento, "Fecha de Vencimiento", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.FechaVencimiento, "{0:yyyy-MM-dd}", new { @class = "trat-input", type = "date" })
+                    </div>
+
+                </div>
+
+                <div class="trat-fila">
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.IdCategoria, "Categoría", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.IdCategoria, new { @class = "trat-input" })
+                    </div>
+
+                    <div class="trat-campo">
+                        @Html.LabelFor(m => m.IdProveedor, "Proveedor", new { @class = "trat-label" })
+                        @Html.TextBoxFor(m => m.IdProveedor, new { @class = "trat-input" })
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="trat-botones">
+                <input type="submit" value="Guardar Cambios" class="btn-inv-primary" />
+                @Html.ActionLink("Cancelar", "InventarioIndex", "Inventario", null, new { @class = "btn-inv-cancelar" })
+            </div>
+
+        </div>
+    }
+
+</div>
+
+<style>
+    .trat-form-card {
+        padding: 32px;
+        border-radius: 16px;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .trat-seccion-titulo {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1e2d3d;
+        margin-bottom: 16px;
+    }
+
+    .trat-fila {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .trat-campo {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .trat-campo-full {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 18px;
+    }
+
+    .trat-label {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #1e2d3d;
+    }
+
+    .trat-input {
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 1.5px solid #dce7ef;
+        font-size: 0.9rem;
+        color: #1e2d3d;
+        background: #fff;
+        outline: none;
+    }
+
+    .trat-error {
+        color: #c0392b;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .trat-botones {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 24px;
+    }
+
+    .btn-inv-cancelar {
+        padding: 10px 20px;
+        border-radius: 8px;
+        background: #f0f4f8;
+        color: #1e2d3d;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: background 0.2s;
+    }
+
+        .btn-inv-cancelar:hover {
+            background: #dce7ef;
+        }
+
+    .alerta-rojo {
+        background: rgba(220, 53, 53, 0.08);
+        border: 1px solid rgba(220, 53, 53, 0.4);
+        color: #9b2020;
+        margin-bottom: 16px;
+        padding: 12px 18px;
+        border-radius: 10px;
+    }
+</style>

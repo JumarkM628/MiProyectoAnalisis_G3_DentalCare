@@ -1,0 +1,603 @@
+﻿@model List<DentalCare.Abstraccion.Modelo.Catalogo.CatalogoDto>
+@{
+    ViewBag.Title = "Costos de Tratamiento";
+    decimal costoPromedio = Model != null && Model.Any() ? Model.Average(c => c.Costo) : 0;
+    var masEconomico = Model != null && Model.Any() ? Model.OrderBy(c => c.Costo).First() : null;
+    var masCaro = Model != null && Model.Any() ? Model.OrderByDescending(c => c.Costo).First() : null;
+}
+<style>
+    .ct-page {
+        padding: 32px 0
+    }
+
+    .ct-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px
+    }
+
+    .ct-header-left h1 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0C1B33;
+        margin: 0 0 4px
+    }
+
+    .ct-header-left p {
+        font-size: 13px;
+        color: #6B7A99;
+        margin: 0
+    }
+
+    .metricas-grid {
+        display: grid;
+        grid-template-columns: repeat(4,1fr);
+        gap: 14px;
+        margin-bottom: 20px
+    }
+
+    .metrica-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 18px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px
+    }
+
+    .metrica-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #8896B0;
+        text-transform: uppercase;
+        letter-spacing: .07em
+    }
+
+    .metrica-valor {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0C1B33
+    }
+
+    .metrica-sub {
+        font-size: 12px;
+        color: #6B7A99
+    }
+
+    .ct-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 20px
+    }
+
+    .ct-card-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: #8896B0;
+        text-transform: uppercase;
+        letter-spacing: .07em;
+        margin-bottom: 16px
+    }
+
+    .filtros-row {
+        display: flex;
+        gap: 12px;
+        align-items: flex-end;
+        flex-wrap: wrap
+    }
+
+    .fg {
+        display: flex;
+        flex-direction: column;
+        gap: 5px
+    }
+
+        .fg label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #3D4D6B
+        }
+
+        .fg input, .fg select {
+            border: 1px solid #DDE1EC;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #0C1B33;
+            background: #fff;
+            font-family: inherit;
+            min-width: 150px
+        }
+
+            .fg input:focus, .fg select:focus {
+                outline: none;
+                border-color: #378ADD
+            }
+
+    .btn-limpiar {
+        padding: 9px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        color: #3D4D6B;
+        cursor: pointer;
+        font-family: inherit
+    }
+
+        .btn-limpiar:hover {
+            background: #F5F6FA
+        }
+
+    .layout-split {
+        display: grid;
+        grid-template-columns: 1fr 260px;
+        gap: 20px;
+        align-items: start
+    }
+
+    .ct-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px
+    }
+
+        .ct-table thead tr {
+            border-bottom: 2px solid #E8ECF4
+        }
+
+        .ct-table th {
+            text-align: left;
+            padding: 10px 12px;
+            color: #8896B0;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            white-space: nowrap
+        }
+
+        .ct-table td {
+            padding: 12px;
+            color: #3D4D6B;
+            border-bottom: 1px solid #F0F2F8;
+            vertical-align: middle
+        }
+
+        .ct-table tbody tr:hover {
+            background: #F9FAFC
+        }
+
+    .td-nombre {
+        font-weight: 600;
+        color: #0C1B33
+    }
+
+    .td-right {
+        text-align: right;
+        font-weight: 600;
+        color: #0C1B33
+    }
+
+    .badge-cat {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        white-space: nowrap
+    }
+
+    .badge-Preventivo {
+        background: #E6F1FB;
+        color: #185FA5
+    }
+
+    .badge-Estetico {
+        background: #F0EBFB;
+        color: #6B3FA0
+    }
+
+    .badge-Restaurador {
+        background: #EAF3DE;
+        color: #3B6D11
+    }
+
+    .badge-Cirugia {
+        background: #FCEBEB;
+        color: #A0291E
+    }
+
+    .badge-Ortodoncia {
+        background: #FAEEDA;
+        color: #854F0B
+    }
+
+    .badge-Endodoncia {
+        background: #E6F7F3;
+        color: #1A7A5E
+    }
+
+    .btn-accion {
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-family: inherit
+    }
+
+    .btn-editar {
+        color: #185FA5;
+        background: #E6F1FB
+    }
+
+        .btn-editar:hover {
+            background: #B5D4F4
+        }
+
+    .btn-ver {
+        color: #3B6D11;
+        background: #EAF3DE
+    }
+
+        .btn-ver:hover {
+            background: #C7E5A5
+        }
+
+    .detalle-panel {
+        background: #F9FAFC;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 20px
+    }
+
+    .detalle-titulo {
+        font-size: 15px;
+        font-weight: 700;
+        color: #0C1B33;
+        margin-bottom: 4px
+    }
+
+    .detalle-cat {
+        font-size: 12px;
+        color: #6B7A99;
+        margin-bottom: 16px
+    }
+
+    .detalle-fila {
+        display: flex;
+        justify-content: space-between;
+        padding: 9px 0;
+        border-bottom: 1px solid #E8ECF4;
+        font-size: 13px
+    }
+
+        .detalle-fila:last-child {
+            border-bottom: none
+        }
+
+        .detalle-fila .dk {
+            color: #6B7A99
+        }
+
+        .detalle-fila .dv {
+            font-weight: 600;
+            color: #0C1B33
+        }
+
+    .mini-barra-wrap {
+        margin-top: 14px
+    }
+
+    .mini-barra-label {
+        font-size: 11px;
+        color: #8896B0;
+        margin-bottom: 4px
+    }
+
+    .mini-barra-bg {
+        background: #E8ECF4;
+        border-radius: 20px;
+        height: 6px
+    }
+
+    .mini-barra-fill {
+        background: #185FA5;
+        border-radius: 20px;
+        height: 6px;
+        transition: width .4s
+    }
+
+    .paginacion-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 16px;
+        font-size: 13px;
+        color: #6B7A99
+    }
+
+    .pag-btns {
+        display: flex;
+        gap: 6px
+    }
+
+    .pag-btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        color: #3D4D6B;
+        cursor: pointer;
+        font-family: inherit
+    }
+
+        .pag-btn:hover {
+            background: #F5F6FA
+        }
+
+        .pag-btn.activo {
+            background: #185FA5;
+            color: #fff;
+            border-color: #185FA5
+        }
+
+    .alert-custom {
+        display: none;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        margin-bottom: 20px;
+        align-items: center;
+        gap: 10px
+    }
+
+        .alert-custom.show {
+            display: flex
+        }
+
+    .alert-success-custom {
+        background: #EAF3DE;
+        color: #3B6D11;
+        border: 1px solid #97C459
+    }
+
+    .alert-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+        flex-shrink: 0
+    }
+
+    .btn-secundario {
+        padding: 9px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        color: #3D4D6B;
+        cursor: pointer;
+        font-family: inherit;
+        text-decoration: none;
+        display: inline-block
+    }
+
+        .btn-secundario:hover {
+            background: #F5F6FA;
+            text-decoration: none;
+            color: #3D4D6B
+        }
+
+    .btn-primario {
+        padding: 9px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        background: #185FA5;
+        color: #fff;
+        cursor: pointer;
+        font-family: inherit;
+        text-decoration: none;
+        display: inline-block
+    }
+
+        .btn-primario:hover {
+            background: #0C447C;
+            text-decoration: none;
+            color: #fff
+        }
+
+    @@media(max-width:900px) {
+        .layout-split {
+            grid-template-columns: 1fr
+        }
+
+        .metricas-grid {
+            grid-template-columns: repeat(2,1fr)
+        }
+
+        .ct-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px
+        }
+    }
+</style>
+
+<div class="container ct-page">
+
+    <div class="ct-header">
+        <div class="ct-header-left">
+            <h1>Costos de tratamiento</h1>
+            <p>Consultá, filtrá y editá los costos de cada tratamiento disponible</p>
+        </div>
+        @Html.ActionLink("← Volver", "HistorialPagos", "Pago", null, new { @class = "btn-secundario" })
+    </div>
+
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert-custom alert-success-custom show">
+            <div class="alert-dot"></div>
+            <span>@TempData["Exito"]</span>
+        </div>
+    }
+
+    <div class="metricas-grid">
+        <div class="metrica-card">
+            <div class="metrica-label">Tratamientos activos</div>
+            <div class="metrica-valor">@(Model?.Count ?? 0)</div>
+            <div class="metrica-sub">en catálogo actual</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Costo promedio</div>
+            <div class="metrica-valor">&#8353; @costoPromedio.ToString("N0")</div>
+            <div class="metrica-sub">por tratamiento</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Más económico</div>
+            <div class="metrica-valor" style="font-size:15px;">@(masEconomico?.Nombre ?? "—")</div>
+            <div class="metrica-sub">&#8353; @(masEconomico?.Costo.ToString("N0") ?? "0")</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Más costoso</div>
+            <div class="metrica-valor" style="font-size:15px;">@(masCaro?.Nombre ?? "—")</div>
+            <div class="metrica-sub">&#8353; @(masCaro?.Costo.ToString("N0") ?? "0")</div>
+        </div>
+    </div>
+
+    <div class="ct-card" style="padding:18px 24px;">
+        <div class="filtros-row">
+            <div class="fg"><label>Buscar tratamiento</label><input type="text" id="inputBuscar" placeholder="Ej: limpieza..." oninput="filtrarTabla()" /></div>
+            <div class="fg">
+                <label>Categoría</label>
+                <select id="selCat" onchange="filtrarTabla()">
+                    <option value="">Todas</option>
+                    <option>Preventivo</option>
+                    <option>Estético</option>
+                    <option>Restaurador</option>
+                    <option>Cirugía</option>
+                    <option>Ortodoncia</option>
+                    <option>Endodoncia</option>
+                </select>
+            </div>
+            <button class="btn-limpiar" onclick="limpiarFiltros()">&#x2715; Limpiar</button>
+        </div>
+    </div>
+
+    <div class="layout-split">
+        <div class="ct-card" style="padding:0;overflow:hidden;">
+            <div style="padding:20px 24px 0;"><div class="ct-card-title">Catálogo de tratamientos</div></div>
+            <div style="overflow-x:auto;">
+                <table class="ct-table" id="tablaCatalogo">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Tratamiento</th>
+                            <th>Categoría</th>
+                            <th>Duración</th>
+                            <th style="text-align:right">Costo (&#8353;)</th>
+                            <th style="text-align:right">Anterior</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model == null || !Model.Any())
+                        {
+                            <tr><td colspan="7" style="text-align:center;padding:24px;color:#8896B0;">No hay tratamientos en el catálogo.</td></tr>
+                        }
+                        else
+                        {
+                            foreach (var c in Model)
+                            {
+                                string catClass = "badge-" + (c.Categoria ?? "Otros").Replace(" ", "").Replace("é", "e").Replace("É", "E");
+                                <tr data-nombre="@c.Nombre.ToLower()" data-cat="@c.Categoria">
+                                    <td style="color:#8896B0;font-size:11px;">@c.IdCatalogo</td>
+                                    <td class="td-nombre">@c.Nombre</td>
+                                    <td><span class="badge-cat @catClass">@c.Categoria</span></td>
+                                    <td>@(c.DuracionMin.HasValue ? c.DuracionMin + " min" : "—")</td>
+                                    <td class="td-right">&#8353; @c.Costo.ToString("N0")</td>
+                                    <td class="td-right" style="color:#8896B0;font-weight:400;">&#8353; @(c.CostoAnterior?.ToString("N0") ?? "—")</td>
+                                    <td style="display:flex;gap:5px;">
+                                        <button class="btn-accion btn-ver" type="button"
+                                                onclick="verDetalle(@c.IdCatalogo,'@c.Nombre','@c.Categoria',@c.Costo,@(c.CostoAnterior ?? 0),'@(c.DuracionMin?.ToString() ?? "—")','@(c.FechaActualizacion?.ToString("dd/MM/yyyy") ?? "—")')">
+                                            Ver
+                                        </button>
+                                        @Html.ActionLink("Editar", "EditarCosto", "Catalogo", new { id = c.IdCatalogo }, new { @class = "btn-accion btn-editar" })
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="paginacion-row" style="padding:12px 24px 16px;">
+                <span id="pagInfo">@(Model?.Count ?? 0) tratamientos</span>
+            </div>
+        </div>
+
+        <div class="detalle-panel" id="panelDetalle">
+            <div class="detalle-titulo" id="detNombre">Seleccioná un tratamiento</div>
+            <div class="detalle-cat" id="detCat">para ver su detalle</div>
+            <div id="detContenido" style="display:none;">
+                <div class="detalle-fila"><span class="dk">Duración</span><span class="dv" id="detDuracion">—</span></div>
+                <div class="detalle-fila"><span class="dk">Costo actual</span><span class="dv" id="detCosto">—</span></div>
+                <div class="detalle-fila"><span class="dk">Costo anterior</span><span class="dv" id="detCostoAnt">—</span></div>
+                <div class="detalle-fila"><span class="dk">Últ. actualización</span><span class="dv" id="detFecha">—</span></div>
+                <div style="margin-top:16px;" id="detEditarBtn"></div>
+            </div>
+            <div id="detPlaceholder" style="text-align:center;padding:24px 0;color:#8896B0;font-size:13px;">
+                Hacé clic en "Ver" para ver el detalle aquí.
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>var idSeleccionado = null;
+
+        function verDetalle(id, nombre, cat, costo, costoAnt, duracion, fecha) {
+            idSeleccionado = id;
+            document.getElementById('detNombre').textContent    = nombre;
+            document.getElementById('detCat').textContent       = cat;
+            document.getElementById('detDuracion').textContent  = duracion + (duracion !== '—' ? ' min' : '');
+            document.getElementById('detCosto').innerHTML       = '&#8353; ' + costo.toLocaleString('es-CR');
+            document.getElementById('detCostoAnt').innerHTML    = '&#8353; ' + (costoAnt || 0).toLocaleString('es-CR');
+            document.getElementById('detFecha').textContent     = fecha;
+            document.getElementById('detEditarBtn').innerHTML   =
+                '<a href="/Catalogo/EditarCosto/' + id + '" class="btn-accion btn-editar" style="width:100%;padding:9px;display:block;text-align:center;">&#x270E; Editar costo</a>';
+            document.getElementById('detContenido').style.display   = 'block';
+            document.getElementById('detPlaceholder').style.display = 'none';
+        }
+
+        function filtrarTabla() {
+            var b   = document.getElementById('inputBuscar').value.toLowerCase();
+            var cat = document.getElementById('selCat').value.toLowerCase();
+            var v = 0;
+            document.querySelectorAll('#tablaCatalogo tbody tr').forEach(function(fila) {
+                var matchB   = fila.getAttribute('data-nombre').includes(b);
+                var matchCat = !cat || fila.getAttribute('data-cat').toLowerCase() === cat;
+                var mostrar  = matchB && matchCat;
+                fila.style.display = mostrar ? '' : 'none';
+                if (mostrar) v++;
+            });
+            document.getElementById('pagInfo').textContent = v + ' tratamientos';
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('inputBuscar').value = '';
+            document.getElementById('selCat').value = '';
+            filtrarTabla();
+        }</script>
+}

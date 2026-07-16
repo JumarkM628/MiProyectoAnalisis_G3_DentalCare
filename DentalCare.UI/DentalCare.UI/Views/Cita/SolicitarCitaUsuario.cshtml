@@ -1,0 +1,186 @@
+﻿@model DentalCare.Abstraccion.Modelo.Citas.CitaDto
+
+@{
+    ViewBag.Title = "SolicitarCitaUsuario";
+}
+
+@* FullCalendar desde CDN *@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
+
+<div class="container" style="max-width: 900px; padding: 24px;">
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 style="font-weight:600; color:#2c3e50;">Solicitar Cita</h2>
+            <p class="text-muted">
+                Seleccioná un día en el calendario y completá los datos para agendar tu cita.
+            </p>
+        </div>
+    </div>
+
+    @* Mensajes de error *@
+    @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""] != null)
+    {
+        <div class="alert alert-danger">
+            @Html.ValidationMessage("")
+            @if (ViewBag.MostrarRegistrarPaciente == true)
+            {
+                <br />
+                @Html.ActionLink("Registrar paciente ahora", "Create", "Usuario",
+                         null, new { @class = "btn btn-sm btn-warning", style = "margin-top:8px;" })
+            }
+        </div>
+    }
+
+    <div class="row">
+
+        <!-- Calendario -->
+        <div class="col-md-7">
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong>Seleccioná una fecha</strong></div>
+                <div class="panel-body">
+                    <div id="calendario"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="col-md-5">
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong>Datos de la Cita</strong></div>
+                <div class="panel-body">
+
+                    @using (Html.BeginForm("SolicitarCitaUsuario", "Cita", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.CedulaPaciente)
+                            <span class="text-danger"> *</span>
+                            @Html.TextBoxFor(m => m.CedulaPaciente,
+                                     new { @class = "form-control", placeholder = "Cédula del paciente" })
+                            @Html.ValidationMessageFor(m => m.CedulaPaciente, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Fecha)
+                            <span class="text-danger"> *</span>
+                            @Html.TextBoxFor(m => m.Fecha, "{0:yyyy-MM-dd}",
+                                     new
+                                     {
+                                         @class = "form-control",
+                                         type = "date",
+                                         id = "inputFecha",
+                                         @readonly = "readonly"
+                                     })
+                            @Html.ValidationMessageFor(m => m.Fecha, "", new { @class = "text-danger" })
+                            <small class="text-muted">Seleccioná un día en el calendario.</small>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.HoraString)
+                            <span class="text-danger"> *</span>
+                            @Html.TextBoxFor(m => m.HoraString,
+                                     new { @class = "form-control", type = "time" })
+                            @Html.ValidationMessageFor(m => m.HoraString, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.IdDoctor)
+                            <span class="text-danger"> *</span>
+                            @Html.DropDownListFor(m => m.IdDoctor, Model.ListaDoctores,
+                                     "-- Seleccione doctor --", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.IdDoctor, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.IdMotivo)
+                            <span class="text-danger"> *</span>
+                            @Html.DropDownListFor(m => m.IdMotivo, Model.ListaMotivos,
+                                     "-- Seleccione motivo --", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.IdMotivo, "", new { @class = "text-danger" })
+                        </div>
+
+                        @* Estado siempre Activo (1) para citas del paciente *@
+                        @Html.HiddenFor(m => m.IdEstado)
+
+                        <button type="submit" class="btn btn-primary btn-block"
+                                style="margin-top:8px;">
+                            Confirmar Cita
+                        </button>
+
+                        @Html.ActionLink("Cancelar", "MisCitas", "Cita",
+                                 null, new { @class = "btn btn-default btn-block", style = "margin-top:8px;" })
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/locale/es.js"></script>
+
+    <script>$(document).ready(function () {
+
+            var fechaSeleccionada = $('#inputFecha').val();
+
+            $('#calendario').fullCalendar({
+                locale: 'es',
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: ''
+                },
+                defaultView: 'month',
+
+                validRange: {
+                    start: moment().format('YYYY-MM-DD')
+                },
+
+                businessHours: {
+                    daysOfWeek: [1, 2, 3, 4, 5],
+                    startTime: '08:00',
+                    endTime: '18:00'
+                },
+
+                dayRender: function (date, cell) {
+                    if (fechaSeleccionada &&
+                        date.format('YYYY-MM-DD') === fechaSeleccionada) {
+                        cell.css('background-color', '#d4e6f1');
+                    }
+                },
+
+                dayClick: function (date, jsEvent, view) {
+
+                    var hoy = moment().startOf('day');
+
+                    if (date.isBefore(hoy))
+                        return;
+
+                    var diaSemana = date.day();
+
+                    if (diaSemana === 0 || diaSemana === 6) {
+                        alert('No se pueden agendar citas los fines de semana.');
+                        return;
+                    }
+
+                    fechaSeleccionada = date.format('YYYY-MM-DD');
+
+                    $('#inputFecha').val(fechaSeleccionada);
+
+                    $('.fc-day').css('background-color', '');
+
+                    $(jsEvent.currentTarget)
+                        .css('background-color', '#d4e6f1');
+                }
+            });
+
+        });</script>
+}
+

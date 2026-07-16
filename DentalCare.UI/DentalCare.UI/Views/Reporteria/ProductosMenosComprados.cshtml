@@ -1,0 +1,45 @@
+﻿@model List<DentalCare.Abstraccion.Modelo.Reporteria.ProductoFrecuenciaDto>
+
+<h3 class="rep-titulo">Productos Menos Comprados</h3>
+
+<div class="exp-table-card">
+    <table class="exp-table">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Cantidad Comprada</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="3" class="text-center" style="padding:24px; color:#8a9bb0;">
+                        No hay compras registradas.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="td-id">@item.CodigoProducto</td>
+                        <td class="td-nombre">@item.NombreProducto</td>
+                        <td><span class="stock-num stock-bajo">@item.CantidadTotal</span></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .rep-titulo {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1e2d3d;
+        margin-bottom: 16px;
+    }
+</style>

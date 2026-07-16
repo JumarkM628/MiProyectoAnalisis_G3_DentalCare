@@ -1,0 +1,166 @@
+﻿@model DentalCare.Abstraccion.Modelo.Tratamientos.TratamientoDto
+
+@{
+    ViewBag.Title = "Registrar Tratamiento";
+}
+
+<div class="usuarios-page" style="max-width:620px; margin:0 auto;">
+
+    <div class="usuarios-header">
+        <div>
+            <h1 class="usuarios-titulo">
+                <i class="fa fa-stethoscope"></i> Registrar Tratamiento
+            </h1>
+            <p class="usuarios-subtitulo">
+                Cita #<strong>@Model.IdCitaForm</strong> —
+                Podés agregar múltiples tratamientos a la misma cita.
+            </p>
+        </div>
+    </div>
+
+    @* Escenario 2: errores de validación *@
+    @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""] != null)
+    {
+        <div class="alert alert-danger">
+            @Html.ValidationMessage("")
+        </div>
+    }
+
+    @using (Html.BeginForm("RegistrarTratamiento", "Tratamiento", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Datos del Tratamiento</strong></div>
+            <div class="panel-body">
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.IdCitaForm)
+                    <span class="text-danger"> *</span>
+                    @Html.TextBoxFor(m => m.IdCitaForm,
+                             new { @class = "form-control", placeholder = "Número de cita" })
+                    @Html.ValidationMessageFor(m => m.IdCitaForm, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Descripcion)
+                    <span class="text-danger"> *</span>
+                    @Html.TextAreaFor(m => m.Descripcion,
+                             new
+                             {
+                                 @class = "form-control",
+                                 rows = "3",
+                                 placeholder = "Describa el tratamiento realizado"
+                             })
+                    @Html.ValidationMessageFor(m => m.Descripcion, "", new { @class = "text-danger" })
+                </div>
+
+                @* Escenario 2: costo obligatorio *@
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Monto)
+                    <span class="text-danger"> *</span>
+                    @Html.TextBoxFor(m => m.Monto,
+                             new
+                             {
+                                 @class = "form-control",
+                                 placeholder = "0.00",
+                                 type = "number",
+                                 step = "0.01",
+                                 min = "0.01"
+                             })
+                    @Html.ValidationMessageFor(m => m.Monto, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(m => m.FechaInicioForm)
+                        @Html.TextBoxFor(m => m.FechaInicioForm, "{0:yyyy-MM-dd}",
+                                 new { @class = "form-control", type = "date" })
+                        @Html.ValidationMessageFor(m => m.FechaInicioForm, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-6 form-group">
+                        @Html.LabelFor(m => m.FechaFinForm)
+                        @Html.TextBoxFor(m => m.FechaFinForm, "{0:yyyy-MM-dd}",
+                                 new { @class = "form-control", type = "date" })
+                        @Html.ValidationMessageFor(m => m.FechaFinForm, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.IdEstado)
+                    <span class="text-danger"> *</span>
+                    @Html.DropDownListFor(m => m.IdEstado, Model.ListaEstados,
+                             "-- Seleccione --", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.IdEstado, "", new { @class = "text-danger" })
+                </div>
+
+            </div>
+        </div>
+
+        <div style="margin-top:20px;">
+            <button type="submit" class="btn-usuario-primary">
+                Guardar Tratamiento
+            </button>
+            @Html.ActionLink("Ver resumen de cita", "ResumenCita", "Tratamiento",
+                     new { id = Model.IdCitaForm },
+                     new { @class = "btn btn-default", style = "margin-left:8px;" })
+        </div>
+    }
+</div>
+
+<style>
+    .panel {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .panel-heading {
+        background: #f5f7fa;
+        padding: 12px 16px;
+        border-bottom: 1px solid #ddd;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .panel-body {
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .btn-default {
+        background: #f0f0f0;
+        color: #333;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-default:hover {
+            background: #ddd;
+        }
+
+    .row {
+        display: flex;
+        gap: 16px;
+    }
+
+    .col-md-6 {
+        flex: 1;
+    }
+</style>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

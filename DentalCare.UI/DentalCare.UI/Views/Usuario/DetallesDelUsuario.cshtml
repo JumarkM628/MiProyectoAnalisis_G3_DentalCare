@@ -1,162 +1,227 @@
 ﻿@model DentalCare.Abstraccion.Modelo.Usuarios.UsuarioDto
 
 @{
-    ViewBag.Title = "DetallesDelUsuario";
+    ViewBag.Title = "Detalles del Usuario";
 }
 
-<h2>DetallesDelUsuario</h2>
+<div class="detalle-container">
 
-<div>
-    <h4>UsuarioDto</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.IdUsuario)
-        </dt>
+    <div class="detalle-card">
 
-        <dd>
-            @Html.DisplayFor(model => model.IdUsuario)
-        </dd>
+        <div class="detalle-header">
 
-        <dt>
-            @Html.DisplayNameFor(model => model.NombreCompleto)
-        </dt>
+            <h1>
+                <i class="fa fa-user-circle"></i>
+                Detalles del Usuario
+            </h1>
 
-        <dd>
-            @Html.DisplayFor(model => model.NombreCompleto)
-        </dd>
+            <span class="usuario-id">
+                ID: @Model.IdUsuario
+            </span>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.NombreArea)
-        </dt>
+        </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.NombreArea)
-        </dd>
+        <div class="detalle-grid">
 
-        <dt>
-            @Html.DisplayNameFor(model => model.NombreEspecialidad)
-        </dt>
+            <div class="detalle-item">
+                <label>Nombre Completo</label>
+                <span>@Model.NombreCompleto</span>
+            </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.NombreEspecialidad)
-        </dd>
+            <div class="detalle-item">
+                <label>Correo Electrónico</label>
+                <span>@Model.Correo</span>
+            </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.NombreEstado)
-        </dt>
+            <div class="detalle-item">
+                <label>Teléfono</label>
+                <span>@Model.Telefono</span>
+            </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.NombreEstado)
-        </dd>
+            <div class="detalle-item">
+                <label>Tipo de Cédula</label>
+                <span>@Model.TipoCedula</span>
+            </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.FechaCreacion)
-        </dt>
+            <div class="detalle-item">
+                <label>Número de Cédula</label>
+                <span>@Model.NumeroCedula</span>
+            </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.FechaCreacion)
-        </dd>
+            <div class="detalle-item">
+                <label>Área</label>
+                <span>@Model.NombreArea</span>
+            </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Nombre)
-        </dt>
+            <div class="detalle-item">
+                <label>Especialidad</label>
+                <span>@Model.NombreEspecialidad</span>
+            </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.Nombre)
-        </dd>
+            <div class="detalle-item">
+                <label>Estado</label>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.PrimerApellido)
-        </dt>
+                <span class="estado-badge @(Model.NombreEstado == "Activo" ? "activo" : "inactivo")">
+                    @Model.NombreEstado
+                </span>
+            </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.PrimerApellido)
-        </dd>
+            <div class="detalle-item">
+                <label>Fecha de Contratación</label>
+                <span>
+                    @(Model.FechaContratacion?.ToString("dd/MM/yyyy") ?? "No registrada")
+                </span>
+            </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.SegundoApellido)
-        </dt>
+            <div class="detalle-item">
+                <label>Fecha de Creación</label>
+                <span>
+                    @(Model.FechaCreacion?.ToString("dd/MM/yyyy") ?? "No registrada")
+                </span>
+            </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.SegundoApellido)
-        </dd>
+        </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.TipoCedula)
-        </dt>
+        <div class="acciones">
 
-        <dd>
-            @Html.DisplayFor(model => model.TipoCedula)
-        </dd>
+            @Html.ActionLink(
+                "Editar Usuario",
+                "EditarUsuario",
+                new { id = Model.IdUsuario },
+                new { @class = "btn-editar" })
 
-        <dt>
-            @Html.DisplayNameFor(model => model.NumeroCedula)
-        </dt>
+            @Html.ActionLink(
+                "Volver",
+                "ObtenerTodosLosUsuarios",
+                null,
+                new { @class = "btn-volver" })
 
-        <dd>
-            @Html.DisplayFor(model => model.NumeroCedula)
-        </dd>
+        </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Telefono)
-        </dt>
+    </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.Telefono)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Correo)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Correo)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.IdAreaUsuario)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.IdAreaUsuario)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.IdEspecialidad)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.IdEspecialidad)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.IdEstado)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.IdEstado)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.FechaContratacion)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.FechaContratacion)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.AspNetUserId)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.AspNetUserId)
-        </dd>
-
-    </dl>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+
+<style>
+
+    .detalle-container {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .detalle-card {
+        background: white;
+        border-radius: 20px;
+        padding: 35px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+
+    .detalle-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 20px;
+    }
+
+        .detalle-header h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+    .usuario-id {
+        background: #f3f4f6;
+        padding: 8px 15px;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    .detalle-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+        gap: 20px;
+    }
+
+    .detalle-item {
+        background: #f9fafb;
+        padding: 18px;
+        border-radius: 12px;
+    }
+
+        .detalle-item label {
+            display: block;
+            font-size: .85rem;
+            color: #6b7280;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .detalle-item span {
+            font-size: 1rem;
+            color: #111827;
+            font-weight: 500;
+        }
+
+    .estado-badge {
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-size: .85rem;
+        font-weight: 700;
+    }
+
+    .activo {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .inactivo {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .acciones {
+        margin-top: 35px;
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-editar {
+        background: #1abcb0;
+        color: white !important;
+        padding: 10px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .btn-volver {
+        background: #6b7280;
+        color: white !important;
+        padding: 10px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+        .btn-editar:hover,
+        .btn-volver:hover {
+            opacity: .9;
+            text-decoration: none;
+        }
+
+    @@media(max-width:768px) {
+
+        .detalle-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .acciones {
+            flex-direction: column;
+        }
+    }
+</style>

@@ -1,0 +1,420 @@
+﻿@model List<DentalCare.Abstraccion.Modelo.Pagos.PagoDto>
+@{
+    ViewBag.Title = "Estado de Pagos";
+    decimal totalCobrado = Model != null ? Model.Where(p => p.NombreEstado == "Activo").Sum(p => p.Monto) : 0;
+    decimal totalPendiente = Model != null ? Model.Where(p => p.NombreEstado == "Pendiente").Sum(p => p.Monto) : 0;
+    int conDeuda = Model != null ? Model.Where(p => p.NombreEstado == "Pendiente").Select(p => p.NombrePaciente).Distinct().Count() : 0;
+}
+<style>
+    .ep-page {
+        padding: 32px 0
+    }
+
+    .ep-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px
+    }
+
+    .ep-header-left h1 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0C1B33;
+        margin: 0 0 4px
+    }
+
+    .ep-header-left p {
+        font-size: 13px;
+        color: #6B7A99;
+        margin: 0
+    }
+
+    .metricas-grid {
+        display: grid;
+        grid-template-columns: repeat(4,1fr);
+        gap: 14px;
+        margin-bottom: 20px
+    }
+
+    .metrica-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 18px 20px
+    }
+
+    .metrica-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #8896B0;
+        text-transform: uppercase;
+        letter-spacing: .07em
+    }
+
+    .metrica-valor {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0C1B33;
+        margin: 4px 0
+    }
+
+    .metrica-sub {
+        font-size: 12px;
+        color: #6B7A99
+    }
+
+    .ep-card {
+        background: #fff;
+        border: 1px solid #E8ECF4;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 20px
+    }
+
+    .filtros-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+        align-items: flex-end
+    }
+
+    .fg {
+        display: flex;
+        flex-direction: column;
+        gap: 4px
+    }
+
+        .fg label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #3D4D6B
+        }
+
+        .fg input, .fg select {
+            border: 1px solid #DDE1EC;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 13px;
+            font-family: inherit;
+            min-width: 160px
+        }
+
+            .fg input:focus, .fg select:focus {
+                outline: none;
+                border-color: #378ADD
+            }
+
+    .ep-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px
+    }
+
+        .ep-table th {
+            text-align: left;
+            padding: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #8896B0;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            border-bottom: 2px solid #E8ECF4
+        }
+
+        .ep-table td {
+            padding: 12px;
+            border-bottom: 1px solid #F0F2F8;
+            color: #3D4D6B;
+            vertical-align: middle
+        }
+
+        .ep-table tbody tr:hover {
+            background: #F9FAFC
+        }
+
+    .td-right {
+        text-align: right;
+        font-weight: 600;
+        color: #0C1B33
+    }
+
+    .badge-pagado {
+        background: #EAF3DE;
+        color: #3B6D11;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600
+    }
+
+    .badge-pendiente {
+        background: #FAEEDA;
+        color: #854F0B;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600
+    }
+
+    .badge-inactivo {
+        background: #F5F6FA;
+        color: #6B7A99;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600
+    }
+
+    .btn-accion {
+        border: none;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-family: inherit;
+        text-decoration: none;
+        display: inline-block
+    }
+
+    .btn-ver {
+        background: #E6F1FB;
+        color: #185FA5
+    }
+
+        .btn-ver:hover {
+            background: #B5D4F4;
+            text-decoration: none;
+            color: #185FA5
+        }
+
+    .btn-pendiente {
+        background: #FAEEDA;
+        color: #854F0B
+    }
+
+        .btn-pendiente:hover {
+            background: #F5CFA0;
+            text-decoration: none;
+            color: #854F0B
+        }
+
+    .btn-pagado {
+        background: #EAF3DE;
+        color: #3B6D11
+    }
+
+        .btn-pagado:hover {
+            background: #C7E5A5;
+            text-decoration: none;
+            color: #3B6D11
+        }
+
+    .alert-custom {
+        display: none;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        margin-bottom: 20px;
+        align-items: center;
+        gap: 10px
+    }
+
+        .alert-custom.show {
+            display: flex
+        }
+
+    .alert-success-custom {
+        background: #EAF3DE;
+        color: #3B6D11;
+        border: 1px solid #97C459
+    }
+
+    .alert-danger-custom {
+        background: #FCEBEB;
+        color: #A0291E;
+        border: 1px solid #F5C6C6
+    }
+
+    .alert-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+        flex-shrink: 0
+    }
+
+    .btn-nuevo {
+        padding: 9px 18px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: none;
+        background: #185FA5;
+        color: #fff;
+        cursor: pointer;
+        font-family: inherit;
+        text-decoration: none;
+        display: inline-block
+    }
+
+        .btn-nuevo:hover {
+            background: #0C447C;
+            text-decoration: none;
+            color: #fff
+        }
+
+    .btn-limpiar {
+        padding: 9px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid #DDE1EC;
+        background: #fff;
+        color: #3D4D6B;
+        cursor: pointer;
+        font-family: inherit
+    }
+
+    @@media(max-width:900px) {
+        .metricas-grid {
+            grid-template-columns: repeat(2,1fr)
+        }
+
+        .ep-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px
+        }
+    }
+</style>
+
+<div class="container ep-page">
+    <div class="d-flex align-items-center gap-2">
+        <a href="@Url.Action("Menu", "Contabilidad")" class="btn-secundario ms-2">&#8592; Volver</a>
+    </div>
+    <div class="ep-header">
+        <div class="ep-header-left">
+            <h1>Estado de pagos</h1>
+            <p>Controlá los pagos de tratamientos de los pacientes</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+            @Html.ActionLink("+ Registrar Pago", "RegistrarPago", "Pago", null, new { @class = "btn-nuevo" })
+            @Html.ActionLink("Costos", "CostosTratamiento", "Catalogo", null, new { @class = "btn-nuevo", style = "background:#3B6D11;" })
+        </div>
+    </div>
+
+    @if (TempData["Exito"] != null)
+    {<div class="alert-custom alert-success-custom show"><div class="alert-dot"></div><span>@TempData["Exito"]</span></div>}
+    @if (TempData["Error"] != null)
+    {<div class="alert-custom alert-danger-custom show"><div class="alert-dot"></div><span>@TempData["Error"]</span></div>}
+
+    <div class="metricas-grid">
+        <div class="metrica-card">
+            <div class="metrica-label">Cobrado</div>
+            <div class="metrica-valor">&#8353; @totalCobrado.ToString("N0")</div>
+            <div class="metrica-sub">pagos completados</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Pendiente</div>
+            <div class="metrica-valor">&#8353; @totalPendiente.ToString("N0")</div>
+            <div class="metrica-sub">por cobrar</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Total registros</div>
+            <div class="metrica-valor">@(Model?.Count ?? 0)</div>
+            <div class="metrica-sub">pagos en total</div>
+        </div>
+        <div class="metrica-card">
+            <div class="metrica-label">Pacientes con deuda</div>
+            <div class="metrica-valor">@conDeuda</div>
+            <div class="metrica-sub">con pagos pendientes</div>
+        </div>
+    </div>
+
+    <div class="ep-card">
+        <div class="filtros-row">
+            <div class="fg"><label>Buscar</label><input type="text" id="buscar" placeholder="Paciente o cita..." oninput="filtrar()" /></div>
+            <div class="fg">
+                <label>Estado</label>
+                <select id="estado" onchange="filtrar()">
+                    <option value="">Todos</option>
+                    <option value="Activo">Pagado</option>
+                    <option value="Pendiente">Pendiente</option>
+                </select>
+            </div>
+            <button class="btn-limpiar" onclick="limpiar()">&#x2715; Limpiar</button>
+        </div>
+
+        <table class="ep-table" id="tablaHistorial">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Paciente</th>
+                    <th>Cita</th>
+                    <th>Método</th>
+                    <th>Fecha</th>
+                    <th class="td-right">Monto</th>
+                    <th>Estado</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model == null || !Model.Any())
+                {
+                    <tr><td colspan="8" style="text-align:center;padding:24px;color:#8896B0;">No hay pagos registrados.</td></tr>
+                }
+                else
+                {
+                    foreach (var p in Model)
+                    {
+                        string badge = p.NombreEstado == "Activo" ? "badge-pagado"
+                                     : p.NombreEstado == "Pendiente" ? "badge-pendiente"
+                                     : "badge-inactivo";
+                        string textoEstado = p.NombreEstado == "Activo" ? "Pagado" : p.NombreEstado;
+                        <tr data-buscar="@p.NombrePaciente.ToLower() @p.IdCita" data-estado="@p.NombreEstado">
+                            <td style="color:#8896B0;font-size:11px;">@p.IdContabilidad</td>
+                            <td style="font-weight:600;color:#0C1B33;">@p.NombrePaciente</td>
+                            <td>#@p.IdCita</td>
+                            <td>@p.NombreMetodoPago</td>
+                            <td style="color:#6B7A99;">@(p.FechaPago.HasValue ? p.FechaPago.Value.ToString("dd/MM/yyyy") : "—")</td>
+                            <td class="td-right">&#8353; @p.Monto.ToString("N0")</td>
+                            <td><span class="@badge">@textoEstado</span></td>
+                            <td style="display:flex;gap:5px;">
+                                @if (p.NombreEstado == "Activo")
+                                {
+                                    @Html.ActionLink("Pendiente", "MarcarPendiente", new { id = p.IdContabilidad }, new { @class = "btn-accion btn-pendiente" })
+                                }
+                                @if (p.NombreEstado == "Pendiente")
+                                {
+                                    @Html.ActionLink("Marcar pagado", "MarcarPagado", new { id = p.IdContabilidad }, new { @class = "btn-accion btn-pagado" })
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function filtrar() {
+            var b = document.getElementById('buscar').value.toLowerCase();
+            var e = document.getElementById('estado').value;
+            document.querySelectorAll('#tablaHistorial tbody tr').forEach(function (fila) {
+                var matchB = fila.getAttribute('data-buscar')?.includes(b) ?? true;
+                var matchE = !e || fila.getAttribute('data-estado') === e;
+                fila.style.display = (matchB && matchE) ? '' : 'none';
+            });
+        }
+        function limpiar() {
+            document.getElementById('buscar').value = '';
+            document.getElementById('estado').value = '';
+            filtrar();
+        }
+    </script>
+}

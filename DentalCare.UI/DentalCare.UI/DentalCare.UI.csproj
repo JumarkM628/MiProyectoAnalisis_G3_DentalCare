@@ -56,6 +56,12 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.5.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Hangfire.Core, Version=1.8.23.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.Core.1.8.23\lib\net46\Hangfire.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Hangfire.SqlServer, Version=1.8.23.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.SqlServer.1.8.23\lib\net451\Hangfire.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="MailKit, Version=4.17.0.0, Culture=neutral, PublicKeyToken=4e064fe7c44a8f1b, processorArchitecture=MSIL">
       <HintPath>..\packages\MailKit.4.17.0\lib\net48\MailKit.dll</HintPath>
     </Reference>
@@ -204,14 +210,18 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ArchivoController.cs" />
+    <Compile Include="Controllers\CatalogoController.cs" />
     <Compile Include="Controllers\CitaController.cs" />
     <Compile Include="Controllers\ContabilidadController.cs" />
     <Compile Include="Controllers\ExpedienteController.cs" />
+    <Compile Include="Controllers\GastoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InventarioController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\PagoController.cs" />
     <Compile Include="Controllers\ProductoController.cs" />
     <Compile Include="Controllers\ReporteriaController.cs" />
+    <Compile Include="Controllers\TratamientoController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -325,6 +335,38 @@
     <Content Include="Views\Expediente\GuardarAlerta.cshtml" />
     <Content Include="Views\Expediente\RegistrarOdontograma.cshtml" />
     <Content Include="Views\Expediente\VerOdontograma.cshtml" />
+    <Content Include="Views\Cita\SolicitarCitaUsuario.cshtml" />
+    <Content Include="Views\Cita\CancelarConfirmado.cshtml" />
+    <Content Include="Views\Cita\RechazarConfirmado.cshtml" />
+    <Content Include="Views\Cita\Editar.cshtml" />
+    <Content Include="Views\Reporteria\ProductosMasUtilizados.cshtml" />
+    <Content Include="Views\Reporteria\ProductosMenosUtilizados.cshtml" />
+    <Content Include="Views\Reporteria\ProductosMasComprados.cshtml" />
+    <Content Include="Views\Reporteria\ProductosMenosComprados.cshtml" />
+    <Content Include="Views\Reporteria\HistorialPorTratamiento.cshtml" />
+    <Content Include="Views\Reporteria\LotesMasUtilizados.cshtml" />
+    <Content Include="Views\Reporteria\LotesMenosUtilizados.cshtml" />
+    <Content Include="Views\Reporteria\LotesMasComprados.cshtml" />
+    <Content Include="Views\Reporteria\LotesMenosComprados.cshtml" />
+    <Content Include="Views\Reporteria\HistorialLotePorTratamiento.cshtml" />
+    <Content Include="Views\Reporteria\ReportesProductos.cshtml" />
+    <Content Include="Views\Cita\RegistrarProductos.cshtml" />
+    <Content Include="Views\Inventario\Edit.cshtml" />
+    <Content Include="Views\Cita\CancelarMiCita.cshtml" />
+    <Content Include="Views\Cita\MisCitas.cshtml" />
+    <Content Include="Views\Inventario\Create.cshtml" />
+    <Content Include="Views\Pago\RegistrarPago.cshtml" />
+    <Content Include="Views\Pago\HistorialPagos.cshtml" />
+    <Content Include="Views\Tratamiento\ResumenCita.cshtml" />
+    <Content Include="Views\Tratamiento\RegistrarTratamiento.cshtml" />
+    <Content Include="Views\Gasto\RegistrarGasto.cshtml" />
+    <Content Include="Views\Gasto\ReporteGastos.cshtml" />
+    <Content Include="Views\Pago\MarcarPendiente.cshtml" />
+    <Content Include="Views\Pago\MarcarPagado.cshtml" />
+    <Content Include="Views\Catalogo\CostosTratamiento.cshtml" />
+    <Content Include="Views\Catalogo\EditarCosto.cshtml" />
+    <Content Include="Views\Reporteria\ReportesCitas.cshtml" />
+    <Content Include="Views\Reporteria\CitasPorPeriodo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

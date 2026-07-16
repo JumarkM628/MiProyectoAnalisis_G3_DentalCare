@@ -1,20 +1,159 @@
 ﻿@model DentalCare.Abstraccion.Modelo.Usuarios.UsuarioDto
 
 @{
-    ViewBag.Title = "EditarUsuario";
+    ViewBag.Title = "Editar Usuario";
 }
 
-<div class="container" style="max-width: 860px; padding: 24px;">
+<style>
 
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <h2 style="font-weight:600; color:#2c3e50;">
-                Editar Usuario <small class="text-muted">Id: @Model.IdUsuario</small>
-            </h2>
-            <p class="text-muted">
-                Campos obligatorios marcados con <span class="text-danger">*</span>
-            </p>
-        </div>
+    body {
+        background: #f4f7fb;
+    }
+
+    .page-header-custom {
+        background: linear-gradient(135deg, #0ea5e9, #2563eb);
+        padding: 30px;
+        border-radius: 20px;
+        color: white;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(37,99,235,.25);
+    }
+
+        .page-header-custom h2 {
+            margin: 0;
+            font-weight: 700;
+            color: white;
+        }
+
+        .page-header-custom p {
+            margin-top: 10px;
+            opacity: .95;
+        }
+
+    .panel {
+        border: none !important;
+        border-radius: 18px !important;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,.08);
+        margin-bottom: 25px;
+    }
+
+    .panel-heading {
+        background: linear-gradient(135deg,#1e3a8a,#2563eb) !important;
+        color: white !important;
+        border: none !important;
+        padding: 18px 22px !important;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .panel-body {
+        background: white;
+        padding: 25px;
+    }
+
+    label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 5px;
+    }
+
+    .form-control {
+        height: 45px;
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        box-shadow: none;
+        transition: all .3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37,99,235,.15);
+        }
+
+    .required {
+        color: #dc2626;
+    }
+
+    .btn-guardar {
+        background: linear-gradient(135deg,#10b981,#059669);
+        border: none;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: .3s;
+    }
+
+        .btn-guardar:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16,185,129,.30);
+        }
+
+    .btn-cancelar {
+        background: #e5e7eb;
+        color: #374151;
+        padding: 12px 24px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+        .btn-cancelar:hover {
+            text-decoration: none;
+            background: #d1d5db;
+            color: #111827;
+        }
+
+    .info-card {
+        background: white;
+        border-radius: 18px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 20px rgba(0,0,0,.05);
+        border-left: 5px solid #2563eb;
+    }
+
+        .info-card strong {
+            color: #2563eb;
+        }
+
+    .acciones {
+        margin-top: 30px;
+        display: flex;
+        gap: 10px;
+    }
+
+    @@media(max-width:768px) {
+
+        .acciones {
+            flex-direction: column;
+        }
+
+        .btn-guardar,
+        .btn-cancelar {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="container" style="max-width:900px; padding:25px;">
+
+    <div class="page-header-custom">
+        <h2>
+            <i class="glyphicon glyphicon-user"></i>
+            Editar Usuario
+        </h2>
+
+        <p>
+            Actualice la información personal y administrativa del usuario.
+        </p>
+    </div>
+
+    <div class="info-card">
+        <strong>ID del Usuario:</strong> @Model.IdUsuario
     </div>
 
     @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""] != null)
@@ -27,118 +166,170 @@
     @using (Html.BeginForm("EditarUsuario", "Usuario", new { id = Model.IdUsuario }, FormMethod.Post))
     {
         @Html.AntiForgeryToken()
+
         @Html.HiddenFor(m => m.IdUsuario)
         @Html.HiddenFor(m => m.AspNetUserId)
         @Html.HiddenFor(m => m.FechaCreacion)
 
         <div class="panel panel-default">
-            <div class="panel-heading"><strong>Datos Personales</strong></div>
+
+            <div class="panel-heading">
+                <i class="glyphicon glyphicon-user"></i>
+                Datos Personales
+            </div>
+
             <div class="panel-body">
 
                 <div class="row">
+
                     <div class="col-md-4 form-group">
-                        @Html.LabelFor(m => m.Nombre)<span class="text-danger"> *</span>
+                        @Html.LabelFor(m => m.Nombre)
+                        <span class="required">*</span>
                         @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "text-danger" })
                     </div>
+
                     <div class="col-md-4 form-group">
-                        @Html.LabelFor(m => m.PrimerApellido)<span class="text-danger"> *</span>
+                        @Html.LabelFor(m => m.PrimerApellido)
+                        <span class="required">*</span>
                         @Html.TextBoxFor(m => m.PrimerApellido, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.PrimerApellido, "", new { @class = "text-danger" })
                     </div>
+
                     <div class="col-md-4 form-group">
                         @Html.LabelFor(m => m.SegundoApellido)
                         @Html.TextBoxFor(m => m.SegundoApellido, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.SegundoApellido, "", new { @class = "text-danger" })
                     </div>
+
                 </div>
 
                 <div class="row">
+
                     <div class="col-md-4 form-group">
-                        @Html.LabelFor(m => m.TipoCedula)<span class="text-danger"> *</span>
-                        @Html.DropDownListFor(m => m.TipoCedula, Model.ListaTiposCedula,
-                            "-- Seleccione --", new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.TipoCedula, "", new { @class = "text-danger" })
+                        @Html.LabelFor(m => m.TipoCedula)
+                        <span class="required">*</span>
+                        @Html.DropDownListFor(m => m.TipoCedula,
+                            Model.ListaTiposCedula,
+                            "-- Seleccione --",
+                            new { @class = "form-control" })
                     </div>
+
                     <div class="col-md-4 form-group">
-                        @Html.LabelFor(m => m.NumeroCedula)<span class="text-danger"> *</span>
+                        @Html.LabelFor(m => m.NumeroCedula)
+                        <span class="required">*</span>
                         @Html.TextBoxFor(m => m.NumeroCedula, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.NumeroCedula, "", new { @class = "text-danger" })
                     </div>
+
                     <div class="col-md-4 form-group">
-                        @Html.LabelFor(m => m.Telefono)<span class="text-danger"> *</span>
+                        @Html.LabelFor(m => m.Telefono)
+                        <span class="required">*</span>
                         @Html.TextBoxFor(m => m.Telefono, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.Telefono, "", new { @class = "text-danger" })
                     </div>
+
                 </div>
 
                 <div class="row">
+
                     <div class="col-md-6 form-group">
-                        @Html.LabelFor(m => m.Correo)<span class="text-danger"> *</span>
+                        @Html.LabelFor(m => m.Correo)
+                        <span class="required">*</span>
                         @Html.TextBoxFor(m => m.Correo, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.Correo, "", new { @class = "text-danger" })
                     </div>
+
                     <div class="col-md-6 form-group">
-                        @Html.LabelFor(m => m.RoleId, "Rol del sistema")<span class="text-danger"> *</span>
-                        @Html.DropDownListFor(m => m.RoleId, Model.ListaRoles,
-                            "-- Seleccione un rol --", new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.RoleId, "", new { @class = "text-danger" })
+                        @Html.LabelFor(m => m.RoleId, "Rol del Sistema")
+                        <span class="required">*</span>
+                        @Html.DropDownListFor(m => m.RoleId,
+                            Model.ListaRoles,
+                            "-- Seleccione un rol --",
+                            new { @class = "form-control" })
                     </div>
+
                 </div>
 
             </div>
         </div>
 
-        <div class="panel panel-default" style="margin-top:16px;">
-            <div class="panel-heading"><strong>Datos del Sistema</strong></div>
+        <div class="panel panel-default">
+
+            <div class="panel-heading">
+                <i class="glyphicon glyphicon-cog"></i>
+                Datos del Sistema
+            </div>
+
             <div class="panel-body">
 
                 <div class="row">
+
                     <div class="col-md-4 form-group">
-                        @Html.LabelFor(m => m.IdAreaUsuario)<span class="text-danger"> *</span>
-                        @Html.DropDownListFor(m => m.IdAreaUsuario, Model.ListaAreas,
-                            "-- Seleccione --", new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.IdAreaUsuario, "", new { @class = "text-danger" })
+                        @Html.LabelFor(m => m.IdAreaUsuario)
+                        <span class="required">*</span>
+                        @Html.DropDownListFor(m => m.IdAreaUsuario,
+                            Model.ListaAreas,
+                            "-- Seleccione --",
+                            new { @class = "form-control" })
                     </div>
+
                     <div class="col-md-4 form-group">
-                        @Html.LabelFor(m => m.IdEspecialidad)<span class="text-danger"> *</span>
-                        @Html.DropDownListFor(m => m.IdEspecialidad, Model.ListaEspecialidades,
-                            "-- Seleccione --", new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.IdEspecialidad, "", new { @class = "text-danger" })
+                        @Html.LabelFor(m => m.IdEspecialidad)
+                        <span class="required">*</span>
+                        @Html.DropDownListFor(m => m.IdEspecialidad,
+                            Model.ListaEspecialidades,
+                            "-- Seleccione --",
+                            new { @class = "form-control" })
                     </div>
+
                     <div class="col-md-4 form-group">
-                        @Html.LabelFor(m => m.IdEstado)<span class="text-danger"> *</span>
-                        @Html.DropDownListFor(m => m.IdEstado, Model.ListaEstados,
-                            "-- Seleccione --", new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.IdEstado, "", new { @class = "text-danger" })
+                        @Html.LabelFor(m => m.IdEstado)
+                        <span class="required">*</span>
+                        @Html.DropDownListFor(m => m.IdEstado,
+                            Model.ListaEstados,
+                            "-- Seleccione --",
+                            new { @class = "form-control" })
                     </div>
+
                 </div>
 
                 <div class="row">
+
                     <div class="col-md-4 form-group">
                         @Html.LabelFor(m => m.FechaContratacion)
-                        @Html.TextBoxFor(m => m.FechaContratacion, "{0:yyyy-MM-dd}",
-                            new { @class = "form-control", type = "date" })
-                        @Html.ValidationMessageFor(m => m.FechaContratacion, "", new { @class = "text-danger" })
+                        @Html.TextBoxFor(
+                            m => m.FechaContratacion,
+                            "{0:yyyy-MM-dd}",
+                            new
+                            {
+                                @class = "form-control",
+                                type = "date"
+                            })
                     </div>
+
                 </div>
 
-
-
             </div>
+
         </div>
 
-        <!-- BOTONES -->
-        <div style="margin-top:24px;">
-            <button type="submit" class="btn btn-warning">
+        <div class="acciones">
+
+            <button type="submit" class="btn btn-guardar">
+                <i class="glyphicon glyphicon-floppy-disk"></i>
                 Guardar Cambios
             </button>
-            @Html.ActionLink("Cancelar", "ObtenerTodosLosUsuarios", "Usuario",
-                null, new { @class = "btn btn-default", style = "margin-left:8px;" })
+
+            @Html.ActionLink(
+                "Cancelar",
+                "ObtenerTodosLosUsuarios",
+                "Usuario",
+                null,
+                new { @class = "btn btn-cancelar" })
+
         </div>
     }
+
 </div>
 
-@section Scripts {
+@section Scripts{
     @Scripts.Render("~/bundles/jqueryval")
 }
