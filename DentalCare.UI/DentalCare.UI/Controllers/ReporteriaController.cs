@@ -8,6 +8,8 @@ using DentalCare.Abstraccion.LogicaDeNegocio.Reporteria.Producto;
 using DentaCare.LogicaDeNegocio.Reporteria.Citas;
 using DentalCare.Abstraccion.LogicaDeNegocio.Reporteria.Citas;
 using DentalCare.Abstraccion.Modelo.Reporteria;
+using DentaCare.LogicaDeNegocio.Usuarios.ObtenerTodosLosUsuarios;
+using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.ObtenerTodosLosUsuarios;
 using DentalCare.AccesoADatos.Citas.Reporteria;
 using DentalCare.AccesoADatos;
 using DentalCare.AccesoADatos.Reporteria.Producto;
@@ -20,12 +22,14 @@ namespace DentalCare.UI.Controllers
         private readonly IReporteProductosLN _reporteProductosLN;
         private readonly IReporteLotesLN _reporteLotesLN;
         private readonly IReporteCitasLN _reporteCitasLN;
+        private IObtenerTodosLosUsuariosLN _obtenerTodosLosUsuariosLN;
 
         public ReporteriaController()
         {
             _reporteProductosLN = new ReporteProductosLN(new ReporteProductosAD(new Contexto()));
             _reporteLotesLN = new ReporteLotesLN(new ReporteLotesAD(new Contexto()));
             _reporteCitasLN = new ReporteCitasLN(new ReporteCitasAD(new Contexto()));
+            _obtenerTodosLosUsuariosLN = new ObtenerTodosLosUsuariosLN();
         }
 
         // GET: Reporteria
@@ -210,23 +214,136 @@ namespace DentalCare.UI.Controllers
             }
         }
 
-        // GET: Reporteria/ReportesPagos
-        public ActionResult ReportesPagos()
+        // GET: Reporteria/ReportesPagos?desde=yyyy-MM-dd&hasta=yyyy-MM-dd
+        public ActionResult ReportesPagos(DateTime? desde, DateTime? hasta)
         {
-            return View("Pagos");
+            using (var contexto = new Contexto())
+            {
+                var query = contexto.Gastos.AsQueryable();
+
+                if (desde.HasValue)
+                    query = query.Where(g => g.Fecha >= desde.Value);
+
+                if (hasta.HasValue)
+                    query = query.Where(g => g.Fecha <= hasta.Value);
+
+                var lista = (from g in query
+                             join estado in contexto.Estados on g.IdEstado equals estado.IdEstado
+                             select new
+                             {
+                                 g.IdGasto,
+                                 g.Descripcion,
+                                 g.Monto,
+                                 g.Fecha,
+                                 NombreEstado = estado.NombreEstado
+                             })
+                            .OrderByDescending(x => x.Fecha)
+                            .ToList();
+
+                var sb = new System.Text.StringBuilder();
+                sb.AppendLine("<!DOCTYPE html>");
+                sb.AppendLine("<html lang=\"es\">\n<head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Reportes de Pagos - Clínica Dental</title>\n    <link href=\"/Content/DentalCare.css?v=3\" rel=\"stylesheet\" />\n</head>\n<body>");
+
+                sb.AppendLine("<nav class=\"main-nav\">\n  <div class=\"nav-inner\">\n    <div class=\"navbar-title\">Clínica dental y especialidades Dra. Rebeca</div>\n    <div class=\"nav-links-wrapper\" id=\"mainNavLinks\">\n      <ul class=\"nav-links\">\n        <li><a class=\"nav-link\" href=\"/\">Inicio</a></li>\n        <li><a class=\"nav-link\" href=\"/Reporteria\">Reporteria</a></li>\n      </ul>\n    </div>\n  </div>\n</nav>");
+
+                sb.AppendLine("<div class=\"page-wrapper\">\n<div class=\"usuarios-page\">\n  <div class=\"usuarios-header\">\n    <div>\n      <h1 class=\"usuarios-titulo\"><i class=\"fa fa-money\"></i> Reportes de Pagos</h1>\n      <p class=\"usuarios-subtitulo\">Listado de gastos (tabla FIDE_GASTO_TB). Filtra por fechas si lo deseas.</p>\n    </div>\n    <div>\n      <a href=\"/Reporteria\" class=\"btn-usuario-primary\">← Volver a Reportería</a>\n    </div>\n  </div>\n  <section class=\"usuarios-table-card rep-contenido\">\n    <form method=\"get\" action=\"/Reporteria/ReportesPagos\" class=\"form-inline\">\n      <label>Desde: <input type=\"date\" name=\"desde\" value=\"" + (desde.HasValue? desde.Value.ToString("yyyy-MM-dd") : "") + "\" /></label>\n      <label style=\"margin-left:12px;\">Hasta: <input type=\"date\" name=\"hasta\" value=\"" + (hasta.HasValue? hasta.Value.ToString("yyyy-MM-dd") : "") + "\" /></label>\n      <button type=\"submit\" class=\"btn-usuario-primary\" style=\"margin-left:12px;\">Filtrar</button>\n    </form>");
+
+                if (lista == null || !lista.Any())
+                {
+                    sb.AppendLine("<p class=\"rep-placeholder\" style=\"margin-top:20px;\">No hay registros en FIDE_GASTO_TB para las fechas seleccionadas.</p>");
+                }
+                else
+                {
+                    sb.AppendLine("<table class=\"table\" style=\"margin-top:16px; width:100%; border-collapse:collapse;\"><thead><tr><th>ID_GASTO</th><th>DESCRIPCION</th><th>MONTO</th><th>FECHA</th><th>ESTADO</th></tr></thead><tbody>");
+                    foreach (var g in lista)
+                    {
+                        sb.AppendLine($"<tr><td>{g.IdGasto}</td><td>{System.Net.WebUtility.HtmlEncode(g.Descripcion)}</td><td>{(g.Monto.HasValue? g.Monto.Value.ToString("F2") : "")}</td><td>{(g.Fecha.HasValue? g.Fecha.Value.ToString("yyyy-MM-dd") : "")}</td><td>{System.Net.WebUtility.HtmlEncode(g.NombreEstado)}</td></tr>");
+                    }
+                    sb.AppendLine("</tbody></table>");
+                }
+
+                sb.AppendLine("</section>\n</div>\n<footer class=\"site-footer\">\n  <div class=\"footer-inner\">\n    <div class=\"footer-brand\">\n      <span>Clínica Dental y Especialidades<br><strong>Dra. Rebeca</strong></span>\n    </div>\n    <p class=\"footer-tagline\">Sonríe con confianza</p>\n    <p class=\"footer-copy\">&copy; " + DateTime.Now.Year + " — Todos los derechos reservados</p>\n  </div>\n</footer>\n</div>");
+
+                sb.AppendLine("<script src=\"/Scripts/jquery-3.6.0.min.js\"></script>");
+                sb.AppendLine("<script src=\"/Scripts/bootstrap.min.js\"></script>");
+                sb.AppendLine("</body></html>");
+
+                return Content(sb.ToString(), "text/html");
+            }
         }
 
         // GET: Reporteria/ReportesPacientesAtendidos
-        public ActionResult ReportesPacientesAtendidos()
+        // Muestra las citas con fecha pasada (antes de hoy) con paginación
+        public ActionResult ReportesPacientesAtendidos(int page = 1, int pageSize = 20)
         {
-            return View("Pacientes");
+            using (var contexto = new Contexto())
+            {
+                var query = contexto.Citas.AsQueryable();
+
+                var hoy = DateTime.Today;
+                // Solo citas de fechas pasadas
+                query = query.Where(c => c.Fecha.HasValue && c.Fecha.Value < hoy);
+
+                var total = query.Count();
+                var totalPages = (int)Math.Ceiling(total / (double)pageSize);
+
+                var lista = query.OrderByDescending(c => c.Fecha).ThenByDescending(c => c.Hora)
+                                 .Skip((page - 1) * pageSize)
+                                 .Take(pageSize)
+                                 .ToList();
+
+                var sb = new System.Text.StringBuilder();
+                sb.AppendLine("<!DOCTYPE html>");
+                sb.AppendLine("<html lang=\"es\">\n<head>\n    <meta charset=\"utf-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Pacientes Atendidos - Clínica Dental</title>\n    <link href=\"/Content/DentalCare.css?v=3\" rel=\"stylesheet\" />\n</head>\n<body>");
+
+                sb.AppendLine("<nav class=\"main-nav\">\n  <div class=\"nav-inner\">\n    <div class=\"navbar-title\">Clínica dental y especialidades Dra. Rebeca</div>\n    <div class=\"nav-links-wrapper\" id=\"mainNavLinks\">\n      <ul class=\"nav-links\">\n        <li><a class=\"nav-link\" href=\"/\">Inicio</a></li>\n        <li><a class=\"nav-link\" href=\"/Reporteria\">Reporteria</a></li>\n      </ul>\n    </div>\n  </div>\n</nav>");
+
+                sb.AppendLine("<div class=\"page-wrapper\">\n<div class=\"usuarios-page\">\n  <div class=\"usuarios-header\">\n    <div>\n      <h1 class=\"usuarios-titulo\"><i class=\"fa fa-calendar-check-o\"></i> Pacientes atendidos</h1>\n      <p class=\"usuarios-subtitulo\">Listado de citas (tabla FIDE_CITAS_TB) — solo fechas pasadas.</p>\n    </div>\n    <div>\n      <a href=\"/Reporteria\" class=\"btn-usuario-primary\">← Volver a Reportería</a>\n    </div>\n  </div>\n  <section class=\"usuarios-table-card rep-contenido\">\n");
+
+                if (lista == null || !lista.Any())
+                {
+                    sb.AppendLine("<p class=\"rep-placeholder\">No hay citas pasadas para mostrar.</p>");
+                }
+                else
+                {
+                    sb.AppendLine("<table class=\"table\" style=\"width:100%;border-collapse:collapse;\"><thead><tr><th>ID_CITA</th><th>FECHA</th><th>HORA</th><th>ID_MOTIVO</th><th>ID_CANCELACION</th><th>ID_ESTADO</th><th>ID_DOCTOR</th></tr></thead><tbody>");
+                    foreach (var c in lista)
+                    {
+                        var fecha = c.Fecha.HasValue ? c.Fecha.Value.ToString("yyyy-MM-dd") : "";
+                        var hora = c.Hora.HasValue ? c.Hora.Value.ToString(@"hh\:mm") : "";
+                        sb.AppendLine($"<tr><td>{c.IdCita}</td><td>{fecha}</td><td>{hora}</td><td>{c.IdMotivo}</td><td>{c.IdCancelacion}</td><td>{c.IdEstado}</td><td>{(c.IdDoctor.HasValue? c.IdDoctor.ToString() : "")}</td></tr>");
+                    }
+                    sb.AppendLine("</tbody></table>");
+
+                    // Paginación simple
+                    sb.AppendLine("<div style=\"margin-top:12px; text-align:center;\">\n<nav class=\"pagination\">\n");
+                    if (page > 1)
+                        sb.AppendLine($"<a class=\"btn-usuario-secondary\" href=\"/Reporteria/ReportesPacientesAtendidos?page={page-1}&pageSize={pageSize}\">← Anterior</a>");
+
+                    sb.AppendLine($"<span style=\"margin:0 8px;line-height:34px;\">Página {page} de {Math.Max(totalPages,1)}</span>");
+
+                    if (page < totalPages)
+                        sb.AppendLine($"<a class=\"btn-usuario-secondary\" href=\"/Reporteria/ReportesPacientesAtendidos?page={page+1}&pageSize={pageSize}\">Siguiente →</a>");
+
+                    sb.AppendLine("</nav>\n</div>");
+                }
+
+                sb.AppendLine("</section>\n</div>\n<footer class=\"site-footer\">\n  <div class=\"footer-inner\">\n    <div class=\"footer-brand\">\n      <span>Clínica Dental y Especialidades<br><strong>Dra. Rebeca</strong></span>\n    </div>\n    <p class=\"footer-tagline\">Sonríe con confianza</p>\n    <p class=\"footer-copy\">&copy; " + DateTime.Now.Year + " — Todos los derechos reservados</p>\n  </div>\n</footer>\n</div>");
+
+                sb.AppendLine("<script src=\"/Scripts/jquery-3.6.0.min.js\"></script>");
+                sb.AppendLine("<script src=\"/Scripts/bootstrap.min.js\"></script>");
+                sb.AppendLine("</body></html>");
+
+                return Content(sb.ToString(), "text/html");
+            }
         }
 
         // GET: Reporteria/ReportesUsuarios
         public ActionResult ReportesUsuarios()
         {
-            // Reutilizamos la vista de usuario existente por ahora
-            return View("~/Views/Usuario/ObtenerTodosLosUsuarios.cshtml");
+            // Obtener lista de usuarios y reutilizar la vista de usuarios
+            var lista = _obtenerTodosLosUsuariosLN.Obtener();
+            return View("~/Views/Usuario/ObtenerTodosLosUsuarios.cshtml", lista);
         }
 
         // GET: Reporteria/CitasPorPeriodo?desde=yyyy-MM-dd&hasta=yyyy-MM-dd
