@@ -69,9 +69,10 @@
                     }
                     else
                     {
+                        int contador = 1;
+
                         foreach (var c in Model)
                         {
-                            // Determinar la clase CSS del badge según el estado
                             string badgeClass = "estado-inactivo";
                             if (c.NombreEstado == "Activo" || c.NombreEstado == "Confirmada")
                             {
@@ -102,9 +103,20 @@
                                 badgeClass = "estado-finalizada";
                             }
 
+                            var inicialPaciente = string.IsNullOrEmpty(c.NombrePaciente) ? "?" : c.NombrePaciente.Substring(0, 1).ToUpper();
+                            var formConfirmarId = "formConfirmar" + c.IdCita;
+                            var formAsistirId = "formAsistir" + c.IdCita;
+                            var formAusenteId = "formAusente" + c.IdCita;
+                            var formFinalizarId = "formFinalizar" + c.IdCita;
+
                             <tr>
-                                <td class="td-id">@c.IdCita</td>
-                                <td>@c.NombrePaciente</td>
+                                <td class="td-id">@contador</td>
+                                <td>
+                                    <div class="correo-cell">
+                                        <span class="avatar-inicial">@inicialPaciente</span>
+                                        <span>@c.NombrePaciente</span>
+                                    </div>
+                                </td>
                                 <td>@c.NombreDoctor</td>
                                 <td class="td-muted">
                                     @(c.Fecha.HasValue ? c.Fecha.Value.ToString("dd/MM/yyyy") : "—")
@@ -121,81 +133,76 @@
                                 <td>
                                     <div class="acciones-row">
 
-                                        @* Ver *@
                                         @Html.ActionLink("Ver", "Details",
                                                  new { id = c.IdCita },
                                                  new { @class = "accion-btn accion-ver" })
 
-                                        @* Confirmar: solo si está Pendiente o Activo *@
                                         @if (c.NombreEstado == "Pendiente" || c.NombreEstado == "Activo")
                                         {
                                             using (Html.BeginForm("Confirmar", "Cita",
                                                 new { id = c.IdCita }, FormMethod.Post,
-                                                new { style = "display:inline;" }))
+                                                new { id = formConfirmarId, style = "display:inline;" }))
                                             {
                                                 @Html.AntiForgeryToken()
-                                                <button type="submit"
+                                                <button type="button"
                                                         class="accion-btn accion-confirmar"
-                                                        onclick="return confirm('¿Confirmar esta cita?');">
+                                                        onclick="abrirModalAccion('@formConfirmarId', 'confirmar', '@c.NombrePaciente')">
                                                     Confirmar
                                                 </button>
                                             }
                                         }
 
-                                        @* Cancelar: si no está ya cancelada o rechazada *@
                                         @if (c.NombreEstado != "Cancelada" && c.NombreEstado != "Rechazada")
                                         {
                                             @Html.ActionLink("Cancelar", "Cancelar", new { id = c.IdCita }, new { @class = "accion-btn accion-cancelar" })
                                         }
 
-                                        @* Rechazar: solo si está Pendiente *@
                                         @if (c.NombreEstado == "Pendiente")
                                         {
                                             @Html.ActionLink("Rechazar", "Rechazar", new { id = c.IdCita }, new { @class = "accion-btn accion-eliminar" })
                                         }
 
-                                        @* Asistir: solo si está Confirmada o Activo *@
                                         @if (c.NombreEstado == "Confirmada" || c.NombreEstado == "Activo")
                                         {
-                                            using (Html.BeginForm("Asistir", "Cita", new { id = c.IdCita }, FormMethod.Post, new { style = "display:inline;" }))
+                                            using (Html.BeginForm("Asistir", "Cita", new { id = c.IdCita }, FormMethod.Post, new { id = formAsistirId, style = "display:inline;" }))
                                             {
                                                 @Html.AntiForgeryToken()
-                                                <button type="submit" class="accion-btn accion-asistir" onclick="return confirm('¿Registrar asistencia? Se guardará la hora de inicio.');">
+                                                <button type="button" class="accion-btn accion-asistir"
+                                                        onclick="abrirModalAccion('@formAsistirId', 'asistio', '@c.NombrePaciente')">
                                                     Asistió
                                                 </button>
                                             }
                                         }
 
-                                        @* Ausente: solo si está Confirmada o Activo *@
                                         @if (c.NombreEstado == "Confirmada" || c.NombreEstado == "Activo")
                                         {
-                                            using (Html.BeginForm("Ausente", "Cita", new { id = c.IdCita }, FormMethod.Post, new { style = "display:inline;" }))
+                                            using (Html.BeginForm("Ausente", "Cita", new { id = c.IdCita }, FormMethod.Post, new { id = formAusenteId, style = "display:inline;" }))
                                             {
                                                 @Html.AntiForgeryToken()
-                                                <button type="submit" class="accion-btn accion-ausente" onclick="return confirm('¿Registrar inasistencia?');">
+                                                <button type="button" class="accion-btn accion-ausente"
+                                                        onclick="abrirModalAccion('@formAusenteId', 'noAsistio', '@c.NombrePaciente')">
                                                     No Asistió
                                                 </button>
                                             }
                                         }
-                                        @* Registrar Productos: disponible cuando está Asistida (antes de finalizar) *@
+
                                         @if (c.NombreEstado == "Asistida")
                                         {
                                             @Html.ActionLink("Registrar Productos", "RegistrarProductos", new { id = c.IdCita }, new { @class = "accion-btn accion-productos" })
                                         }
 
-                                        @* Finalizar: solo si está Asistida *@
                                         @if (c.NombreEstado == "Asistida")
                                         {
-                                            using (Html.BeginForm("Finalizar", "Cita", new { id = c.IdCita }, FormMethod.Post, new { style = "display:inline;" }))
+                                            using (Html.BeginForm("Finalizar", "Cita", new { id = c.IdCita }, FormMethod.Post, new { id = formFinalizarId, style = "display:inline;" }))
                                             {
                                                 @Html.AntiForgeryToken()
-                                                <button type="submit" class="accion-btn accion-finalizar" onclick="return confirm('¿Finalizar tratamiento? Se registrará la hora de fin.');">
+                                                <button type="button" class="accion-btn accion-finalizar"
+                                                        onclick="abrirModalAccion('@formFinalizarId', 'finalizar', '@c.NombrePaciente')">
                                                     Finalizar
                                                 </button>
                                             }
                                         }
 
-                                        @* Editar: solo para roles con permisos *@
                                         @if (User.IsInRole("Admin") || User.IsInRole("Recepcionista") || User.IsInRole("Doctor") || User.IsInRole("Asistente"))
                                         {
                                             @Html.ActionLink("Editar", "Editar", new { id = c.IdCita }, new { @class = "accion-btn accion-editar" })
@@ -204,6 +211,8 @@
                                     </div>
                                 </td>
                             </tr>
+
+                            contador++;
                         }
                     }
                 </tbody>
@@ -224,10 +233,33 @@
 
 </div>
 
+<!-- Modal reutilizable de confirmación de acciones -->
+<div class="modal-overlay" id="modalAccion">
+
+    <div class="modal-caja">
+
+        <div class="modal-icono" id="modalIcono">✅</div>
+
+        <h3 id="modalTitulo">¿Confirmar acción?</h3>
+
+        <p id="modalTexto">
+            ¿Estás seguro que deseás continuar?
+        </p>
+
+        <div class="modal-acciones">
+            <button class="modal-btn-cancelar" onclick="cerrarModalAccion()">Cancelar</button>
+            <button class="modal-btn-confirmar" id="modalBtnConfirmar" onclick="confirmarAccionModal()">Sí, continuar</button>
+        </div>
+
+    </div>
+
+</div>
+
 <style>
     .usuarios-page {
         min-height: 100vh;
         padding: 40px 32px 60px;
+        background: linear-gradient(180deg, #F4FBFA 0%, #ffffff 220px);
     }
 
     .usuarios-header {
@@ -242,7 +274,7 @@
     .usuarios-titulo {
         font-size: 2.2rem;
         font-weight: 700;
-        color: #000;
+        color: #16302D;
         margin: 0;
     }
 
@@ -252,8 +284,8 @@
     }
 
     .btn-usuario-primary {
-        background: #8FFDFF;
-        color: #000;
+        background: #2F6E62;
+        color: #fff;
         text-decoration: none;
         padding: 10px 16px;
         border-radius: 8px;
@@ -262,7 +294,7 @@
     }
 
         .btn-usuario-primary:hover {
-            background: #6EA0FF;
+            background: #1F4E44;
             color: #fff;
             text-decoration: none;
         }
@@ -299,6 +331,7 @@
         border-radius: 16px;
         overflow: hidden;
         box-shadow: 0 8px 30px rgba(0,0,0,.08);
+        border-top: 4px solid #16302D;
     }
 
     .usuarios-table-card {
@@ -312,8 +345,8 @@
     }
 
         .usuarios-table thead tr {
-            background: #f5f7fa;
-            border-bottom: 2px solid #e5e7eb;
+            background: #EAF5F3;
+            border-bottom: 2px solid #CFE8E6;
         }
 
         .usuarios-table th {
@@ -321,7 +354,7 @@
             text-align: left;
             font-size: .8rem;
             font-weight: 700;
-            color: #1f2937;
+            color: #16302D;
             white-space: nowrap;
         }
 
@@ -344,7 +377,26 @@
         color: #6b7280;
     }
 
-    /* Badges de estado */
+    .correo-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .avatar-inicial {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2C8C99, #7FD8CE);
+        color: white;
+        font-size: .75rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
     .estado-badge {
         display: inline-block;
         padding: 5px 12px;
@@ -401,26 +453,33 @@
         border: 1px solid #9b59b6;
     }
 
-    /* Botones de acción */
     .acciones-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 5px;
+        align-items: center;
+        gap: 6px;
     }
 
     .accion-btn {
+        box-sizing: border-box;
         text-decoration: none !important;
         color: white !important;
-        padding: 6px 10px;
+        padding: 7px 12px;
         border-radius: 6px;
         font-size: .75rem;
+        font-family: inherit;
         font-weight: 600;
+        line-height: 1.2;
         transition: .2s;
         border: none;
         cursor: pointer;
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         text-align: center;
         white-space: nowrap;
+        vertical-align: middle;
+        margin: 0;
     }
 
         .accion-btn:hover {
@@ -433,11 +492,11 @@
     }
 
     .accion-confirmar {
-        background: #27ae60;
+        background: #1B7A43;
     }
 
     .accion-cancelar {
-        background: #f39c12;
+        background: #e74c3c;
     }
 
     .accion-eliminar {
@@ -445,15 +504,19 @@
     }
 
     .accion-asistir {
-        background: #2ecc71;
+        background: #1B7A43;
     }
 
     .accion-ausente {
-        background: #e67e22;
+        background: #e74c3c;
     }
 
     .accion-finalizar {
         background: #9b59b6;
+    }
+
+    .accion-productos {
+        background: #16a085;
     }
 
     .accion-editar {
@@ -497,6 +560,99 @@
         font-weight: 600;
     }
 
+    /* Modal reutilizable */
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(22,48,45,.55);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .modal-overlay.activo {
+            display: flex;
+        }
+
+    .modal-caja {
+        background: white;
+        border-radius: 18px;
+        padding: 32px;
+        max-width: 380px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(15,45,42,.35);
+        animation: modalAparece .2s ease;
+    }
+
+    @@keyframes modalAparece {
+        from {
+            opacity: 0;
+            transform: translateY(-10px) scale(.97);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .modal-icono {
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+    }
+
+    .modal-caja h3 {
+        margin: 0 0 10px;
+        color: #16302D;
+        font-weight: 700;
+    }
+
+    .modal-caja p {
+        margin: 0 0 24px;
+        color: #6B8E89;
+        font-size: .9rem;
+        line-height: 1.5;
+    }
+
+    .modal-acciones {
+        display: flex;
+        gap: 10px;
+    }
+
+    .modal-btn-cancelar {
+        flex: 1;
+        border: 1px solid #dcdcdc;
+        background: white;
+        color: #374151;
+        padding: 10px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+        .modal-btn-cancelar:hover {
+            background: #f5f5f5;
+        }
+
+    .modal-btn-confirmar {
+        flex: 1;
+        border: none;
+        color: white;
+        padding: 10px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+        .modal-btn-confirmar:hover {
+            opacity: .9;
+        }
+
     @@media(max-width:768px) {
         .usuarios-page {
             padding: 20px 15px;
@@ -517,6 +673,7 @@
     <script>
         let paginaActual = 1;
         const filasPorPagina = 10;
+        let formularioAConfirmar = null;
 
         function obtenerFilasVisibles() {
             return Array.from(
@@ -576,6 +733,69 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             mostrarPagina();
+        });
+
+        // ---- Modal reutilizable de confirmación de acciones ----
+
+        const configModal = {
+            confirmar: {
+                icono: "✅",
+                titulo: "¿Confirmar esta cita?",
+                texto: "La cita para {paciente} pasará al estado Confirmada.",
+                colorBtn: "#1B7A43"
+            },
+            asistio: {
+                icono: "🩺",
+                titulo: "¿Registrar asistencia?",
+                texto: "Se marcará que {paciente} asistió y se guardará la hora de inicio.",
+                colorBtn: "#1B7A43"
+            },
+            noAsistio: {
+                icono: "⏱️",
+                titulo: "¿Registrar inasistencia?",
+                texto: "Se marcará que {paciente} no asistió a la cita.",
+                colorBtn: "#e74c3c"
+            },
+            finalizar: {
+                icono: "🏁",
+                titulo: "¿Finalizar tratamiento?",
+                texto: "Se registrará la hora de fin para la cita de {paciente}.",
+                colorBtn: "#9b59b6"
+            }
+        };
+
+        function abrirModalAccion(idFormulario, tipo, nombrePaciente) {
+
+            formularioAConfirmar = document.getElementById(idFormulario);
+
+            const config = configModal[tipo];
+
+            document.getElementById("modalIcono").innerText = config.icono;
+            document.getElementById("modalTitulo").innerText = config.titulo;
+            document.getElementById("modalTexto").innerText =
+                config.texto.replace("{paciente}", nombrePaciente || "este paciente");
+
+            const btnConfirmar = document.getElementById("modalBtnConfirmar");
+            btnConfirmar.style.background = config.colorBtn;
+
+            document.getElementById("modalAccion").classList.add("activo");
+        }
+
+        function cerrarModalAccion() {
+            document.getElementById("modalAccion").classList.remove("activo");
+            formularioAConfirmar = null;
+        }
+
+        function confirmarAccionModal() {
+            if (formularioAConfirmar) {
+                formularioAConfirmar.submit();
+            }
+        }
+
+        document.getElementById("modalAccion").addEventListener("click", function (e) {
+            if (e.target === this) {
+                cerrarModalAccion();
+            }
         });
     </script>
 }

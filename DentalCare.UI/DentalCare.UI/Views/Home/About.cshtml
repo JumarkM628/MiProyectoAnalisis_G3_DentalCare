@@ -2,11 +2,22 @@
     ViewBag.Title = "Acerca de";
 }
 
+<style>
+    .about-hero {
+        background-image:
+            linear-gradient(135deg, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.40) 100%),
+            url('@Url.Content("~/Content/Images/Promocion.png")') !important;
+        background-size: cover !important;
+        background-position: center center !important;
+        background-repeat: no-repeat !important;
+    }
+</style>
+
 <main class="full-width-main">
 
     <!-- Page Hero -->
     <div class="about-hero">
-        <span class="section-label" style="color: var(--teal);">Quiénes somos</span>
+        <span class="section-label" style="color: #CFE8E6;">Quiénes somos</span>
         <h1>Clínica Dental y Especialidades<br>Dra. Rebeca</h1>
         <p>Comprometidos con tu salud bucal y tu bienestar desde hace más de una década.</p>
     </div>
@@ -30,20 +41,20 @@
                     </div>
                 </div>
                 <div class="col-md-6 mb-4">
-                    <div class="about-card" style="background: #000000; color: white;">
+                    <div class="about-card" style="background: linear-gradient(135deg, #16302D 0%, #1F6B75 60%, #2C8C99 100%); color: white;">
                         <h2 style="color: white; font-family: var(--font-display);">Nuestra misión</h2>
-                        <p style="color: rgba(255,255,255,0.72);">
+                        <p style="color: rgba(255,255,255,0.85);">
                             Proporcionar servicios odontológicos integrales con los más altos estándares de calidad, tecnología y ética profesional, enfocados en la prevención y el bienestar de nuestros pacientes.
                         </p>
                         <h2 style="color: white; font-family: var(--font-display); margin-top: 24px;">Nuestra visión</h2>
-                        <p style="color: rgba(255,255,255,0.72);">
+                        <p style="color: rgba(255,255,255,0.85);">
                             Ser la clínica dental de referencia en la región, reconocida por la excelencia en la atención, la innovación tecnológica y el compromiso con la salud bucal de la comunidad.
                         </p>
                     </div>
                 </div>
             </div>
 
-          
+
         </div>
     </section>
 

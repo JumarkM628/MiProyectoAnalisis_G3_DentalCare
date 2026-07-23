@@ -11,7 +11,7 @@
 
         <div>
             <h1 class="usuarios-titulo">
-                <i class="fa fa-users"></i>
+                <span class="titulo-icono">🦷</span>
                 Gestión de Usuarios
             </h1>
 
@@ -82,12 +82,33 @@
                     }
                     else
                     {
+                        int contador = 1;
+
                         foreach (var usuario in Model)
                         {
+                            var correo = string.IsNullOrEmpty(usuario.Correo) ? "—" : usuario.Correo;
+
+                            var iniciales = "?";
+                            if (!string.IsNullOrEmpty(usuario.Correo))
+                            {
+                                iniciales = usuario.Correo.Substring(0, 1).ToUpper();
+                            }
+
+                            var area = string.IsNullOrEmpty(usuario.NombreArea) ? "" : usuario.NombreArea.ToLower();
+                            var iconoArea = "🏥";
+                            if (area.Contains("recep"))
+                            {
+                                iconoArea = "📋";
+                            }
+                            else if (area.Contains("admin"))
+                            {
+                                iconoArea = "🗂️";
+                            }
+
                             <tr>
 
                                 <td class="td-id">
-                                    @usuario.IdUsuario
+                                    @contador
                                 </td>
 
                                 <td>
@@ -109,15 +130,24 @@
                                 </td>
 
                                 <td>
-                                    @(string.IsNullOrEmpty(usuario.Correo)
-                                        ? "—"
-                                        : usuario.Correo)
+                                    <div class="correo-cell">
+                                        <span class="avatar-inicial">@iniciales</span>
+                                        <span>@correo</span>
+                                    </div>
                                 </td>
 
                                 <td>
-                                    @(string.IsNullOrEmpty(usuario.NombreArea)
-                                        ? "—"
-                                        : usuario.NombreArea)
+                                    @if (string.IsNullOrEmpty(usuario.NombreArea))
+                                    {
+                                        @:—
+                                    }
+                                    else
+                                    {
+                                        <span class="area-cell">
+                                            <span class="area-icono">@iconoArea</span>
+                                            @usuario.NombreArea
+                                        </span>
+                                    }
                                 </td>
 
                                 <td>
@@ -162,21 +192,19 @@
                                             new { id = usuario.IdUsuario },
                                             new { @class = "accion-btn accion-editar" })
 
-                                        @Html.ActionLink(
-                                            "Desactivar",
-                                            "DesactivarUsuario",
-                                            new { id = usuario.IdUsuario },
-                                            new
-                                                 {
-                                                @class = "accion-btn accion-desactivar",
-                                                onclick = "return confirm('¿Desea desactivar este usuario?');"
-                                            })
+                                        <a href="@Url.Action("DesactivarUsuario", "Usuario", new { id = usuario.IdUsuario })"
+                                           class="accion-btn accion-desactivar"
+                                           onclick="return confirmarDesactivar(event, this.href);">
+                                            Desactivar
+                                        </a>
 
                                     </div>
 
                                 </td>
 
                             </tr>
+
+                            contador++;
                         }
                     }
 
@@ -210,11 +238,34 @@
 
 </div>
 
+<!-- Modal de confirmación -->
+<div class="modal-overlay" id="modalDesactivar">
+
+    <div class="modal-caja">
+
+        <div class="modal-icono">⚠️</div>
+
+        <h3>¿Desactivar este usuario?</h3>
+
+        <p>
+            El usuario dejará de tener acceso al sistema. Podrás reactivarlo más adelante si lo necesitás.
+        </p>
+
+        <div class="modal-acciones">
+            <button class="modal-btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+            <a href="#" id="linkConfirmarDesactivar" class="modal-btn-confirmar">Sí, desactivar</a>
+        </div>
+
+    </div>
+
+</div>
+
 <style>
 
     .usuarios-page {
         min-height: 100vh;
         padding: 40px 32px 60px;
+        background: linear-gradient(180deg, #F4FBFA 0%, #ffffff 220px);
     }
 
     .usuarios-header {
@@ -229,8 +280,15 @@
     .usuarios-titulo {
         font-size: 2.2rem;
         font-weight: 700;
-        color: #000;
+        color: #16302D;
         margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .titulo-icono {
+        font-size: 1.8rem;
     }
 
     .usuarios-subtitulo {
@@ -239,8 +297,8 @@
     }
 
     .btn-usuario-primary {
-        background: #8FFDFF;
-        color: #000;
+        background: #3E8E7E;
+        color: #fff;
         text-decoration: none;
         padding: 10px 16px;
         border-radius: 8px;
@@ -249,7 +307,7 @@
     }
 
         .btn-usuario-primary:hover {
-            background: #6EA0FF;
+            background: #2F6E62;
             color: #fff;
             text-decoration: none;
         }
@@ -286,6 +344,7 @@
         border-radius: 16px;
         overflow: hidden;
         box-shadow: 0 8px 30px rgba(0,0,0,.08);
+        border-top: 4px solid #16302D;
     }
 
     .usuarios-table-card {
@@ -299,8 +358,8 @@
     }
 
         .usuarios-table thead tr {
-            background: #f5f7fa;
-            border-bottom: 2px solid #e5e7eb;
+            background: #EAF5F3;
+            border-bottom: 2px solid #CFE8E6;
         }
 
         .usuarios-table th {
@@ -308,7 +367,7 @@
             text-align: left;
             font-size: .8rem;
             font-weight: 700;
-            color: #1f2937;
+            color: #16302D;
             white-space: nowrap;
         }
 
@@ -329,6 +388,36 @@
 
     .td-muted {
         color: #6b7280;
+    }
+
+    .correo-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .avatar-inicial {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2C8C99, #7FD8CE);
+        color: white;
+        font-size: .75rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .area-cell {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .area-icono {
+        font-size: .95rem;
     }
 
     .estado-badge {
@@ -373,7 +462,7 @@
         }
 
     .accion-ver {
-        background: #3498db;
+        background: #3E8E7E;
     }
 
     .accion-editar {
@@ -381,7 +470,7 @@
     }
 
     .accion-desactivar {
-        background: #e67e22;
+        background: #e74c3c;
     }
 
     .accion-eliminar {
@@ -424,6 +513,102 @@
     #paginaActual {
         font-weight: 600;
     }
+
+    /* Modal de confirmación */
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(22,48,45,.55);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .modal-overlay.activo {
+            display: flex;
+        }
+
+    .modal-caja {
+        background: white;
+        border-radius: 18px;
+        padding: 32px;
+        max-width: 380px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(15,45,42,.35);
+        animation: modalAparece .2s ease;
+    }
+
+    @@keyframes modalAparece {
+        from {
+            opacity: 0;
+            transform: translateY(-10px) scale(.97);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .modal-icono {
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+    }
+
+    .modal-caja h3 {
+        margin: 0 0 10px;
+        color: #16302D;
+        font-weight: 700;
+    }
+
+    .modal-caja p {
+        margin: 0 0 24px;
+        color: #6B8E89;
+        font-size: .9rem;
+        line-height: 1.5;
+    }
+
+    .modal-acciones {
+        display: flex;
+        gap: 10px;
+    }
+
+    .modal-btn-cancelar {
+        flex: 1;
+        border: 1px solid #dcdcdc;
+        background: white;
+        color: #374151;
+        padding: 10px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+        .modal-btn-cancelar:hover {
+            background: #f5f5f5;
+        }
+
+    .modal-btn-confirmar {
+        flex: 1;
+        border: none;
+        background: #e74c3c;
+        color: white;
+        padding: 10px;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: .2s;
+    }
+
+        .modal-btn-confirmar:hover {
+            background: #c0392b;
+            color: white;
+            text-decoration: none;
+        }
 
     @@media(max-width:768px) {
 
@@ -553,6 +738,29 @@
             function () {
                 mostrarPagina();
             });
+
+        // Modal de confirmación para Desactivar
+
+        function confirmarDesactivar(event, url) {
+
+            event.preventDefault();
+
+            document.getElementById("linkConfirmarDesactivar").href = url;
+            document.getElementById("modalDesactivar").classList.add("activo");
+
+            return false;
+        }
+
+        function cerrarModal() {
+            document.getElementById("modalDesactivar").classList.remove("activo");
+        }
+
+        // Cerrar el modal si se hace click fuera de la caja
+        document.getElementById("modalDesactivar").addEventListener("click", function (e) {
+            if (e.target === this) {
+                cerrarModal();
+            }
+        });
 
     </script>
 

@@ -647,10 +647,9 @@ a {
 }
 
 .contact-info-card {
-    background: linear-gradient(160deg, #111827 0%, var(--black) 100%);
+    background: linear-gradient(160deg, #16302D 0%, #1F6B75 100%);
     color: var(--white);
 }
-
     .contact-info-card h3,
     .contact-form-card h3 {
         font-family: var(--font-main);
