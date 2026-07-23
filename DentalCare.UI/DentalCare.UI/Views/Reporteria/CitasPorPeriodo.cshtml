@@ -4,107 +4,285 @@
     ViewBag.Title = "Citas por período";
 }
 
-<div class="container mt-4">
+<style>
+    .reporte-page {
+        min-height: 100vh;
+        padding: 40px 32px 60px;
+        background: linear-gradient(180deg, #F4FBFA 0%, #ffffff 220px);
+    }
 
-    <div class="card shadow-lg border-0">
-        <div class="card-header bg-primary text-white">
-            <h3 class="mb-0">
-                <i class="fas fa-calendar-check me-2"></i>
-                Reporte de citas por periodo
-            </h3>
+    .reporte-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 30px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #16302D 0%, #1F6B75 60%, #2C8C99 100%);
+        color: white;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(22,48,45,.25);
+    }
+
+        .reporte-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reporte-header p {
+            margin-top: 8px;
+            color: #CFE8E6;
+            font-size: .92rem;
+        }
+
+    .btn-volver-reporte {
+        background: rgba(255,255,255,.15);
+        border: 1px solid rgba(255,255,255,.35);
+        color: white;
+        text-decoration: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: .2s;
+        white-space: nowrap;
+    }
+
+        .btn-volver-reporte:hover {
+            background: rgba(255,255,255,.25);
+            color: white;
+            text-decoration: none;
+        }
+
+    .reporte-card {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 8px 30px rgba(0,0,0,.06);
+        border-top: 4px solid #16302D;
+        overflow-x: auto;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .reporte-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+        .reporte-total h5 {
+            margin: 0;
+            color: #16302D;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+    .total-badge {
+        background: #16302D;
+        color: white;
+        padding: 5px 14px;
+        border-radius: 50px;
+        font-size: .85rem;
+        font-weight: 700;
+    }
+
+    .tabla-reporte {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .tabla-reporte th {
+            background: #EAF5F3;
+            color: #16302D;
+            text-align: left;
+            padding: 12px;
+            font-size: .8rem;
+            border-bottom: 2px solid #CFE8E6;
+        }
+
+        .tabla-reporte td {
+            padding: 12px;
+            border-bottom: 1px solid #edf2f7;
+            color: #374151;
+            vertical-align: middle;
+        }
+
+        .tabla-reporte tbody tr:hover {
+            background: #f8fffe;
+        }
+
+    .persona-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .estado-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 50px;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+
+    .estado-pendiente {
+        background: #fff8e1;
+        color: #b45309;
+        border: 1px solid #f59e0b;
+    }
+
+    .estado-confirmada {
+        background: #e6f9f7;
+        color: #0f6e56;
+        border: 1px solid #1abcb0;
+    }
+
+    .estado-cancelada {
+        background: #fff0f0;
+        color: #b42318;
+        border: 1px solid #f0a0a0;
+    }
+
+    .estado-otro {
+        background: #f3f4f6;
+        color: #374151;
+        border: 1px solid #d1d5db;
+    }
+
+    .rep-placeholder {
+        text-align: center;
+        color: #6b7280;
+        padding: 40px;
+        background: #FFF8E1;
+        border: 1px solid #FDE68A;
+        border-radius: 12px;
+    }
+
+    @@media(max-width:768px) {
+
+        .reporte-page {
+            padding: 20px 15px;
+        }
+
+        .reporte-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .btn-volver-reporte {
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="reporte-page">
+
+    <div class="container" style="max-width:1100px; margin:0 auto;">
+
+        <div class="reporte-header">
+            <div>
+                <h1>
+                    <i class="fa fa-calendar-check"></i> Reporte de Citas por Periodo
+                </h1>
+                <p>Consulta las citas realizadas dentro del rango de fechas seleccionado.</p>
+            </div>
+
+            @Html.ActionLink("← Volver", "ReportesCitas", "Reporteria", null,
+                     new { @class = "btn-volver-reporte" })
         </div>
 
-        <div class="card-body">
+        <div class="reporte-card">
 
             @if (Model == null || !Model.Any())
             {
-                <div class="alert alert-warning text-center">
-                    <i class="fas fa-exclamation-circle"></i>
+                <div class="rep-placeholder">
+                    <i class="fa fa-exclamation-circle"></i>
                     No se encontraron citas en el periodo seleccionado.
                 </div>
             }
             else
             {
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0">
-                        Total de citas:
-                        <span class="badge bg-primary">@Model.Count</span>
+                <div class="reporte-total">
+                    <h5>
+                        <i class="fa fa-list"></i>
+                        Total de citas: <span class="total-badge">@Model.Count</span>
                     </h5>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered align-middle">
-                        <thead class="table-dark text-center">
-                            <tr>
-                                <th>#</th>
-                                <th>Paciente</th>
-                                <th>Doctor</th>
-                                <th>Fecha</th>
-                                <th>Hora</th>
-                                <th>Motivo</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
+                <table class="tabla-reporte">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Paciente</th>
+                            <th>Doctor</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Motivo</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int contador = 1;
+                        }
+                        @foreach (var c in Model)
+                        {
+                            string claseEstado = "estado-otro";
 
-                        <tbody>
-                            @foreach (var c in Model)
+                            if (c.NombreEstado == "Pendiente")
                             {
-                                <tr>
-                                    <td class="text-center">@c.IdCita</td>
-
-                                    <td>
-                                        <i class="fas fa-user text-primary"></i>
-                                        @c.NombrePaciente
-                                    </td>
-
-                                    <td>
-                                        <i class="fas fa-user-md text-success"></i>
-                                        @c.NombreDoctor
-                                    </td>
-
-                                    <td class="text-center">
-                                        @(c.Fecha.HasValue
-                                            ? c.Fecha.Value.ToString("dd/MM/yyyy")
-                                            : "—")
-                                    </td>
-
-                                    <td class="text-center">
-                                        @c.HoraString
-                                    </td>
-
-                                    <td>@c.NombreMotivo</td>
-
-                                    <td class="text-center">
-                                        @{
-                                            string color = "secondary";
-
-                                            if (c.NombreEstado == "Pendiente")
-                                            {
-                                                color = "warning";
-                                            }
-                                            else if (c.NombreEstado == "Confirmada")
-                                            {
-                                                color = "success";
-                                            }
-                                            else if (c.NombreEstado == "Cancelada")
-                                            {
-                                                color = "danger";
-                                            }
-                                        }
-
-                                        <span class="badge bg-@color">
-                                            @c.NombreEstado
-                                        </span>
-                                    </td>
-                                </tr>
+                                claseEstado = "estado-pendiente";
                             }
-                        </tbody>
+                            else if (c.NombreEstado == "Confirmada")
+                            {
+                                claseEstado = "estado-confirmada";
+                            }
+                            else if (c.NombreEstado == "Cancelada")
+                            {
+                                claseEstado = "estado-cancelada";
+                            }
 
-                    </table>
-                </div>
+                            <tr>
+                                <td>@contador</td>
+                                <td>
+                                    <span class="persona-cell">
+                                        <i class="fa fa-user" style="color:#2C8C99;"></i>
+                                        @c.NombrePaciente
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="persona-cell">
+                                        <i class="fa fa-user-md" style="color:#3E8E7E;"></i>
+                                        @c.NombreDoctor
+                                    </span>
+                                </td>
+                                <td>@(c.Fecha.HasValue ? c.Fecha.Value.ToString("dd/MM/yyyy") : "—")</td>
+                                <td>@c.HoraString</td>
+                                <td>@c.NombreMotivo</td>
+                                <td>
+                                    <span class="estado-badge @claseEstado">
+                                        @c.NombreEstado
+                                    </span>
+                                </td>
+                            </tr>
+
+                            contador++;
+                        }
+                    </tbody>
+                </table>
             }
 
         </div>
+
     </div>
 
 </div>
