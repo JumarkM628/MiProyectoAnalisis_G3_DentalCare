@@ -1,23 +1,183 @@
-﻿
-<h2>Inventario</h2>
+﻿@{
+    ViewBag.Title = "Inventario";
+}
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Producto</th>
-            <th>Stock</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr style="background-color:gold;">
-            <td>Anestesia</td>
-            <td>2</td>
-        </tr>
+<style>
+    .reporte-page {
+        min-height: 100vh;
+        padding: 40px 32px 60px;
+        background: linear-gradient(180deg, #F4FBFA 0%, #ffffff 220px);
+    }
 
-        <tr style="background-color:red; color:white;">
-            <td>Guantes</td>
-            <td>0</td>
-        </tr>
-    </tbody>
-</table>
+    .reporte-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 30px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #16302D 0%, #1F6B75 60%, #2C8C99 100%);
+        color: white;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(22,48,45,.25);
+    }
 
+        .reporte-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reporte-header p {
+            margin-top: 8px;
+            color: #CFE8E6;
+            font-size: .92rem;
+        }
+
+    .btn-volver-reporte {
+        background: rgba(255,255,255,.15);
+        border: 1px solid rgba(255,255,255,.35);
+        color: white;
+        text-decoration: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: .2s;
+        white-space: nowrap;
+    }
+
+        .btn-volver-reporte:hover {
+            background: rgba(255,255,255,.25);
+            color: white;
+            text-decoration: none;
+        }
+
+    .reporte-card {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 8px 30px rgba(0,0,0,.06);
+        border-top: 4px solid #16302D;
+        overflow-x: auto;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .tabla-reporte {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .tabla-reporte th {
+            background: #EAF5F3;
+            color: #16302D;
+            text-align: left;
+            padding: 12px;
+            font-size: .8rem;
+            border-bottom: 2px solid #CFE8E6;
+        }
+
+        .tabla-reporte td {
+            padding: 12px;
+            border-bottom: 1px solid #edf2f7;
+            color: #374151;
+        }
+
+        .tabla-reporte tbody tr:hover {
+            background: #f8fffe;
+        }
+
+    .stock-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 50px;
+        font-size: .8rem;
+        font-weight: 700;
+    }
+
+    .stock-ok {
+        background: #e6f9f7;
+        color: #0f6e56;
+        border: 1px solid #1abcb0;
+    }
+
+    .stock-bajo {
+        background: #fff8e1;
+        color: #b45309;
+        border: 1px solid #f59e0b;
+    }
+
+    .stock-agotado {
+        background: #fff0f0;
+        color: #b42318;
+        border: 1px solid #f0a0a0;
+    }
+
+    @@media(max-width:768px) {
+
+        .reporte-page {
+            padding: 20px 15px;
+        }
+
+        .reporte-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .btn-volver-reporte {
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="reporte-page">
+
+    <div class="container" style="max-width:1100px; margin:0 auto;">
+
+        <div class="reporte-header">
+            <div>
+                <h1>
+                    <i class="fa fa-cubes"></i> Inventario
+                </h1>
+                <p>Existencias actuales de productos.</p>
+            </div>
+
+            @Html.ActionLink("← Volver", "Index", "Reporteria", null,
+                new { @class = "btn-volver-reporte" })
+        </div>
+
+        <div class="reporte-card">
+
+            <table class="tabla-reporte">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Stock</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Anestesia</td>
+                        <td>2</td>
+                        <td><span class="stock-badge stock-bajo">Stock bajo</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>Guantes</td>
+                        <td>0</td>
+                        <td><span class="stock-badge stock-agotado">Agotado</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

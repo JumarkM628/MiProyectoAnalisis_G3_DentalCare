@@ -2,28 +2,184 @@
     ViewBag.Title = "Reporte de Citas";
 }
 
-<div class="usuarios-page">
+<style>
+
+    .reporte-page {
+        min-height: 100vh;
+        padding: 40px 32px 60px;
+        background: linear-gradient(180deg, #F4FBFA 0%, #ffffff 220px);
+    }
+
+    .reporte-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 30px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #16302D 0%, #1F6B75 60%, #2C8C99 100%);
+        color: white;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(22,48,45,.25);
+    }
+
+        .reporte-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reporte-header p {
+            margin-top: 8px;
+            color: #CFE8E6;
+            font-size: .92rem;
+        }
+
+    .btn-volver-reporte {
+        background: rgba(255,255,255,.15);
+        border: 1px solid rgba(255,255,255,.35);
+        color: white;
+        text-decoration: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: .2s;
+        white-space: nowrap;
+    }
+
+        .btn-volver-reporte:hover {
+            background: rgba(255,255,255,.25);
+            color: white;
+            text-decoration: none;
+        }
+
+    .reporte-card {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        margin-top: 25px;
+        box-shadow: 0 8px 30px rgba(0,0,0,.06);
+        border-top: 4px solid #16302D;
+    }
+
+        .reporte-card h4 {
+            margin-bottom: 22px;
+            color: #16302D;
+            font-weight: 700;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reporte-card label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .reporte-card .form-control {
+            height: 45px;
+            border-radius: 10px;
+            border: 1px solid #CFE8E6;
+            box-shadow: none;
+            transition: all .3s ease;
+        }
+
+            .reporte-card .form-control:focus {
+                border-color: #2C8C99;
+                box-shadow: 0 0 0 4px rgba(44,140,153,.15);
+                outline: none;
+            }
+
+    .btn-consultar-reporte {
+        width: 100%;
+        height: 45px;
+        background: linear-gradient(135deg, #3E8E7E, #2F6E62);
+        border: none;
+        color: white;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: .3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+        .btn-consultar-reporte:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(62,142,126,.30);
+        }
+
+    .resultado-vacio {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6B8E89;
+    }
+
+        .resultado-vacio i {
+            font-size: 56px;
+            color: #CFE8E6;
+        }
+
+        .resultado-vacio h4 {
+            margin-top: 20px;
+            color: #16302D;
+            font-weight: 700;
+        }
+
+        .resultado-vacio p {
+            color: #6b7280;
+            margin-top: 6px;
+        }
+
+    @@media(max-width:768px) {
+
+        .reporte-page {
+            padding: 20px 15px;
+        }
+
+        .reporte-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .btn-volver-reporte {
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="reporte-page">
 
     <div class="container" style="max-width:1100px; margin:0 auto;">
 
-        <div class="usuarios-header">
+        <div class="reporte-header">
             <div>
-                <h1 class="usuarios-titulo">
+                <h1>
                     <i class="fa fa-calendar-alt"></i> Reporte de Citas
                 </h1>
-                <p class="usuarios-subtitulo">
-                    Consulta las citas realizadas dentro de un periodo especifico.
+                <p>
+                    Consulta las citas realizadas dentro de un periodo específico.
                 </p>
             </div>
 
-            @Html.ActionLink("← Volver", "Index", "Reporteria", null,
-                new { @class = "btn-usuario-primary" })
+            @Html.ActionLink("Volver", "Index", "Reporteria", null,
+                new { @class = "btn-volver-reporte" })
         </div>
 
-        <div class="usuarios-table-card" style="padding:30px; margin-top:25px;">
+        <div class="reporte-card">
 
-            <h4 style="margin-bottom:25px;">
-                <i class="fa fa-filter"></i> Filtros de Busqueda
+            <h4>
+                <i class="fa fa-filter"></i>filtros de busqueda
             </h4>
 
             <form method="get" action="/Reporteria/CitasPorPeriodo">
@@ -31,25 +187,27 @@
                 <div class="row">
 
                     <div class="col-md-4">
-                        <label><strong>Fecha Desde</strong></label>
+                        <label>Fecha Desde</label>
                         <input type="date"
                                class="form-control"
                                name="desde"
+                               min="@DateTime.Now.ToString("yyyy-MM-dd")"
                                required />
                     </div>
 
                     <div class="col-md-4">
-                        <label><strong>Fecha Hasta</strong></label>
+                        <label>Fecha Hasta</label>
                         <input type="date"
                                class="form-control"
                                name="hasta"
+                               min="@DateTime.Now.ToString("yyyy-MM-dd")"
                                required />
                     </div>
 
                     <div class="col-md-4">
                         <label style="visibility:hidden;">Buscar</label>
                         <button type="submit"
-                                class="btn btn-primary btn-block">
+                                class="btn-consultar-reporte">
                             <i class="fa fa-search"></i>
                             Consultar Reporte
                         </button>
@@ -61,24 +219,23 @@
 
         </div>
 
-        <div class="usuarios-table-card" style="padding:30px; margin-top:30px;">
+        <div class="reporte-card">
 
-            <h4 style="margin-bottom:25px;">
+            <h4>
                 <i class="fa fa-table"></i> Resultados
             </h4>
 
             <div id="resultado-citas">
 
-                <div class="text-center" style="padding:70px 20px;">
+                <div class="resultado-vacio">
 
-                    <i class="fa fa-calendar-check-o"
-                       style="font-size:60px;color:#c7c7c7;"></i>
+                    <i class="fa fa-calendar-check-o"></i>
 
-                    <h4 style="margin-top:20px;">
+                    <h4>
                         No hay resultados para mostrar
                     </h4>
 
-                    <p class="text-muted">
+                    <p>
                         Selecciona un rango de fechas y presiona
                         <strong>Consultar Reporte</strong>.
                     </p>
