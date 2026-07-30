@@ -435,10 +435,45 @@ namespace DentalCare.UI.Controllers
                 var total = query.Count();
                 var totalPages = (int)Math.Ceiling(total / (double)pageSize);
 
-                var lista = query.OrderByDescending(c => c.Fecha).ThenByDescending(c => c.Hora)
-                                 .Skip((page - 1) * pageSize)
-                                 .Take(pageSize)
-                                 .ToList();
+                // Construir lista con nombres legibles (paciente, doctor, motivo, estado)
+                var raw = (from cita in contexto.Citas
+                           join uc in contexto.UsuarioCitas on cita.IdCita equals uc.IdCita into ucGrupo
+                           from uc in ucGrupo.DefaultIfEmpty()
+                           join paciente in contexto.Usuarios on uc.IdUsuario equals paciente.IdUsuario into pacienteGrupo
+                           from paciente in pacienteGrupo.DefaultIfEmpty()
+                           join doctor in contexto.Usuarios on cita.IdDoctor equals doctor.IdUsuario into doctorGrupo
+                           from doctor in doctorGrupo.DefaultIfEmpty()
+                           join motivo in contexto.MotivosCita on cita.IdMotivo equals motivo.IdMotivo into motivoGrp
+                           from motivo in motivoGrp.DefaultIfEmpty()
+                           join estado in contexto.Estados on cita.IdEstado equals estado.IdEstado into estadoGrp
+                           from estado in estadoGrp.DefaultIfEmpty()
+                           where cita.Fecha.HasValue && cita.Fecha.Value < hoy
+                           select new
+                           {
+                               cita.IdCita,
+                               cita.Fecha,
+                               cita.Hora,
+                               NombrePaciente = paciente != null ? paciente.Nombre + " " + paciente.PrimerApellido : "Sin asignar",
+                               NombreDoctor = doctor != null ? doctor.Nombre + " " + doctor.PrimerApellido : "Sin asignar",
+                               NombreMotivo = motivo != null ? motivo.Descripcion : "-",
+                               NombreEstado = estado != null ? estado.NombreEstado : "-"
+                           }).ToList();
+
+                // Paginación sobre la lista ya proyectada
+                var lista = raw.OrderByDescending(r => r.Fecha).ThenByDescending(r => r.Hora)
+                               .Skip((page - 1) * pageSize)
+                               .Take(pageSize)
+                               .Select(r => new CitaReporteDto
+                               {
+                                   IdCita = r.IdCita,
+                                   Fecha = r.Fecha,
+                                   HoraString = r.Hora.HasValue ? r.Hora.Value.ToString(@"hh\:mm") : "—",
+                                   NombrePaciente = r.NombrePaciente,
+                                   NombreDoctor = r.NombreDoctor,
+                                   NombreMotivo = r.NombreMotivo,
+                                   NombreEstado = r.NombreEstado
+                               })
+                               .ToList();
 
                 var sb = new System.Text.StringBuilder();
 
@@ -473,25 +508,25 @@ namespace DentalCare.UI.Controllers
                 else
                 {
                     sb.Append("<table class=\"tabla-reporte\"><thead><tr>");
-                    sb.Append("<th>ID</th><th>Fecha</th><th>Hora</th><th>Motivo</th><th>Cancelacion</th><th>Estado</th><th>Doctor</th>");
+                    sb.Append("<th>ID</th><th>Paciente</th><th>Doctor</th><th>Fecha</th><th>Hora</th><th>Motivo</th><th>Estado</th>");
                     sb.Append("</tr></thead><tbody>");
 
                     // Contador continuo entre paginas: la pagina 2 sigue en 21, 22, 23...
                     int contador = ((page - 1) * pageSize) + 1;
 
-                    foreach (var c in lista)
+                    foreach (var r in lista)
                     {
-                        var fecha = c.Fecha.HasValue ? c.Fecha.Value.ToString("dd/MM/yyyy") : "-";
-                        var hora = c.Hora.HasValue ? c.Hora.Value.ToString(@"hh\:mm") : "-";
+                        var fecha = r.Fecha.HasValue ? r.Fecha.Value.ToString("dd/MM/yyyy") : "-";
+                        var hora = string.IsNullOrEmpty(r.HoraString) ? "-" : r.HoraString;
 
                         sb.Append("<tr>");
                         sb.Append("<td>" + contador + "</td>");
+                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(r.NombrePaciente) + "</td>");
+                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(r.NombreDoctor) + "</td>");
                         sb.Append("<td>" + fecha + "</td>");
                         sb.Append("<td>" + hora + "</td>");
-                        sb.Append("<td>" + c.IdMotivo + "</td>");
-                        sb.Append("<td>" + c.IdCancelacion + "</td>");
-                        sb.Append("<td>" + c.IdEstado + "</td>");
-                        sb.Append("<td>" + (c.IdDoctor.HasValue ? c.IdDoctor.ToString() : "-") + "</td>");
+                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(r.NombreMotivo) + "</td>");
+                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(r.NombreEstado) + "</td>");
                         sb.Append("</tr>");
 
                         contador++;
