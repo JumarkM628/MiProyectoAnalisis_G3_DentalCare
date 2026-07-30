@@ -154,7 +154,16 @@ namespace DentalCare.UI.Controllers
                 if (hasta.HasValue)
                     query = query.Where(t => t.FechaInicio <= hasta.Value);
 
-                var lista = query.OrderBy(t => t.FechaInicio).ToList();
+                var raw = (from t in query
+                           join estado in contexto.Estados on t.IdEstado equals estado.IdEstado into estadoGrp
+                           from estado in estadoGrp.DefaultIfEmpty()
+                           select new
+                           {
+                               Tratamiento = t,
+                               NombreEstado = estado != null ? estado.NombreEstado : "-"
+                           })
+                          .OrderBy(x => x.Tratamiento.FechaInicio)
+                          .ToList();
 
                 var sb = new System.Text.StringBuilder();
 
@@ -188,7 +197,7 @@ namespace DentalCare.UI.Controllers
                 sb.Append("<button type=\"submit\" class=\"btn-filtrar-reporte\" style=\"margin-left:12px;\">Filtrar</button>");
                 sb.Append("</form>");
 
-                if (lista == null || !lista.Any())
+                if (raw == null || !raw.Any())
                 {
                     sb.Append("<p class=\"rep-placeholder\">No hay tratamientos para mostrar.</p>");
                 }
@@ -200,14 +209,15 @@ namespace DentalCare.UI.Controllers
 
                     int contador = 1;
 
-                    foreach (var t in lista)
+                    foreach (var item in raw)
                     {
+                        var t = item.Tratamiento;
                         sb.Append("<tr>");
                         sb.Append("<td>" + contador + "</td>");
                         sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(t.Descripcion) + "</td>");
                         sb.Append("<td>" + (t.FechaInicio.HasValue ? t.FechaInicio.Value.ToString("dd/MM/yyyy") : "-") + "</td>");
                         sb.Append("<td>" + (t.FechaFin.HasValue ? t.FechaFin.Value.ToString("dd/MM/yyyy") : "-") + "</td>");
-                        sb.Append("<td>" + t.IdEstado + "</td>");
+                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(item.NombreEstado) + "</td>");
                         sb.Append("<td>" + (t.Monto.HasValue ? t.Monto.Value.ToString("F2") : "-") + "</td>");
                         sb.Append("<td>" + (t.IdCita.HasValue ? t.IdCita.ToString() : "-") + "</td>");
                         sb.Append("</tr>");
@@ -247,7 +257,22 @@ namespace DentalCare.UI.Controllers
         {
             using (var contexto = new Contexto())
             {
-                var lista = contexto.UsoProductos.OrderBy(u => u.ID_USO).ToList();
+                var raw = (from uso in contexto.UsoProductos
+                           join prod in contexto.Productos on uso.ID_PRODUCTO equals prod.ID_PRODUCTO into prodGrp
+                           from prod in prodGrp.DefaultIfEmpty()
+                           join proc in contexto.Procedimientos on uso.ID_PROCEDIMIENTO equals proc.ID_PROCEDIMIENTO into procGrp
+                           from proc in procGrp.DefaultIfEmpty()
+                           join estado in contexto.Estados on uso.ID_ESTADO equals estado.IdEstado into estadoGrp
+                           from estado in estadoGrp.DefaultIfEmpty()
+                           select new
+                           {
+                               Uso = uso,
+                               NombreProducto = prod != null ? prod.NOMBRE_PRODUCTO : "-",
+                               ProcedimientoDescripcion = proc != null ? proc.DESCRIPCION : "-",
+                               NombreEstado = estado != null ? estado.NombreEstado : "-"
+                           })
+                          .OrderBy(x => x.Uso.ID_USO)
+                          .ToList();
 
                 var sb = new System.Text.StringBuilder();
 
@@ -275,26 +300,27 @@ namespace DentalCare.UI.Controllers
 
                 sb.Append("<div class=\"reporte-card\">");
 
-                if (lista == null || !lista.Any())
+                if (raw == null || !raw.Any())
                 {
                     sb.Append("<p class=\"rep-placeholder\">No hay registros para mostrar.</p>");
                 }
                 else
                 {
                     sb.Append("<table class=\"tabla-reporte\"><thead><tr>");
-                    sb.Append("<th>ID</th><th>ID Producto</th><th>ID Procedimiento</th><th>Cantidad</th><th>Estado</th>");
+                    sb.Append("<th>ID</th><th>Producto</th><th>Procedimiento</th><th>Cantidad</th><th>Estado</th>");
                     sb.Append("</tr></thead><tbody>");
 
                     int contador = 1;
 
-                    foreach (var r in lista)
+                    foreach (var item in raw)
                     {
+                        var r = item.Uso;
                         sb.Append("<tr>");
                         sb.Append("<td>" + contador + "</td>");
-                        sb.Append("<td>" + r.ID_PRODUCTO + "</td>");
-                        sb.Append("<td>" + r.ID_PROCEDIMIENTO + "</td>");
+                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(item.NombreProducto) + "</td>");
+                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(item.ProcedimientoDescripcion) + "</td>");
                         sb.Append("<td>" + (r.CANTIDAD.HasValue ? r.CANTIDAD.Value.ToString() : "-") + "</td>");
-                        sb.Append("<td>" + r.ID_ESTADO + "</td>");
+                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(item.NombreEstado) + "</td>");
                         sb.Append("</tr>");
 
                         contador++;
