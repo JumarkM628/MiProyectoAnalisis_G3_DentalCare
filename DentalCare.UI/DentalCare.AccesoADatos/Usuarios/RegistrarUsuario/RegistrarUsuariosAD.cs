@@ -3,15 +3,11 @@ using DentalCare.Abstraccion.Modelo.Usuarios;
 using DentalCare.AccesoADatos.Entidades;
 using DentalCare.AccesoADatos.Entidades.Usuarios;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DentalCare.AccesoADatos.Usuarios.RegistrarUsuario
 {
-    public class RegistrarUsuariosAD: IRegistrarUsuariosAD
+    public class RegistrarUsuariosAD : IRegistrarUsuariosAD
     {
         private readonly Contexto _elContexto;
 
@@ -26,10 +22,9 @@ namespace DentalCare.AccesoADatos.Usuarios.RegistrarUsuario
             {
                 try
                 {
-
                     int nuevoId = _elContexto.Database
-                    .SqlQuery<int>("SELECT ISNULL(MAX(ID_USUARIO), 0) + 1 FROM FIDE_USUARIO_TB")
-                    .FirstOrDefault();
+                        .SqlQuery<int>("SELECT ISNULL(MAX(ID_USUARIO), 0) + 1 FROM FIDE_USUARIO_TB")
+                        .FirstOrDefault();
 
                     _elContexto.Usuarios.Add(new UsuariosEntidad
                     {
@@ -63,13 +58,8 @@ namespace DentalCare.AccesoADatos.Usuarios.RegistrarUsuario
                     });
                     _elContexto.SaveChanges();
 
-                    _elContexto.Correos.Add(new CorreoEntidad
-                    {
-                        IdUsuario = nuevoId,
-                        Correo = dto.Correo,
-                        IdEstado = dto.IdEstado
-                    });
-                    _elContexto.SaveChanges();
+                    // El correo ya no se inserta en FIDE_CORREO_TB
+                    // porque se obtiene directamente de AspNetUsers.Email
 
                     transaccion.Commit();
                 }
@@ -83,8 +73,5 @@ namespace DentalCare.AccesoADatos.Usuarios.RegistrarUsuario
 
         public bool ExisteCedula(string numeroCedula)
             => _elContexto.Cedulas.Any(c => c.NumeroCedula == numeroCedula);
-
-        public bool ExisteCorreo(string correo)
-            => _elContexto.Correos.Any(c => c.Correo == correo);
     }
 }

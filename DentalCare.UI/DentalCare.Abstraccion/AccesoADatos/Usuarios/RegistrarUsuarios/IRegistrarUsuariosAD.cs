@@ -1,9 +1,4 @@
 ﻿using DentalCare.Abstraccion.Modelo.Usuarios;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DentalCare.Abstraccion.AccesoADatos.Usuarios.RegistrarUsuarios
 {
@@ -11,6 +6,6 @@ namespace DentalCare.Abstraccion.AccesoADatos.Usuarios.RegistrarUsuarios
     {
         void RegistrarUsuario(UsuarioDto dto);
         bool ExisteCedula(string numeroCedula);
-        bool ExisteCorreo(string correo);
+        // ExisteCorreo eliminado — Identity maneja unicidad de email en AspNetUsers
     }
 }

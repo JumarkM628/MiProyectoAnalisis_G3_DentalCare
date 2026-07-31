@@ -1,17 +1,14 @@
 ﻿using DentalCare.Abstraccion.AccesoADatos.Usuarios.ObtenerTodosLosUsuarios;
 using DentalCare.Abstraccion.Modelo.Usuarios;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DentalCare.AccesoADatos.Usuarios.ObtenerTodosLosUsuarios
 {
     public class ObtenerTodoLosUsuariosAD : IObtenerTodoLosUsuariosAD
     {
         Contexto _elContexto;
+
         public ObtenerTodoLosUsuariosAD()
         {
             _elContexto = new Contexto();
@@ -30,9 +27,10 @@ namespace DentalCare.AccesoADatos.Usuarios.ObtenerTodosLosUsuarios
                     on usuario.IdUsuario equals telefono.IdUsuario into telefonoGrupo
                 from telefono in telefonoGrupo.DefaultIfEmpty()
 
-                join correo in _elContexto.Correos
-                    on usuario.IdUsuario equals correo.IdUsuario into correoGrupo
-                from correo in correoGrupo.DefaultIfEmpty()
+                    // JOIN con AspNetUsers para obtener el Email directamente
+                join aspNet in _elContexto.AspNetUsers
+                    on usuario.ASPNET_USER_ID equals aspNet.Id into aspNetGrupo
+                from aspNet in aspNetGrupo.DefaultIfEmpty()
 
                 join area in _elContexto.Areas
                     on usuario.IdAreaUsuario equals area.IdAreaUsuario
@@ -53,7 +51,8 @@ namespace DentalCare.AccesoADatos.Usuarios.ObtenerTodosLosUsuarios
                     TipoCedula = cedula != null ? cedula.TipoCedula : "",
                     NumeroCedula = cedula != null ? cedula.NumeroCedula : "",
                     Telefono = telefono != null ? telefono.Telefono : "",
-                    Correo = correo != null ? correo.Correo : "",
+                    // Correo viene de AspNetUsers.Email en lugar de FIDE_CORREO_TB
+                    Correo = aspNet != null ? aspNet.Email : "",
                     IdAreaUsuario = usuario.IdAreaUsuario,
                     NombreArea = area.NombreTipoUsuario,
                     IdEspecialidad = usuario.IdEspecialidad,
