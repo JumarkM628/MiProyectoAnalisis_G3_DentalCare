@@ -17,6 +17,7 @@ namespace DentalCare.AccesoADatos.Alertas.ObtenerAlertaPorExpediente
 
         public ExpedienteDetalleDto Obtener(int idExpediente)
         {
+            // Paso 1: traer expediente a memoria con tipos primitivos únicamente
             var rawExpediente = (
                 from ue in _contexto.UsuarioExpedientes
                 where ue.IdExpediente == idExpediente
@@ -51,25 +52,28 @@ namespace DentalCare.AccesoADatos.Alertas.ObtenerAlertaPorExpediente
                     expediente.FechaDeCreacion,
                     expediente.IdAlerta
                 }
-            ).FirstOrDefault();
+            ).FirstOrDefault(); // <-- datos en memoria antes de llamar ExtraerCampo
 
             if (rawExpediente == null) return null;
 
+            // Paso 2: traer alerta a memoria con tipos primitivos únicamente
             var rawAlerta = (
                 from a in _contexto.Alertas
                 where a.IdAlerta == rawExpediente.IdAlerta
                 join estado in _contexto.Estados
-                    on a.IdEstado equals estado.IdEstado
+                    on a.IdEstado equals estado.IdEstado into estadoGrupo
+                from estado in estadoGrupo.DefaultIfEmpty()
                 select new
                 {
                     a.IdAlerta,
                     a.Descripcion,
                     a.NivelRiesgo,
                     a.IdEstado,
-                    NombreEstado = estado.NombreEstado
+                    NombreEstado = estado != null ? estado.NombreEstado : ""
                 }
-            ).FirstOrDefault();
+            ).FirstOrDefault(); // <-- datos en memoria antes de llamar ExtraerCampo
 
+            // Paso 3: mapear ExpedienteDto en memoria (ExtraerCampo funciona aquí)
             var expedienteDto = new ExpedienteDto
             {
                 IdExpediente = rawExpediente.IdExpediente,
@@ -88,6 +92,7 @@ namespace DentalCare.AccesoADatos.Alertas.ObtenerAlertaPorExpediente
                 Otro = ObtenerTodosLosExpedientesAD.ExtraerCampo(rawExpediente.DescConsentimiento, "OTRO")
             };
 
+            // Paso 4: mapear AlertaDto en memoria (ExtraerCampo funciona aquí)
             AlertaDto alertaDto = null;
             if (rawAlerta != null)
             {
@@ -119,6 +124,7 @@ namespace DentalCare.AccesoADatos.Alertas.ObtenerAlertaPorExpediente
             };
         }
 
+        // Método local para extraer campos del string concatenado
         private static string ExtraerCampo(string descripcion, string campo)
         {
             if (string.IsNullOrEmpty(descripcion)) return string.Empty;
