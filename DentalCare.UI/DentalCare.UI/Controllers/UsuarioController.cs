@@ -22,7 +22,7 @@ using System.Web.Mvc;
 
 namespace DentalCare.UI.Controllers
 {
-    [Authorize(Roles = "Admin,Recepcionista")]
+    [Authorize(Roles = "Admin,Recepcionista,Paciente")]
     public class UsuarioController : Controller
     {
         private IObtenerTodosLosUsuariosLN _obtenerTodosLosUsuariosLN;
@@ -44,6 +44,23 @@ namespace DentalCare.UI.Controllers
 
         public ActionResult ObtenerTodosLosUsuarios()
         {
+            // Si el usuario autenticado es Paciente, sólo mostrar su propio registro
+            if (User.IsInRole("Paciente"))
+            {
+                var aspNetUserId = User.Identity.GetUserId();
+                using (var ctx = new Contexto())
+                {
+                    var usuario = ctx.Usuarios.FirstOrDefault(u => u.ASPNET_USER_ID == aspNetUserId);
+                    if (usuario == null)
+                    {
+                        return View(new List<UsuarioDto>());
+                    }
+
+                    var dto = _obtenerUsuarioPorIdLN.Obtener(usuario.IdUsuario);
+                    return View(new List<UsuarioDto> { dto });
+                }
+            }
+
             List<UsuarioDto> listaUsuarios = _obtenerTodosLosUsuariosLN.Obtener();
             return View(listaUsuarios);
         }
@@ -56,6 +73,13 @@ namespace DentalCare.UI.Controllers
 
         public ActionResult RegistrarUsuario()
         {
+            // Solo Admin y Recepcionista pueden registrar nuevos usuarios
+            if (User.IsInRole("Paciente"))
+            {
+                TempData["Error"] = "No tienes permisos para crear usuarios.";
+                return RedirectToAction("ObtenerTodosLosUsuarios");
+            }
+
             var dto = CargarDropdowns(new UsuarioDto());
             return View(dto);
         }
@@ -93,6 +117,17 @@ namespace DentalCare.UI.Controllers
                 return RedirectToAction("ObtenerTodosLosUsuarios");
             }
 
+            // Si es paciente, sólo puede editar su propio registro
+            if (User.IsInRole("Paciente"))
+            {
+                var aspNetUserId = User.Identity.GetUserId();
+                if (dto.AspNetUserId != aspNetUserId)
+                {
+                    TempData["Error"] = "No tienes permisos para editar este usuario.";
+                    return RedirectToAction("ObtenerTodosLosUsuarios");
+                }
+            }
+
             // 🔹 Cargar el rol actual del AspNetUser
             using (var ctx = new Contexto())
             {
@@ -117,6 +152,18 @@ namespace DentalCare.UI.Controllers
         {
             dto.IdUsuario = id;
 
+            // Validación de permisos: si es paciente, sólo puede editar su propio registro
+            if (User.IsInRole("Paciente"))
+            {
+                var aspNetUserId = User.Identity.GetUserId();
+                var usuarioActual = _obtenerUsuarioPorIdLN.Obtener(id);
+                if (usuarioActual == null || usuarioActual.AspNetUserId != aspNetUserId)
+                {
+                    TempData["Error"] = "No tienes permisos para editar este usuario.";
+                    return RedirectToAction("ObtenerTodosLosUsuarios");
+                }
+            }
+
             if (!ModelState.IsValid)
             {
                 CargarDropdowns(dto);
@@ -137,6 +184,13 @@ namespace DentalCare.UI.Controllers
 
         public ActionResult EliminarUsuario(int id)
         {
+            // Sólo Admin/Recepcionista pueden eliminar usuarios
+            if (User.IsInRole("Paciente"))
+            {
+                TempData["Error"] = "No tienes permisos para eliminar usuarios.";
+                return RedirectToAction("ObtenerTodosLosUsuarios");
+            }
+
             UsuarioDto dto = _obtenerUsuarioPorIdLN.Obtener(id);
             if (dto == null)
             {
@@ -164,6 +218,13 @@ namespace DentalCare.UI.Controllers
 
         public ActionResult DesactivarUsuario(int id)
         {
+            // Sólo Admin/Recepcionista pueden desactivar usuarios
+            if (User.IsInRole("Paciente"))
+            {
+                TempData["Error"] = "No tienes permisos para desactivar usuarios.";
+                return RedirectToAction("ObtenerTodosLosUsuarios");
+            }
+
             string error = _desactivarUsuarioLN.Desactivar(id);
             if (error != null)
             {

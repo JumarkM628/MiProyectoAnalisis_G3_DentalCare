@@ -22,13 +22,16 @@
         </div>
 
         <div>
-            @Html.ActionLink(
-                "+ Nuevo Usuario",
-                "RegistrarUsuario",
-                "Usuario",
-                null,
-                new { @class = "btn-usuario-primary" }
-            )
+            @if (User.IsInRole("Admin") || User.IsInRole("Recepcionista"))
+            {
+                @Html.ActionLink(
+                    "+ Nuevo Usuario",
+                    "RegistrarUsuario",
+                    "Usuario",
+                    null,
+                    new { @class = "btn-usuario-primary" }
+                )
+            }
         </div>
 
     </div>
@@ -192,11 +195,14 @@
                                             new { id = usuario.IdUsuario },
                                             new { @class = "accion-btn accion-editar" })
 
-                                        <a href="@Url.Action("DesactivarUsuario", "Usuario", new { id = usuario.IdUsuario })"
-                                           class="accion-btn accion-desactivar"
-                                           onclick="return confirmarDesactivar(event, this.href);">
-                                            Desactivar
-                                        </a>
+                                        @if (!(User.IsInRole("Paciente")))
+                                        {
+                                            <a href="@Url.Action("DesactivarUsuario", "Usuario", new { id = usuario.IdUsuario })"
+                                               class="accion-btn accion-desactivar"
+                                               onclick="return confirmarDesactivar(event, this.href);">
+                                                Desactivar
+                                            </a>
+                                        }
 
                                     </div>
 
