@@ -3,16 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using DentaCare.LogicaDeNegocio.Reporteria.Producto;
-using DentalCare.Abstraccion.LogicaDeNegocio.Reporteria.Producto;
 using DentaCare.LogicaDeNegocio.Reporteria.Citas;
-using DentalCare.Abstraccion.LogicaDeNegocio.Reporteria.Citas;
-using DentalCare.Abstraccion.Modelo.Reporteria;
+using DentaCare.LogicaDeNegocio.Reporteria.Expediente;
+using DentaCare.LogicaDeNegocio.Reporteria.Finanzas;
+using DentaCare.LogicaDeNegocio.Reporteria.Producto;
+using DentaCare.LogicaDeNegocio.Reporteria.Usuario;
 using DentaCare.LogicaDeNegocio.Usuarios.ObtenerTodosLosUsuarios;
+using DentalCare.Abstraccion.LogicaDeNegocio.Reporteria.Citas;
+using DentalCare.Abstraccion.LogicaDeNegocio.Reporteria.Expediente;
+using DentalCare.Abstraccion.LogicaDeNegocio.Reporteria.Finanzas;
+using DentalCare.Abstraccion.LogicaDeNegocio.Reporteria.Producto;
+using DentalCare.Abstraccion.LogicaDeNegocio.Reporteria.Usuario;
 using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.ObtenerTodosLosUsuarios;
-using DentalCare.AccesoADatos.Citas.Reporteria;
+using DentalCare.Abstraccion.Modelo.Reporteria;
 using DentalCare.AccesoADatos;
+using DentalCare.AccesoADatos.Citas.Reporteria;
+using DentalCare.AccesoADatos.Reporteria.Cita;
+using DentalCare.AccesoADatos.Reporteria.Expediente;
+using DentalCare.AccesoADatos.Reporteria.Finanzas;
+using DentalCare.AccesoADatos.Reporteria.Inventario;
 using DentalCare.AccesoADatos.Reporteria.Producto;
+using DentalCare.AccesoADatos.Reporteria.Usuario;
+using Microsoft.AspNet.Identity;
 
 namespace DentalCare.UI.Controllers
 {
@@ -22,6 +34,12 @@ namespace DentalCare.UI.Controllers
         private readonly IReporteProductosLN _reporteProductosLN;
         private readonly IReporteLotesLN _reporteLotesLN;
         private readonly IReporteCitasLN _reporteCitasLN;
+        private readonly IReporteBajoStockLN _reporteBajoStockLN;
+        private readonly IReporteProductosVencerLN _reporteProductosVencerLN;
+        private readonly IReporteCitasCanceladasLN _reporteCitasCanceladasLN;
+        private readonly IReporteProcedimientosLN _reporteProcedimientosLN;
+        private readonly IReporteGastosLN _reporteGastosLN;
+        private readonly IHistorialDoctoraLN _historialDoctoraLN;
         private IObtenerTodosLosUsuariosLN _obtenerTodosLosUsuariosLN;
 
         // Estilo compartido teal para los reportes generados como HTML crudo.
@@ -50,6 +68,12 @@ namespace DentalCare.UI.Controllers
             _reporteProductosLN = new ReporteProductosLN(new ReporteProductosAD(new Contexto()));
             _reporteLotesLN = new ReporteLotesLN(new ReporteLotesAD(new Contexto()));
             _reporteCitasLN = new ReporteCitasLN(new ReporteCitasAD(new Contexto()));
+            _reporteBajoStockLN = new ReporteBajoStockLN(new ReporteBajoStockAD(new Contexto()));
+            _reporteProductosVencerLN = new ReporteProductosVencerLN(new ReporteProductosVencerAD(new Contexto()));
+            _reporteCitasCanceladasLN = new ReporteCitasCanceladasLN(new ReporteCitasCanceladasAD(new Contexto()));
+            _reporteProcedimientosLN = new ReporteProcedimientosLN(new ReporteProcedimientosAD(new Contexto()));
+            _reporteGastosLN = new ReporteGastosLN(new ReporteGastosAD(new Contexto()));
+            _historialDoctoraLN = new HistorialDoctoraLN(new HistorialDoctoraAD(new Contexto()));
             _obtenerTodosLosUsuariosLN = new ObtenerTodosLosUsuariosLN();
         }
 
@@ -612,6 +636,291 @@ namespace DentalCare.UI.Controllers
             return View(lista);
         }
 
+        // ── GDR-007 — Productos con bajo stock ──────────────────────
+
+        // GET: carga la vista con TODOS los productos de bajo stock (Escenario 1)
+        // y el dropdown de categorías para filtrar (Escenarios 3/4)
+        public ActionResult ProductosBajoStock()
+        {
+            CargarCategoriasDropdown();
+            var modelo = _reporteBajoStockLN.ObtenerProductosBajoStock();
+            return View(modelo);
+        }
+
+        // POST: filtro por categoría 
+        [HttpPost]
+        public ActionResult ProductosStockBajo(int? categoriaId)
+        {
+            using (var ctx = new Contexto())
+            {
+                if (categoriaId.HasValue)
+                {
+                    bool existeCategoria = ctx.CategoriasProducto.Any(c => c.IdCategoria == categoriaId.Value);
+                    if (!existeCategoria)
+                    {
+                        TempData["Error"] = "Debe seleccionar una categoría válida.";
+                        return View("StockBajo", new List<DentalCare.Abstraccion.Modelo.Reporteria.ProductoInventarioDto>());
+                    }
+                }
+            }
+            var ad = new ReporteInventarioAD(new Contexto());
+            var ln = new DentaCare.LogicaDeNegocio.Reporteria.Inventario.ReporteInventarioLN(ad);
+            var lista = ln.ObtenerProductosStockBajo(categoriaId);
+
+            return View("StockBajo", lista);
+        }
+
+        // ── GDR-008 — Productos próximos a vencer ───────────────────
+
+        // GET: sin filtro → por defecto muestra próximos 30 días 
+        public ActionResult ProductosPorVencer()
+        {
+            try
+            {
+                var modelo = _reporteProductosVencerLN.ObtenerProductosPorVencer(null, null);
+                return View(modelo);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return View(new System.Collections.Generic.List<
+                    DentalCare.Abstraccion.Modelo.Reporteria.ReporteProductosVencerDto>());
+            }
+        }
+
+        // POST: filtro por rango de fechas 
+        [HttpPost]
+        public ActionResult ProductosPorVencer(DateTime? fechaInicio, DateTime? fechaFin)
+        {
+            try
+            {
+                var modelo = _reporteProductosVencerLN.ObtenerProductosPorVencer(fechaInicio, fechaFin);
+                return View(modelo);
+            }
+            catch (ArgumentException ex)
+            {
+                ViewBag.Error = ex.Message;
+                var modelo = _reporteProductosVencerLN.ObtenerProductosPorVencer(null, null);
+                return View(modelo);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return View(new System.Collections.Generic.List<
+                    DentalCare.Abstraccion.Modelo.Reporteria.ReporteProductosVencerDto>());
+            }
+        }
+        // GDR-009 — Citas canceladas ───────────────────────────────
+
+        // POST: Reporteria/CitasCanceladas — filtro por rango de fechas 
+        [HttpPost]
+        public ActionResult CitasCanceladas()
+        {
+            try
+            {
+                var modelo = _reporteCitasCanceladasLN.ObtenerCitasCanceladas(null, null);
+                return View(modelo);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return View(new List<ReporteCitasCanceladasDto>());
+            }
+        }
+
+        // POST: Reporteria/CitasCanceladas — filtro por rango de fechas 
+        [HttpPost]
+        public ActionResult CitasCanceladas(DateTime? fechaInicio, DateTime? fechaFin)
+        {
+            try
+            {
+                var modelo = _reporteCitasCanceladasLN.ObtenerCitasCanceladas(fechaInicio, fechaFin);
+                return View(modelo);
+            }
+            catch (ArgumentException ex)
+            {
+                ViewBag.Error = ex.Message;
+                var modelo = _reporteCitasCanceladasLN.ObtenerCitasCanceladas(null, null);
+                return View(modelo);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return View(new List<ReporteCitasCanceladasDto>());
+            }
+        }
+        // GDR-010 — Procedimientos realizados ───────────────────────
+        [Authorize(Roles = "Admin")]
+        public ActionResult ProcedimientosExpediente()
+        {
+            CargarExpedientesDropdown();
+            return View(new List<ReporteProcedimientosDto>());
+        }
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public ActionResult ProcedimientosExpediente(
+            int idExpediente, DateTime? fechaInicio, DateTime? fechaFin)
+        {
+            CargarExpedientesDropdown(idExpediente);
+            try
+            {
+                List<ReporteProcedimientosDto> modelo;
+
+                if (fechaInicio.HasValue || fechaFin.HasValue)
+                {
+                    modelo = _reporteProcedimientosLN.ObtenerProcedimientosPorExpedienteFiltrado(
+                        idExpediente, fechaInicio, fechaFin);
+                }
+                else
+                {
+                    modelo = _reporteProcedimientosLN.ObtenerProcedimientosPorExpediente(idExpediente);
+                }
+                RegistrarBitacora(
+                    modulo: "Expediente",
+                    accion: "Visualizacion",
+                    descripcion: $"Consulta de procedimientos del expediente ID {idExpediente}" +
+                                 (fechaInicio.HasValue ? $" desde {fechaInicio:dd/MM/yyyy}" : "") +
+                                 (fechaFin.HasValue ? $" hasta {fechaFin:dd/MM/yyyy}" : "")
+                );
+
+                ViewBag.Confirmacion = "Visualización registrada en bitácora.";
+                return View(modelo);
+            }
+            catch (ArgumentException ex)
+            {
+                ViewBag.Error = ex.Message;
+                CargarExpedientesDropdown(idExpediente);
+                return View(new List<ReporteProcedimientosDto>());
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                CargarExpedientesDropdown(idExpediente);
+                return View(new List<ReporteProcedimientosDto>());
+            }
+        }
+
+        // GDR-011 — Gastos ─────────────────────────────────────────
+        [Authorize(Roles = "Admin")]
+        public ActionResult Gastos()
+        {
+            try
+            {
+                var modelo = _reporteGastosLN.ObtenerGastos(null, null);
+                RegistrarBitacora(
+                    modulo: "Gastos",
+                    accion: "Visualizacion",
+                    descripcion: "Consulta general de gastos de la clínica"
+                );
+
+                ViewBag.Confirmacion = "Visualización registrada en bitácora.";
+                return View(modelo);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return View(new List<ReporteGastosDto>());
+            }
+        }
+
+        // POST: Reporteria/Gastos — filtro por rango de fechas
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public ActionResult Gastos(DateTime? fechaInicio, DateTime? fechaFin)
+        {
+            try
+            {
+                var modelo = _reporteGastosLN.ObtenerGastos(fechaInicio, fechaFin);
+                RegistrarBitacora(
+                    modulo: "Gastos",
+                    accion: "Visualizacion",
+                    descripcion: "Consulta de gastos" +
+                                 (fechaInicio.HasValue ? $" desde {fechaInicio:dd/MM/yyyy}" : "") +
+                                 (fechaFin.HasValue ? $" hasta {fechaFin:dd/MM/yyyy}" : "")
+                );
+
+                ViewBag.Confirmacion = "Visualización registrada en bitácora.";
+                return View(modelo);
+            }
+            catch (ArgumentException ex)
+            {
+                ViewBag.Error = ex.Message;
+                var modelo = _reporteGastosLN.ObtenerGastos(null, null);
+                return View(modelo);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return View(new List<ReporteGastosDto>());
+            }
+        }
+        //GDR-012 — Historial de la doctora ─────────────────────────────
+        [Authorize(Roles = "Doctor")]
+        public ActionResult HistorialDoctora()
+        {
+            try
+            {
+                // Obtener el ASPNET_USER_ID del usuario autenticado
+                var aspNetUserId = User.Identity.GetUserId();
+
+                var modelo = _historialDoctoraLN.ObtenerHistorialPorDoctora(aspNetUserId);
+
+                // Escenario 4 — trazabilidad: registrar visualización en Bitácora
+                RegistrarBitacora(
+                    modulo: "HistorialClinico",
+                    accion: "Visualizacion",
+                    descripcion: $"Doctora {User.Identity.Name} consultó su historial clínico completo"
+                );
+
+                ViewBag.Confirmacion = "Visualización registrada en bitácora.";
+                return View(modelo);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return View(new List<HistorialDoctoraDto>());
+            }
+        }
+
+        // POST: Reporteria/HistorialDoctora — filtro por rango de fechas (Escenarios 3/4)
+        [HttpPost]
+        [Authorize(Roles = "Doctor")]
+        public ActionResult HistorialDoctora(DateTime? fechaInicio, DateTime? fechaFin)
+        {
+            try
+            {
+                var aspNetUserId = User.Identity.GetUserId();
+
+                // Escenario 4 — LN lanza ArgumentException si fechaInicio > fechaFin
+                var modelo = _historialDoctoraLN.ObtenerHistorialPorDoctoraFiltrado(
+                    aspNetUserId, fechaInicio, fechaFin);
+
+                // Escenario 4 — trazabilidad
+                RegistrarBitacora(
+                    modulo: "HistorialClinico",
+                    accion: "Visualizacion",
+                    descripcion: $"Doctora {User.Identity.Name} consultó su historial clínico" +
+                                 (fechaInicio.HasValue ? $" desde {fechaInicio:dd/MM/yyyy}" : "") +
+                                 (fechaFin.HasValue ? $" hasta {fechaFin:dd/MM/yyyy}" : "")
+                );
+
+                ViewBag.Confirmacion = "Visualización registrada en bitácora.";
+                return View(modelo);
+            }
+            catch (ArgumentException ex)
+            {
+                ViewBag.Error = ex.Message;
+                var modelo = _historialDoctoraLN.ObtenerHistorialPorDoctora(
+                    User.Identity.GetUserId());
+                return View(modelo);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return View(new List<HistorialDoctoraDto>());
+            }
+        }
+
         // GET: Reporteria/Details/5
         public ActionResult Details(int id)
         {
@@ -675,6 +984,48 @@ namespace DentalCare.UI.Controllers
             catch
             {
                 return View();
+            }
+        }
+        // ── Helpers ─────────────────────────────────────────────────
+        private void CargarCategoriasDropdown(int? seleccionada = null)
+        {
+            using (var ctx = new Contexto())
+            {
+                var categorias = ctx.CategoriasProducto
+                    .Where(c => c.IdEstado == 1)
+                    .Select(c => new { c.IdCategoria, c.NombreCategoria })
+                    .ToList();
+
+                ViewBag.Categorias = new SelectList(categorias, "IdCategoria", "NombreCategoria", seleccionada);
+            }
+        }
+        private void CargarExpedientesDropdown(int? seleccionado = null)
+        {
+            var expedientes = _reporteProcedimientosLN.ObtenerExpedientes();
+            ViewBag.Expedientes = new SelectList(
+                expedientes, "IdExpediente", "NombrePaciente", seleccionado);
+        }
+
+        // Inserta un registro en Bitácora — reutilizable para GDR-011 y GDR-012
+        private void RegistrarBitacora(string modulo, string accion, string descripcion)
+        {
+            try
+            {
+                using (var ctx = new Contexto())
+                {
+                    ctx.Bitacoras.Add(new DentalCare.AccesoADatos.Entidades.Bitacora.BitacoraEntidad
+                    {
+                        Modulo = modulo,
+                        Accion = accion,
+                        Descripcion = descripcion,
+                        NombreUsuario = User.Identity.Name,
+                        FechaHora = DateTime.Now
+                    });
+                    ctx.SaveChanges();
+                }
+            }
+            catch
+            {
             }
         }
     }

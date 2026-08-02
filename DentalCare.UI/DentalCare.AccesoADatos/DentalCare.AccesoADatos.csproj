@@ -82,8 +82,10 @@
     <Compile Include="Entidades\Pago\ContabilidadPacienteEntidad.cs" />
     <Compile Include="Entidades\Pago\MetodoPagoEntidad.cs" />
     <Compile Include="Entidades\Procedimiento\ProcedimientoEntidad.cs" />
+    <Compile Include="Entidades\Producto\CategoriaProductoEntidad.cs" />
     <Compile Include="Entidades\Producto\ComprasProductoEntidad.cs" />
     <Compile Include="Entidades\Producto\ProductoEntidad.cs" />
+    <Compile Include="Entidades\Producto\ProveedorEntidad.cs" />
     <Compile Include="Entidades\Producto\ProveedorProductoEntidad.cs" />
     <Compile Include="Entidades\Producto\UsoProductoEntidad.cs" />
     <Compile Include="Entidades\Tratamiento\Catalogo\CatalogoTratamientoEntidad.cs" />
@@ -113,8 +115,15 @@
     <Compile Include="Producto\EditarProducto\EditarProductoAD.cs" />
     <Compile Include="Producto\RegistrarProducto\RegistrarProductoAD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reporteria\Cita\ReporteCitasCanceladasAD.cs" />
+    <Compile Include="Reporteria\Expediente\ReporteProcedimientosAD.cs" />
+    <Compile Include="Reporteria\Finanzas\ReporteGastosAD.cs" />
+    <Compile Include="Reporteria\Inventario\ReporteInventarioAD.cs" />
+    <Compile Include="Reporteria\Producto\ReporteBajoStockAD.cs" />
     <Compile Include="Reporteria\Producto\ReporteLotesAD.cs" />
     <Compile Include="Reporteria\Producto\ReporteProductosAD.cs" />
+    <Compile Include="Reporteria\Producto\ReporteProductosVencerAD.cs" />
+    <Compile Include="Reporteria\Usuario\HistorialDoctoraAD.cs" />
     <Compile Include="Tratamiento\EditarPlanTratamiento\EditarPlanTratamientoAD.cs" />
     <Compile Include="Tratamiento\ObtenerTratamientoPorCita\ObtenerTratamientosPorCitaAD.cs" />
     <Compile Include="Tratamiento\RegistrarTratamiento\RegistrarTratamientoAD.cs" />

@@ -18,6 +18,8 @@ namespace DentalCare.AccesoADatos.Entidades.Producto
         public int? STOCK_ACTUAL { get; set; }
         public int? STOCK_MINIMO { get; set; }
         public string LOTE { get; set; }
+        public DateTime? FECHA_REGISTRO { get; set; }
+        public DateTime? FECHA_MODIFICACION { get; set; }
         public DateTime? FECHA_VENCIMIENTO { get; set; }
         public int ID_ESTADO { get; set; }
         public int? REGISTRADO_POR { get; set; }
