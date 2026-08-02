@@ -368,6 +368,11 @@
     <Content Include="Views\Reporteria\ReportesCitas.cshtml" />
     <Content Include="Views\Reporteria\CitasPorPeriodo.cshtml" />
     <Content Include="Views\Reporteria\ProductosStockBajo.cshtml" />
+    <Content Include="Views\Reporteria\ProductosPorVencer.cshtml" />
+    <Content Include="Views\Reporteria\CitasCanceladas.cshtml" />
+    <Content Include="Views\Expediente\ProcedimientosExpediente.cshtml" />
+    <Content Include="Views\Reporteria\Gastos.cshtml" />
+    <Content Include="Views\Reporteria\HistorialDoctora.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

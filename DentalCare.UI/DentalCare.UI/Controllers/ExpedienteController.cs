@@ -1,4 +1,10 @@
-﻿using DentaCare.LogicaDeNegocio.Expedientes.CerrarExpediente;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using DentaCare.LogicaDeNegocio.Expedientes.CerrarExpediente;
+using DentaCare.LogicaDeNegocio.Reporteria.Expediente;
 using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.Alertas.GuardarAlerta;
 using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.Alertas.ObtenerAlertasPorExpediente;
 using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.CerrarExpediente;
@@ -17,11 +23,6 @@ using DentalCare.LogicaDeNegocio.Expedientes.CrearExpediente;
 using DentalCare.LogicaDeNegocio.Expedientes.ObtenerTodosLosExpedientes;
 using DentalCare.LogicaDeNegocio.Odontograma.ObtenerOdontogramaPorExpediente;
 using DentalCare.LogicaDeNegocio.Odontograma.RegistrarOdontograma;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 
 namespace DentalCare.UI.Controllers
 {
@@ -124,6 +125,41 @@ namespace DentalCare.UI.Controllers
             catch
             {
                 return View();
+            }
+        }
+
+        public ActionResult ProcedimientosExpediente(int idExpediente, DateTime? desde, DateTime? hasta, int? idTratamiento)
+        {
+            try
+            {
+                var ln = new ReporteExpedienteLN();
+                var procedimientos = ln.ObtenerProcedimientosPorExpediente(idExpediente, desde, hasta, idTratamiento);
+
+                // register view in bitacora
+                var bitacora = new DentaCare.LogicaDeNegocio.Reporteria.Bitacora.BitacoraLN();
+                string usuario = User.Identity.Name ?? "Desconocido";
+                bitacora.RegistrarVisualizacion("Expediente", "VisualizacionProcedimientos", $"Visualizó procedimientos del expediente {idExpediente}", usuario);
+
+                var vm = new Abstraccion.Modelo.Expediente.ProcedimientosExpedienteModelDto
+                {
+                    IdExpediente = idExpediente,
+                    Desde = desde,
+                    Hasta = hasta,
+                    IdTratamiento = idTratamiento,
+                    Procedimientos = procedimientos
+                };
+
+                return View("ProcedimientosExpediente", vm);
+            }
+            catch (ArgumentException ex)
+            {
+                TempData["Error"] = ex.Message;
+                return RedirectToAction("DetallesAlerta", new { id = idExpediente }); // or show the expediente page
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Ocurrió un error al obtener los procedimientos.";
+                return RedirectToAction("DetallesAlerta", new { id = idExpediente });
             }
         }
 

@@ -155,12 +155,15 @@
     <Compile Include="Modelo\Expediente\AlertaDto.cs" />
     <Compile Include="Modelo\Expediente\ExpedienteDetalleDto.cs" />
     <Compile Include="Modelo\Expediente\ExpedienteDto.cs" />
+    <Compile Include="Modelo\Expediente\ProcedimientoDto.cs" />
+    <Compile Include="Modelo\Expediente\ProcedimientosExpedienteModelDto.cs" />
     <Compile Include="Modelo\Odontograma\OdontogramaDto.cs" />
     <Compile Include="Modelo\Gasto\GastoDto.cs" />
     <Compile Include="Modelo\Pago\PagoDto.cs" />
     <Compile Include="Modelo\Producto\ProductoDto.cs" />
     <Compile Include="Modelo\Producto\UsoProducto\UsoProductoDto.cs" />
     <Compile Include="Modelo\RecuperacionContrasena\ForgotPasswordDto.cs" />
+    <Compile Include="Modelo\Reporteria\CategoriaDto.cs" />
     <Compile Include="Modelo\Reporteria\CitaReporteDto.cs" />
     <Compile Include="Modelo\Reporteria\ExpedienteItemDto.cs" />
     <Compile Include="Modelo\Reporteria\HistorialDoctoraDto.cs" />

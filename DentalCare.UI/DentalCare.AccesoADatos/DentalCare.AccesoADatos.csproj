@@ -116,6 +116,7 @@
     <Compile Include="Producto\RegistrarProducto\RegistrarProductoAD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reporteria\Cita\ReporteCitasCanceladasAD.cs" />
+    <Compile Include="Reporteria\Expediente\ReporteExpedienteAD.cs" />
     <Compile Include="Reporteria\Expediente\ReporteProcedimientosAD.cs" />
     <Compile Include="Reporteria\Finanzas\ReporteGastosAD.cs" />
     <Compile Include="Reporteria\Inventario\ReporteInventarioAD.cs" />

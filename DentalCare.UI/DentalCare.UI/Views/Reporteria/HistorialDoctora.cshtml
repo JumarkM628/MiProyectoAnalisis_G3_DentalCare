@@ -1,0 +1,60 @@
+﻿@model IEnumerable<DentalCare.Abstraccion.Modelo.Reporteria.HistorialDoctoraDto>
+
+@{
+    ViewBag.Title = "HistorialDoctora";
+}
+
+<div class="reporte-card">
+    <h3>Mis Procedimientos</h3>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alerta-item alerta-rojo">@TempData["Error"]</div>
+    }
+
+    <div style="margin:12px 0;">
+        @using (Html.BeginForm("MisProcedimientos", "Reporteria", FormMethod.Get))
+        {
+            <label>Desde</label>
+            <input type="date" name="fechaInicio" value="@(Request["fechaInicio"] ?? "")" class="form-control" style="display:inline-block;width:auto;margin-right:8px;" />
+            <label>Hasta</label>
+            <input type="date" name="fechaFin" value="@(Request["fechaFin"] ?? "")" class="form-control" style="display:inline-block;width:auto;margin-right:8px;" />
+            <button type="submit" class="btn-filtrar-reporte">Filtrar</button>
+        }
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="rep-placeholder">No hay procedimientos para mostrar.</div>
+    }
+    else
+    {
+        <table class="tabla-reporte">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Paciente</th>
+                    <th>Fecha</th>
+                    <th>Descripción</th>
+                    <th>Tratamiento</th>
+                    <th>Observaciones</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td>@p.IdProcedimiento</td>
+                        <td>@p.NombrePaciente</td>
+                        <td>@(p.FechaProcedimiento?.ToString("dd/MM/yyyy") ?? "-")</td>
+                        <td>@p.DescripcionProcedimiento</td>
+                        <td>@p.PlanTratamiento</td>
+                        <td>@p.Observaciones</td>
+                        <td>@p.EstadoProcedimiento</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

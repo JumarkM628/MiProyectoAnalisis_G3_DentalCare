@@ -1,0 +1,61 @@
+﻿@model DentalCare.Abstraccion.Modelo.Expediente.ProcedimientosExpedienteModelDto
+
+@{
+    ViewBag.Title = "ProcedimientosExpediente";
+}
+
+<div class="reporte-card">
+    <h3>Procedimientos del Expediente #@Model.IdExpediente</h3>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alerta-item alerta-rojo">@TempData["Error"]</div>
+    }
+
+    <div style="margin:12px 0;">
+        @using (Html.BeginForm("ProcedimientosExpediente", "Expediente", FormMethod.Get))
+        {
+            @Html.Hidden("idExpediente", Model.IdExpediente)
+            <label>Desde</label>
+            <input type="date" name="desde" value="@(Model.Desde?.ToString("yyyy-MM-dd") ?? "")" class="form-control" style="display:inline-block;width:auto;margin-right:8px;" />
+            <label>Hasta</label>
+            <input type="date" name="hasta" value="@(Model.Hasta?.ToString("yyyy-MM-dd") ?? "")" class="form-control" style="display:inline-block;width:auto;margin-right:8px;" />
+            <label>Tratamiento</label>
+            <input type="text" name="idTratamiento" value="@(Model.IdTratamiento?.ToString() ?? "")" class="form-control" style="display:inline-block;width:auto;margin-right:8px;" />
+            <button type="submit" class="btn-filtrar-reporte">Filtrar</button>
+        }
+    </div>
+
+    @if (Model.Procedimientos == null || !Model.Procedimientos.Any())
+    {
+        <div class="rep-placeholder">No hay procedimientos registrados para los filtros seleccionados.</div>
+    }
+    else
+    {
+        <table class="tabla-reporte">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Fecha</th>
+                    <th>Descripción</th>
+                    <th>Doctor</th>
+                    <th>Tratamiento</th>
+                    <th>Observaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.Procedimientos)
+                {
+                    <tr>
+                        <td>@p.IdProcedimiento</td>
+                        <td>@(p.Fecha?.ToString("dd/MM/yyyy") ?? "-")</td>
+                        <td>@p.Descripcion</td>
+                        <td>@p.NombreDoctor</td>
+                        <td>@p.NombreTratamiento</td>
+                        <td>@p.Observaciones</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

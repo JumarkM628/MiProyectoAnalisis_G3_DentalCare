@@ -627,13 +627,21 @@ namespace DentalCare.UI.Controllers
         }
 
         // GET: Reporteria/CitasPorPeriodo?desde=yyyy-MM-dd&hasta=yyyy-MM-dd
-        public ActionResult CitasPorPeriodo(DateTime? desde, DateTime? hasta)
+        public ActionResult CitasCanceladasPorPeriodo(DateTime? desde, DateTime? hasta)
         {
             if (!desde.HasValue || !hasta.HasValue)
                 return View(new List<CitaReporteDto>());
 
+            if (desde.Value.Date > hasta.Value.Date)
+            {
+                TempData["Error"] = "El rango de fechas ingresado no es válido.";
+                return View(new List<CitaReporteDto>());
+            }
+
             var lista = _reporteCitasLN.ObtenerPorPeriodo(desde.Value, hasta.Value);
-            return View(lista);
+            var canceladas = lista.Where(c => c.FechaCancelacion.HasValue).ToList();
+
+            return View("CitasCanceladas", canceladas);
         }
 
         // ── GDR-007 — Productos con bajo stock ──────────────────────
@@ -651,22 +659,28 @@ namespace DentalCare.UI.Controllers
         [HttpPost]
         public ActionResult ProductosStockBajo(int? categoriaId)
         {
-            using (var ctx = new Contexto())
-            {
-                if (categoriaId.HasValue)
+            var ln = new DentaCare.LogicaDeNegocio.Reporteria.Inventario.ReporteInventarioLN();
+            var categoriasDto = ln.ObtenerCategorias() ?? new List<DentalCare.Abstraccion.Modelo.Reporteria.CategoriaDto>();
+
+            ViewBag.Categorias = categoriasDto
+                .Select(c => new SelectListItem
                 {
-                    bool existeCategoria = ctx.CategoriasProducto.Any(c => c.IdCategoria == categoriaId.Value);
-                    if (!existeCategoria)
-                    {
-                        TempData["Error"] = "Debe seleccionar una categoría válida.";
-                        return View("StockBajo", new List<DentalCare.Abstraccion.Modelo.Reporteria.ProductoInventarioDto>());
-                    }
+                    Value = c.IdCategoria.ToString(),
+                    Text = c.NombreCategoria
+                })
+                .ToList();
+            if (categoriaId.HasValue)
+            {
+                bool exists = ((IEnumerable<SelectListItem>)ViewBag.Categorias)
+                                .Any(x => x.Value == categoriaId.Value.ToString());
+                if (!exists)
+                {
+                    TempData["Error"] = "Debe seleccionar una categoría válida.";
+                    return View("StockBajo", new List<DentalCare.Abstraccion.Modelo.Reporteria.ProductoInventarioDto>());
                 }
             }
-            var ad = new ReporteInventarioAD(new Contexto());
-            var ln = new DentaCare.LogicaDeNegocio.Reporteria.Inventario.ReporteInventarioLN(ad);
-            var lista = ln.ObtenerProductosStockBajo(categoriaId);
 
+            var lista = ln.ObtenerProductosStockBajo(categoriaId);
             return View("StockBajo", lista);
         }
 
@@ -802,44 +816,32 @@ namespace DentalCare.UI.Controllers
 
         // GDR-011 — Gastos ─────────────────────────────────────────
         [Authorize(Roles = "Admin")]
-        public ActionResult Gastos()
-        {
-            try
-            {
-                var modelo = _reporteGastosLN.ObtenerGastos(null, null);
-                RegistrarBitacora(
-                    modulo: "Gastos",
-                    accion: "Visualizacion",
-                    descripcion: "Consulta general de gastos de la clínica"
-                );
-
-                ViewBag.Confirmacion = "Visualización registrada en bitácora.";
-                return View(modelo);
-            }
-            catch (Exception ex)
-            {
-                ViewBag.Error = ex.Message;
-                return View(new List<ReporteGastosDto>());
-            }
-        }
-
-        // POST: Reporteria/Gastos — filtro por rango de fechas
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
         public ActionResult Gastos(DateTime? fechaInicio, DateTime? fechaFin)
         {
             try
             {
+                if (fechaInicio.HasValue && fechaFin.HasValue && fechaInicio.Value.Date > fechaFin.Value.Date)
+                {
+                    ViewBag.Error = "El rango de fechas ingresado no es válido.";
+                    var fallback = _reporteGastosLN.ObtenerGastos(null, null);
+                    return View(fallback);
+                }
                 var modelo = _reporteGastosLN.ObtenerGastos(fechaInicio, fechaFin);
-                RegistrarBitacora(
-                    modulo: "Gastos",
-                    accion: "Visualizacion",
-                    descripcion: "Consulta de gastos" +
-                                 (fechaInicio.HasValue ? $" desde {fechaInicio:dd/MM/yyyy}" : "") +
-                                 (fechaFin.HasValue ? $" hasta {fechaFin:dd/MM/yyyy}" : "")
-                );
+                try
+                {
+                    RegistrarBitacora(
+                        modulo: "Gastos",
+                        accion: "Visualizacion",
+                        descripcion: "Consulta de gastos" +
+                                     (fechaInicio.HasValue ? $" desde {fechaInicio:dd/MM/yyyy}" : "") +
+                                     (fechaFin.HasValue ? $" hasta {fechaFin:dd/MM/yyyy}" : "")
+                    );
+                    ViewBag.Confirmacion = "Visualización registrada en bitácora.";
+                }
+                catch
+                {
+                }
 
-                ViewBag.Confirmacion = "Visualización registrada en bitácora.";
                 return View(modelo);
             }
             catch (ArgumentException ex)
@@ -856,62 +858,44 @@ namespace DentalCare.UI.Controllers
         }
         //GDR-012 — Historial de la doctora ─────────────────────────────
         [Authorize(Roles = "Doctor")]
-        public ActionResult HistorialDoctora()
-        {
-            try
-            {
-                // Obtener el ASPNET_USER_ID del usuario autenticado
-                var aspNetUserId = User.Identity.GetUserId();
-
-                var modelo = _historialDoctoraLN.ObtenerHistorialPorDoctora(aspNetUserId);
-
-                // Escenario 4 — trazabilidad: registrar visualización en Bitácora
-                RegistrarBitacora(
-                    modulo: "HistorialClinico",
-                    accion: "Visualizacion",
-                    descripcion: $"Doctora {User.Identity.Name} consultó su historial clínico completo"
-                );
-
-                ViewBag.Confirmacion = "Visualización registrada en bitácora.";
-                return View(modelo);
-            }
-            catch (Exception ex)
-            {
-                ViewBag.Error = ex.Message;
-                return View(new List<HistorialDoctoraDto>());
-            }
-        }
-
-        // POST: Reporteria/HistorialDoctora — filtro por rango de fechas (Escenarios 3/4)
-        [HttpPost]
-        [Authorize(Roles = "Doctor")]
         public ActionResult HistorialDoctora(DateTime? fechaInicio, DateTime? fechaFin)
         {
             try
             {
-                var aspNetUserId = User.Identity.GetUserId();
+                string aspNetUserId = User.Identity.GetUserId();
 
-                // Escenario 4 — LN lanza ArgumentException si fechaInicio > fechaFin
-                var modelo = _historialDoctoraLN.ObtenerHistorialPorDoctoraFiltrado(
-                    aspNetUserId, fechaInicio, fechaFin);
+                List<HistorialDoctoraDto> modelo;
+                if (fechaInicio.HasValue || fechaFin.HasValue)
+                {
+                    modelo = _historialDoctoraLN.ObtenerHistorialPorDoctoraFiltrado(
+                        aspNetUserId, fechaInicio, fechaFin);
+                }
+                else
+                {
+                    modelo = _historialDoctoraLN.ObtenerHistorialPorDoctora(aspNetUserId);
+                }
+                try
+                {
+                    RegistrarBitacora(
+                        modulo: "HistorialClinico",
+                        accion: "Visualizacion",
+                        descripcion: $"Doctora {User.Identity.Name} consultó su historial clínico" +
+                                     (fechaInicio.HasValue ? $" desde {fechaInicio:dd/MM/yyyy}" : "") +
+                                     (fechaFin.HasValue ? $" hasta {fechaFin:dd/MM/yyyy}" : "")
+                    );
 
-                // Escenario 4 — trazabilidad
-                RegistrarBitacora(
-                    modulo: "HistorialClinico",
-                    accion: "Visualizacion",
-                    descripcion: $"Doctora {User.Identity.Name} consultó su historial clínico" +
-                                 (fechaInicio.HasValue ? $" desde {fechaInicio:dd/MM/yyyy}" : "") +
-                                 (fechaFin.HasValue ? $" hasta {fechaFin:dd/MM/yyyy}" : "")
-                );
+                    ViewBag.Confirmacion = "Visualización registrada en bitácora.";
+                }
+                catch
+                {
+                }
 
-                ViewBag.Confirmacion = "Visualización registrada en bitácora.";
                 return View(modelo);
             }
             catch (ArgumentException ex)
             {
                 ViewBag.Error = ex.Message;
-                var modelo = _historialDoctoraLN.ObtenerHistorialPorDoctora(
-                    User.Identity.GetUserId());
+                var modelo = _historialDoctoraLN.ObtenerHistorialPorDoctora(User.Identity.GetUserId());
                 return View(modelo);
             }
             catch (Exception ex)

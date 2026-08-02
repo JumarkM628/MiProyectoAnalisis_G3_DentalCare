@@ -1,0 +1,57 @@
+﻿@model IEnumerable<DentalCare.Abstraccion.Modelo.Gasto.GastoDto>
+
+@{
+        ViewBag.Title = "Gastos";
+        var gastos = Model ?? new List<DentalCare.Abstraccion.Modelo.Gasto.GastoDto>();
+    }
+
+    <div class="reporte-card">
+        <h3>Gastos registrados</h3>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alerta-item alerta-rojo">@TempData["Error"]</div>
+        }
+
+        <div style="margin:12px 0;">
+            @using (Html.BeginForm("Gastos", "Reporteria", FormMethod.Get))
+            {
+                <label>Desde</label>
+                <input type="date" name="fechaInicio" class="form-control" style="display:inline-block;width:auto;margin-right:8px;" value="@(Request["fechaInicio"] ?? "")" />
+                <label>Hasta</label>
+                <input type="date" name="fechaFin" class="form-control" style="display:inline-block;width:auto;margin-right:8px;" value="@(Request["fechaFin"] ?? "")" />
+                <button type="submit" class="btn-filtrar-reporte">Filtrar</button>
+            }
+        </div>
+
+        @if (!gastos.Any())
+        {
+            <div class="rep-placeholder">No hay gastos para las fechas seleccionadas.</div>
+        }
+        else
+        {
+            <table class="tabla-reporte">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Descripción</th>
+                        <th>Monto</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var g in gastos)
+                    {
+                        <tr>
+                            <td>@g.IdGasto</td>
+                            <td>@g.DescripcionMostrar</td>
+                            <td>@(g.MontoMostrar.ToString("F2"))</td>
+                            <td>@(g.FechaMostrar.HasValue ? g.FechaMostrar.Value.ToString("dd/MM/yyyy") : "-")</td>
+                            <td>@g.NombreEstado</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>

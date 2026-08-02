@@ -28,5 +28,7 @@ namespace DentalCare.AccesoADatos.Entidades.Citas
 
         [Column("ID_DOCTOR")]
         public int? IdDoctor { get; set; }
+        [Column("FECHA_CANCELACION")]
+        public DateTime? FechaCancelacion { get; set; }
     }
 }

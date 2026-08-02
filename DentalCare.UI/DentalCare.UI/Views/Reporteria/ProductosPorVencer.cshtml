@@ -1,37 +1,31 @@
-﻿@using System.Web.Mvc
-@model IEnumerable<DentalCare.Abstraccion.Modelo.Reporteria.ProductoInventarioDto>
+﻿@model IEnumerable<DentalCare.Abstraccion.Modelo.Reporteria.ReporteProductosVencerDto>
 
 @{
-    ViewBag.Title = "Productos con Stock Bajo";
+    ViewBag.Title = "ProductosPorVencer";
 }
 
 <div class="reporte-card">
-    <h3>Productos con Stock Igual o Menor al Mínimo</h3>
+    <h3>Productos Próximos a Vencer</h3>
 
-    @if (TempData["Error"] != null)
+    @if (ViewBag.Error != null)
     {
-        <div class="alerta-item alerta-rojo">@TempData["Error"]</div>
+        <div class="alerta-item alerta-rojo">@ViewBag.Error</div>
     }
 
     <div style="margin:12px 0;">
-        @using (Html.BeginForm("ProductosStockBajo", "Reporteria", FormMethod.Get))
+        @using (Html.BeginForm("ProductosPorVencer", "Reporteria", FormMethod.Get))
         {
-            <label>Filtrar por categoría:</label>
-            @Html.DropDownList(
-                     "categoriaId",
-                     (IEnumerable<SelectListItem>)ViewBag.Categorias ?? new List<SelectListItem>(),
-                     "-- Todas --",
-                     new { @class = "form-control" }
-                 )
-            <button type="submit" class="btn-filtrar-reporte" style="margin-left:8px;">Filtrar</button>
+            <label>Fecha Inicio</label>
+            <input type="date" name="fechaInicio" value="@(Request["fechaInicio"] ?? DateTime.Today.ToString("yyyy-MM-dd"))" class="form-control" style="display:inline-block;width:auto;margin-right:8px;" />
+            <label>Fecha Fin</label>
+            <input type="date" name="fechaFin" value="@(Request["fechaFin"] ?? DateTime.Today.AddDays(30).ToString("yyyy-MM-dd"))" class="form-control" style="display:inline-block;width:auto;margin-right:8px;" />
+            <button type="submit" class="btn-filtrar-reporte">Consultar</button>
         }
     </div>
 
     @if (Model == null || !Model.Any())
     {
-        <div class="rep-placeholder">
-            No hay productos con bajo stock para mostrar.
-        </div>
+        <div class="rep-placeholder">No hay productos próximos a vencer para las fechas seleccionadas.</div>
     }
     else
     {
@@ -42,11 +36,9 @@
                     <th>Producto</th>
                     <th>Categoría</th>
                     <th>Stock Actual</th>
-                    <th>Stock Mínimo</th>
                     <th>Fecha Vencimiento</th>
                     <th>Proveedor</th>
                     <th>Fecha Registro</th>
-                    <th>Fecha Modificación</th>
                 </tr>
             </thead>
             <tbody>
@@ -57,11 +49,9 @@
                         <td>@p.NombreProducto</td>
                         <td>@p.CategoriaProducto</td>
                         <td>@p.StockActual</td>
-                        <td>@p.StockMinimo</td>
                         <td>@(p.FechaVencimiento?.ToString("dd/MM/yyyy") ?? "—")</td>
                         <td>@p.Proveedor</td>
                         <td>@(p.FechaRegistro?.ToString("dd/MM/yyyy") ?? "—")</td>
-                        <td>@(p.FechaModificacion?.ToString("dd/MM/yyyy") ?? "—")</td>
                     </tr>
                 }
             </tbody>
