@@ -1,7 +1,5 @@
 ﻿using DentalCare.Abstraccion.AccesoADatos.Producto;
-using DentalCare.Abstraccion.Modelo.Bitacora;
 using DentalCare.Abstraccion.Modelo.Producto;
-using DentalCare.AccesoADatos.Entidades.Bitacora;
 
 namespace DentalCare.AccesoADatos.Producto.EditarProducto
 {
@@ -40,19 +38,7 @@ namespace DentalCare.AccesoADatos.Producto.EditarProducto
             _contexto.SaveChanges();
             return true;
         }
-        public void RegistrarCambioEnBitacora(BitacoraDto bitacora)
-        {
-            var entidad = new BitacoraEntidad
-            {
-                Modulo = bitacora.Modulo,
-                Accion = bitacora.Accion,
-                Descripcion = bitacora.Descripcion,
-                NombreUsuario = bitacora.NombreUsuario,
-                FechaHora = bitacora.FechaHora
-            };
-
-            _contexto.Bitacoras.Add(entidad);
-            _contexto.SaveChanges();
-        }
+        // RegistrarCambioEnBitacora eliminado — los triggers SQL
+        // en FIDE_EVENTO_TB registran los cambios automáticamente
     }
 }

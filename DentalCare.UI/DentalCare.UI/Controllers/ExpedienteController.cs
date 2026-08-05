@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using DentaCare.LogicaDeNegocio.Expedientes.CerrarExpediente;
+﻿using DentaCare.LogicaDeNegocio.Expedientes.CerrarExpediente;
 using DentaCare.LogicaDeNegocio.Reporteria.Expediente;
 using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.Alertas.GuardarAlerta;
 using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.Alertas.ObtenerAlertasPorExpediente;
@@ -23,6 +18,10 @@ using DentalCare.LogicaDeNegocio.Expedientes.CrearExpediente;
 using DentalCare.LogicaDeNegocio.Expedientes.ObtenerTodosLosExpedientes;
 using DentalCare.LogicaDeNegocio.Odontograma.ObtenerOdontogramaPorExpediente;
 using DentalCare.LogicaDeNegocio.Odontograma.RegistrarOdontograma;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
 
 namespace DentalCare.UI.Controllers
 {
@@ -92,41 +91,10 @@ namespace DentalCare.UI.Controllers
             return RedirectToAction("ObtenerTodosLosExpedientes");
         }
 
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        public ActionResult Edit(int id) => View();
+        [HttpPost] public ActionResult Edit(int id, FormCollection c) { try { return RedirectToAction("Index"); } catch { return View(); } }
+        public ActionResult Delete(int id) => View();
+        [HttpPost] public ActionResult Delete(int id, FormCollection c) { try { return RedirectToAction("Index"); } catch { return View(); } }
 
         public ActionResult ProcedimientosExpediente(int idExpediente, DateTime? desde, DateTime? hasta, int? idTratamiento)
         {
@@ -134,11 +102,7 @@ namespace DentalCare.UI.Controllers
             {
                 var ln = new ReporteExpedienteLN();
                 var procedimientos = ln.ObtenerProcedimientosPorExpediente(idExpediente, desde, hasta, idTratamiento);
-
-                // register view in bitacora
-                var bitacora = new DentaCare.LogicaDeNegocio.Reporteria.Bitacora.BitacoraLN();
-                string usuario = User.Identity.Name ?? "Desconocido";
-                bitacora.RegistrarVisualizacion("Expediente", "VisualizacionProcedimientos", $"Visualizó procedimientos del expediente {idExpediente}", usuario);
+                // El trigger trg_Expediente_Update registra los cambios automáticamente — BitacoraLN eliminado
 
                 var vm = new Abstraccion.Modelo.Expediente.ProcedimientosExpedienteModelDto
                 {
@@ -148,15 +112,14 @@ namespace DentalCare.UI.Controllers
                     IdTratamiento = idTratamiento,
                     Procedimientos = procedimientos
                 };
-
                 return View("ProcedimientosExpediente", vm);
             }
             catch (ArgumentException ex)
             {
                 TempData["Error"] = ex.Message;
-                return RedirectToAction("DetallesAlerta", new { id = idExpediente }); // or show the expediente page
+                return RedirectToAction("DetallesAlerta", new { id = idExpediente });
             }
-            catch (Exception ex)
+            catch
             {
                 TempData["Error"] = "Ocurrió un error al obtener los procedimientos.";
                 return RedirectToAction("DetallesAlerta", new { id = idExpediente });
@@ -166,16 +129,13 @@ namespace DentalCare.UI.Controllers
         public ActionResult Cerrar(int id)
         {
             var expediente = _cerrarExpedienteLN.ObtenerExpedientePorId(id);
-
-            if (expediente == null)
-                return HttpNotFound();
+            if (expediente == null) return HttpNotFound();
 
             if (expediente.IdEstado == 2)
             {
                 TempData["Error"] = "El expediente ya se encuentra cerrado y no puede modificarse.";
                 return RedirectToAction("ObtenerTodosLosExpedientes");
             }
-
             return View(expediente);
         }
 
@@ -183,16 +143,12 @@ namespace DentalCare.UI.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Cerrar(int id, string confirmacion)
         {
-            string nombreDoctora = User.Identity.Name;
-
-            string error = _cerrarExpedienteLN.CerrarExpediente(id, nombreDoctora);
-
+            string error = _cerrarExpedienteLN.CerrarExpediente(id, User.Identity.Name);
             if (error != null)
             {
                 TempData["Error"] = error;
                 return RedirectToAction("Cerrar", new { id });
             }
-
             TempData["Exito"] = "El expediente fue cerrado correctamente.";
             return RedirectToAction("ObtenerTodosLosExpedientes");
         }
@@ -205,7 +161,6 @@ namespace DentalCare.UI.Controllers
                 TempData["Error"] = "No se encontró el expediente.";
                 return RedirectToAction("ObtenerTodosLosExpedientes");
             }
-
             AlertaDto dto = detalle.Alerta ?? new AlertaDto { IdExpediente = id };
             dto.IdExpediente = id;
             CargarDropdownsAlerta(dto);
@@ -217,13 +172,11 @@ namespace DentalCare.UI.Controllers
         public ActionResult GuardarAlerta(int id, AlertaDto dto)
         {
             dto.IdExpediente = id;
-
             if (!ModelState.IsValid)
             {
                 CargarDropdownsAlerta(dto);
                 return View(dto);
             }
-
             string error = _guardarAlertaLN.Guardar(id, dto);
             if (error != null)
             {
@@ -231,12 +184,10 @@ namespace DentalCare.UI.Controllers
                 CargarDropdownsAlerta(dto);
                 return View(dto);
             }
-
             TempData["Exito"] = "Alerta médica guardada correctamente.";
             return RedirectToAction("DetallesAlerta", new { id });
         }
 
-        // GET: Odontograma
         public ActionResult RegistrarOdontograma(int id)
         {
             var dto = new OdontogramaDto { IdExpediente = id };
@@ -244,19 +195,16 @@ namespace DentalCare.UI.Controllers
             return View(dto);
         }
 
-        // POST: Odontograma
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult RegistrarOdontograma(int id, OdontogramaDto dto)
         {
             dto.IdExpediente = id;
-
             if (!ModelState.IsValid)
             {
                 CargarDropdownsOdontograma(dto);
                 return View(dto);
             }
-
             string error = _registrarOdontogramaLN.Registrar(dto);
             if (error != null)
             {
@@ -264,12 +212,10 @@ namespace DentalCare.UI.Controllers
                 CargarDropdownsOdontograma(dto);
                 return View(dto);
             }
-
             TempData["Exito"] = "Odontograma registrado correctamente.";
             return RedirectToAction("DetallesAlerta", new { id });
         }
 
-        // GET: Ver Odontograma
         public ActionResult VerOdontograma(int id)
         {
             var dto = _obtenerOdontogramaLN.Obtener(id);
@@ -285,12 +231,11 @@ namespace DentalCare.UI.Controllers
         {
             using (var ctx = new Contexto())
             {
-                dto.ListaEstados = ctx.Estados
-                    .Select(e => new SelectListItem
-                    {
-                        Value = e.IdEstado.ToString(),
-                        Text = e.NombreEstado
-                    }).ToList();
+                dto.ListaEstados = ctx.Estados.Select(e => new SelectListItem
+                {
+                    Value = e.IdEstado.ToString(),
+                    Text = e.NombreEstado
+                }).ToList();
             }
             return dto;
         }
@@ -299,12 +244,11 @@ namespace DentalCare.UI.Controllers
         {
             using (var ctx = new Contexto())
             {
-                dto.ListaEstados = ctx.Estados
-                    .Select(e => new SelectListItem
-                    {
-                        Value = e.IdEstado.ToString(),
-                        Text = e.NombreEstado
-                    }).ToList();
+                dto.ListaEstados = ctx.Estados.Select(e => new SelectListItem
+                {
+                    Value = e.IdEstado.ToString(),
+                    Text = e.NombreEstado
+                }).ToList();
 
                 dto.ListaNivelesRiesgo = new List<SelectListItem>
                 {
@@ -321,13 +265,11 @@ namespace DentalCare.UI.Controllers
         {
             using (var ctx = new Contexto())
             {
-                dto.ListaPiezas = ctx.PiezasDentales
-                    .Where(p => p.IdEstado == 1)
-                    .Select(p => new SelectListItem
-                    {
-                        Value = p.IdPieza.ToString(),
-                        Text = "Pieza " + p.NumeroPieza
-                    }).ToList();
+                dto.ListaPiezas = ctx.PiezasDentales.Where(p => p.IdEstado == 1).Select(p => new SelectListItem
+                {
+                    Value = p.IdPieza.ToString(),
+                    Text = "Pieza " + p.NumeroPieza
+                }).ToList();
             }
             return dto;
         }

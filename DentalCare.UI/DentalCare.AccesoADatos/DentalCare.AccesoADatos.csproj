@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Archivo\SubirArchivo\ArchivoClinicoAD.cs" />
+    <Compile Include="Bitacora\ObtenerEventosAD.cs" />
     <Compile Include="Catalogo\ActualizarCosto\ActualizarCostoAD.cs" />
     <Compile Include="Catalogo\ObtenerCatalogo\ObtenerCatalogoAD.cs" />
     <Compile Include="Citas\AgregarCita\AgregarCitaAD.cs" />
@@ -62,7 +63,7 @@
     <Compile Include="Citas\Reporteria\ReporteCitasAD.cs" />
     <Compile Include="Contexto.cs" />
     <Compile Include="Entidades\Archivo\ArchivoClinicoEntidad.cs" />
-    <Compile Include="Entidades\Bitacora\BitacoraEntidad.cs" />
+    <Compile Include="Entidades\Bitacora\EventoEntidad.cs" />
     <Compile Include="Entidades\Citas\CitaEntidad.cs" />
     <Compile Include="Entidades\Citas\MotivoCancelacionEntidad.cs" />
     <Compile Include="Entidades\Citas\MotivoCitaEntidad.cs" />

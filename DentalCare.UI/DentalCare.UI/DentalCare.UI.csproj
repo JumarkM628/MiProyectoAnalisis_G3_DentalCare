@@ -210,6 +210,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ArchivoController.cs" />
+    <Compile Include="Controllers\BitacoraController.cs" />
     <Compile Include="Controllers\CatalogoController.cs" />
     <Compile Include="Controllers\CitaController.cs" />
     <Compile Include="Controllers\ContabilidadController.cs" />
@@ -374,6 +375,7 @@
     <Content Include="Views\Reporteria\Gastos.cshtml" />
     <Content Include="Views\Reporteria\HistorialDoctora.cshtml" />
     <Content Include="Views\Reporteria\ReportesInventario.cshtml" />
+    <Content Include="Views\Bitacora\ObtenerTodosLosEventos.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

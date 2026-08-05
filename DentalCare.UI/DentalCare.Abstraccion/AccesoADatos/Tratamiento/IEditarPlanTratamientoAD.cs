@@ -12,6 +12,5 @@ namespace DentalCare.Abstraccion.AccesoADatos.Tratamiento
     {
         PlanTratamientoDto ObtenerPlanPorId(int id);
         bool GuardarCambios(PlanTratamientoDto dto);
-        void RegistrarHistorialCambio(BitacoraDto historial);
     }
 }

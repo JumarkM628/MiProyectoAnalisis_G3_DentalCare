@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccesoADatos\Archivo\IArchivoClinicoAD.cs" />
+    <Compile Include="AccesoADatos\Bitacora\IObtenerEventosAD.cs" />
     <Compile Include="AccesoADatos\Catalogo\ActualizarCosto\IActualizarCostoAD.cs" />
     <Compile Include="AccesoADatos\Catalogo\ObtenerCatalogoAD\IObtenerCatalogoAD.cs" />
     <Compile Include="AccesoADatos\Citas\AgregarCita\IAgregarCitaAD.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="AccesoADatos\Usuarios\RecuperarContrasena\IRecuperarContrasenaAD.cs" />
     <Compile Include="AccesoADatos\Usuarios\RegistrarUsuarios\IRegistrarUsuariosAD.cs" />
     <Compile Include="LogicaDeNegocio\Archivo\IArchivoClinicoLN.cs" />
+    <Compile Include="LogicaDeNegocio\Bitacora\IObtenerEventosLN.cs" />
     <Compile Include="LogicaDeNegocio\Catalogo\ActualizarCosto\IActualizarCostoLN.cs" />
     <Compile Include="LogicaDeNegocio\Catalogo\ObtenerCatalogo\IObtenerCatalogoLN.cs" />
     <Compile Include="LogicaDeNegocio\Citas\AgregarCita\IAgregarCitaLN.cs" />
@@ -150,7 +152,7 @@
     <Compile Include="LogicaDeNegocio\Usuarios\RecuperarContrasena\IRecuperarContrasenaLN.cs" />
     <Compile Include="LogicaDeNegocio\Usuarios\RegistrarUsuario\IRegistrarUsuariosLN.cs" />
     <Compile Include="Modelo\Archivo\ArchivoClinicoDto.cs" />
-    <Compile Include="Modelo\Bitacora\BitacoraDto.cs" />
+    <Compile Include="Modelo\Bitacora\EventoDto.cs" />
     <Compile Include="Modelo\Citas\CitaDto.cs" />
     <Compile Include="Modelo\Expediente\AlertaDto.cs" />
     <Compile Include="Modelo\Expediente\ExpedienteDetalleDto.cs" />

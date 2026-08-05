@@ -12,6 +12,5 @@ namespace DentalCare.Abstraccion.AccesoADatos.Expediente.ReabrirExpediente
     {
         ExpedienteDto ObtenerExpedientePorId(int id);
         bool ReabrirExpediente(int id);
-        void RegistrarReaperturaEnBitacora(BitacoraDto bitacora);
     }
 }

@@ -52,7 +52,7 @@ namespace DentalCare.AccesoADatos
         public DbSet<ArchivoClinicoEntidad> ArchivosClinicos { get; set; }
 
         // Bitácora
-        public DbSet<BitacoraEntidad> Bitacoras { get; set; }
+        public DbSet<EventoEntidad> Eventos { get; set; }
 
         //odontograma
         public DbSet<OdontogramaEntidad> Odontogramas { get; set; }

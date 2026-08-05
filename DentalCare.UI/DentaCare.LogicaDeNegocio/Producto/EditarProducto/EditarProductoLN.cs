@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DentalCare.Abstraccion.AccesoADatos.Producto;
+﻿using DentalCare.Abstraccion.AccesoADatos.Producto;
 using DentalCare.Abstraccion.LogicaDeNegocio.Producto;
-using DentalCare.Abstraccion.Modelo.Bitacora;
 using DentalCare.Abstraccion.Modelo.Producto;
 
 namespace DentaCare.LogicaDeNegocio.Producto.EditarProducto
@@ -30,25 +24,12 @@ namespace DentaCare.LogicaDeNegocio.Producto.EditarProducto
             if (productoActual == null)
                 return "El producto no fue encontrado.";
 
-            int cantidadAnterior = productoActual.CantidadActual;
             bool guardado = _editarProductoAD.GuardarCambios(dto);
             if (!guardado)
                 return "Ocurrió un error al guardar los cambios.";
 
-
-            var bitacora = new BitacoraDto
-            {
-                Modulo = "Inventario",
-                Accion = "Modificación",
-                Descripcion = $"Producto '{dto.NombreProducto}' (Código: {dto.CodigoProducto}) actualizado. " +
-                                 $"Cantidad anterior: {cantidadAnterior} → Cantidad nueva: {dto.CantidadActual}.",
-                NombreUsuario = nombreUsuario,
-                FechaHora = DateTime.Now
-            };
-
-            _editarProductoAD.RegistrarCambioEnBitacora(bitacora);
-
-            return null; 
+            // El trigger trg_Producto_Update registra el cambio automáticamente
+            return null;
         }
     }
 }
