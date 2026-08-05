@@ -317,23 +317,33 @@ namespace DentalCare.UI.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult RegistrarProductos(UsoProductoDto dto)
         {
+            if (dto == null)
+            {
+                TempData["Error"] = "Datos inválidos.";
+                return RedirectToAction("ObtenerTodasLasCitas");
+            }
             if (dto.Cantidad <= 0 || dto.IdProducto == 0)
             {
                 TempData["Error"] = "Debe seleccionar un producto y una cantidad válida.";
                 return RedirectToAction("RegistrarProductos", new { id = dto.IdCita });
             }
-
             string error = _usoProductoLN.RegistrarUso(dto);
 
             if (error != null)
             {
                 TempData["Error"] = error;
+                return RedirectToAction("RegistrarProductos", new { id = dto.IdCita });
+            }
+            string finalizarError = _cambiarEstadoLN.Finalizar(dto.IdCita, DateTime.Now.TimeOfDay);
+
+            if (finalizarError != null)
+            {
+                TempData["Exito"] = "Producto registrado correctamente. Nota: " + finalizarError;
             }
             else
             {
-                TempData["Exito"] = "Producto registrado correctamente.";
+                TempData["Exito"] = "Producto registrado y cita finalizada correctamente.";
             }
-
             return RedirectToAction("RegistrarProductos", new { id = dto.IdCita });
         }
 

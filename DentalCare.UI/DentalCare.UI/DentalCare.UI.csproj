@@ -373,6 +373,7 @@
     <Content Include="Views\Expediente\ProcedimientosExpediente.cshtml" />
     <Content Include="Views\Reporteria\Gastos.cshtml" />
     <Content Include="Views\Reporteria\HistorialDoctora.cshtml" />
+    <Content Include="Views\Reporteria\ReportesInventario.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -169,6 +169,7 @@
     <Compile Include="Modelo\Reporteria\HistorialDoctoraDto.cs" />
     <Compile Include="Modelo\Reporteria\HistorialLoteTratamientoDto.cs" />
     <Compile Include="Modelo\Reporteria\HistorialTratamientoDto.cs" />
+    <Compile Include="Modelo\Reporteria\InventarioReporteDto.cs" />
     <Compile Include="Modelo\Reporteria\ProductoFrecuenciaDto.cs" />
     <Compile Include="Modelo\Reporteria\ProductoInventario.cs" />
     <Compile Include="Modelo\Reporteria\ProductoLoteFrecuenciaDto.cs" />

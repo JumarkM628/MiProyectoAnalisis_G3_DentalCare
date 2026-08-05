@@ -1,76 +1,41 @@
-﻿@{
-    ViewBag.Title = "Inventario";
+﻿@model List<DentalCare.Abstraccion.Modelo.Reporteria.InventarioReporteDto>
+
+@{
+    ViewBag.Title = "Inventario - Reporte";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <style>
     .reporte-page {
         min-height: 100vh;
         padding: 40px 32px 60px;
-        background: linear-gradient(180deg, #F4FBFA 0%, #ffffff 220px);
+        background: linear-gradient(180deg,#F4FBFA 0%,#ffffff 220px);
     }
 
     .reporte-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        flex-wrap: wrap;
-        gap: 20px;
-        padding: 30px;
-        border-radius: 20px;
-        background: linear-gradient(135deg, #16302D 0%, #1F6B75 60%, #2C8C99 100%);
+        gap: 12px;
+        padding: 18px;
+        border-radius: 12px;
+        background: linear-gradient(135deg,#16302D 0%,#1F6B75 60%,#2C8C99 100%);
         color: white;
-        margin-bottom: 25px;
-        box-shadow: 0 10px 30px rgba(22,48,45,.25);
+        margin-bottom: 20px;
     }
-
-        .reporte-header h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin: 0;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .reporte-header p {
-            margin-top: 8px;
-            color: #CFE8E6;
-            font-size: .92rem;
-        }
-
-    .btn-volver-reporte {
-        background: rgba(255,255,255,.15);
-        border: 1px solid rgba(255,255,255,.35);
-        color: white;
-        text-decoration: none;
-        padding: 10px 18px;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: .2s;
-        white-space: nowrap;
-    }
-
-        .btn-volver-reporte:hover {
-            background: rgba(255,255,255,.25);
-            color: white;
-            text-decoration: none;
-        }
 
     .reporte-card {
         background: white;
-        border-radius: 16px;
-        padding: 30px;
+        border-radius: 12px;
+        padding: 20px;
         box-shadow: 0 8px 30px rgba(0,0,0,.06);
         border-top: 4px solid #16302D;
-        overflow-x: auto;
-        max-width: 1100px;
-        margin: 0 auto;
     }
 
     .tabla-reporte {
         width: 100%;
         border-collapse: collapse;
+        margin-top: 10px;
     }
 
         .tabla-reporte th {
@@ -78,7 +43,7 @@
             color: #16302D;
             text-align: left;
             padding: 12px;
-            font-size: .8rem;
+            font-weight: 700;
             border-bottom: 2px solid #CFE8E6;
         }
 
@@ -86,98 +51,106 @@
             padding: 12px;
             border-bottom: 1px solid #edf2f7;
             color: #374151;
+            vertical-align: middle;
         }
 
-        .tabla-reporte tbody tr:hover {
-            background: #f8fffe;
-        }
-
-    .stock-badge {
+    .badge-stock {
         display: inline-block;
-        padding: 5px 12px;
-        border-radius: 50px;
-        font-size: .8rem;
+        padding: 6px 10px;
+        border-radius: 999px;
         font-weight: 700;
+        font-size: .85rem;
     }
 
-    .stock-ok {
-        background: #e6f9f7;
+    .badge-ok {
+        background: #E6F9F1;
         color: #0f6e56;
         border: 1px solid #1abcb0;
     }
 
-    .stock-bajo {
-        background: #fff8e1;
-        color: #b45309;
-        border: 1px solid #f59e0b;
+    .badge-warn {
+        background: #FFF6E5;
+        color: #7A5B00;
+        border: 1px solid #FFD36B;
     }
 
-    .stock-agotado {
-        background: #fff0f0;
-        color: #b42318;
-        border: 1px solid #f0a0a0;
+    .badge-empty {
+        background: #FDECEA;
+        color: #8B1C1C;
+        border: 1px solid #F79A9A;
     }
 
-    @@media(max-width:768px) {
+    .producto-name {
+        font-weight: 600;
+        color: #16302D;
+    }
 
-        .reporte-page {
-            padding: 20px 15px;
-        }
-
-        .reporte-header {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .btn-volver-reporte {
-            text-align: center;
-        }
+    .acciones-link {
+        color: #2C8C99;
+        text-decoration: none;
+        font-weight: 600;
     }
 </style>
 
 <div class="reporte-page">
-
     <div class="container" style="max-width:1100px; margin:0 auto;">
-
         <div class="reporte-header">
             <div>
-                <h1>
-                    <i class="fa fa-cubes"></i> Inventario
-                </h1>
-                <p>Existencias actuales de productos.</p>
+                <h2 style="margin:0"><i class="fa fa-box"></i> Reporte de Inventario</h2>
+                <p style="margin:6px 0 0; color:#CFE8E6">Listado actual del inventario — muestra indicadores según stock mínimo.</p>
             </div>
-
-            @Html.ActionLink("← Volver", "Index", "Reporteria", null,
-                new { @class = "btn-volver-reporte" })
+            @Html.ActionLink("← Volver a Reportería", "Index", "Reporteria", null, new { @class = "btn-volver-reporte", style = "background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2); color:white; padding:10px 14px; border-radius:8px; text-decoration:none;" })
         </div>
 
         <div class="reporte-card">
+            <h4 style="margin:0 0 8px;"><i class="fa fa-table"></i> Inventario</h4>
 
-            <table class="tabla-reporte">
+            <table class="tabla-reporte" aria-live="polite">
                 <thead>
                     <tr>
                         <th>Producto</th>
                         <th>Stock</th>
+                        <th>Mínimo</th>
                         <th>Estado</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Anestesia</td>
-                        <td>2</td>
-                        <td><span class="stock-badge stock-bajo">Stock bajo</span></td>
-                    </tr>
-
-                    <tr>
-                        <td>Guantes</td>
-                        <td>0</td>
-                        <td><span class="stock-badge stock-agotado">Agotado</span></td>
-                    </tr>
+                    @if (Model == null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" style="text-align:center; padding:30px; color:#6b7280;">No hay datos de inventario.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            var clase = "badge-ok";
+                            var texto = "Suficiente";
+                            if (item.Stock == 0)
+                            {
+                                clase = "badge-empty";
+                                texto = "Agotado";
+                            }
+                            else if (item.Stock <= item.StockMinimo)
+                            {
+                                clase = "badge-warn";
+                                texto = "Bajo";
+                            }
+                            <tr>
+                                <td>
+                                    <div class="producto-name">@item.Producto</div>
+                                </td>
+                                <td>
+                                    <span class="badge-stock @clase">@item.Stock</span>
+                                </td>
+                                <td>@item.StockMinimo</td>
+                                <td>@item.Estado</td>
+                            </tr>
+                        }
+                    }
                 </tbody>
             </table>
-
         </div>
-
     </div>
-
 </div>

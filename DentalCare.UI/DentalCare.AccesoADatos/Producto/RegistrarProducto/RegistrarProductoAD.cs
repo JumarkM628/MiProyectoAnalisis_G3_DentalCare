@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using DentalCare.Abstraccion.AccesoADatos.Producto;
 using DentalCare.Abstraccion.Modelo.Producto;
 using DentalCare.AccesoADatos.Entidades.Producto;
@@ -23,7 +24,7 @@ namespace DentalCare.AccesoADatos.Producto.RegistrarProducto
             int nuevoId = _contexto.Productos.Any() 
                 ? _contexto.Productos.Max(p => p.ID_PRODUCTO) + 1 
                 : 1;
-
+            var ahora = DateTime.Now;
             var entidad = new ProductoEntidad
             {
                 ID_PRODUCTO = nuevoId,
@@ -36,8 +37,10 @@ namespace DentalCare.AccesoADatos.Producto.RegistrarProducto
                 STOCK_MINIMO = dto.CantidadMinima,
                 LOTE = dto.Lote,
                 FECHA_VENCIMIENTO = dto.FechaVencimiento,
-                ID_ESTADO = 1
-
+                ID_ESTADO = 1,
+                FECHA_REGISTRO = ahora,
+                FECHA_MODIFICACION = ahora,
+                REGISTRADO_POR = dto.RegistradoPor > 0 ? dto.RegistradoPor : (int?)null
                 // REGISTRADO_POR = dto.RegistradoPor
             };
             _contexto.Productos.Add(entidad);
@@ -64,6 +67,7 @@ namespace DentalCare.AccesoADatos.Producto.RegistrarProducto
             entidad.STOCK_MINIMO = dto.CantidadMinima;
             entidad.LOTE = dto.Lote;
             entidad.FECHA_VENCIMIENTO = dto.FechaVencimiento;
+            entidad.FECHA_MODIFICACION = DateTime.Now;
             _contexto.SaveChanges();
             return true;
         }

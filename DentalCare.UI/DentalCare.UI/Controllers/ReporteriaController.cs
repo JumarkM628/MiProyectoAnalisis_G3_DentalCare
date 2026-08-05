@@ -273,7 +273,22 @@ namespace DentalCare.UI.Controllers
         // GET: Reporteria/ReportesInventario
         public ActionResult ReportesInventario()
         {
-            return View("Inventario");
+            using (var ctx = new Contexto())
+            {
+                var lista = (from p in ctx.Productos
+                             join est in ctx.Estados on p.ID_ESTADO equals est.IdEstado into estGrp
+                             from est in estGrp.DefaultIfEmpty()
+                             select new InventarioReporteDto
+                             {
+                                 Producto = p.NOMBRE_PRODUCTO,
+                                 Stock = p.STOCK_ACTUAL ?? 0,
+                                 Estado = est != null ? est.NombreEstado : "-"
+                             })
+                            .OrderBy(x => x.Producto)
+                            .ToList();
+
+                return View("Inventario", lista);
+            }
         }
 
         // GET: Reporteria/ReportesProductosUtilizados

@@ -8,6 +8,7 @@ namespace DentalCare.AccesoADatos.Entidades.Tratamientos
     public class PlanTratamientoEntidad
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)] //Added maybe delete later
         [Column("ID_TRATAMIENTO")]
         public int IdTratamiento { get; set; }
 

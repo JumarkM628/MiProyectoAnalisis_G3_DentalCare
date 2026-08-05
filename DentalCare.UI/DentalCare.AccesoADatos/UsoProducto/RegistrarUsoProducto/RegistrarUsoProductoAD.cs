@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DentalCare.Abstraccion.AccesoADatos.UsoProducto;
 using DentalCare.Abstraccion.Modelo.Producto.UsoProducto;
 using DentalCare.AccesoADatos.Entidades.Procedimiento;
 using DentalCare.AccesoADatos.Entidades.Producto;
+using DentalCare.AccesoADatos.Entidades.Tratamientos;
 
 namespace DentalCare.AccesoADatos.UsoProducto.RegistrarUsoProducto
 {
@@ -23,19 +25,57 @@ namespace DentalCare.AccesoADatos.UsoProducto.RegistrarUsoProducto
             if (procedimiento != null)
                 return procedimiento.ID_PROCEDIMIENTO;
 
-            var nuevo = new ProcedimientoEntidad
+            // Start transaction to create treatment + procedure atomically
+            using (var tx = _contexto.Database.BeginTransaction())
             {
-                ID_CITA = idCita,
-                ID_TRATAMIENTO = 0,
-                DESCRIPCION = "Procedimiento generado automáticamente",
-                FECHA = System.DateTime.Now,
-                ID_ESTADO = 1
-            };
+                try
+                {
+                    // Create a treatment record to satisfy FK
+                    int nuevoTratamientoId = _contexto.PlanesTratamiento.Any()
+                        ? _contexto.PlanesTratamiento.Max(t => t.IdTratamiento) + 1
+                        : 1;
 
-            _contexto.Procedimientos.Add(nuevo);
-            _contexto.SaveChanges();
+                    var nuevoTratamiento = new PlanTratamientoEntidad
+                    {
+                        IdTratamiento = nuevoTratamientoId,
+                        Descripcion = "Tratamiento generado automáticamente para procedimiento",
+                        FechaInicio = DateTime.Now,
+                        FechaFin = null,
+                        Monto = 0,
+                        IdCita = idCita,
+                        IdEstado = 1
+                    };
 
-            return nuevo.ID_PROCEDIMIENTO;
+                    _contexto.PlanesTratamiento.Add(nuevoTratamiento);
+                    _contexto.SaveChanges();
+
+                    // Now create procedimiento and reference the new treatment
+                    int nuevoId = _contexto.Procedimientos.Any()
+                        ? _contexto.Procedimientos.Max(p => p.ID_PROCEDIMIENTO) + 1
+                        : 1;
+
+                    var nuevo = new ProcedimientoEntidad
+                    {
+                        ID_PROCEDIMIENTO = nuevoId,
+                        ID_CITA = idCita,
+                        ID_TRATAMIENTO = nuevoTratamiento.IdTratamiento,
+                        DESCRIPCION = "Procedimiento generado automáticamente",
+                        FECHA = DateTime.Now,
+                        ID_ESTADO = 1
+                    };
+
+                    _contexto.Procedimientos.Add(nuevo);
+                    _contexto.SaveChanges();
+
+                    tx.Commit();
+                    return nuevo.ID_PROCEDIMIENTO;
+                }
+                catch
+                {
+                    tx.Rollback();
+                    throw;
+                }
+            }
         }
 
         public List<UsoProductoDto> ObtenerProductosUsadosPorCita(int idCita)
@@ -56,8 +96,12 @@ namespace DentalCare.AccesoADatos.UsoProducto.RegistrarUsoProducto
         }
         public bool GuardarUso(UsoProductoDto dto, int idProcedimiento)
         {
+            int nuevoIdUso = _contexto.UsoProductos.Any()
+            ? _contexto.UsoProductos.Max(u => u.ID_USO) + 1
+            : 1;
             var entidad = new UsoProductoEntidad
             {
+                ID_USO = nuevoIdUso,
                 ID_PRODUCTO = dto.IdProducto,
                 ID_PROCEDIMIENTO = idProcedimiento,
                 CANTIDAD = dto.Cantidad,
