@@ -50,6 +50,7 @@
     <Compile Include="Catalogo\ObtenerCatalogo\ObtenerCatalogoLN.cs" />
     <Compile Include="Citas\AgregarCita\AgregarCitaLN.cs" />
     <Compile Include="Citas\CambiarEstadoCita\CambiarEstadoCitaLN.cs" />
+    <Compile Include="Citas\ObtenerCitaPorId\ObtenerCitaPorIdLN.cs" />
     <Compile Include="Citas\ObtenerCitasPaciente\ObtenerCitasPacienteLN.cs" />
     <Compile Include="Citas\ObtenerTodasLasCitas\ObtenerTodasLasCitasLN.cs" />
     <Compile Include="Citas\RecordatorioCitaServicios\RecordatorioCitaServicio.cs" />

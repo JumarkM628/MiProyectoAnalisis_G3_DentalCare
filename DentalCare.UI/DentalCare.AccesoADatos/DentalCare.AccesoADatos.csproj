@@ -59,6 +59,7 @@
     <Compile Include="Citas\AgregarCita\AgregarCitaAD.cs" />
     <Compile Include="Citas\CambiarEstadoCita\CambiarEstadoCitaAD.cs" />
     <Compile Include="Citas\ObtenerCitaPaciente\ObtenerCitasPacienteAD.cs" />
+    <Compile Include="Citas\ObtenerCitaPorId\ObtenerCitaPorIdAD.cs" />
     <Compile Include="Citas\ObtenerTodasLasCitas\ObtenerTodasLasCitasAD.cs" />
     <Compile Include="Citas\Reporteria\ReporteCitasAD.cs" />
     <Compile Include="Contexto.cs" />

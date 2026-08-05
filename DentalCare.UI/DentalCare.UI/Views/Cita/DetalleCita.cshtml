@@ -1,0 +1,328 @@
+﻿@model DentalCare.Abstraccion.Modelo.Citas.CitaDto
+
+@{
+    ViewBag.Title = "Detalle de Cita";
+
+    string estadoClass = "activo";
+
+    if (Model.NombreEstado == "Cancelada" ||
+        Model.NombreEstado == "Rechazada" ||
+        Model.NombreEstado == "Ausente")
+    {
+        estadoClass = "inactivo";
+    }
+    else if (Model.NombreEstado == "Pendiente")
+    {
+        estadoClass = "pendiente";
+    }
+    else if (Model.NombreEstado == "Finalizada")
+    {
+        estadoClass = "finalizada";
+    }
+}
+
+<div class="detalle-container">
+    <div class="detalle-card">
+
+        <!-- HEADER -->
+        <div class="detalle-header">
+            <div class="detalle-header-left">
+                <div class="avatar-grande">
+                    <i class="fa fa-calendar"></i>
+                </div>
+                <div>
+                    <h1>Cita #@Model.IdCita</h1>
+                    <p class="detalle-subtitulo">Detalle completo de la cita</p>
+                </div>
+            </div>
+            <span class="usuario-id">
+                <span class="estado-badge @estadoClass">@Model.NombreEstado</span>
+            </span>
+        </div>
+
+        <!-- BODY -->
+        <div class="detalle-body">
+
+            <!-- Datos de la Cita -->
+            <div class="detalle-seccion">
+                <h3 class="seccion-titulo">
+                    <i class="fa fa-info-circle"></i>
+                    Datos de la Cita
+                </h3>
+                <div class="detalle-lista">
+                    <div class="detalle-fila">
+                        <span class="fila-label">Fecha</span>
+                        <span class="fila-valor">
+                            @(Model.Fecha.HasValue ? Model.Fecha.Value.ToString("dd/MM/yyyy") : "—")
+                        </span>
+                    </div>
+                    <div class="detalle-fila">
+                        <span class="fila-label">Hora</span>
+                        <span class="fila-valor">
+                            @(string.IsNullOrEmpty(Model.HoraString) ? "—" : Model.HoraString)
+                        </span>
+                    </div>
+                    <div class="detalle-fila">
+                        <span class="fila-label">Motivo</span>
+                        <span class="fila-valor">@Model.NombreMotivo</span>
+                    </div>
+                    <div class="detalle-fila">
+                        <span class="fila-label">Estado</span>
+                        <span class="fila-valor">
+                            <span class="estado-badge @estadoClass">@Model.NombreEstado</span>
+                        </span>
+                    </div>
+                    @if (Model.FechaModificacion.HasValue)
+                    {
+                        <div class="detalle-fila">
+                            <span class="fila-label">Fecha Cancelación</span>
+                            <span class="fila-valor">@Model.FechaModificacion.Value.ToString("dd/MM/yyyy")</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Personas -->
+            <div class="detalle-seccion">
+                <h3 class="seccion-titulo">
+                    <i class="fa fa-users"></i>
+                    Participantes
+                </h3>
+                <div class="detalle-lista">
+                    <div class="detalle-fila">
+                        <span class="fila-label">Paciente</span>
+                        <span class="fila-valor">@Model.NombrePaciente</span>
+                    </div>
+                    <div class="detalle-fila">
+                        <span class="fila-label">Cédula</span>
+                        <span class="fila-valor">
+                            @(string.IsNullOrEmpty(Model.CedulaPaciente) ? "—" : Model.CedulaPaciente)
+                        </span>
+                    </div>
+                    <div class="detalle-fila">
+                        <span class="fila-label">Doctor</span>
+                        <span class="fila-valor">@Model.NombreDoctor</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ACCIONES -->
+        <div class="acciones">
+            @Html.ActionLink("Editar", "Editar", new { id = Model.IdCita },
+                          new { @class = "btn-editar" })
+            @Html.ActionLink("← Volver", "ObtenerTodasLasCitas", null,
+                          new { @class = "btn-volver" })
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .detalle-container {
+        max-width: 950px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .detalle-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(15,45,42,.10);
+    }
+
+    .detalle-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        padding: 35px;
+        background: linear-gradient(135deg,#16302D 0%,#1F6B75 60%,#2C8C99 100%);
+        color: white;
+    }
+
+    .detalle-header-left {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .avatar-grande {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.15);
+        border: 2px solid rgba(255,255,255,.35);
+        color: white;
+        font-size: 1.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .detalle-header h1 {
+        margin: 0;
+        font-size: 1.7rem;
+        font-weight: 700;
+        color: white;
+    }
+
+    .detalle-subtitulo {
+        margin: 4px 0 0;
+        color: #CFE8E6;
+        font-size: .9rem;
+    }
+
+    .usuario-id {
+        background: rgba(255,255,255,.15);
+        border: 1px solid rgba(255,255,255,.3);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 8px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .detalle-body {
+        padding: 35px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
+        gap: 30px;
+    }
+
+    .detalle-seccion {
+        background: #F4FBFA;
+        border: 1px solid #E6F1EF;
+        border-radius: 14px;
+        padding: 22px;
+    }
+
+    .seccion-titulo {
+        margin: 0 0 16px;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1F6B75;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #CFE8E6;
+    }
+
+    .detalle-lista {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .detalle-fila {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 11px 0;
+        border-bottom: 1px dashed #DCEEEC;
+    }
+
+        .detalle-fila:last-child {
+            border-bottom: none;
+        }
+
+    .fila-label {
+        font-size: .85rem;
+        color: #6B8E89;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+
+    .fila-valor {
+        font-size: .95rem;
+        color: #16302D;
+        font-weight: 500;
+        text-align: right;
+    }
+
+    .estado-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 30px;
+        font-size: .8rem;
+        font-weight: 700;
+    }
+
+    .activo {
+        background: #e6f9f7;
+        color: #0f6e56;
+        border: 1px solid #1abcb0;
+    }
+
+    .inactivo {
+        background: #fff0f0;
+        color: #b42318;
+        border: 1px solid #f0a0a0;
+    }
+
+    .pendiente {
+        background: #fff8e1;
+        color: #b45309;
+        border: 1px solid #f59e0b;
+    }
+
+    .finalizada {
+        background: #e6f1fb;
+        color: #185FA5;
+        border: 1px solid #378ADD;
+    }
+
+    .acciones {
+        padding: 0 35px 35px;
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-editar {
+        background: #f39c12;
+        color: white !important;
+        padding: 10px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: .2s;
+    }
+
+    .btn-volver {
+        background: #6b7280;
+        color: white !important;
+        padding: 10px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: .2s;
+    }
+
+        .btn-editar:hover, .btn-volver:hover {
+            opacity: .9;
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+
+    @@media(max-width:768px) {
+        .detalle-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .detalle-body, .acciones {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .acciones {
+            flex-direction: column;
+        }
+    }
+</style>

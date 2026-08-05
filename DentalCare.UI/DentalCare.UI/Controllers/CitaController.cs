@@ -5,17 +5,18 @@ using DentaCare.LogicaDeNegocio.Citas.ObtenerTodasLasCitas;
 using DentaCare.LogicaDeNegocio.UsoProducto.RegistrarUsoProducto;
 using DentalCare.Abstraccion.LogicaDeNegocio.Citas.AgregarCita;
 using DentalCare.Abstraccion.LogicaDeNegocio.Citas.CambiarEstadoCita;
+using DentalCare.Abstraccion.LogicaDeNegocio.Citas.ObtenerCitaPorId;
 using DentalCare.Abstraccion.LogicaDeNegocio.Citas.ObtenerCitasPaciente;
 using DentalCare.Abstraccion.LogicaDeNegocio.Citas.ObtenerTodasLasCitas;
 using DentalCare.Abstraccion.LogicaDeNegocio.UsoProducto;
 using DentalCare.Abstraccion.Modelo.Citas;
 using DentalCare.Abstraccion.Modelo.Producto.UsoProducto;
 using DentalCare.AccesoADatos;
+using DentalCare.LogicaDeNegocio.Citas.ObtenerCitaPorId;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using DentalCare.AccesoADatos.UsoProducto.RegistrarUsoProducto;
 
@@ -29,6 +30,7 @@ namespace DentalCare.UI.Controllers
         private readonly ICambiarEstadoCitaLN _cambiarEstadoLN;
         private readonly IRegistrarUsoProductoLN _usoProductoLN;
         private readonly IObtenerCitasPacienteLN _obtenerPacienteLN;
+        private readonly IObtenerCitaPorIdLN _obtenerPorIdLN;
 
         public CitaController()
         {
@@ -37,6 +39,7 @@ namespace DentalCare.UI.Controllers
             _cambiarEstadoLN = new CambiarEstadoCitaLN();
             _obtenerPacienteLN = new ObtenerCitasPacienteLN();
             _usoProductoLN = new RegistrarUsoProductoLN(new RegistrarUsoProductoAD(new Contexto()));
+            _obtenerPorIdLN = new ObtenerCitaPorIdLN();
         }
 
         // GET: Cita/ObtenerTodasLasCitas
@@ -46,7 +49,19 @@ namespace DentalCare.UI.Controllers
             return View(lista);
         }
 
-        // GET: Cita/Create
+        // GET: Cita/Detalle/5
+        public ActionResult Detalle(int id)
+        {
+            var cita = _obtenerPorIdLN.Obtener(id);
+            if (cita == null)
+            {
+                TempData["Error"] = "No se encontró la cita.";
+                return RedirectToAction("ObtenerTodasLasCitas");
+            }
+            return View("DetalleCita", cita);
+        }
+
+        // GET: Cita/AgregarCita
         public ActionResult AgregarCita()
         {
             var dto = CargarDropdowns(new CitaDto());
@@ -88,11 +103,9 @@ namespace DentalCare.UI.Controllers
                 TempData["Error"] = "No se encontró la cita.";
                 return RedirectToAction("ObtenerTodasLasCitas");
             }
-            // Usar la vista existente "CancelarConfirmado"
             return View("CancelarConfirmado", cita);
         }
 
-        // POST: Procesar cancelación (sin ActionName)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CancelarConfirmado(int id, string motivoCancelacion)
@@ -101,7 +114,7 @@ namespace DentalCare.UI.Controllers
             if (error != null)
             {
                 TempData["Error"] = error;
-                return RedirectToAction("Cancelar", new { id }); 
+                return RedirectToAction("Cancelar", new { id });
             }
             TempData["Exito"] = "Cita cancelada correctamente.";
             return RedirectToAction("ObtenerTodasLasCitas");
@@ -117,11 +130,9 @@ namespace DentalCare.UI.Controllers
                 TempData["Error"] = "No se encontró la cita.";
                 return RedirectToAction("ObtenerTodasLasCitas");
             }
-            // Usar la vista existente "RechazarConfirmado"
             return View("RechazarConfirmado", cita);
         }
 
-        // POST: Procesar rechazo (sin ActionName)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult RechazarConfirmado(int id)
@@ -136,14 +147,12 @@ namespace DentalCare.UI.Controllers
             return RedirectToAction("ObtenerTodasLasCitas");
         }
 
-        // POST: Confirmar (ya funcionaba)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Confirmar(int id)
         {
             string error = _cambiarEstadoLN.Confirmar(id);
-            TempData[error != null ? "Error" : "Exito"] =
-                error ?? "Cita confirmada correctamente.";
+            TempData[error != null ? "Error" : "Exito"] = error ?? "Cita confirmada correctamente.";
             return RedirectToAction("ObtenerTodasLasCitas");
         }
 
@@ -156,9 +165,7 @@ namespace DentalCare.UI.Controllers
                 TempData["Error"] = "No se encontró la cita.";
                 return RedirectToAction("ObtenerTodasLasCitas");
             }
-            // Cargar dropdowns con los datos de la cita
-            var dto = CargarDropdowns(cita);
-            return View(dto);
+            return View(CargarDropdowns(cita));
         }
 
         [HttpPost]
@@ -172,7 +179,6 @@ namespace DentalCare.UI.Controllers
                 return View(dto);
             }
 
-            // Obtener el nombre del estado a partir del IdEstado seleccionado
             string nombreEstado = ObtenerNombreEstado(dto.IdEstado);
             if (string.IsNullOrEmpty(nombreEstado))
             {
@@ -193,7 +199,6 @@ namespace DentalCare.UI.Controllers
             return RedirectToAction("ObtenerTodasLasCitas");
         }
 
-        // Método auxiliar para obtener nombre de estado por ID
         private string ObtenerNombreEstado(int idEstado)
         {
             using (var ctx = new Contexto())
@@ -207,33 +212,26 @@ namespace DentalCare.UI.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Asistir(int id)
         {
-            TimeSpan horaInicio = DateTime.Now.TimeOfDay;
-            string error = _cambiarEstadoLN.Asistir(id, horaInicio);
-            TempData[error != null ? "Error" : "Exito"] =
-                error ?? "Asistencia registrada correctamente.";
+            string error = _cambiarEstadoLN.Asistir(id, DateTime.Now.TimeOfDay);
+            TempData[error != null ? "Error" : "Exito"] = error ?? "Asistencia registrada correctamente.";
             return RedirectToAction("ObtenerTodasLasCitas");
         }
 
-        // POST: Ausente
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Ausente(int id)
         {
             string error = _cambiarEstadoLN.Ausente(id);
-            TempData[error != null ? "Error" : "Exito"] =
-                error ?? "Ausencia registrada correctamente.";
+            TempData[error != null ? "Error" : "Exito"] = error ?? "Ausencia registrada correctamente.";
             return RedirectToAction("ObtenerTodasLasCitas");
         }
 
-        // POST: Finalizar
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Finalizar(int id)
         {
-            TimeSpan horaFin = DateTime.Now.TimeOfDay;
-            string error = _cambiarEstadoLN.Finalizar(id, horaFin);
-            TempData[error != null ? "Error" : "Exito"] =
-                error ?? "Cita finalizada correctamente.";
+            string error = _cambiarEstadoLN.Finalizar(id, DateTime.Now.TimeOfDay);
+            TempData[error != null ? "Error" : "Exito"] = error ?? "Cita finalizada correctamente.";
             return RedirectToAction("ObtenerTodasLasCitas");
         }
 
@@ -248,7 +246,7 @@ namespace DentalCare.UI.Controllers
             }
 
             ViewBag.IdCita = id;
-            ViewBag.NombrePaciente = cita.NombrePaciente; // ajusta según el nombre real de la propiedad en CitaDto
+            ViewBag.NombrePaciente = cita.NombrePaciente;
 
             var productosUsados = _usoProductoLN.ObtenerProductosUsadosPorCita(id);
 
@@ -265,10 +263,39 @@ namespace DentalCare.UI.Controllers
             return View(productosUsados);
         }
 
-        //-----------------paciente
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RegistrarProductos(UsoProductoDto dto)
+        {
+            if (dto == null)
+            {
+                TempData["Error"] = "Datos inválidos.";
+                return RedirectToAction("ObtenerTodasLasCitas");
+            }
+            if (dto.Cantidad <= 0 || dto.IdProducto == 0)
+            {
+                TempData["Error"] = "Debe seleccionar un producto y una cantidad válida.";
+                return RedirectToAction("RegistrarProductos", new { id = dto.IdCita });
+            }
 
-        // GET: Cita/MisCitas
-        // Escenario 4: historial de citas del paciente logueado
+            string error = _usoProductoLN.RegistrarUso(dto);
+            if (error != null)
+            {
+                TempData["Error"] = error;
+                return RedirectToAction("RegistrarProductos", new { id = dto.IdCita });
+            }
+
+            string finalizarError = _cambiarEstadoLN.Finalizar(dto.IdCita, DateTime.Now.TimeOfDay);
+            TempData["Exito"] = finalizarError != null
+                ? "Producto registrado correctamente. Nota: " + finalizarError
+                : "Producto registrado y cita finalizada correctamente.";
+
+            return RedirectToAction("RegistrarProductos", new { id = dto.IdCita });
+        }
+
+        // ---------------------------------------------------------------
+        // Paciente
+        // ---------------------------------------------------------------
         [Authorize(Roles = "Paciente")]
         public ActionResult MisCitas()
         {
@@ -277,25 +304,20 @@ namespace DentalCare.UI.Controllers
             return View(lista);
         }
 
-        // GET: Cita/CancelarMiCita/5
-        // Escenario 4: confirmación antes de cancelar
         [Authorize(Roles = "Paciente")]
         public ActionResult CancelarMiCita(int id)
         {
             string aspNetUserId = User.Identity.GetUserId();
             var lista = _obtenerPacienteLN.ObtenerPorPaciente(aspNetUserId);
             var cita = lista.FirstOrDefault(c => c.IdCita == id);
-
             if (cita == null)
             {
                 TempData["Error"] = "No se encontró la cita o no te pertenece.";
                 return RedirectToAction("MisCitas");
             }
-
             return View(cita);
         }
 
-        // POST: Cita/CancelarMiCita/5
         [HttpPost, ActionName("CancelarMiCita")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Paciente")]
@@ -311,56 +333,17 @@ namespace DentalCare.UI.Controllers
             return RedirectToAction("MisCitas");
         }
 
-
-        // POST: Cita/RegistrarProductos
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult RegistrarProductos(UsoProductoDto dto)
-        {
-            if (dto == null)
-            {
-                TempData["Error"] = "Datos inválidos.";
-                return RedirectToAction("ObtenerTodasLasCitas");
-            }
-            if (dto.Cantidad <= 0 || dto.IdProducto == 0)
-            {
-                TempData["Error"] = "Debe seleccionar un producto y una cantidad válida.";
-                return RedirectToAction("RegistrarProductos", new { id = dto.IdCita });
-            }
-            string error = _usoProductoLN.RegistrarUso(dto);
-
-            if (error != null)
-            {
-                TempData["Error"] = error;
-                return RedirectToAction("RegistrarProductos", new { id = dto.IdCita });
-            }
-            string finalizarError = _cambiarEstadoLN.Finalizar(dto.IdCita, DateTime.Now.TimeOfDay);
-
-            if (finalizarError != null)
-            {
-                TempData["Exito"] = "Producto registrado correctamente. Nota: " + finalizarError;
-            }
-            else
-            {
-                TempData["Exito"] = "Producto registrado y cita finalizada correctamente.";
-            }
-            return RedirectToAction("RegistrarProductos", new { id = dto.IdCita });
-        }
-
         public ActionResult SolicitarCitaUsuario()
         {
-            var dto = CargarDropdowns(new CitaDto { IdEstado = 1 }); // Activo por defecto
+            var dto = CargarDropdowns(new CitaDto { IdEstado = 1 });
             return View(dto);
         }
 
-        // POST: Cita/SolicitarCita
-        // Reutiliza exactamente la misma lógica de AgregarCitaLN
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult SolicitarCitaUsuario(CitaDto dto)
         {
             ModelState.Remove("Hora");
-
             if (!ModelState.IsValid)
             {
                 CargarDropdowns(dto);
@@ -372,7 +355,6 @@ namespace DentalCare.UI.Controllers
             {
                 if (error.Contains("no está registrado"))
                     ViewBag.MostrarRegistrarPaciente = true;
-
                 ModelState.AddModelError(string.Empty, error);
                 CargarDropdowns(dto);
                 return View(dto);
@@ -382,7 +364,6 @@ namespace DentalCare.UI.Controllers
             return RedirectToAction("ObtenerTodasLasCitas");
         }
 
-
         // ---------------------------------------------------------------
         // Auxiliar: carga dropdowns
         // ---------------------------------------------------------------
@@ -390,30 +371,22 @@ namespace DentalCare.UI.Controllers
         {
             using (var ctx = new Contexto())
             {
-                // Solo doctores (rol Doctor)
-                var rolDoctor = ctx.AspNetRoles
-                    .FirstOrDefault(r => r.Name == "Doctor");
-
+                var rolDoctor = ctx.AspNetRoles.FirstOrDefault(r => r.Name == "Doctor");
                 if (rolDoctor != null)
                 {
                     var idsAspNetDoctores = ctx.AspNetUserRoles
                         .Where(ur => ur.RoleId == rolDoctor.Id)
-                        .Select(ur => ur.UserId)
-                        .ToList();
+                        .Select(ur => ur.UserId).ToList();
 
                     dto.ListaDoctores = ctx.Usuarios
-                        .Where(u => idsAspNetDoctores.Contains(u.ASPNET_USER_ID)
-                                 && u.IdEstado == 1)
+                        .Where(u => idsAspNetDoctores.Contains(u.ASPNET_USER_ID) && u.IdEstado == 1)
                         .Select(u => new SelectListItem
                         {
                             Value = u.IdUsuario.ToString(),
                             Text = u.Nombre + " " + u.PrimerApellido
                         }).ToList();
                 }
-                else
-                {
-                    dto.ListaDoctores = new List<SelectListItem>();
-                }
+                else dto.ListaDoctores = new List<SelectListItem>();
 
                 dto.ListaMotivos = ctx.MotivosCita
                     .Where(m => m.IdEstado == 1)

@@ -376,6 +376,7 @@
     <Content Include="Views\Reporteria\HistorialDoctora.cshtml" />
     <Content Include="Views\Reporteria\ReportesInventario.cshtml" />
     <Content Include="Views\Bitacora\ObtenerTodosLosEventos.cshtml" />
+    <Content Include="Views\Cita\DetalleCita.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
