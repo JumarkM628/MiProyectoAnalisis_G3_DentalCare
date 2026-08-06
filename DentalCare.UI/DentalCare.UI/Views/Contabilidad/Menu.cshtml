@@ -24,46 +24,6 @@
             margin: 0;
         }
 
-    .metrics-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 16px;
-        margin-bottom: 36px;
-    }
-
-    .metric-card {
-        background: #fff;
-        border: 1px solid #E8ECF4;
-        border-radius: 12px;
-        padding: 18px 20px;
-    }
-
-        .metric-card .m-label {
-            font-size: 12px;
-            color: #8896B0;
-            font-weight: 500;
-            margin-bottom: 6px;
-        }
-
-        .metric-card .m-value {
-            font-size: 22px;
-            font-weight: 700;
-            color: #0C1B33;
-        }
-
-        .metric-card .m-sub {
-            font-size: 12px;
-            margin-top: 4px;
-        }
-
-    .m-sub.pos {
-        color: #27B07A;
-    }
-
-    .m-sub.neg {
-        color: #E24B4A;
-    }
-
     .section-label {
         font-size: 11px;
         font-weight: 700;
@@ -128,16 +88,6 @@
         flex: 1;
     }
 
-    .mod-badge {
-        display: inline-block;
-        font-size: 10px;
-        font-weight: 600;
-        padding: 3px 9px;
-        border-radius: 20px;
-        margin-top: 12px;
-        width: fit-content;
-    }
-
     .mod-arrow {
         position: absolute;
         right: 18px;
@@ -151,65 +101,25 @@
         background: #E6F1FB;
     }
 
-    .txt-blue {
-        color: #185FA5;
-    }
-
     .bg-teal {
         background: #E1F5EE;
-    }
-
-    .txt-teal {
-        color: #0F6E56;
     }
 
     .bg-amber {
         background: #FAEEDA;
     }
 
-    .txt-amber {
-        color: #854F0B;
-    }
-
-    .bg-coral {
-        background: #FAECE7;
-    }
-
-    .txt-coral {
-        color: #993C1D;
-    }
-
     .bg-purple {
         background: #EEEDFE;
     }
 
-    .txt-purple {
-        color: #534AB7;
-    }
-
-    .bg-green {
-        background: #EAF3DE;
-    }
-
-    .txt-green {
-        color: #3B6D11;
-    }
-
     @@media (max-width: 992px) {
-        .metrics-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
         .modules-grid {
             grid-template-columns: repeat(2, 1fr);
         }
     }
 
     @@media (max-width: 576px) {
-        .metrics-grid {
-            grid-template-columns: 1fr;
-        }
-
         .modules-grid {
             grid-template-columns: 1fr;
         }
@@ -222,8 +132,6 @@
         <h1>Contabilidad</h1>
         <p>Resumen financiero &middot; @DateTime.Now.ToString("MMMM yyyy")</p>
     </div>
-
-   
 
     <!-- MÓDULOS -->
     <div class="section-label">Accesos rápidos</div>
@@ -267,28 +175,15 @@
             <span class="mod-arrow">›</span>
         </a>
 
-
-        <a href="@Url.Action("Anticipo", "Contabilidad")" class="mod-card">
+        <a href="@Url.Action("HistorialPagos", "Pago")" class="mod-card">
             <div class="mod-icon bg-purple">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10" />
                     <polyline points="12 6 12 12 16 14" />
                 </svg>
             </div>
-            <div class="mod-title">Anticipos</div>
-            <div class="mod-desc">Registra pagos adelantados de pacientes antes de su tratamiento.</div>
-            <span class="mod-arrow">›</span>
-        </a>
-
-        <a href="@Url.Action("EditarPago", "Contabilidad")" class="mod-card">
-            <div class="mod-icon bg-green">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#3B6D11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                </svg>
-            </div>
-            <div class="mod-title">Editar pago</div>
-            <div class="mod-desc">Corrige errores en pagos registrados. Registra fecha, hora y usuario del cambio.</div>
+            <div class="mod-title">Historial de pagos</div>
+            <div class="mod-desc">Consulta los pagos ya registrados, con su fecha, monto y método.</div>
             <span class="mod-arrow">›</span>
         </a>
 

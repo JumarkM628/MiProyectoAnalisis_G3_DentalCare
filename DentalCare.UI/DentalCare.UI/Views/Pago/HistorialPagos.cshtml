@@ -1,416 +1,732 @@
 ﻿@model List<DentalCare.Abstraccion.Modelo.Pagos.PagoDto>
+
 @{
     ViewBag.Title = "Estado de Pagos";
+
     decimal totalCobrado = Model != null ? Model.Where(p => p.NombreEstado == "Activo").Sum(p => p.Monto) : 0;
     decimal totalPendiente = Model != null ? Model.Where(p => p.NombreEstado == "Pendiente").Sum(p => p.Monto) : 0;
     int conDeuda = Model != null ? Model.Where(p => p.NombreEstado == "Pendiente").Select(p => p.NombrePaciente).Distinct().Count() : 0;
+    int totalRegistros = Model != null ? Model.Count : 0;
 }
-<style>
-    .ep-page {
-        padding: 32px 0
-    }
 
-    .ep-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 28px
-    }
+<div class="inv-page">
 
-    .ep-header-left h1 {
-        font-size: 22px;
-        font-weight: 700;
-        color: #0C1B33;
-        margin: 0 0 4px
-    }
-
-    .ep-header-left p {
-        font-size: 13px;
-        color: #6B7A99;
-        margin: 0
-    }
-
-    .metricas-grid {
-        display: grid;
-        grid-template-columns: repeat(4,1fr);
-        gap: 14px;
-        margin-bottom: 20px
-    }
-
-    .metrica-card {
-        background: #fff;
-        border: 1px solid #E8ECF4;
-        border-radius: 14px;
-        padding: 18px 20px
-    }
-
-    .metrica-label {
-        font-size: 11px;
-        font-weight: 700;
-        color: #8896B0;
-        text-transform: uppercase;
-        letter-spacing: .07em
-    }
-
-    .metrica-valor {
-        font-size: 22px;
-        font-weight: 700;
-        color: #0C1B33;
-        margin: 4px 0
-    }
-
-    .metrica-sub {
-        font-size: 12px;
-        color: #6B7A99
-    }
-
-    .ep-card {
-        background: #fff;
-        border: 1px solid #E8ECF4;
-        border-radius: 14px;
-        padding: 20px;
-        margin-bottom: 20px
-    }
-
-    .filtros-row {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-bottom: 16px;
-        align-items: flex-end
-    }
-
-    .fg {
-        display: flex;
-        flex-direction: column;
-        gap: 4px
-    }
-
-        .fg label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #3D4D6B
-        }
-
-        .fg input, .fg select {
-            border: 1px solid #DDE1EC;
-            border-radius: 8px;
-            padding: 8px 10px;
-            font-size: 13px;
-            font-family: inherit;
-            min-width: 160px
-        }
-
-            .fg input:focus, .fg select:focus {
-                outline: none;
-                border-color: #378ADD
-            }
-
-    .ep-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 13px
-    }
-
-        .ep-table th {
-            text-align: left;
-            padding: 10px;
-            font-size: 11px;
-            font-weight: 700;
-            color: #8896B0;
-            text-transform: uppercase;
-            letter-spacing: .05em;
-            border-bottom: 2px solid #E8ECF4
-        }
-
-        .ep-table td {
-            padding: 12px;
-            border-bottom: 1px solid #F0F2F8;
-            color: #3D4D6B;
-            vertical-align: middle
-        }
-
-        .ep-table tbody tr:hover {
-            background: #F9FAFC
-        }
-
-    .td-right {
-        text-align: right;
-        font-weight: 600;
-        color: #0C1B33
-    }
-
-    .badge-pagado {
-        background: #EAF3DE;
-        color: #3B6D11;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 600
-    }
-
-    .badge-pendiente {
-        background: #FAEEDA;
-        color: #854F0B;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 600
-    }
-
-    .badge-inactivo {
-        background: #F5F6FA;
-        color: #6B7A99;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 600
-    }
-
-    .btn-accion {
-        border: none;
-        cursor: pointer;
-        font-size: 12px;
-        font-weight: 600;
-        padding: 5px 10px;
-        border-radius: 6px;
-        font-family: inherit;
-        text-decoration: none;
-        display: inline-block
-    }
-
-    .btn-ver {
-        background: #E6F1FB;
-        color: #185FA5
-    }
-
-        .btn-ver:hover {
-            background: #B5D4F4;
-            text-decoration: none;
-            color: #185FA5
-        }
-
-    .btn-pendiente {
-        background: #FAEEDA;
-        color: #854F0B
-    }
-
-        .btn-pendiente:hover {
-            background: #F5CFA0;
-            text-decoration: none;
-            color: #854F0B
-        }
-
-    .btn-pagado {
-        background: #EAF3DE;
-        color: #3B6D11
-    }
-
-        .btn-pagado:hover {
-            background: #C7E5A5;
-            text-decoration: none;
-            color: #3B6D11
-        }
-
-    .alert-custom {
-        display: none;
-        padding: 12px 16px;
-        border-radius: 10px;
-        font-size: 13px;
-        margin-bottom: 20px;
-        align-items: center;
-        gap: 10px
-    }
-
-        .alert-custom.show {
-            display: flex
-        }
-
-    .alert-success-custom {
-        background: #EAF3DE;
-        color: #3B6D11;
-        border: 1px solid #97C459
-    }
-
-    .alert-danger-custom {
-        background: #FCEBEB;
-        color: #A0291E;
-        border: 1px solid #F5C6C6
-    }
-
-    .alert-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: currentColor;
-        flex-shrink: 0
-    }
-
-    .btn-nuevo {
-        padding: 9px 18px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 600;
-        border: none;
-        background: #185FA5;
-        color: #fff;
-        cursor: pointer;
-        font-family: inherit;
-        text-decoration: none;
-        display: inline-block
-    }
-
-        .btn-nuevo:hover {
-            background: #0C447C;
-            text-decoration: none;
-            color: #fff
-        }
-
-    .btn-limpiar {
-        padding: 9px 14px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 600;
-        border: 1px solid #DDE1EC;
-        background: #fff;
-        color: #3D4D6B;
-        cursor: pointer;
-        font-family: inherit
-    }
-
-    @@media(max-width:900px) {
-        .metricas-grid {
-            grid-template-columns: repeat(2,1fr)
-        }
-
-        .ep-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 12px
-        }
-    }
-</style>
-
-<div class="container ep-page">
-    <div class="d-flex align-items-center gap-2">
-        <a href="@Url.Action("Menu", "Contabilidad")" class="btn-secundario ms-2">&#8592; Volver</a>
-    </div>
-    <div class="ep-header">
-        <div class="ep-header-left">
-            <h1>Estado de pagos</h1>
-            <p>Controlá los pagos de tratamientos de los pacientes</p>
+    <div class="inv-header exp-header">
+        <div>
+            <h1 class="inv-titulo">Estado de pagos</h1>
+            <p class="inv-subtitulo">Controlá los pagos de tratamientos de los pacientes.</p>
         </div>
-        <div style="display:flex;gap:10px;">
-            @Html.ActionLink("+ Registrar Pago", "RegistrarPago", "Pago", null, new { @class = "btn-nuevo" })
-            @Html.ActionLink("Costos", "CostosTratamiento", "Catalogo", null, new { @class = "btn-nuevo", style = "background:#3B6D11;" })
+        <div class="exp-header-acciones">
+            @Html.ActionLink("Volver", "Menu", "Contabilidad", null, new { @class = "btn-header" })
+            @Html.ActionLink("Costos", "CostosTratamiento", "Catalogo", null, new { @class = "btn-header" })
+            @Html.ActionLink("Registrar Pago", "RegistrarPago", "Pago", null, new { @class = "btn-header btn-header-solido" })
         </div>
     </div>
 
     @if (TempData["Exito"] != null)
-    {<div class="alert-custom alert-success-custom show"><div class="alert-dot"></div><span>@TempData["Exito"]</span></div>}
+    {
+        <div class="alerta-verde">@TempData["Exito"]</div>
+    }
+
     @if (TempData["Error"] != null)
-    {<div class="alert-custom alert-danger-custom show"><div class="alert-dot"></div><span>@TempData["Error"]</span></div>}
+    {
+        <div class="alerta-rojo">@TempData["Error"]</div>
+    }
 
     <div class="metricas-grid">
+
         <div class="metrica-card">
             <div class="metrica-label">Cobrado</div>
-            <div class="metrica-valor">&#8353; @totalCobrado.ToString("N0")</div>
+            <div class="metrica-valor valor-ok">&#8353; @totalCobrado.ToString("N0")</div>
             <div class="metrica-sub">pagos completados</div>
         </div>
+
         <div class="metrica-card">
             <div class="metrica-label">Pendiente</div>
-            <div class="metrica-valor">&#8353; @totalPendiente.ToString("N0")</div>
+            <div class="metrica-valor valor-alerta">&#8353; @totalPendiente.ToString("N0")</div>
             <div class="metrica-sub">por cobrar</div>
         </div>
+
         <div class="metrica-card">
             <div class="metrica-label">Total registros</div>
-            <div class="metrica-valor">@(Model?.Count ?? 0)</div>
+            <div class="metrica-valor">@totalRegistros</div>
             <div class="metrica-sub">pagos en total</div>
         </div>
+
         <div class="metrica-card">
             <div class="metrica-label">Pacientes con deuda</div>
             <div class="metrica-valor">@conDeuda</div>
             <div class="metrica-sub">con pagos pendientes</div>
         </div>
+
     </div>
 
-    <div class="ep-card">
-        <div class="filtros-row">
-            <div class="fg"><label>Buscar</label><input type="text" id="buscar" placeholder="Paciente o cita..." oninput="filtrar()" /></div>
-            <div class="fg">
-                <label>Estado</label>
-                <select id="estado" onchange="filtrar()">
-                    <option value="">Todos</option>
-                    <option value="Activo">Pagado</option>
-                    <option value="Pendiente">Pendiente</option>
-                </select>
+    <div class="trat-form-card">
+
+        <div class="trat-card-bar">Pagos registrados</div>
+
+        <div class="trat-card-body">
+
+            <div class="filtro-barra">
+
+                <div class="filtro-campo">
+                    <label class="trat-label" for="buscar">Buscar</label>
+                    <input type="text" id="buscar" class="trat-input" placeholder="Paciente o cita..." oninput="filtrar()" />
+                </div>
+
+                <div class="filtro-campo">
+                    <label class="trat-label" for="estado">Estado</label>
+                    <select id="estado" class="trat-input" onchange="filtrar()">
+                        <option value="">Todos</option>
+                        <option value="Activo">Pagado</option>
+                        <option value="Pendiente">Pendiente</option>
+                    </select>
+                </div>
+
+                <button type="button" class="btn-inv-cancelar" onclick="limpiar()">Limpiar</button>
+
+                <span class="contador-pill" id="contador">@totalRegistros pagos</span>
+
             </div>
-            <button class="btn-limpiar" onclick="limpiar()">&#x2715; Limpiar</button>
+
+            @if (Model == null || !Model.Any())
+            {
+                <div class="estado-vacio">
+                    <p class="estado-vacio-titulo">Sin pagos registrados</p>
+                    <p class="estado-vacio-texto">Todavía no hay pagos en el sistema. Registrá el primero desde el botón de arriba.</p>
+                </div>
+            }
+            else
+            {
+                <div class="tabla-scroll">
+                    <table class="rep-tabla" id="tablaHistorial">
+                        <thead>
+                            <tr>
+                                <th class="col-num">#</th>
+                                <th>Paciente</th>
+                                <th class="col-cita">Cita</th>
+                                <th>Método</th>
+                                <th class="col-fecha">Fecha</th>
+                                <th class="col-monto">Monto</th>
+                                <th class="col-estado">Estado</th>
+                                <th class="col-acciones"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in Model)
+                            {
+                                var badge = p.NombreEstado == "Activo" ? "badge-pagado"
+                                          : p.NombreEstado == "Pendiente" ? "badge-pendiente"
+                                          : "badge-inactivo";
+                                var textoEstado = p.NombreEstado == "Activo" ? "Pagado" : p.NombreEstado;
+                                var nombre = p.NombrePaciente ?? "";
+
+                                <tr data-buscar="@(nombre.ToLower() + " " + p.IdCita)" data-estado="@p.NombreEstado">
+                                    <td class="celda-num">@p.IdContabilidad</td>
+                                    <td class="celda-desc">@nombre</td>
+                                    <td class="celda-num">#@p.IdCita</td>
+                                    <td>@p.NombreMetodoPago</td>
+                                    <td>@(p.FechaPago.HasValue ? p.FechaPago.Value.ToString("dd/MM/yyyy") : "—")</td>
+                                    <td class="celda-monto">&#8353; @p.Monto.ToString("N0")</td>
+                                    <td><span class="badge-custom @badge">@textoEstado</span></td>
+                                    <td>
+                                        <div class="celda-acciones">
+                                            @if (p.NombreEstado == "Activo")
+                                            {
+                                                @Html.ActionLink("Pendiente", "MarcarPendiente", new { id = p.IdContabilidad }, new { @class = "btn-accion btn-pendiente" })
+                                            }
+                                            @if (p.NombreEstado == "Pendiente")
+                                            {
+                                                @Html.ActionLink("Marcar pagado", "MarcarPagado", new { id = p.IdContabilidad }, new { @class = "btn-accion btn-pagado" })
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="trat-hint sin-resultados" id="sinResultados" style="display:none;">Ningún pago coincide con los filtros aplicados.</p>
+            }
+
         </div>
 
-        <table class="ep-table" id="tablaHistorial">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Paciente</th>
-                    <th>Cita</th>
-                    <th>Método</th>
-                    <th>Fecha</th>
-                    <th class="td-right">Monto</th>
-                    <th>Estado</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model == null || !Model.Any())
-                {
-                    <tr><td colspan="8" style="text-align:center;padding:24px;color:#8896B0;">No hay pagos registrados.</td></tr>
-                }
-                else
-                {
-                    foreach (var p in Model)
-                    {
-                        string badge = p.NombreEstado == "Activo" ? "badge-pagado"
-                                     : p.NombreEstado == "Pendiente" ? "badge-pendiente"
-                                     : "badge-inactivo";
-                        string textoEstado = p.NombreEstado == "Activo" ? "Pagado" : p.NombreEstado;
-                        <tr data-buscar="@p.NombrePaciente.ToLower() @p.IdCita" data-estado="@p.NombreEstado">
-                            <td style="color:#8896B0;font-size:11px;">@p.IdContabilidad</td>
-                            <td style="font-weight:600;color:#0C1B33;">@p.NombrePaciente</td>
-                            <td>#@p.IdCita</td>
-                            <td>@p.NombreMetodoPago</td>
-                            <td style="color:#6B7A99;">@(p.FechaPago.HasValue ? p.FechaPago.Value.ToString("dd/MM/yyyy") : "—")</td>
-                            <td class="td-right">&#8353; @p.Monto.ToString("N0")</td>
-                            <td><span class="@badge">@textoEstado</span></td>
-                            <td style="display:flex;gap:5px;">
-                                @if (p.NombreEstado == "Activo")
-                                {
-                                    @Html.ActionLink("Pendiente", "MarcarPendiente", new { id = p.IdContabilidad }, new { @class = "btn-accion btn-pendiente" })
-                                }
-                                @if (p.NombreEstado == "Pendiente")
-                                {
-                                    @Html.ActionLink("Marcar pagado", "MarcarPagado", new { id = p.IdContabilidad }, new { @class = "btn-accion btn-pagado" })
-                                }
-                            </td>
-                        </tr>
-                    }
-                }
-            </tbody>
-        </table>
     </div>
+
 </div>
+
+<style>
+    /* ── Tokens (los mismos del resto del sistema) ── */
+    .inv-page {
+        padding: 36px 20px 56px;
+        --dc-teal-oscuro: #0f3b3c;
+        --dc-teal: #2e8f8c;
+        --dc-teal-barra: #1c6a68;
+        --dc-tinta: #1e2d3d;
+        --dc-suave: #6b7f92;
+        --dc-input-bg: #f5f8fe;
+        --dc-input-borde: #dde5f3;
+        --dc-verde: #2f6d5c;
+        --dc-verde-hover: #275c4d;
+        --dc-gris: #e9ebed;
+        --dc-gris-hover: #dde1e5;
+        --dc-error: #c0392b;
+        --dc-ancho: 1100px;
+    }
+
+    /* ── Encabezado ── */
+    .inv-header {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 20px;
+        padding: 28px 34px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, var(--dc-teal-oscuro) 0%, var(--dc-teal) 100%);
+        box-shadow: 0 10px 26px rgba(15, 59, 60, 0.18);
+    }
+
+    .exp-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .exp-header-acciones {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .inv-titulo {
+        margin: 0;
+        color: #fff;
+        font-size: 1.55rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+    }
+
+    .inv-subtitulo {
+        margin: 10px 0 0;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    .btn-header {
+        display: inline-flex;
+        align-items: center;
+        height: 40px;
+        padding: 0 20px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: background .18s ease, border-color .18s ease;
+    }
+
+        .btn-header:hover,
+        .btn-header:focus {
+            background: rgba(255, 255, 255, 0.22);
+            border-color: #fff;
+            color: #fff;
+            text-decoration: none;
+        }
+
+    /* La acción principal se distingue por relleno, no por otro color */
+    .btn-header-solido {
+        background: #fff;
+        border-color: #fff;
+        color: var(--dc-teal-oscuro);
+        font-weight: 700;
+    }
+
+        .btn-header-solido:hover,
+        .btn-header-solido:focus {
+            background: #eaf5f4;
+            border-color: #eaf5f4;
+            color: var(--dc-teal-oscuro);
+        }
+
+    /* ── Métricas ── */
+    .metricas-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        max-width: var(--dc-ancho);
+        margin: 0 auto 20px;
+    }
+
+    .metrica-card {
+        padding: 18px 22px;
+        border-radius: 14px;
+        background: #fff;
+        border: 1px solid #e8edf4;
+        box-shadow: 0 6px 18px rgba(15, 59, 60, 0.05);
+    }
+
+    .metrica-label {
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--dc-suave);
+    }
+
+    .metrica-valor {
+        margin: 6px 0 2px;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--dc-tinta);
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* El color solo en los dos montos que importan: lo cobrado y lo que falta */
+    .valor-ok {
+        color: #216d4f;
+    }
+
+    .valor-alerta {
+        color: #8a6210;
+    }
+
+    .metrica-sub {
+        font-size: 0.78rem;
+        color: var(--dc-suave);
+    }
+
+    /* ── Tarjeta ── */
+    .trat-form-card {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 22px;
+        padding: 0;
+        overflow: hidden;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 10px 26px rgba(15, 59, 60, 0.09);
+    }
+
+    .trat-card-bar {
+        padding: 18px 30px;
+        background: linear-gradient(135deg, var(--dc-teal-oscuro) 0%, var(--dc-teal-barra) 100%);
+        color: #fff;
+        font-size: 1.02rem;
+        font-weight: 700;
+    }
+
+    .trat-card-body {
+        padding: 24px 30px 28px;
+    }
+
+    /* ── Filtros ── */
+    .filtro-barra {
+        display: flex;
+        align-items: flex-end;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    .filtro-campo {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .trat-label {
+        margin: 0;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--dc-tinta);
+    }
+
+    .trat-hint {
+        font-size: 0.8rem;
+        color: var(--dc-suave);
+    }
+
+    /* background-color, no el atajo background: el select usa background-image */
+    .trat-input {
+        box-sizing: border-box;
+        height: 44px;
+        min-width: 200px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 1px solid var(--dc-input-borde);
+        background-color: var(--dc-input-bg);
+        font-family: inherit;
+        font-size: 0.92rem;
+        color: var(--dc-tinta);
+        outline: none;
+        transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+    }
+
+        .trat-input:hover {
+            border-color: #c8d6ec;
+        }
+
+        .trat-input:focus {
+            background-color: #fff;
+            border-color: var(--dc-teal);
+            box-shadow: 0 0 0 3px rgba(46, 143, 140, 0.15);
+        }
+
+        .trat-input::placeholder {
+            color: #a9bccb;
+        }
+
+    select.trat-input {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        padding-right: 40px;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236b7f92' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+    }
+
+        select.trat-input::-ms-expand {
+            display: none;
+        }
+
+    .contador-pill {
+        margin-left: auto;
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: rgba(46, 143, 140, 0.1);
+        color: #216d6a;
+        font-size: 0.8rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* ── Tabla ── */
+    .tabla-scroll {
+        overflow-x: auto;
+        border: 1px solid var(--dc-input-borde);
+        border-radius: 12px;
+    }
+
+    .rep-tabla {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+        .rep-tabla thead th {
+            padding: 12px 16px;
+            background: #eef4f9;
+            border-bottom: 1px solid var(--dc-input-borde);
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--dc-suave);
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .rep-tabla td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f4f8;
+            color: var(--dc-tinta);
+            vertical-align: middle;
+        }
+
+        .rep-tabla tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .rep-tabla tbody tr:hover td {
+            background: #f8fbfe;
+        }
+
+    .col-num {
+        width: 70px;
+    }
+
+    .col-cita {
+        width: 80px;
+    }
+
+    .col-fecha {
+        width: 110px;
+    }
+
+    .col-monto {
+        width: 130px;
+        text-align: right !important;
+    }
+
+    .col-estado {
+        width: 120px;
+    }
+
+    .col-acciones {
+        width: 150px;
+    }
+
+    .celda-num {
+        color: var(--dc-suave);
+        font-size: 0.85rem;
+    }
+
+    .celda-desc {
+        font-weight: 600;
+        min-width: 180px;
+    }
+
+    /* Ancho fijo por dígito: los montos quedan en columna y se comparan */
+    .celda-monto {
+        text-align: right;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+    /* En una celda de tabla el flex va en un div interno, no en el td */
+    .celda-acciones {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .sin-resultados {
+        margin: 16px 0 0;
+        text-align: center;
+    }
+
+    /* ── Etiquetas de estado ── */
+    .badge-custom {
+        display: inline-block;
+        padding: 4px 13px;
+        border-radius: 999px;
+        font-size: 0.76rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .badge-pagado {
+        background: #e3f4ea;
+        color: #1d6b41;
+    }
+
+    .badge-pendiente {
+        background: #fdf1d8;
+        color: #7a5c12;
+    }
+
+    .badge-inactivo {
+        background: #eef1f4;
+        color: #5a6672;
+    }
+
+    /* ── Acciones de fila ── */
+    .btn-accion {
+        display: inline-flex;
+        align-items: center;
+        height: 32px;
+        padding: 0 12px;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: background .15s ease;
+    }
+
+    .btn-pendiente {
+        background: #fdf1d8;
+        color: #7a5c12;
+        border-color: rgba(214, 158, 46, 0.35);
+    }
+
+        .btn-pendiente:hover,
+        .btn-pendiente:focus {
+            background: #f8e4b8;
+            color: #6a5010;
+            text-decoration: none;
+        }
+
+    .btn-pagado {
+        background: #e3f4ea;
+        color: #1d6b41;
+        border-color: rgba(46, 143, 140, 0.3);
+    }
+
+        .btn-pagado:hover,
+        .btn-pagado:focus {
+            background: #cbe9d7;
+            color: #175636;
+            text-decoration: none;
+        }
+
+    .btn-inv-cancelar {
+        display: inline-flex;
+        align-items: center;
+        height: 44px;
+        padding: 0 22px;
+        border: none;
+        border-radius: 8px;
+        background: var(--dc-gris);
+        color: #5a6672;
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background .18s ease, color .18s ease;
+    }
+
+        .btn-inv-cancelar:hover {
+            background: var(--dc-gris-hover);
+            color: var(--dc-tinta);
+            text-decoration: none;
+        }
+
+    /* ── Estado vacío ── */
+    .estado-vacio {
+        padding: 40px 20px;
+        text-align: center;
+        border: 1px dashed var(--dc-input-borde);
+        border-radius: 12px;
+        background: var(--dc-input-bg);
+    }
+
+    .estado-vacio-titulo {
+        margin: 0 0 6px;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--dc-tinta);
+    }
+
+    .estado-vacio-texto {
+        margin: 0 auto;
+        max-width: 420px;
+        font-size: 0.88rem;
+        line-height: 1.5;
+        color: var(--dc-suave);
+    }
+
+    /* ── Mensajes ── */
+    .alerta-rojo,
+    .alerta-verde {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 18px;
+        padding: 12px 18px;
+        border-radius: 10px;
+        font-size: 0.88rem;
+    }
+
+    .alerta-rojo {
+        background: rgba(220, 53, 53, 0.07);
+        border: 1px solid rgba(220, 53, 53, 0.3);
+        border-left: 4px solid var(--dc-error);
+        color: #9b2020;
+    }
+
+    .alerta-verde {
+        background: rgba(46, 143, 140, 0.08);
+        border: 1px solid rgba(46, 143, 140, 0.3);
+        border-left: 4px solid var(--dc-teal);
+        color: #1b5f5d;
+    }
+
+    /* ── Accesibilidad y responsive ── */
+    .trat-input:focus-visible,
+    .btn-inv-cancelar:focus-visible,
+    .btn-accion:focus-visible {
+        outline: 2px solid var(--dc-teal);
+        outline-offset: 2px;
+    }
+
+    .btn-header:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+    }
+
+    @@media (max-width: 900px) {
+        .metricas-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 680px) {
+        .inv-page {
+            padding: 22px 14px 40px;
+        }
+
+        .inv-header {
+            padding: 22px;
+        }
+
+        .metricas-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .trat-card-bar {
+            padding: 16px 20px;
+        }
+
+        .trat-card-body {
+            padding: 20px 20px 22px;
+        }
+
+        .filtro-campo {
+            flex: 1 1 100%;
+        }
+
+        .trat-input {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .contador-pill {
+            margin-left: 0;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .trat-input,
+        .btn-header,
+        .btn-accion,
+        .btn-inv-cancelar {
+            transition: none;
+        }
+    }
+</style>
 
 @section Scripts {
     <script>
         function filtrar() {
-            var b = document.getElementById('buscar').value.toLowerCase();
-            var e = document.getElementById('estado').value;
-            document.querySelectorAll('#tablaHistorial tbody tr').forEach(function (fila) {
-                var matchB = fila.getAttribute('data-buscar')?.includes(b) ?? true;
-                var matchE = !e || fila.getAttribute('data-estado') === e;
-                fila.style.display = (matchB && matchE) ? '' : 'none';
-            });
+            var texto = document.getElementById('buscar').value.toLowerCase();
+            var estado = document.getElementById('estado').value;
+            var filas = document.querySelectorAll('#tablaHistorial tbody tr');
+            var visibles = 0;
+
+            for (var i = 0; i < filas.length; i++) {
+                var datos = filas[i].getAttribute('data-buscar') || '';
+                var coincideTexto = datos.indexOf(texto) > -1;
+                var coincideEstado = !estado || filas[i].getAttribute('data-estado') === estado;
+                var visible = coincideTexto && coincideEstado;
+
+                filas[i].style.display = visible ? '' : 'none';
+                if (visible) { visibles++; }
+            }
+
+            document.getElementById('contador').textContent = visibles === 1 ? '1 pago' : visibles + ' pagos';
+            document.getElementById('sinResultados').style.display = visibles === 0 ? 'block' : 'none';
         }
+
         function limpiar() {
             document.getElementById('buscar').value = '';
             document.getElementById('estado').value = '';
