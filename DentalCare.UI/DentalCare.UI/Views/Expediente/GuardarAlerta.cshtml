@@ -2,166 +2,42 @@
 
 @{
     ViewBag.Title = "GuardarAlerta";
+
+    // ── ¿A dónde vuelve el botón Cancelar? ──────────────────────────────
+    // 1) Lo que venga explícito: por querystring al entrar, o por el hidden
+    //    del formulario cuando la vista se repinta tras un error de validación.
+    var returnUrl = Request["returnUrl"];
+
+    // 2) Si no vino, se deduce de dónde llegó el usuario. Solo si es una
+    //    página de este mismo sitio y no es esta misma pantalla.
+    if (string.IsNullOrEmpty(returnUrl)
+        && Request.UrlReferrer != null
+        && Request.UrlReferrer.Host == Request.Url.Host
+        && !Request.UrlReferrer.AbsolutePath.Equals(Request.Url.AbsolutePath, StringComparison.OrdinalIgnoreCase))
+    {
+        returnUrl = Request.UrlReferrer.PathAndQuery;
+    }
+
+    // 3) Respaldo. IsLocalUrl evita que alguien fuerce un destino externo
+    //    con ...?returnUrl=https://sitio-falso.com (open redirect).
+    if (string.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
+    {
+        returnUrl = Url.Action("ObtenerTodosLosExpedientes", "Expediente");
+    }
 }
 
+<div class="inv-page">
 
-<style>
-
-    body {
-        background: #f4f7fb;
-    }
-
-    .page-header-custom {
-        background: linear-gradient(135deg, #0ea5e9, #2563eb);
-        padding: 30px;
-        border-radius: 20px;
-        color: white;
-        margin-bottom: 25px;
-        box-shadow: 0 10px 30px rgba(37,99,235,.25);
-    }
-
-        .page-header-custom h2 {
-            margin: 0;
-            font-weight: 700;
-            color: white;
-        }
-
-        .page-header-custom p {
-            margin-top: 10px;
-            opacity: .95;
-        }
-
-    .panel {
-        border: none !important;
-        border-radius: 18px !important;
-        overflow: hidden;
-        box-shadow: 0 8px 25px rgba(0,0,0,.08);
-        margin-bottom: 25px;
-    }
-
-    .panel-heading {
-        background: linear-gradient(135deg,#1e3a8a,#2563eb) !important;
-        color: white !important;
-        border: none !important;
-        padding: 18px 22px !important;
-        font-size: 16px;
-        font-weight: 600;
-    }
-
-    .panel-body {
-        background: white;
-        padding: 25px;
-    }
-
-    label {
-        font-weight: 600;
-        color: #374151;
-        margin-bottom: 5px;
-    }
-
-    .form-control {
-        height: 45px;
-        border-radius: 10px;
-        border: 1px solid #d1d5db;
-        box-shadow: none;
-        transition: all .3s ease;
-    }
-
-        .form-control:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 4px rgba(37,99,235,.15);
-        }
-
-    .required {
-        color: #dc2626;
-    }
-
-    .btn-guardar {
-        background: linear-gradient(135deg,#10b981,#059669);
-        border: none;
-        color: white;
-        padding: 12px 24px;
-        border-radius: 10px;
-        font-weight: 600;
-        transition: .3s;
-    }
-
-        .btn-guardar:hover {
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16,185,129,.30);
-        }
-
-    .btn-cancelar {
-        background: #e5e7eb;
-        color: #374151;
-        padding: 12px 24px;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 600;
-    }
-
-        .btn-cancelar:hover {
-            text-decoration: none;
-            background: #d1d5db;
-            color: #111827;
-        }
-
-    .info-card {
-        background: white;
-        border-radius: 18px;
-        padding: 20px;
-        margin-bottom: 25px;
-        box-shadow: 0 5px 20px rgba(0,0,0,.05);
-        border-left: 5px solid #2563eb;
-    }
-
-        .info-card strong {
-            color: #2563eb;
-        }
-
-    .acciones {
-        margin-top: 30px;
-        display: flex;
-        gap: 10px;
-    }
-
-    @@media(max-width:768px) {
-
-        .acciones {
-            flex-direction: column;
-        }
-
-        .btn-guardar,
-        .btn-cancelar {
-            width: 100%;
-            text-align: center;
-        }
-    }
-</style>
-
-<div class="container" style="max-width:1000px; padding:25px;">
-
-    <div class="page-header-custom">
-        <h2>
-            <i class="glyphicon glyphicon-warning-sign"></i>
-            @(Model.IdAlerta > 0 ? "Editar Alerta Médica" : "Agregar Alerta Médica")
-        </h2>
-
-        <p>
-            Expediente #@Model.IdExpediente -
-            Paciente: <strong>@Model.NombrePaciente</strong>
-        </p>
+    <div class="inv-header">
+        <h1 class="inv-titulo">@(Model.IdAlerta > 0 ? "Editar Alerta Médica" : "Agregar Alerta Médica")</h1>
+        <p class="inv-subtitulo">Expediente #@Model.IdExpediente — Paciente: <strong>@Model.NombrePaciente</strong></p>
     </div>
 
-    <div class="info-card">
-        <strong>Información:</strong>
-        Los campos marcados con (*) son obligatorios.
-    </div>
+    <div class="nota-info">Los campos marcados con <span class="required">*</span> son obligatorios.</div>
 
     @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""] != null)
     {
-        <div class="alert alert-danger">
+        <div class="alerta-rojo">
             @Html.ValidationMessage("")
         </div>
     }
@@ -175,138 +51,71 @@
         @Html.HiddenFor(m => m.IdAlerta)
         @Html.HiddenFor(m => m.IdExpediente)
 
-        <div class="panel panel-default">
+        <input type="hidden" name="returnUrl" value="@returnUrl" />
 
-            <div class="panel-heading">
-                <i class="glyphicon glyphicon-list-alt"></i>
-                Historia Clínica
-            </div>
+        <div class="trat-form-card">
 
-            <div class="panel-body">
+            <div class="trat-card-bar">Historia Clínica</div>
 
-                <div class="row">
+            <div class="trat-card-body">
 
-                    <div class="col-md-6 form-group">
+                <div class="trat-fila">
 
-                        @Html.LabelFor(m => m.AntecedentesMedicos)
-                        <span class="required">*</span>
-
-                        @Html.TextAreaFor(
-                            m => m.AntecedentesMedicos,
-                            new
-                            {
-                                @class = "form-control",
-                                rows = "4"
-                            })
-
-                        @Html.ValidationMessageFor(
-                            m => m.AntecedentesMedicos,
-                            "",
-                            new { @class = "text-danger" })
-
+                    <div class="trat-campo">
+                        <div class="trat-label-row">
+                            @Html.LabelFor(m => m.AntecedentesMedicos, new { @class = "trat-label" })
+                            <span class="required">*</span>
+                        </div>
+                        @Html.TextAreaFor(m => m.AntecedentesMedicos, new { @class = "trat-input trat-textarea", rows = "4" })
+                        @Html.ValidationMessageFor(m => m.AntecedentesMedicos, "", new { @class = "trat-error" })
                     </div>
 
-                    <div class="col-md-6 form-group">
-
-                        @Html.LabelFor(m => m.Alergias)
-
-                        @Html.TextAreaFor(
-                            m => m.Alergias,
-                            new
-                            {
-                                @class = "form-control",
-                                rows = "4"
-                            })
-
-                        @Html.ValidationMessageFor(
-                            m => m.Alergias,
-                            "",
-                            new { @class = "text-danger" })
-
+                    <div class="trat-campo">
+                        <div class="trat-label-row">
+                            @Html.LabelFor(m => m.Alergias, new { @class = "trat-label" })
+                        </div>
+                        @Html.TextAreaFor(m => m.Alergias, new { @class = "trat-input trat-textarea", rows = "4" })
+                        @Html.ValidationMessageFor(m => m.Alergias, "", new { @class = "trat-error" })
                     </div>
 
                 </div>
 
-                <div class="row">
+                <div class="trat-fila">
 
-                    <div class="col-md-6 form-group">
-
-                        @Html.LabelFor(m => m.MedicacionActual)
-
-                        @Html.TextAreaFor(
-                            m => m.MedicacionActual,
-                            new
-                            {
-                                @class = "form-control",
-                                rows = "4"
-                            })
-
-                        @Html.ValidationMessageFor(
-                            m => m.MedicacionActual,
-                            "",
-                            new { @class = "text-danger" })
-
+                    <div class="trat-campo">
+                        <div class="trat-label-row">
+                            @Html.LabelFor(m => m.MedicacionActual, new { @class = "trat-label" })
+                        </div>
+                        @Html.TextAreaFor(m => m.MedicacionActual, new { @class = "trat-input trat-textarea", rows = "4" })
+                        @Html.ValidationMessageFor(m => m.MedicacionActual, "", new { @class = "trat-error" })
                     </div>
 
-                    <div class="col-md-6 form-group">
-
-                        @Html.LabelFor(m => m.CirugiasPrevias)
-
-                        @Html.TextAreaFor(
-                            m => m.CirugiasPrevias,
-                            new
-                            {
-                                @class = "form-control",
-                                rows = "4"
-                            })
-
-                        @Html.ValidationMessageFor(
-                            m => m.CirugiasPrevias,
-                            "",
-                            new { @class = "text-danger" })
-
+                    <div class="trat-campo">
+                        <div class="trat-label-row">
+                            @Html.LabelFor(m => m.CirugiasPrevias, new { @class = "trat-label" })
+                        </div>
+                        @Html.TextAreaFor(m => m.CirugiasPrevias, new { @class = "trat-input trat-textarea", rows = "4" })
+                        @Html.ValidationMessageFor(m => m.CirugiasPrevias, "", new { @class = "trat-error" })
                     </div>
 
                 </div>
 
-                <div class="row">
+                <div class="trat-fila">
 
-                    <div class="col-md-6 form-group">
-
-                        @Html.LabelFor(m => m.Habitos)
-
-                        @Html.TextAreaFor(
-                            m => m.Habitos,
-                            new
-                            {
-                                @class = "form-control",
-                                rows = "3"
-                            })
-
-                        @Html.ValidationMessageFor(
-                            m => m.Habitos,
-                            "",
-                            new { @class = "text-danger" })
-
+                    <div class="trat-campo">
+                        <div class="trat-label-row">
+                            @Html.LabelFor(m => m.Habitos, new { @class = "trat-label" })
+                        </div>
+                        @Html.TextAreaFor(m => m.Habitos, new { @class = "trat-input trat-textarea", rows = "3" })
+                        @Html.ValidationMessageFor(m => m.Habitos, "", new { @class = "trat-error" })
                     </div>
 
-                    <div class="col-md-6 form-group">
-
-                        @Html.LabelFor(m => m.AntecedentesOdontologicos)
-
-                        @Html.TextAreaFor(
-                            m => m.AntecedentesOdontologicos,
-                            new
-                            {
-                                @class = "form-control",
-                                rows = "3"
-                            })
-
-                        @Html.ValidationMessageFor(
-                            m => m.AntecedentesOdontologicos,
-                            "",
-                            new { @class = "text-danger" })
-
+                    <div class="trat-campo">
+                        <div class="trat-label-row">
+                            @Html.LabelFor(m => m.AntecedentesOdontologicos, new { @class = "trat-label" })
+                        </div>
+                        @Html.TextAreaFor(m => m.AntecedentesOdontologicos, new { @class = "trat-input trat-textarea", rows = "3" })
+                        @Html.ValidationMessageFor(m => m.AntecedentesOdontologicos, "", new { @class = "trat-error" })
                     </div>
 
                 </div>
@@ -315,145 +124,390 @@
 
         </div>
 
-        <div class="panel panel-default">
+        <div class="trat-form-card">
 
-            <div class="panel-heading">
-                <i class="glyphicon glyphicon-heart"></i>
-                Consulta Actual
-            </div>
+            <div class="trat-card-bar">Consulta Actual</div>
 
-            <div class="panel-body">
+            <div class="trat-card-body">
 
-                <div class="row">
+                <div class="trat-fila">
 
-                    <div class="col-md-6 form-group">
-
-                        @Html.LabelFor(m => m.MotivoConsulta)
-                        <span class="required">*</span>
-
-                        @Html.TextAreaFor(
-                            m => m.MotivoConsulta,
-                            new
-                            {
-                                @class = "form-control",
-                                rows = "4"
-                            })
-
-                        @Html.ValidationMessageFor(
-                            m => m.MotivoConsulta,
-                            "",
-                            new { @class = "text-danger" })
-
+                    <div class="trat-campo">
+                        <div class="trat-label-row">
+                            @Html.LabelFor(m => m.MotivoConsulta, new { @class = "trat-label" })
+                            <span class="required">*</span>
+                        </div>
+                        @Html.TextAreaFor(m => m.MotivoConsulta, new { @class = "trat-input trat-textarea", rows = "4" })
+                        @Html.ValidationMessageFor(m => m.MotivoConsulta, "", new { @class = "trat-error" })
                     </div>
 
-                    <div class="col-md-6 form-group">
-
-                        @Html.LabelFor(m => m.DiagnosticoInicial)
-                        <span class="required">*</span>
-
-                        @Html.TextAreaFor(
-                            m => m.DiagnosticoInicial,
-                            new
-                            {
-                                @class = "form-control",
-                                rows = "4"
-                            })
-
-                        @Html.ValidationMessageFor(
-                            m => m.DiagnosticoInicial,
-                            "",
-                            new { @class = "text-danger" })
-
+                    <div class="trat-campo">
+                        <div class="trat-label-row">
+                            @Html.LabelFor(m => m.DiagnosticoInicial, new { @class = "trat-label" })
+                            <span class="required">*</span>
+                        </div>
+                        @Html.TextAreaFor(m => m.DiagnosticoInicial, new { @class = "trat-input trat-textarea", rows = "4" })
+                        @Html.ValidationMessageFor(m => m.DiagnosticoInicial, "", new { @class = "trat-error" })
                     </div>
 
                 </div>
 
-                <div class="row">
+                <div class="trat-fila">
 
-                    <div class="col-md-6 form-group">
-
-                        @Html.LabelFor(m => m.PlanTratamiento)
-                        <span class="required">*</span>
-
-                        @Html.TextAreaFor(
-                            m => m.PlanTratamiento,
-                            new
-                            {
-                                @class = "form-control",
-                                rows = "4"
-                            })
-
-                        @Html.ValidationMessageFor(
-                            m => m.PlanTratamiento,
-                            "",
-                            new { @class = "text-danger" })
-
-                    </div>
-
-                    <div class="col-md-3 form-group">
-
-                        @Html.LabelFor(m => m.NivelRiesgo)
-                        <span class="required">*</span>
-
-                        @Html.DropDownListFor(
-                            m => m.NivelRiesgo,
-                            Model.ListaNivelesRiesgo,
-                            "-- Seleccione --",
-                            new { @class = "form-control" })
-
-                        @Html.ValidationMessageFor(
-                            m => m.NivelRiesgo,
-                            "",
-                            new { @class = "text-danger" })
-
-                    </div>
-
-                    <div class="col-md-3 form-group">
-
-                        @Html.LabelFor(m => m.IdEstado)
-                        <span class="required">*</span>
-
-                        @Html.DropDownListFor(
-                            m => m.IdEstado,
-                            Model.ListaEstados,
-                            "-- Seleccione --",
-                            new { @class = "form-control" })
-
-                        @Html.ValidationMessageFor(
-                            m => m.IdEstado,
-                            "",
-                            new { @class = "text-danger" })
-
+                    <div class="trat-campo trat-campo-full">
+                        <div class="trat-label-row">
+                            @Html.LabelFor(m => m.PlanTratamiento, new { @class = "trat-label" })
+                            <span class="required">*</span>
+                        </div>
+                        @Html.TextAreaFor(m => m.PlanTratamiento, new { @class = "trat-input trat-textarea", rows = "4" })
+                        @Html.ValidationMessageFor(m => m.PlanTratamiento, "", new { @class = "trat-error" })
                     </div>
 
                 </div>
 
+                <div class="trat-fila">
+
+                    <div class="trat-campo">
+                        <div class="trat-label-row">
+                            @Html.LabelFor(m => m.NivelRiesgo, new { @class = "trat-label" })
+                            <span class="required">*</span>
+                        </div>
+                        @Html.DropDownListFor(m => m.NivelRiesgo, Model.ListaNivelesRiesgo, "-- Seleccione --", new { @class = "trat-input" })
+                        @Html.ValidationMessageFor(m => m.NivelRiesgo, "", new { @class = "trat-error" })
+                    </div>
+
+                    <div class="trat-campo">
+                        <div class="trat-label-row">
+                            @Html.LabelFor(m => m.IdEstado, new { @class = "trat-label" })
+                            <span class="required">*</span>
+                        </div>
+                        @Html.DropDownListFor(m => m.IdEstado, Model.ListaEstados, "-- Seleccione --", new { @class = "trat-input" })
+                        @Html.ValidationMessageFor(m => m.IdEstado, "", new { @class = "trat-error" })
+                    </div>
+
+                </div>
+
+                <div class="trat-botones">
+                    <button type="submit" class="btn-inv-primary">Guardar Alerta</button>
+                    <a href="@returnUrl" class="btn-inv-cancelar">Cancelar</a>
+                </div>
+
             </div>
-
-        </div>
-
-        <div class="acciones">
-
-            <button type="submit" class="btn btn-guardar">
-                <i class="glyphicon glyphicon-floppy-disk"></i>
-                Guardar Alerta
-            </button>
-
-            @Html.ActionLink(
-                "Cancelar",
-                "DetallesAlerta",
-                "Expediente",
-                new { id = Model.IdExpediente },
-                new { @class = "btn btn-cancelar" })
 
         </div>
     }
 
 </div>
 
+<style>
+    /* ── Tokens (los mismos del resto del módulo) ── */
+    .inv-page {
+        padding: 36px 20px 56px;
+        --dc-teal-oscuro: #0f3b3c;
+        --dc-teal: #2e8f8c;
+        --dc-teal-barra: #1c6a68;
+        --dc-tinta: #1e2d3d;
+        --dc-suave: #6b7f92;
+        --dc-input-bg: #f5f8fe;
+        --dc-input-borde: #dde5f3;
+        --dc-verde: #2f6d5c;
+        --dc-verde-hover: #275c4d;
+        --dc-gris: #e9ebed;
+        --dc-gris-hover: #dde1e5;
+        --dc-error: #c0392b;
+        --dc-ancho: 900px;
+    }
+
+    /* ── Encabezado ── */
+    .inv-header {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 20px;
+        padding: 28px 34px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, var(--dc-teal-oscuro) 0%, var(--dc-teal) 100%);
+        box-shadow: 0 10px 26px rgba(15, 59, 60, 0.18);
+    }
+
+    .inv-titulo {
+        margin: 0;
+        color: #fff;
+        font-size: 1.55rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+    }
+
+    .inv-subtitulo {
+        margin: 10px 0 0;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+        .inv-subtitulo strong {
+            color: #fff;
+            font-weight: 700;
+        }
+
+    /* ── Nota de campos obligatorios ── */
+    .nota-info {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 20px;
+        padding: 12px 18px;
+        border-radius: 10px;
+        background: rgba(46, 143, 140, 0.07);
+        border: 1px solid rgba(46, 143, 140, 0.22);
+        border-left: 4px solid var(--dc-teal);
+        color: #275f5d;
+        font-size: 0.88rem;
+    }
+
+    .required {
+        color: var(--dc-error);
+        font-weight: 700;
+    }
+
+    /* ── Tarjetas ── */
+    .trat-form-card {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 22px;
+        padding: 0;
+        overflow: hidden;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 10px 26px rgba(15, 59, 60, 0.09);
+    }
+
+    .trat-card-bar {
+        padding: 18px 30px;
+        background: linear-gradient(135deg, var(--dc-teal-oscuro) 0%, var(--dc-teal-barra) 100%);
+        color: #fff;
+        font-size: 1.02rem;
+        font-weight: 700;
+    }
+
+    .trat-card-body {
+        padding: 26px 30px 28px;
+    }
+
+    /* ── Grilla ── */
+    .trat-fila {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+    }
+
+        .trat-fila:last-child {
+            margin-bottom: 0;
+        }
+
+    .trat-campo {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1;
+        min-width: 240px;
+    }
+
+    .trat-campo-full {
+        flex-basis: 100%;
+    }
+
+    /* El rótulo y el asterisco van en la misma línea */
+    .trat-label-row {
+        display: flex;
+        align-items: baseline;
+        gap: 5px;
+    }
+
+    .trat-label {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--dc-tinta);
+    }
+
+    /* ── Campos ── */
+    /* background-color, no el atajo background: el select usa background-image */
+    .trat-input {
+        width: 100%;
+        box-sizing: border-box;
+        height: 46px;
+        padding: 12px 16px;
+        border-radius: 8px;
+        border: 1px solid var(--dc-input-borde);
+        background-color: var(--dc-input-bg);
+        font-family: inherit;
+        font-size: 0.95rem;
+        color: var(--dc-tinta);
+        outline: none;
+        box-shadow: none;
+        transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+    }
+
+        .trat-input:hover {
+            border-color: #c8d6ec;
+        }
+
+        .trat-input:focus {
+            background-color: #fff;
+            border-color: var(--dc-teal);
+            box-shadow: 0 0 0 3px rgba(46, 143, 140, 0.15);
+        }
+
+        .trat-input::placeholder {
+            color: #a9bccb;
+        }
+
+        .trat-input.input-validation-error {
+            border-color: var(--dc-error);
+            background-color: rgba(192, 57, 43, 0.04);
+        }
+
+    /* El alto lo define el atributo rows de cada textarea */
+    .trat-textarea {
+        height: auto;
+        min-height: 78px;
+        line-height: 1.5;
+        resize: vertical;
+    }
+
+    select.trat-input {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        padding-right: 42px;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236b7f92' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+    }
+
+        select.trat-input::-ms-expand {
+            display: none;
+        }
+
+    .trat-error {
+        color: var(--dc-error);
+        font-size: 0.78rem;
+        font-weight: 600;
+    }
+
+    /* ── Botones ── */
+    .trat-botones {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-start;
+        align-items: center;
+        margin-top: 28px;
+        padding-top: 22px;
+        border-top: 1px solid #eef2f7;
+    }
+
+    .btn-inv-primary {
+        height: 46px;
+        padding: 0 26px;
+        border: none;
+        border-radius: 8px;
+        background: var(--dc-verde);
+        color: #fff;
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background .18s ease, box-shadow .18s ease;
+    }
+
+        .btn-inv-primary:hover {
+            background: var(--dc-verde-hover);
+            color: #fff;
+            box-shadow: 0 6px 14px rgba(47, 109, 92, 0.28);
+        }
+
+    .btn-inv-cancelar {
+        display: inline-flex;
+        align-items: center;
+        height: 46px;
+        padding: 0 26px;
+        border-radius: 8px;
+        background: var(--dc-gris);
+        color: #5a6672;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background .18s ease, color .18s ease;
+    }
+
+        .btn-inv-cancelar:hover {
+            background: var(--dc-gris-hover);
+            color: var(--dc-tinta);
+            text-decoration: none;
+        }
+
+    /* ── Validación ── */
+    .alerta-rojo {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 20px;
+        padding: 12px 18px;
+        border-radius: 10px;
+        background: rgba(220, 53, 53, 0.07);
+        border: 1px solid rgba(220, 53, 53, 0.3);
+        border-left: 4px solid var(--dc-error);
+        color: #9b2020;
+        font-size: 0.88rem;
+    }
+
+    /* ── Accesibilidad y responsive ── */
+    .trat-input:focus-visible,
+    .btn-inv-primary:focus-visible,
+    .btn-inv-cancelar:focus-visible {
+        outline: 2px solid var(--dc-teal);
+        outline-offset: 2px;
+    }
+
+    @@media (max-width: 680px) {
+        .inv-page {
+            padding: 22px 14px 40px;
+        }
+
+        .inv-header {
+            padding: 22px;
+        }
+
+        .trat-card-bar {
+            padding: 16px 20px;
+        }
+
+        .trat-card-body {
+            padding: 20px 20px 22px;
+        }
+
+        .trat-campo {
+            min-width: 100%;
+        }
+
+        .trat-botones {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .btn-inv-primary,
+        .btn-inv-cancelar {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .trat-input,
+        .btn-inv-primary,
+        .btn-inv-cancelar {
+            transition: none;
+        }
+    }
+</style>
+
 @section Scripts{
     @Scripts.Render("~/bundles/jqueryval")
 }
-
-
-

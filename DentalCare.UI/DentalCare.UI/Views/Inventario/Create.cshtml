@@ -7,6 +7,7 @@
 
     <div class="inv-header">
         <h1 class="inv-titulo">Registrar Nuevo Producto</h1>
+        <p class="inv-subtitulo">Complete los datos del producto que ingresa al inventario.</p>
     </div>
 
     @Html.ValidationSummary(false, "", new { @class = "alerta-item alerta-rojo" })
@@ -17,93 +18,117 @@
 
         <div class="exp-table-card trat-form-card">
 
-            <div class="trat-seccion">
-                <h4 class="trat-seccion-titulo">Datos del Producto</h4>
+            <div class="trat-card-bar">Detalles del Producto</div>
 
-                <div class="trat-fila">
-                    <div class="trat-campo">
-                        @Html.LabelFor(model => model.CodigoProducto, "Codigo de Producto", new { @class = "trat-label" })
-                        @Html.TextBoxFor(model => model.CodigoProducto, new { @class = "trat-input", placeholder = "Ej: CONS-001" })
-                        @Html.ValidationMessageFor(model => model.CodigoProducto, "", new { @class = "trat-error" })
+            <div class="trat-card-body">
+
+                <div class="trat-seccion">
+                    <h4 class="trat-seccion-titulo">Identificación</h4>
+
+                    <div class="trat-fila">
+
+                        <div class="trat-campo">
+                            @Html.LabelFor(model => model.CodigoProducto, "Código de Producto", new { @class = "trat-label" })
+                            @Html.TextBoxFor(model => model.CodigoProducto, new { @class = "trat-input", placeholder = "Ej: CONS-001" })
+                            @Html.ValidationMessageFor(model => model.CodigoProducto, "", new { @class = "trat-error" })
+                        </div>
+
+                        <div class="trat-campo">
+                            @Html.LabelFor(model => model.NombreProducto, "Nombre del Producto", new { @class = "trat-label" })
+                            @Html.TextBoxFor(model => model.NombreProducto, new { @class = "trat-input", placeholder = "Ej: Guantes de látex" })
+                            @Html.ValidationMessageFor(model => model.NombreProducto, "", new { @class = "trat-error" })
+                        </div>
+
                     </div>
 
-                    <div class="trat-campo">
-                        @Html.LabelFor(model => model.NombreProducto, "Nombre del Producto", new { @class = "trat-label" })
-                        @Html.TextBoxFor(model => model.NombreProducto, new { @class = "trat-input", placeholder = "Ej: Guantes de latex" })
-                        @Html.ValidationMessageFor(model => model.NombreProducto, "", new { @class = "trat-error" })
+                    <div class="trat-fila">
+
+                        <div class="trat-campo trat-campo-full">
+                            @Html.LabelFor(model => model.Descripcion, "Descripción", new { @class = "trat-label" })
+                            @Html.TextAreaFor(model => model.Descripcion, new { @class = "trat-input trat-textarea", rows = "3", placeholder = "Descripción del producto" })
+                            @Html.ValidationMessageFor(model => model.Descripcion, "", new { @class = "trat-error" })
+                        </div>
+
                     </div>
+
                 </div>
 
-                <div class="trat-campo-full">
-                    @Html.LabelFor(model => model.Descripcion, "Descripcion", new { @class = "trat-label" })
-                    @Html.TextAreaFor(model => model.Descripcion, new { @class = "trat-input", rows = "3", placeholder = "Descripcion del producto" })
-                    @Html.ValidationMessageFor(model => model.Descripcion, "", new { @class = "trat-error" })
-                </div>
-            </div>
+                <div class="trat-seccion">
+                    <h4 class="trat-seccion-titulo">Existencias</h4>
 
-            <div class="trat-seccion">
-                <h4 class="trat-seccion-titulo">Clasificacion y Tipo</h4>
+                    <div class="trat-fila">
 
-                <div class="trat-fila">
-                    <div class="trat-campo">
-                        @Html.LabelFor(model => model.IdCategoria, "Categoria/Tipo", new { @class = "trat-label" })
-                        @Html.DropDownListFor(model => model.IdCategoria, ViewBag.Categorias as IEnumerable<SelectListItem>, "Seleccionar categoria", new { @class = "trat-input" })
-                        @Html.ValidationMessageFor(model => model.IdCategoria, "", new { @class = "trat-error" })
+                        <div class="trat-campo">
+                            @Html.LabelFor(model => model.CantidadActual, "Cantidad Actual", new { @class = "trat-label" })
+                            @Html.TextBoxFor(model => model.CantidadActual, new { @class = "trat-input", type = "number", min = "0" })
+                            @Html.ValidationMessageFor(model => model.CantidadActual, "", new { @class = "trat-error" })
+                        </div>
+
+                        <div class="trat-campo">
+                            @Html.LabelFor(model => model.CantidadMinima, "Cantidad Mínima", new { @class = "trat-label" })
+                            @Html.TextBoxFor(model => model.CantidadMinima, new { @class = "trat-input", type = "number", min = "0" })
+                            @Html.ValidationMessageFor(model => model.CantidadMinima, "", new { @class = "trat-error" })
+                            <span class="trat-hint">Cuando el stock baje de aquí, se genera una alerta.</span>
+                        </div>
+
                     </div>
 
-                    <div class="trat-campo">
-                        @Html.LabelFor(model => model.UnidadMedida, "Unidad de Medida", new { @class = "trat-label" })
-                        @Html.TextBoxFor(model => model.UnidadMedida, new { @class = "trat-input", placeholder = "Ej: Caja, Unidad, Frasco" })
-                        @Html.ValidationMessageFor(model => model.UnidadMedida, "", new { @class = "trat-error" })
-                    </div>
-                </div>
-            </div>
+                    <div class="trat-fila">
 
-            <div class="trat-seccion">
-                <h4 class="trat-seccion-titulo">Control de Stock</h4>
+                        <div class="trat-campo">
+                            @Html.LabelFor(model => model.UnidadMedida, "Unidad de Medida", new { @class = "trat-label" })
+                            @Html.TextBoxFor(model => model.UnidadMedida, new { @class = "trat-input", placeholder = "Ej: Caja, Unidad, Frasco" })
+                            @Html.ValidationMessageFor(model => model.UnidadMedida, "", new { @class = "trat-error" })
+                        </div>
 
-                <div class="trat-fila">
-                    <div class="trat-campo">
-                        @Html.LabelFor(model => model.CantidadActual, "Cantidad Actual", new { @class = "trat-label" })
-                        @Html.TextBoxFor(model => model.CantidadActual, new { @class = "trat-input", type = "number", min = "0" })
-                        @Html.ValidationMessageFor(model => model.CantidadActual, "", new { @class = "trat-error" })
+                        <div class="trat-campo">
+                            @Html.LabelFor(model => model.Lote, "Número de Lote", new { @class = "trat-label" })
+                            @Html.TextBoxFor(model => model.Lote, new { @class = "trat-input", placeholder = "Ej: L-2025-A" })
+                            @Html.ValidationMessageFor(model => model.Lote, "", new { @class = "trat-error" })
+                        </div>
+
                     </div>
 
-                    <div class="trat-campo">
-                        @Html.LabelFor(model => model.CantidadMinima, "Cantidad Minima", new { @class = "trat-label" })
-                        @Html.TextBoxFor(model => model.CantidadMinima, new { @class = "trat-input", type = "number", min = "0" })
-                        @Html.ValidationMessageFor(model => model.CantidadMinima, "", new { @class = "trat-error" })
-                    </div>
-                </div>
-            </div>
-
-            <div class="trat-seccion">
-                <h4 class="trat-seccion-titulo">Informacion de Lote y Proveedor</h4>
-
-                <div class="trat-fila">
-                    <div class="trat-campo">
-                        @Html.LabelFor(model => model.Lote, "Numero de Lote", new { @class = "trat-label" })
-                        @Html.TextBoxFor(model => model.Lote, new { @class = "trat-input", placeholder = "Ej: L-2025-A" })
-                        @Html.ValidationMessageFor(model => model.Lote, "", new { @class = "trat-error" })
-                    </div>
-
-                    <div class="trat-campo">
-                        @Html.LabelFor(model => model.FechaVencimiento, "Fecha de Vencimiento", new { @class = "trat-label" })
-                        @Html.TextBoxFor(model => model.FechaVencimiento, new { @class = "trat-input", type = "date" })
-                        @Html.ValidationMessageFor(model => model.FechaVencimiento, "", new { @class = "trat-error" })
-                    </div>
                 </div>
 
-                <div class="trat-campo-full">
-                    @Html.LabelFor(model => model.IdProveedor, "Proveedor", new { @class = "trat-label" })
-                    @Html.DropDownListFor(model => model.IdProveedor, ViewBag.Proveedores as IEnumerable<SelectListItem>, "Seleccionar proveedor", new { @class = "trat-input" })
-                    @Html.ValidationMessageFor(model => model.IdProveedor, "", new { @class = "trat-error" })
-                </div>
-            </div>
+                <div class="trat-seccion">
+                    <h4 class="trat-seccion-titulo">Clasificación</h4>
 
-            <div class="trat-botones">
-                <input type="submit" value="Registrar Producto" class="btn-inv-primary" />
-                @Html.ActionLink("Cancelar", "InventarioIndex", "Inventario", null, new { @class = "btn-inv-cancelar" })
+                    <div class="trat-fila">
+
+                        <div class="trat-campo">
+                            @Html.LabelFor(model => model.FechaVencimiento, "Fecha de Vencimiento", new { @class = "trat-label" })
+                            @Html.TextBoxFor(model => model.FechaVencimiento, new { @class = "trat-input", type = "date" })
+                            @Html.ValidationMessageFor(model => model.FechaVencimiento, "", new { @class = "trat-error" })
+                        </div>
+
+                        <div class="trat-campo">
+                            @Html.LabelFor(model => model.IdCategoria, "Categoría / Tipo", new { @class = "trat-label" })
+                            @Html.DropDownListFor(model => model.IdCategoria, ViewBag.Categorias as IEnumerable<SelectListItem>, "Seleccionar categoría", new { @class = "trat-input" })
+                            @Html.ValidationMessageFor(model => model.IdCategoria, "", new { @class = "trat-error" })
+                        </div>
+
+                    </div>
+
+                    <div class="trat-fila">
+
+                        <div class="trat-campo">
+                            @Html.LabelFor(model => model.IdProveedor, "Proveedor", new { @class = "trat-label" })
+                            @Html.DropDownListFor(model => model.IdProveedor, ViewBag.Proveedores as IEnumerable<SelectListItem>, "Seleccionar proveedor", new { @class = "trat-input" })
+                            @Html.ValidationMessageFor(model => model.IdProveedor, "", new { @class = "trat-error" })
+                        </div>
+
+                        <div class="trat-campo trat-campo-vacio"></div>
+
+                    </div>
+
+                </div>
+
+                <div class="trat-botones">
+                    <input type="submit" value="Registrar Producto" class="btn-inv-primary" />
+                    @Html.ActionLink("Volver", "InventarioIndex", "Inventario", null, new { @class = "btn-inv-cancelar" })
+                </div>
+
             </div>
 
         </div>
@@ -112,122 +137,333 @@
 </div>
 
 <style>
-    .trat-form-card {
-        padding: 32px;
-        border-radius: 16px;
-        max-width: 800px;
-        margin: 0 auto;
+    /* ── Tokens (idénticos a Editar Producto) ── */
+    .inv-page {
+        padding: 36px 20px 56px;
+        --dc-teal-oscuro: #0f3b3c;
+        --dc-teal: #2e8f8c;
+        --dc-teal-barra: #1c6a68;
+        --dc-tinta: #1e2d3d;
+        --dc-suave: #6b7f92;
+        --dc-input-bg: #f5f8fe;
+        --dc-input-borde: #dde5f3;
+        --dc-verde: #2f6d5c;
+        --dc-verde-hover: #275c4d;
+        --dc-gris: #e9ebed;
+        --dc-gris-hover: #dde1e5;
+        --dc-error: #c0392b;
+        --dc-ancho: 780px;
     }
 
-    .trat-seccion {
-        margin-bottom: 28px;
+    /* ── Encabezado ── */
+    .inv-header {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 26px;
+        padding: 30px 34px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, var(--dc-teal-oscuro) 0%, var(--dc-teal) 100%);
+        box-shadow: 0 10px 26px rgba(15, 59, 60, 0.18);
+    }
+
+    .inv-titulo {
+        margin: 0;
+        color: #fff;
+        font-size: 1.55rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+    }
+
+    .inv-subtitulo {
+        margin: 10px 0 0;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    /* ── Tarjeta del formulario ── */
+    .trat-form-card {
+        max-width: var(--dc-ancho);
+        margin: 0 auto;
+        padding: 0;
+        overflow: hidden;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 10px 26px rgba(15, 59, 60, 0.09);
+    }
+
+    .trat-card-bar {
+        padding: 20px 34px;
+        background: linear-gradient(135deg, var(--dc-teal-oscuro) 0%, var(--dc-teal-barra) 100%);
+        color: #fff;
+        font-size: 1.02rem;
+        font-weight: 700;
+    }
+
+    .trat-card-body {
+        padding: 28px 34px 30px;
+    }
+
+    /* ── Secciones ── */
+    .trat-seccion + .trat-seccion {
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid #eef2f7;
     }
 
     .trat-seccion-titulo {
-        font-size: 1rem;
-        font-weight: 700;
-        color: #1e2d3d;
-        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0 0 18px;
+        font-size: 0.76rem;
+        font-weight: 800;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--dc-suave);
     }
 
+        .trat-seccion-titulo::before {
+            content: "";
+            width: 3px;
+            height: 14px;
+            border-radius: 2px;
+            background: var(--dc-teal);
+            flex: none;
+        }
+
+    /* ── Grilla ── */
     .trat-fila {
         display: flex;
-        gap: 16px;
+        gap: 20px;
         flex-wrap: wrap;
+        margin-bottom: 18px;
     }
+
+        .trat-fila:last-child {
+            margin-bottom: 0;
+        }
 
     .trat-campo {
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 8px;
         flex: 1;
-        min-width: 200px;
+        min-width: 220px;
     }
 
     .trat-campo-full {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        margin-bottom: 18px;
+        flex-basis: 100%;
+    }
+
+    .trat-campo-vacio {
+        min-width: 220px;
     }
 
     .trat-label {
-        font-size: 0.82rem;
+        font-size: 0.95rem;
         font-weight: 700;
-        color: #1e2d3d;
+        color: var(--dc-tinta);
     }
 
-    .trat-input {
-        padding: 10px 14px;
-        border-radius: 8px;
-        border: 1.5px solid #dce7ef;
-        font-size: 0.9rem;
-        transition: border-color 0.2s;
-        font-family: inherit;
+    .trat-hint {
+        font-size: 0.76rem;
+        color: var(--dc-suave);
+        line-height: 1.35;
     }
+
+    /* ── Inputs ── */
+    /* Ojo: aquí va background-color y NO el atajo background,
+       porque el select usa background-image para su flecha. */
+    .trat-input {
+        width: 100%;
+        box-sizing: border-box;
+        height: 46px;
+        padding: 12px 16px;
+        border-radius: 8px;
+        border: 1px solid var(--dc-input-borde);
+        background-color: var(--dc-input-bg);
+        font-family: inherit;
+        font-size: 0.95rem;
+        color: var(--dc-tinta);
+        outline: none;
+        transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+    }
+
+        .trat-input:hover {
+            border-color: #c8d6ec;
+        }
 
         .trat-input:focus {
-            outline: none;
-            border-color: #0066cc;
-            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+            background-color: #fff;
+            border-color: var(--dc-teal);
+            box-shadow: 0 0 0 3px rgba(46, 143, 140, 0.15);
+        }
+
+        .trat-input::placeholder {
+            color: #a9bccb;
+        }
+
+        .trat-input::-webkit-calendar-picker-indicator {
+            opacity: .5;
+            cursor: pointer;
+        }
+
+        .trat-input.input-validation-error {
+            border-color: var(--dc-error);
+            background-color: rgba(192, 57, 43, 0.04);
+        }
+
+    /* ── Área de texto: sin alto fijo ── */
+    .trat-textarea {
+        height: auto;
+        min-height: 96px;
+        line-height: 1.5;
+        resize: vertical;
+    }
+
+    /* ── Desplegables: flecha propia en lugar de la del navegador ── */
+    select.trat-input {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        padding-right: 42px;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236b7f92' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+    }
+
+        select.trat-input::-ms-expand {
+            display: none;
         }
 
     .trat-error {
-        font-size: 0.75rem;
-        color: #d32f2f;
-        margin-top: 2px;
+        color: var(--dc-error);
+        font-size: 0.78rem;
+        font-weight: 600;
     }
 
+    /* ── Botones ── */
     .trat-botones {
         display: flex;
         gap: 12px;
-        justify-content: center;
+        justify-content: flex-start;
+        align-items: center;
         margin-top: 28px;
-        padding-top: 24px;
-        border-top: 1px solid #dce7ef;
     }
 
-    .btn-inv-primary {
-        background-color: #0066cc;
-        color: white;
-        padding: 10px 24px;
-        border-radius: 8px;
-        border: none;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-
-        .btn-inv-primary:hover {
-            background-color: #0052a3;
+        .trat-botones .btn-inv-primary {
+            height: 46px;
+            padding: 0 26px;
+            border: none;
+            border-radius: 8px;
+            background: var(--dc-verde);
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .18s ease, box-shadow .18s ease;
         }
 
+            .trat-botones .btn-inv-primary:hover {
+                background: var(--dc-verde-hover);
+                box-shadow: 0 6px 14px rgba(47, 109, 92, 0.28);
+            }
+
     .btn-inv-cancelar {
-        background-color: #f0f2f5;
-        color: #1e2d3d;
-        padding: 10px 24px;
+        display: inline-flex;
+        align-items: center;
+        height: 46px;
+        padding: 0 26px;
         border-radius: 8px;
-        border: none;
+        background: var(--dc-gris);
+        color: #5a6672;
+        font-size: 0.95rem;
         font-weight: 600;
-        cursor: pointer;
         text-decoration: none;
-        display: inline-block;
-        transition: background-color 0.2s;
+        transition: background .18s ease, color .18s ease;
     }
 
         .btn-inv-cancelar:hover {
-            background-color: #e4e6eb;
+            background: var(--dc-gris-hover);
+            color: var(--dc-tinta);
+            text-decoration: none;
         }
 
-    .alerta-item {
-        padding: 12px 16px;
-        border-radius: 8px;
-        margin-bottom: 20px;
+    /* ── Validación ── */
+    .validation-summary-valid {
+        display: none !important;
     }
 
     .alerta-rojo {
-        background-color: #ffebee;
-        color: #c62828;
-        border-left: 4px solid #d32f2f;
+        max-width: var(--dc-ancho);
+        margin: 0 auto 18px;
+        padding: 12px 18px;
+        border-radius: 10px;
+        background: rgba(220, 53, 53, 0.07);
+        border: 1px solid rgba(220, 53, 53, 0.3);
+        border-left: 4px solid var(--dc-error);
+        color: #9b2020;
+        font-size: 0.88rem;
+    }
+
+        .alerta-rojo ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+    /* ── Accesibilidad y responsive ── */
+    .trat-input:focus-visible,
+    .btn-inv-cancelar:focus-visible,
+    .trat-botones .btn-inv-primary:focus-visible {
+        outline: 2px solid var(--dc-teal);
+        outline-offset: 2px;
+    }
+
+    @@media (max-width: 680px) {
+        .inv-page {
+            padding: 22px 14px 40px;
+        }
+
+        .inv-header {
+            padding: 24px 22px;
+        }
+
+        .trat-card-bar {
+            padding: 18px 22px;
+        }
+
+        .trat-card-body {
+            padding: 22px 22px 24px;
+        }
+
+        .trat-campo {
+            min-width: 100%;
+        }
+
+        .trat-campo-vacio {
+            display: none;
+        }
+
+        .trat-botones {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+            .trat-botones .btn-inv-primary,
+            .trat-botones .btn-inv-cancelar {
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+            }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .trat-input,
+        .btn-inv-cancelar,
+        .trat-botones .btn-inv-primary {
+            transition: none;
+        }
     }
 </style>

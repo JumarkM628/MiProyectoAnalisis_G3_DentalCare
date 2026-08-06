@@ -41,25 +41,98 @@ namespace DentalCare.UI.Controllers
         private readonly IHistorialDoctoraLN _historialDoctoraLN;
         private IObtenerTodosLosUsuariosLN _obtenerTodosLosUsuariosLN;
 
+        // ─────────────────────────────────────────────────────────────
+        // Estilos de los reportes armados con StringBuilder.
+        // Son las mismas clases y los mismos tokens que usan las vistas
+        // .cshtml del resto del sistema, para que todo se vea igual.
+        // ─────────────────────────────────────────────────────────────
         private const string EstiloReporte =
-            ".reporte-page{min-height:100vh;padding:40px 32px 60px;background:linear-gradient(180deg,#F4FBFA 0%,#ffffff 220px);font-family:'DM Sans',sans-serif;}" +
-            ".reporte-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;padding:30px;border-radius:20px;background:linear-gradient(135deg,#16302D 0%,#1F6B75 60%,#2C8C99 100%);color:white;margin-bottom:25px;box-shadow:0 10px 30px rgba(22,48,45,.25);}" +
-            ".reporte-header h1{font-size:1.8rem;font-weight:700;margin:0;color:white;}" +
-            ".reporte-header p{margin-top:8px;color:#CFE8E6;font-size:.92rem;}" +
-            ".btn-volver-reporte{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:white;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:600;white-space:nowrap;}" +
-            ".btn-volver-reporte:hover{background:rgba(255,255,255,.25);color:white;text-decoration:none;}" +
-            ".reporte-card{background:white;border-radius:16px;padding:30px;box-shadow:0 8px 30px rgba(0,0,0,.06);border-top:4px solid #16302D;overflow-x:auto;max-width:1100px;margin:0 auto;}" +
-            ".reporte-card label{font-weight:600;color:#374151;margin-right:6px;}" +
-            ".reporte-card input[type=date]{height:40px;border-radius:10px;border:1px solid #CFE8E6;padding:0 10px;}" +
-            ".btn-filtrar-reporte{background:linear-gradient(135deg,#3E8E7E,#2F6E62);border:none;color:white;padding:10px 20px;border-radius:10px;font-weight:600;cursor:pointer;}" +
-            ".tabla-reporte{width:100%;border-collapse:collapse;margin-top:20px;}" +
-            ".tabla-reporte th{background:#EAF5F3;color:#16302D;text-align:left;padding:12px;font-size:.8rem;border-bottom:2px solid #CFE8E6;}" +
-            ".tabla-reporte td{padding:12px;border-bottom:1px solid #edf2f7;color:#374151;}" +
-            ".rep-placeholder{text-align:center;color:#6b7280;padding:40px;}" +
-            ".rep-paginacion{text-align:center;margin-top:18px;}" +
-            ".rep-paginacion a{display:inline-block;background:#2F6E62;color:white;padding:8px 15px;border-radius:8px;text-decoration:none;margin:0 6px;}" +
-            ".rep-paginacion a:hover{background:#1F4E44;color:white;text-decoration:none;}" +
-            ".rep-paginacion span{font-weight:600;color:#16302D;margin:0 8px;}";
+            ".inv-page{padding:36px 20px 56px;" +
+                "--dc-teal-oscuro:#0f3b3c;--dc-teal:#2e8f8c;--dc-teal-barra:#1c6a68;" +
+                "--dc-tinta:#1e2d3d;--dc-suave:#6b7f92;--dc-input-bg:#f5f8fe;--dc-input-borde:#dde5f3;" +
+                "--dc-verde:#2f6d5c;--dc-verde-hover:#275c4d;--dc-gris:#e9ebed;--dc-gris-hover:#dde1e5;" +
+                "--dc-error:#c0392b;--dc-ancho:1100px;}" +
+
+            ".inv-header{max-width:var(--dc-ancho);margin:0 auto 20px;padding:28px 34px;border-radius:16px;" +
+                "background:linear-gradient(135deg,var(--dc-teal-oscuro) 0%,var(--dc-teal) 100%);" +
+                "box-shadow:0 10px 26px rgba(15,59,60,.18);}" +
+            ".exp-header{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}" +
+            ".inv-titulo{margin:0;color:#fff;font-size:1.55rem;font-weight:800;letter-spacing:-.01em;}" +
+            ".inv-subtitulo{margin:10px 0 0;color:rgba(255,255,255,.82);font-size:.95rem;font-weight:500;}" +
+
+            ".btn-header{display:inline-flex;align-items:center;height:40px;padding:0 20px;border-radius:8px;" +
+                "border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.12);color:#fff;" +
+                "font-size:.88rem;font-weight:600;text-decoration:none;white-space:nowrap;" +
+                "transition:background .18s ease,border-color .18s ease;}" +
+            ".btn-header:hover,.btn-header:focus{background:rgba(255,255,255,.22);border-color:#fff;color:#fff;text-decoration:none;}" +
+
+            ".trat-form-card{max-width:var(--dc-ancho);margin:0 auto 22px;padding:0;overflow:hidden;" +
+                "border-radius:16px;background:#fff;box-shadow:0 10px 26px rgba(15,59,60,.09);}" +
+            ".trat-card-bar{padding:18px 30px;color:#fff;font-size:1.02rem;font-weight:700;" +
+                "background:linear-gradient(135deg,var(--dc-teal-oscuro) 0%,var(--dc-teal-barra) 100%);}" +
+            ".trat-card-body{padding:24px 30px 28px;}" +
+
+            ".filtro-barra{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;" +
+                "margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #eef2f7;}" +
+            ".filtro-campo{display:flex;flex-direction:column;gap:7px;}" +
+            ".trat-label{margin:0;font-size:.82rem;font-weight:700;color:var(--dc-tinta);}" +
+            ".trat-input{box-sizing:border-box;height:44px;padding:10px 14px;border-radius:8px;" +
+                "border:1px solid var(--dc-input-borde);background-color:var(--dc-input-bg);" +
+                "font-family:inherit;font-size:.92rem;color:var(--dc-tinta);outline:none;" +
+                "transition:border-color .18s ease,box-shadow .18s ease,background-color .18s ease;}" +
+            ".trat-input:hover{border-color:#c8d6ec;}" +
+            ".trat-input:focus{background-color:#fff;border-color:var(--dc-teal);box-shadow:0 0 0 3px rgba(46,143,140,.15);}" +
+            ".trat-input::-webkit-calendar-picker-indicator{opacity:.5;cursor:pointer;}" +
+
+            ".contador-pill{margin-left:auto;padding:8px 16px;border-radius:999px;" +
+                "background:rgba(46,143,140,.1);color:#216d6a;font-size:.8rem;font-weight:700;white-space:nowrap;}" +
+
+            ".tabla-scroll{overflow-x:auto;border:1px solid var(--dc-input-borde);border-radius:12px;}" +
+            ".rep-tabla{width:100%;border-collapse:collapse;font-size:.9rem;}" +
+            ".rep-tabla thead th{padding:12px 16px;background:#eef4f9;border-bottom:1px solid var(--dc-input-borde);" +
+                "font-size:.72rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;" +
+                "color:var(--dc-suave);text-align:left;white-space:nowrap;}" +
+            ".rep-tabla td{padding:12px 16px;border-bottom:1px solid #f0f4f8;color:var(--dc-tinta);vertical-align:middle;}" +
+            ".rep-tabla tbody tr:last-child td{border-bottom:none;}" +
+            ".rep-tabla tbody tr:hover td{background:#f8fbfe;}" +
+            ".celda-num{width:60px;color:var(--dc-suave);font-size:.85rem;}" +
+            ".celda-desc{font-weight:600;min-width:220px;}" +
+            ".celda-monto{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}" +
+            ".col-monto{text-align:right;}" +
+
+            ".rep-badge{display:inline-block;padding:4px 13px;border-radius:999px;" +
+                "background:rgba(46,143,140,.1);color:#216d6a;font-size:.76rem;font-weight:700;white-space:nowrap;}" +
+
+            ".estado-vacio{padding:40px 20px;text-align:center;border:1px dashed var(--dc-input-borde);" +
+                "border-radius:12px;background:var(--dc-input-bg);}" +
+            ".estado-vacio-titulo{margin:0 0 6px;font-size:1rem;font-weight:700;color:var(--dc-tinta);}" +
+            ".estado-vacio-texto{margin:0 auto;max-width:420px;font-size:.88rem;line-height:1.5;color:var(--dc-suave);}" +
+
+            ".btn-inv-primary{height:44px;padding:0 24px;border:none;border-radius:8px;background:var(--dc-verde);" +
+                "color:#fff;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;" +
+                "transition:background .18s ease,box-shadow .18s ease;}" +
+            ".btn-inv-primary:hover{background:var(--dc-verde-hover);color:#fff;box-shadow:0 6px 14px rgba(47,109,92,.28);}" +
+            ".btn-inv-cancelar{display:inline-flex;align-items:center;height:44px;padding:0 22px;border-radius:8px;" +
+                "background:var(--dc-gris);color:#5a6672;font-size:.9rem;font-weight:600;text-decoration:none;" +
+                "transition:background .18s ease,color .18s ease;}" +
+            ".btn-inv-cancelar:hover{background:var(--dc-gris-hover);color:var(--dc-tinta);text-decoration:none;}" +
+
+            ".rep-paginacion{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:20px;}" +
+            ".rep-paginacion a{display:inline-flex;align-items:center;height:40px;padding:0 18px;border-radius:8px;" +
+                "background:var(--dc-input-bg);border:1px solid var(--dc-input-borde);color:var(--dc-tinta);" +
+                "font-size:.86rem;font-weight:600;text-decoration:none;transition:background .18s ease;}" +
+            ".rep-paginacion a:hover{background:#e6eef8;color:var(--dc-tinta);text-decoration:none;}" +
+            ".rep-paginacion span{color:var(--dc-suave);font-size:.84rem;font-weight:700;}" +
+
+            "@media(max-width:680px){" +
+                ".inv-page{padding:22px 14px 40px;}" +
+                ".inv-header{padding:22px;}" +
+                ".trat-card-bar{padding:16px 20px;}" +
+                ".trat-card-body{padding:20px 20px 22px;}" +
+                ".filtro-campo{flex:1 1 100%;}" +
+                ".trat-input{width:100%;}" +
+                ".contador-pill{margin-left:0;}" +
+            "}";
 
         public ReporteriaController()
         {
@@ -73,6 +146,73 @@ namespace DentalCare.UI.Controllers
             _reporteGastosLN = new ReporteGastosLN(new ReporteGastosAD(new Contexto()));
             _historialDoctoraLN = new HistorialDoctoraLN(new HistorialDoctoraAD(new Contexto()));
             _obtenerTodosLosUsuariosLN = new ObtenerTodosLosUsuariosLN();
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // Ayudantes de presentación de los reportes con StringBuilder.
+        // Solo arman HTML: no consultan nada ni cambian comportamiento.
+        // ─────────────────────────────────────────────────────────────
+
+        private static string AbrirReporte(string titulo, string subtitulo, string tituloTarjeta)
+        {
+            var sb = new System.Text.StringBuilder();
+            sb.Append("<style>" + EstiloReporte + "</style>");
+            sb.Append("<div class=\"inv-page\">");
+            sb.Append("<div class=\"inv-header exp-header\">");
+            sb.Append("<div><h1 class=\"inv-titulo\">" + System.Net.WebUtility.HtmlEncode(titulo) + "</h1>");
+            if (!string.IsNullOrEmpty(subtitulo))
+            {
+                sb.Append("<p class=\"inv-subtitulo\">" + System.Net.WebUtility.HtmlEncode(subtitulo) + "</p>");
+            }
+            sb.Append("</div>");
+            sb.Append("<a href=\"/Reporteria\" class=\"btn-header\">Volver</a>");
+            sb.Append("</div>");
+            sb.Append("<div class=\"trat-form-card\">");
+            sb.Append("<div class=\"trat-card-bar\">" + System.Net.WebUtility.HtmlEncode(tituloTarjeta) + "</div>");
+            sb.Append("<div class=\"trat-card-body\">");
+            return sb.ToString();
+        }
+
+        private static string CerrarReporte()
+        {
+            return "</div></div></div>";
+        }
+
+        private static string FiltroFechas(string accion, DateTime? desde, DateTime? hasta, int cantidad, string etiquetaCantidad)
+        {
+            var sb = new System.Text.StringBuilder();
+            sb.Append("<form method=\"get\" action=\"/Reporteria/" + accion + "\" class=\"filtro-barra\">");
+            sb.Append("<div class=\"filtro-campo\"><label class=\"trat-label\" for=\"desde\">Desde</label>");
+            sb.Append("<input type=\"date\" id=\"desde\" name=\"desde\" class=\"trat-input\" value=\"" +
+                      (desde.HasValue ? desde.Value.ToString("yyyy-MM-dd") : "") + "\" /></div>");
+            sb.Append("<div class=\"filtro-campo\"><label class=\"trat-label\" for=\"hasta\">Hasta</label>");
+            sb.Append("<input type=\"date\" id=\"hasta\" name=\"hasta\" class=\"trat-input\" value=\"" +
+                      (hasta.HasValue ? hasta.Value.ToString("yyyy-MM-dd") : "") + "\" /></div>");
+            sb.Append("<button type=\"submit\" class=\"btn-inv-primary\">Filtrar</button>");
+            if (desde.HasValue || hasta.HasValue)
+            {
+                sb.Append("<a href=\"/Reporteria/" + accion + "\" class=\"btn-inv-cancelar\">Limpiar</a>");
+            }
+            sb.Append("<span class=\"contador-pill\">" + cantidad + " " + etiquetaCantidad + "</span>");
+            sb.Append("</form>");
+            return sb.ToString();
+        }
+
+        private static string EstadoVacio(string titulo, string texto)
+        {
+            return "<div class=\"estado-vacio\"><p class=\"estado-vacio-titulo\">" +
+                   System.Net.WebUtility.HtmlEncode(titulo) + "</p><p class=\"estado-vacio-texto\">" +
+                   System.Net.WebUtility.HtmlEncode(texto) + "</p></div>";
+        }
+
+        // Devuelve el HTML ya armado a traves de la vista puente
+        // Views/Shared/ReporteHtml.cshtml para que pase por _Layout.
+        // El cast a object es obligatorio: sin el, C# elige la sobrecarga
+        // View(string viewName, string masterName) y la pagina sale vacia.
+        private ActionResult VistaReporte(string titulo, System.Text.StringBuilder sb)
+        {
+            ViewBag.Title = titulo;
+            return View("ReporteHtml", (object)sb.ToString());
         }
 
         public ActionResult Index() => View();
@@ -105,42 +245,43 @@ namespace DentalCare.UI.Controllers
                           .OrderBy(x => x.Tratamiento.FechaInicio).ToList();
 
                 var sb = new System.Text.StringBuilder();
-                sb.Append("<!DOCTYPE html><html lang=\"es\"><head><meta charset=\"utf-8\" /><title>Reportes de Tratamientos</title>");
-                sb.Append("<link href=\"/Content/DentalCare.css?v=3\" rel=\"stylesheet\" /><style>" + EstiloReporte + "</style></head><body>");
-                sb.Append("<div class=\"page-wrapper\"><div class=\"reporte-page\">");
-                sb.Append("<div class=\"reporte-header\"><div><h1>Reportes de Tratamientos</h1></div>");
-                sb.Append("<div><a href=\"/Reporteria\" class=\"btn-volver-reporte\">&larr; Volver</a></div></div>");
-                sb.Append("<div class=\"reporte-card\">");
-                sb.Append("<form method=\"get\" action=\"/Reporteria/ReportesTratamientos\">");
-                sb.Append("<label>Desde:</label> <input type=\"date\" name=\"desde\" value=\"" + (desde.HasValue ? desde.Value.ToString("yyyy-MM-dd") : "") + "\" />");
-                sb.Append("<label style=\"margin-left:12px;\">Hasta:</label> <input type=\"date\" name=\"hasta\" value=\"" + (hasta.HasValue ? hasta.Value.ToString("yyyy-MM-dd") : "") + "\" />");
-                sb.Append("<button type=\"submit\" class=\"btn-filtrar-reporte\" style=\"margin-left:12px;\">Filtrar</button></form>");
+                sb.Append(AbrirReporte("Reportes de Tratamientos",
+                                       "Planes de tratamiento registrados en la clinica.",
+                                       "Tratamientos"));
+                sb.Append(FiltroFechas("ReportesTratamientos", desde, hasta, raw.Count, "tratamientos"));
 
                 if (!raw.Any())
                 {
-                    sb.Append("<p class=\"rep-placeholder\">No hay tratamientos para mostrar.</p>");
+                    sb.Append(EstadoVacio("Sin resultados",
+                        desde.HasValue || hasta.HasValue
+                            ? "No hay tratamientos en el rango de fechas seleccionado."
+                            : "Todavia no hay planes de tratamiento registrados."));
                 }
                 else
                 {
-                    sb.Append("<table class=\"tabla-reporte\"><thead><tr><th>ID</th><th>Descripcion</th><th>Fecha Inicio</th><th>Fecha Fin</th><th>Estado</th><th>Monto</th><th>ID Cita</th></tr></thead><tbody>");
+                    sb.Append("<div class=\"tabla-scroll\"><table class=\"rep-tabla\"><thead><tr>");
+                    sb.Append("<th>#</th><th>Descripcion</th><th>Inicio</th><th>Fin</th><th>Estado</th>");
+                    sb.Append("<th class=\"col-monto\">Monto</th><th>Cita</th>");
+                    sb.Append("</tr></thead><tbody>");
                     int i = 1;
                     foreach (var item in raw)
                     {
                         var t = item.Tratamiento;
                         sb.Append("<tr>");
-                        sb.Append("<td>" + i++ + "</td>");
-                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(t.Descripcion) + "</td>");
-                        sb.Append("<td>" + (t.FechaInicio.HasValue ? t.FechaInicio.Value.ToString("dd/MM/yyyy") : "-") + "</td>");
-                        sb.Append("<td>" + (t.FechaFin.HasValue ? t.FechaFin.Value.ToString("dd/MM/yyyy") : "-") + "</td>");
-                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(item.NombreEstado) + "</td>");
-                        sb.Append("<td>" + (t.Monto.HasValue ? t.Monto.Value.ToString("F2") : "-") + "</td>");
-                        sb.Append("<td>" + (t.IdCita.HasValue ? t.IdCita.ToString() : "-") + "</td>");
+                        sb.Append("<td class=\"celda-num\">" + i++ + "</td>");
+                        sb.Append("<td class=\"celda-desc\">" + System.Net.WebUtility.HtmlEncode(t.Descripcion) + "</td>");
+                        sb.Append("<td>" + (t.FechaInicio.HasValue ? t.FechaInicio.Value.ToString("dd/MM/yyyy") : "&mdash;") + "</td>");
+                        sb.Append("<td>" + (t.FechaFin.HasValue ? t.FechaFin.Value.ToString("dd/MM/yyyy") : "&mdash;") + "</td>");
+                        sb.Append("<td><span class=\"rep-badge\">" + System.Net.WebUtility.HtmlEncode(item.NombreEstado) + "</span></td>");
+                        sb.Append("<td class=\"celda-monto\">" + (t.Monto.HasValue ? "&#8353; " + t.Monto.Value.ToString("N2") : "&mdash;") + "</td>");
+                        sb.Append("<td class=\"celda-num\">" + (t.IdCita.HasValue ? t.IdCita.ToString() : "&mdash;") + "</td>");
                         sb.Append("</tr>");
                     }
-                    sb.Append("</tbody></table>");
+                    sb.Append("</tbody></table></div>");
                 }
-                sb.Append("</div></div></div></body></html>");
-                return Content(sb.ToString(), "text/html");
+
+                sb.Append(CerrarReporte());
+                return VistaReporte("Reportes de Tratamientos", sb);
             }
         }
 
@@ -181,32 +322,33 @@ namespace DentalCare.UI.Controllers
                            }).OrderBy(x => x.Uso.ID_USO).ToList();
 
                 var sb = new System.Text.StringBuilder();
-                sb.Append("<!DOCTYPE html><html lang=\"es\"><head><meta charset=\"utf-8\" /><title>Productos Utilizados</title>");
-                sb.Append("<link href=\"/Content/DentalCare.css?v=3\" rel=\"stylesheet\" /><style>" + EstiloReporte + "</style></head><body>");
-                sb.Append("<div class=\"page-wrapper\"><div class=\"reporte-page\">");
-                sb.Append("<div class=\"reporte-header\"><div><h1>Reporte de Productos Utilizados</h1></div>");
-                sb.Append("<div><a href=\"/Reporteria\" class=\"btn-volver-reporte\">&larr; Volver</a></div></div>");
-                sb.Append("<div class=\"reporte-card\">");
+                sb.Append(AbrirReporte("Reporte de Productos Utilizados",
+                                       "Consumo de productos por procedimiento.",
+                                       "Productos utilizados"));
+
                 if (!raw.Any())
                 {
-                    sb.Append("<p class=\"rep-placeholder\">No hay registros para mostrar.</p>");
+                    sb.Append(EstadoVacio("Sin resultados", "Todavia no hay consumo de productos registrado."));
                 }
                 else
                 {
-                    sb.Append("<table class=\"tabla-reporte\"><thead><tr><th>ID</th><th>Producto</th><th>Procedimiento</th><th>Cantidad</th><th>Estado</th></tr></thead><tbody>");
+                    sb.Append("<div class=\"tabla-scroll\"><table class=\"rep-tabla\"><thead><tr>");
+                    sb.Append("<th>#</th><th>Producto</th><th>Procedimiento</th><th>Cantidad</th><th>Estado</th>");
+                    sb.Append("</tr></thead><tbody>");
                     int i = 1;
                     foreach (var item in raw)
                     {
-                        sb.Append("<tr><td>" + i++ + "</td>");
-                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(item.NombreProducto) + "</td>");
+                        sb.Append("<tr><td class=\"celda-num\">" + i++ + "</td>");
+                        sb.Append("<td class=\"celda-desc\">" + System.Net.WebUtility.HtmlEncode(item.NombreProducto) + "</td>");
                         sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(item.ProcedimientoDescripcion) + "</td>");
-                        sb.Append("<td>" + (item.Uso.CANTIDAD.HasValue ? item.Uso.CANTIDAD.Value.ToString() : "-") + "</td>");
-                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(item.NombreEstado) + "</td></tr>");
+                        sb.Append("<td>" + (item.Uso.CANTIDAD.HasValue ? item.Uso.CANTIDAD.Value.ToString() : "&mdash;") + "</td>");
+                        sb.Append("<td><span class=\"rep-badge\">" + System.Net.WebUtility.HtmlEncode(item.NombreEstado) + "</span></td></tr>");
                     }
-                    sb.Append("</tbody></table>");
+                    sb.Append("</tbody></table></div>");
                 }
-                sb.Append("</div></div></div></body></html>");
-                return Content(sb.ToString(), "text/html");
+
+                sb.Append(CerrarReporte());
+                return VistaReporte("Productos Utilizados", sb);
             }
         }
 
@@ -224,36 +366,37 @@ namespace DentalCare.UI.Controllers
                             .OrderByDescending(x => x.Fecha).ToList();
 
                 var sb = new System.Text.StringBuilder();
-                sb.Append("<!DOCTYPE html><html lang=\"es\"><head><meta charset=\"utf-8\" /><title>Reportes de Pagos</title>");
-                sb.Append("<link href=\"/Content/DentalCare.css?v=3\" rel=\"stylesheet\" /><style>" + EstiloReporte + "</style></head><body>");
-                sb.Append("<div class=\"page-wrapper\"><div class=\"reporte-page\">");
-                sb.Append("<div class=\"reporte-header\"><div><h1>Reportes de Pagos</h1></div>");
-                sb.Append("<div><a href=\"/Reporteria\" class=\"btn-volver-reporte\">&larr; Volver</a></div></div>");
-                sb.Append("<div class=\"reporte-card\">");
-                sb.Append("<form method=\"get\" action=\"/Reporteria/ReportesPagos\">");
-                sb.Append("<label>Desde:</label> <input type=\"date\" name=\"desde\" value=\"" + (desde.HasValue ? desde.Value.ToString("yyyy-MM-dd") : "") + "\" />");
-                sb.Append("<label style=\"margin-left:12px;\">Hasta:</label> <input type=\"date\" name=\"hasta\" value=\"" + (hasta.HasValue ? hasta.Value.ToString("yyyy-MM-dd") : "") + "\" />");
-                sb.Append("<button type=\"submit\" class=\"btn-filtrar-reporte\" style=\"margin-left:12px;\">Filtrar</button></form>");
+                sb.Append(AbrirReporte("Reportes de Pagos",
+                                       "Gastos registrados en el periodo seleccionado.",
+                                       "Pagos"));
+                sb.Append(FiltroFechas("ReportesPagos", desde, hasta, lista.Count, "registros"));
+
                 if (!lista.Any())
                 {
-                    sb.Append("<p class=\"rep-placeholder\">No hay registros para las fechas seleccionadas.</p>");
+                    sb.Append(EstadoVacio("Sin resultados",
+                        desde.HasValue || hasta.HasValue
+                            ? "No hay pagos en el rango de fechas seleccionado."
+                            : "Todavia no hay pagos registrados."));
                 }
                 else
                 {
-                    sb.Append("<table class=\"tabla-reporte\"><thead><tr><th>ID</th><th>Descripcion</th><th>Monto</th><th>Fecha</th><th>Estado</th></tr></thead><tbody>");
+                    sb.Append("<div class=\"tabla-scroll\"><table class=\"rep-tabla\"><thead><tr>");
+                    sb.Append("<th>#</th><th>Descripcion</th><th class=\"col-monto\">Monto</th><th>Fecha</th><th>Estado</th>");
+                    sb.Append("</tr></thead><tbody>");
                     int i = 1;
                     foreach (var g in lista)
                     {
-                        sb.Append("<tr><td>" + i++ + "</td>");
-                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(g.Descripcion) + "</td>");
-                        sb.Append("<td>" + (g.Monto.HasValue ? g.Monto.Value.ToString("F2") : "-") + "</td>");
-                        sb.Append("<td>" + (g.Fecha.HasValue ? g.Fecha.Value.ToString("dd/MM/yyyy") : "-") + "</td>");
-                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(g.NombreEstado) + "</td></tr>");
+                        sb.Append("<tr><td class=\"celda-num\">" + i++ + "</td>");
+                        sb.Append("<td class=\"celda-desc\">" + System.Net.WebUtility.HtmlEncode(g.Descripcion) + "</td>");
+                        sb.Append("<td class=\"celda-monto\">" + (g.Monto.HasValue ? "&#8353; " + g.Monto.Value.ToString("N2") : "&mdash;") + "</td>");
+                        sb.Append("<td>" + (g.Fecha.HasValue ? g.Fecha.Value.ToString("dd/MM/yyyy") : "&mdash;") + "</td>");
+                        sb.Append("<td><span class=\"rep-badge\">" + System.Net.WebUtility.HtmlEncode(g.NombreEstado) + "</span></td></tr>");
                     }
-                    sb.Append("</tbody></table>");
+                    sb.Append("</tbody></table></div>");
                 }
-                sb.Append("</div></div></div></body></html>");
-                return Content(sb.ToString(), "text/html");
+
+                sb.Append(CerrarReporte());
+                return VistaReporte("Reportes de Pagos", sb);
             }
         }
 
@@ -302,39 +445,47 @@ namespace DentalCare.UI.Controllers
                                }).ToList();
 
                 var sb = new System.Text.StringBuilder();
-                sb.Append("<!DOCTYPE html><html lang=\"es\"><head><meta charset=\"utf-8\" /><title>Pacientes Atendidos</title>");
-                sb.Append("<link href=\"/Content/DentalCare.css?v=3\" rel=\"stylesheet\" /><style>" + EstiloReporte + "</style></head><body>");
-                sb.Append("<div class=\"page-wrapper\"><div class=\"reporte-page\">");
-                sb.Append("<div class=\"reporte-header\"><div><h1>Pacientes Atendidos</h1></div>");
-                sb.Append("<div><a href=\"/Reporteria\" class=\"btn-volver-reporte\">&larr; Volver</a></div></div>");
-                sb.Append("<div class=\"reporte-card\">");
+                sb.Append(AbrirReporte("Pacientes Atendidos",
+                                       "Citas anteriores a la fecha de hoy.",
+                                       "Pacientes atendidos"));
+
                 if (!lista.Any())
                 {
-                    sb.Append("<p class=\"rep-placeholder\">No hay citas pasadas para mostrar.</p>");
+                    sb.Append(EstadoVacio("Sin resultados", "No hay citas pasadas para mostrar."));
                 }
                 else
                 {
-                    sb.Append("<table class=\"tabla-reporte\"><thead><tr><th>ID</th><th>Paciente</th><th>Doctor</th><th>Fecha</th><th>Hora</th><th>Motivo</th><th>Estado</th></tr></thead><tbody>");
+                    sb.Append("<div class=\"tabla-scroll\"><table class=\"rep-tabla\"><thead><tr>");
+                    sb.Append("<th>#</th><th>Paciente</th><th>Doctor</th><th>Fecha</th><th>Hora</th><th>Motivo</th><th>Estado</th>");
+                    sb.Append("</tr></thead><tbody>");
                     int contador = ((page - 1) * pageSize) + 1;
                     foreach (var r in lista)
                     {
-                        sb.Append("<tr><td>" + contador++ + "</td>");
-                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(r.NombrePaciente) + "</td>");
+                        sb.Append("<tr><td class=\"celda-num\">" + contador++ + "</td>");
+                        sb.Append("<td class=\"celda-desc\">" + System.Net.WebUtility.HtmlEncode(r.NombrePaciente) + "</td>");
                         sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(r.NombreDoctor) + "</td>");
-                        sb.Append("<td>" + (r.Fecha.HasValue ? r.Fecha.Value.ToString("dd/MM/yyyy") : "-") + "</td>");
-                        sb.Append("<td>" + r.HoraString + "</td>");
+                        sb.Append("<td>" + (r.Fecha.HasValue ? r.Fecha.Value.ToString("dd/MM/yyyy") : "&mdash;") + "</td>");
+                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(r.HoraString) + "</td>");
                         sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(r.NombreMotivo) + "</td>");
-                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(r.NombreEstado) + "</td></tr>");
+                        sb.Append("<td><span class=\"rep-badge\">" + System.Net.WebUtility.HtmlEncode(r.NombreEstado) + "</span></td></tr>");
                     }
-                    sb.Append("</tbody></table>");
+                    sb.Append("</tbody></table></div>");
+
                     sb.Append("<div class=\"rep-paginacion\">");
-                    if (page > 1) sb.Append("<a href=\"/Reporteria/ReportesPacientesAtendidos?page=" + (page - 1) + "&pageSize=" + pageSize + "\">&larr; Anterior</a>");
+                    if (page > 1)
+                    {
+                        sb.Append("<a href=\"/Reporteria/ReportesPacientesAtendidos?page=" + (page - 1) + "&pageSize=" + pageSize + "\">&larr; Anterior</a>");
+                    }
                     sb.Append("<span>Pagina " + page + " de " + Math.Max(totalPages, 1) + "</span>");
-                    if (page < totalPages) sb.Append("<a href=\"/Reporteria/ReportesPacientesAtendidos?page=" + (page + 1) + "&pageSize=" + pageSize + "\">Siguiente &rarr;</a>");
+                    if (page < totalPages)
+                    {
+                        sb.Append("<a href=\"/Reporteria/ReportesPacientesAtendidos?page=" + (page + 1) + "&pageSize=" + pageSize + "\">Siguiente &rarr;</a>");
+                    }
                     sb.Append("</div>");
                 }
-                sb.Append("</div></div></div></body></html>");
-                return Content(sb.ToString(), "text/html");
+
+                sb.Append(CerrarReporte());
+                return VistaReporte("Pacientes Atendidos", sb);
             }
         }
 

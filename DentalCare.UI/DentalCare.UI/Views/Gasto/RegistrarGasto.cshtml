@@ -1,123 +1,445 @@
 ﻿@model DentalCare.Abstraccion.Modelo.Gasto.GastoDto
-@{ ViewBag.Title = "Registrar Gasto"; }
 
-<div class="usuarios-page" style="max-width:620px; margin:0 auto;">
-    <div class="usuarios-header">
-        <div>
-            <h1 class="usuarios-titulo"><i class="fa fa-minus-circle"></i> Registrar Gasto</h1>
-            <p class="usuarios-subtitulo">Registrá los gastos de la clínica para el control financiero.</p>
-        </div>
+@{
+    ViewBag.Title = "Registrar Gasto";
+}
+
+<div class="inv-page">
+
+    <div class="inv-header">
+        <h1 class="inv-titulo">Registrar Gasto</h1>
+        <p class="inv-subtitulo">Registrá los gastos de la clínica para el control financiero.</p>
     </div>
+
+    <div class="nota-info">Los campos marcados con <span class="required">*</span> son obligatorios.</div>
 
     @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""] != null)
     {
-        <div class="alert alert-danger">@Html.ValidationMessage("")</div>
+        <div class="alerta-rojo">@Html.ValidationMessage("")</div>
     }
 
     @using (Html.BeginForm("RegistrarGasto", "Gasto", FormMethod.Post))
     {
         @Html.AntiForgeryToken()
-        <div class="panel panel-default">
-            <div class="panel-heading"><strong>Datos del Gasto</strong></div>
-            <div class="panel-body">
 
-                @* Escenario 3: categoría de gasto *@
-                <div class="form-group">
-                    @Html.LabelFor(m => m.TipoGasto)<span class="text-danger"> *</span>
-                    @Html.DropDownListFor(m => m.TipoGasto, Model.ListaTiposGasto,
-                             "-- Seleccione categoría --", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.TipoGasto, "", new { @class = "text-danger" })
+        <div class="trat-form-card">
+
+            <div class="trat-card-bar">Datos del Gasto</div>
+
+            <div class="trat-card-body">
+
+                <div class="trat-fila">
+
+                    @* Escenario 3: categoría de gasto *@
+                    <div class="trat-campo">
+                        <div class="trat-label-row">
+                            @Html.LabelFor(m => m.TipoGasto, new { @class = "trat-label" })
+                            <span class="required">*</span>
+                        </div>
+                        @Html.DropDownListFor(m => m.TipoGasto, Model.ListaTiposGasto, "-- Seleccione categoría --", new { @class = "trat-input" })
+                        @Html.ValidationMessageFor(m => m.TipoGasto, "", new { @class = "trat-error" })
+                    </div>
+
+                    <div class="trat-campo">
+                        <div class="trat-label-row">
+                            @Html.LabelFor(m => m.Monto, new { @class = "trat-label" })
+                            <span class="required">*</span>
+                        </div>
+                        <div class="campo-monto">
+                            <span class="campo-moneda" aria-hidden="true">₡</span>
+                            @Html.TextBoxFor(m => m.Monto, new
+                            {
+                                @class = "trat-input input-monto",
+                                placeholder = "0.00",
+                                type = "number",
+                                step = "0.01",
+                                min = "0.01"
+                            })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Monto, "", new { @class = "trat-error" })
+                    </div>
+
                 </div>
 
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Concepto)<span class="text-danger"> *</span>
-                    @Html.TextAreaFor(m => m.Concepto, new
-                    {
-                        @class = "form-control",
-                        rows = "3",
-                        placeholder = "Describa el concepto del gasto"
-                    })
-                    @Html.ValidationMessageFor(m => m.Concepto, "", new { @class = "text-danger" })
+                <div class="trat-fila">
+
+                    <div class="trat-campo trat-campo-full">
+                        <div class="trat-label-row">
+                            @Html.LabelFor(m => m.Concepto, new { @class = "trat-label" })
+                            <span class="required">*</span>
+                        </div>
+                        @Html.TextAreaFor(m => m.Concepto, new
+                        {
+                            @class = "trat-input trat-textarea",
+                            rows = "3",
+                            placeholder = "Describa el concepto del gasto"
+                        })
+                        @Html.ValidationMessageFor(m => m.Concepto, "", new { @class = "trat-error" })
+                    </div>
+
                 </div>
 
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Monto)<span class="text-danger"> *</span>
-                    @Html.TextBoxFor(m => m.Monto, new
-                    {
-                        @class = "form-control",
-                        placeholder = "0.00",
-                        type = "number",
-                        step = "0.01",
-                        min = "0.01"
-                    })
-                    @Html.ValidationMessageFor(m => m.Monto, "", new { @class = "text-danger" })
+                <div class="trat-fila">
+
+                    <div class="trat-campo">
+                        <div class="trat-label-row">
+                            @Html.LabelFor(m => m.Fecha, new { @class = "trat-label" })
+                            <span class="required">*</span>
+                        </div>
+                        @Html.TextBoxFor(m => m.Fecha, "{0:yyyy-MM-dd}", new { @class = "trat-input", type = "date" })
+                        @Html.ValidationMessageFor(m => m.Fecha, "", new { @class = "trat-error" })
+                    </div>
+
+                    <div class="trat-campo">
+                        <div class="trat-label-row">
+                            @Html.LabelFor(m => m.IdEstado, new { @class = "trat-label" })
+                            <span class="required">*</span>
+                        </div>
+                        @Html.DropDownListFor(m => m.IdEstado, Model.ListaEstados, "-- Seleccione --", new { @class = "trat-input" })
+                        @Html.ValidationMessageFor(m => m.IdEstado, "", new { @class = "trat-error" })
+                    </div>
+
                 </div>
 
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Fecha)<span class="text-danger"> *</span>
-                    @Html.TextBoxFor(m => m.Fecha, "{0:yyyy-MM-dd}",
-                             new { @class = "form-control", type = "date" })
-                    @Html.ValidationMessageFor(m => m.Fecha, "", new { @class = "text-danger" })
-                </div>
-
-                <div class="form-group">
-                    @Html.LabelFor(m => m.IdEstado)<span class="text-danger"> *</span>
-                    @Html.DropDownListFor(m => m.IdEstado, Model.ListaEstados,
-                             "-- Seleccione --", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.IdEstado, "", new { @class = "text-danger" })
+                <div class="trat-botones">
+                    <button type="submit" class="btn-inv-primary">Confirmar Gasto</button>
+                    @Html.ActionLink("Cancelar", "ReporteGastos", "Gasto", null, new { @class = "btn-inv-cancelar" })
                 </div>
 
             </div>
-        </div>
-        <div style="margin-top:20px;">
-            <button type="submit" class="btn-usuario-primary">Confirmar Gasto</button>
-            @Html.ActionLink("Cancelar", "ReporteGastos", "Gasto",
-                     null, new { @class = "btn btn-default", style = "margin-left:8px;" })
+
         </div>
     }
+
 </div>
 
 <style>
-    .panel {
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        margin-bottom: 20px;
+    /* ── Tokens (los mismos del resto del módulo) ── */
+    .inv-page {
+        padding: 36px 20px 56px;
+        --dc-teal-oscuro: #0f3b3c;
+        --dc-teal: #2e8f8c;
+        --dc-teal-barra: #1c6a68;
+        --dc-tinta: #1e2d3d;
+        --dc-suave: #6b7f92;
+        --dc-input-bg: #f5f8fe;
+        --dc-input-borde: #dde5f3;
+        --dc-verde: #2f6d5c;
+        --dc-verde-hover: #275c4d;
+        --dc-gris: #e9ebed;
+        --dc-gris-hover: #dde1e5;
+        --dc-error: #c0392b;
+        --dc-ancho: 780px;
     }
 
-    .panel-heading {
-        background: #f5f7fa;
-        padding: 12px 16px;
-        border-bottom: 1px solid #ddd;
-        border-radius: 8px 8px 0 0;
+    /* ── Encabezado ── */
+    .inv-header {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 20px;
+        padding: 28px 34px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, var(--dc-teal-oscuro) 0%, var(--dc-teal) 100%);
+        box-shadow: 0 10px 26px rgba(15, 59, 60, 0.18);
     }
 
-    .panel-body {
-        padding: 20px;
+    .inv-titulo {
+        margin: 0;
+        color: #fff;
+        font-size: 1.55rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
     }
 
-    .form-group {
-        margin-bottom: 16px;
+    .inv-subtitulo {
+        margin: 10px 0 0;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 0.95rem;
+        font-weight: 500;
     }
 
-    .form-control {
-        width: 100%;
-        padding: 8px 12px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
+    /* ── Nota de campos obligatorios ── */
+    .nota-info {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 20px;
+        padding: 12px 18px;
+        border-radius: 10px;
+        background: rgba(46, 143, 140, 0.07);
+        border: 1px solid rgba(46, 143, 140, 0.22);
+        border-left: 4px solid var(--dc-teal);
+        color: #275f5d;
+        font-size: 0.88rem;
     }
 
-    .btn-default {
-        background: #f0f0f0;
-        color: #333;
-        padding: 8px 16px;
-        border-radius: 4px;
-        text-decoration: none;
-        display: inline-block;
+    .required {
+        color: var(--dc-error);
+        font-weight: 700;
     }
 
-        .btn-default:hover {
-            background: #ddd;
+    /* ── Tarjeta ── */
+    .trat-form-card {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 22px;
+        padding: 0;
+        overflow: hidden;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 10px 26px rgba(15, 59, 60, 0.09);
+    }
+
+    .trat-card-bar {
+        padding: 18px 30px;
+        background: linear-gradient(135deg, var(--dc-teal-oscuro) 0%, var(--dc-teal-barra) 100%);
+        color: #fff;
+        font-size: 1.02rem;
+        font-weight: 700;
+    }
+
+    .trat-card-body {
+        padding: 26px 30px 28px;
+    }
+
+    /* ── Grilla ── */
+    .trat-fila {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+    }
+
+        .trat-fila:last-child {
+            margin-bottom: 0;
         }
+
+    .trat-campo {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1;
+        min-width: 220px;
+    }
+
+    .trat-campo-full {
+        flex-basis: 100%;
+    }
+
+    .trat-label-row {
+        display: flex;
+        align-items: baseline;
+        gap: 5px;
+    }
+
+    .trat-label {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--dc-tinta);
+    }
+
+    /* ── Campos ── */
+    /* background-color, no el atajo background: el select usa background-image */
+    .trat-input {
+        width: 100%;
+        box-sizing: border-box;
+        height: 46px;
+        padding: 12px 16px;
+        border-radius: 8px;
+        border: 1px solid var(--dc-input-borde);
+        background-color: var(--dc-input-bg);
+        font-family: inherit;
+        font-size: 0.95rem;
+        color: var(--dc-tinta);
+        outline: none;
+        box-shadow: none;
+        transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+    }
+
+        .trat-input:hover {
+            border-color: #c8d6ec;
+        }
+
+        .trat-input:focus {
+            background-color: #fff;
+            border-color: var(--dc-teal);
+            box-shadow: 0 0 0 3px rgba(46, 143, 140, 0.15);
+        }
+
+        .trat-input::placeholder {
+            color: #a9bccb;
+        }
+
+        .trat-input::-webkit-calendar-picker-indicator {
+            opacity: .5;
+            cursor: pointer;
+        }
+
+        .trat-input.input-validation-error {
+            border-color: var(--dc-error);
+            background-color: rgba(192, 57, 43, 0.04);
+        }
+
+    .trat-textarea {
+        height: auto;
+        min-height: 78px;
+        line-height: 1.5;
+        resize: vertical;
+    }
+
+    select.trat-input {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        padding-right: 42px;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236b7f92' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+    }
+
+        select.trat-input::-ms-expand {
+            display: none;
+        }
+
+    /* ── Monto: el símbolo va dentro del campo ── */
+    .campo-monto {
+        position: relative;
+    }
+
+    .campo-moneda {
+        position: absolute;
+        top: 0;
+        left: 16px;
+        height: 46px;
+        display: flex;
+        align-items: center;
+        color: var(--dc-suave);
+        font-size: 0.95rem;
+        font-weight: 700;
+        pointer-events: none;
+    }
+
+    .input-monto {
+        padding-left: 34px;
+    }
+
+    .trat-error {
+        color: var(--dc-error);
+        font-size: 0.78rem;
+        font-weight: 600;
+    }
+
+    /* ── Botones ── */
+    .trat-botones {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-start;
+        align-items: center;
+        margin-top: 28px;
+        padding-top: 22px;
+        border-top: 1px solid #eef2f7;
+    }
+
+    .btn-inv-primary {
+        height: 46px;
+        padding: 0 26px;
+        border: none;
+        border-radius: 8px;
+        background: var(--dc-verde);
+        color: #fff;
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background .18s ease, box-shadow .18s ease;
+    }
+
+        .btn-inv-primary:hover {
+            background: var(--dc-verde-hover);
+            color: #fff;
+            box-shadow: 0 6px 14px rgba(47, 109, 92, 0.28);
+        }
+
+    .btn-inv-cancelar {
+        display: inline-flex;
+        align-items: center;
+        height: 46px;
+        padding: 0 26px;
+        border-radius: 8px;
+        background: var(--dc-gris);
+        color: #5a6672;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background .18s ease, color .18s ease;
+    }
+
+        .btn-inv-cancelar:hover {
+            background: var(--dc-gris-hover);
+            color: var(--dc-tinta);
+            text-decoration: none;
+        }
+
+    /* ── Validación ── */
+    .alerta-rojo {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 20px;
+        padding: 12px 18px;
+        border-radius: 10px;
+        background: rgba(220, 53, 53, 0.07);
+        border: 1px solid rgba(220, 53, 53, 0.3);
+        border-left: 4px solid var(--dc-error);
+        color: #9b2020;
+        font-size: 0.88rem;
+    }
+
+    /* ── Accesibilidad y responsive ── */
+    .trat-input:focus-visible,
+    .btn-inv-primary:focus-visible,
+    .btn-inv-cancelar:focus-visible {
+        outline: 2px solid var(--dc-teal);
+        outline-offset: 2px;
+    }
+
+    @@media (max-width: 680px) {
+        .inv-page {
+            padding: 22px 14px 40px;
+        }
+
+        .inv-header {
+            padding: 22px;
+        }
+
+        .trat-card-bar {
+            padding: 16px 20px;
+        }
+
+        .trat-card-body {
+            padding: 20px 20px 22px;
+        }
+
+        .trat-campo {
+            min-width: 100%;
+        }
+
+        .trat-botones {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .btn-inv-primary,
+        .btn-inv-cancelar {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .trat-input,
+        .btn-inv-primary,
+        .btn-inv-cancelar {
+            transition: none;
+        }
+    }
 </style>
+
 @section Scripts { @Scripts.Render("~/bundles/jqueryval") }

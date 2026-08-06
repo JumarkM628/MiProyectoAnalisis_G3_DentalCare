@@ -2,114 +2,770 @@
 
 @{
     ViewBag.Title = "Ver Odontograma";
+
+    var hayOdontograma = Model.Detalles != null && Model.Detalles.Any();
 }
 
-<div class="container-fluid" style="padding: 24px;">
+@functions {
+    // Se compara por prefijo para no depender de las tildes,
+    // que es justo lo que se rompe cuando el archivo cambia de codificación.
+    string ClaseEstado(string estado)
+    {
+        var e = (estado ?? "").Trim().ToLowerInvariant();
+        if (e.StartsWith("sana")) return "badge-sana";
+        if (e.StartsWith("caries")) return "badge-caries";
+        if (e.StartsWith("restaur")) return "badge-restauracion";
+        if (e.StartsWith("corona")) return "badge-corona";
+        if (e.StartsWith("implante")) return "badge-implante";
+        if (e.StartsWith("extrac")) return "badge-extraccion";
+        if (e.StartsWith("ausente")) return "badge-ausente";
+        return "badge-neutro";
+    }
+}
 
-    <div class="row mb-3">
-        <div class="col-md-8">
-            <h2 style="font-weight: 600; color: #2c3e50;">
-                <i class="fa fa-tooth" aria-hidden="true"></i>
-                Odontograma del Paciente
-            </h2>
-            <p class="text-muted">Expediente #@Model.IdExpediente</p>
+<div class="inv-page">
+
+    <div class="inv-header exp-header">
+        <div>
+            <h1 class="inv-titulo">Odontograma del Paciente</h1>
+            <p class="inv-subtitulo">Expediente #@Model.IdExpediente</p>
         </div>
-        <div class="col-md-4 text-right">
-            @Html.ActionLink("← Volver", "ObtenerTodosLosExpedientes", "Expediente",
-                null, new { @class = "btn btn-default" })
-            @Html.ActionLink("Editar", "RegistrarOdontograma", new { id = Model.IdExpediente },
-                new { @class = "btn btn-warning" })
+        <div class="exp-header-acciones">
+            @Html.ActionLink("Volver", "ObtenerTodosLosExpedientes", "Expediente", null, new { @class = "btn-header" })
+            @if (hayOdontograma)
+            {
+                @Html.ActionLink("Editar", "RegistrarOdontograma", new { id = Model.IdExpediente }, new { @class = "btn-header btn-header-solido" })
+            }
         </div>
     </div>
 
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger">@TempData["Error"]</div>
+        <div class="alerta-rojo">@TempData["Error"]</div>
     }
 
-    <div class="panel panel-default">
-        <div class="panel-heading" style="background-color: #2c3e50; color: white;">
-            <h4 style="margin: 0;">Piezas Registradas</h4>
-        </div>
-        <div class="panel-body">
+    <div class="trat-form-card">
 
-            @if (Model.Detalles == null || !Model.Detalles.Any())
+        <div class="trat-card-bar">Piezas Registradas</div>
+
+        <div class="trat-card-body">
+
+            @if (!hayOdontograma)
             {
-                <div class="alert alert-info">
-                    No hay piezas dentales registradas en este odontograma.
+                <div class="estado-vacio">
+                    <p class="estado-vacio-titulo">Sin odontograma registrado</p>
+                    <p class="estado-vacio-texto">Este expediente todavía no tiene el estado de las piezas dentales. Registralo para verlo aquí.</p>
+                    @Html.ActionLink("Registrar Odontograma", "RegistrarOdontograma", new { id = Model.IdExpediente }, new { @class = "btn-inv-primary btn-vacio" })
                 </div>
             }
             else
             {
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <input type="text" id="buscador" class="form-control"
-                               placeholder="Buscar por pieza o estado..."
-                               onkeyup="filtrarTabla()" />
-                    </div>
-                    <div class="col-md-8 text-right">
-                        <span class="text-muted">
-                            Total piezas registradas: <strong>@Model.Detalles.Count</strong>
-                        </span>
-                    </div>
+                <div class="odo-lienzo">
+                    <svg id="odo" width="100%" viewBox="0 0 680 520" role="img" aria-label="Arcada dental del paciente"></svg>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover table-striped" id="tablaOdontograma">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>#</th>
-                                <th>Pieza Dental</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var detalle in Model.Detalles)
-                            {
-                                string estadoClass;
-                                switch (detalle.EstadoPieza?.ToLower())
-                                {
-                                    case "sana":
-                                        estadoClass = "success";
-                                        break;
-                                    case "caries":
-                                    case "extracción":
-                                        estadoClass = "danger";
-                                        break;
-                                    case "restauración":
-                                    case "corona":
-                                    case "implante":
-                                        estadoClass = "warning";
-                                        break;
-                                    default:
-                                        estadoClass = "default";
-                                        break;
-                                }
+                <div class="odo-leyenda" id="odoLeyenda"></div>
+
+                <div class="odo-aviso" id="avisoNumeracion" style="display:none;">
+                    Los números de pieza guardados no corresponden a la numeración FDI, así que se ubicaron en la arcada en el orden en que vinieron. El detalle de abajo sí muestra el número tal cual está en la base.
+                </div>
+
+                <div class="odo-detalle">
+
+                    <h4 class="trat-seccion-titulo">Detalle</h4>
+
+                    <div class="piezas-barra">
+                        <input type="text"
+                               id="buscador"
+                               class="trat-input buscador"
+                               placeholder="Buscar por pieza o estado..."
+                               onkeyup="filtrarTabla()" />
+                        <span class="contador-pill">@Model.Detalles.Count() piezas registradas</span>
+                    </div>
+
+                    <div class="tabla-scroll">
+                        <table class="piezas-tabla" id="tablaOdontograma">
+                            <thead>
                                 <tr>
-                                    <td>@detalle.IdDetalle</td>
-                                    <td>Pieza @detalle.NumeroPieza</td>
-                                    <td>
-                                        <span class="label label-@estadoClass">
-                                            @detalle.EstadoPieza
-                                        </span>
-                                    </td>
+                                    <th class="col-id">#</th>
+                                    <th>Pieza dental</th>
+                                    <th class="col-estado">Estado</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach (var detalle in Model.Detalles)
+                                {
+                                    <tr>
+                                        <td class="celda-id">@detalle.IdDetalle</td>
+                                        <td><span class="nombre-pieza">Pieza @detalle.NumeroPieza</span></td>
+                                        <td>
+                                            <span class="badge-custom @ClaseEstado(detalle.EstadoPieza)">@detalle.EstadoPieza</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="trat-hint tabla-sin-datos" id="sinResultados" style="display:none;">Ninguna pieza coincide con la búsqueda.</p>
+
                 </div>
             }
+
         </div>
+
     </div>
+
 </div>
+
+<style>
+    /* ── Tokens (los mismos del resto del módulo) ── */
+    .inv-page {
+        padding: 36px 20px 56px;
+        --dc-teal-oscuro: #0f3b3c;
+        --dc-teal: #2e8f8c;
+        --dc-teal-barra: #1c6a68;
+        --dc-tinta: #1e2d3d;
+        --dc-suave: #6b7f92;
+        --dc-input-bg: #f5f8fe;
+        --dc-input-borde: #dde5f3;
+        --dc-verde: #2f6d5c;
+        --dc-verde-hover: #275c4d;
+        --dc-error: #c0392b;
+        --dc-ancho: 900px;
+    }
+
+    /* ── Encabezado ── */
+    .inv-header {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 20px;
+        padding: 28px 34px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, var(--dc-teal-oscuro) 0%, var(--dc-teal) 100%);
+        box-shadow: 0 10px 26px rgba(15, 59, 60, 0.18);
+    }
+
+    .exp-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .exp-header-acciones {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .inv-titulo {
+        margin: 0;
+        color: #fff;
+        font-size: 1.55rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+    }
+
+    .inv-subtitulo {
+        margin: 10px 0 0;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    .btn-header {
+        display: inline-flex;
+        align-items: center;
+        height: 40px;
+        padding: 0 20px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: background .18s ease, border-color .18s ease;
+    }
+
+        .btn-header:hover,
+        .btn-header:focus {
+            background: rgba(255, 255, 255, 0.22);
+            border-color: #fff;
+            color: #fff;
+            text-decoration: none;
+        }
+
+    /* La acción principal se distingue por relleno, no por otro color */
+    .btn-header-solido {
+        background: #fff;
+        border-color: #fff;
+        color: var(--dc-teal-oscuro);
+        font-weight: 700;
+    }
+
+        .btn-header-solido:hover,
+        .btn-header-solido:focus {
+            background: #eaf5f4;
+            border-color: #eaf5f4;
+            color: var(--dc-teal-oscuro);
+        }
+
+    /* ── Tarjeta ── */
+    .trat-form-card {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 22px;
+        padding: 0;
+        overflow: hidden;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 10px 26px rgba(15, 59, 60, 0.09);
+    }
+
+    .trat-card-bar {
+        padding: 18px 30px;
+        background: linear-gradient(135deg, var(--dc-teal-oscuro) 0%, var(--dc-teal-barra) 100%);
+        color: #fff;
+        font-size: 1.02rem;
+        font-weight: 700;
+    }
+
+    .trat-card-body {
+        padding: 26px 30px 28px;
+    }
+
+    .trat-seccion-titulo {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0 0 16px;
+        font-size: 0.76rem;
+        font-weight: 800;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--dc-suave);
+    }
+
+        .trat-seccion-titulo::before {
+            content: "";
+            width: 3px;
+            height: 14px;
+            border-radius: 2px;
+            background: var(--dc-teal);
+            flex: none;
+        }
+
+    .trat-hint {
+        font-size: 0.76rem;
+        color: var(--dc-suave);
+        line-height: 1.4;
+    }
+
+    .trat-input {
+        width: 100%;
+        box-sizing: border-box;
+        height: 42px;
+        padding: 10px 16px;
+        border-radius: 8px;
+        border: 1px solid var(--dc-input-borde);
+        background-color: var(--dc-input-bg);
+        font-family: inherit;
+        font-size: 0.95rem;
+        color: var(--dc-tinta);
+        outline: none;
+        box-shadow: none;
+        transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+    }
+
+        .trat-input:hover {
+            border-color: #c8d6ec;
+        }
+
+        .trat-input:focus {
+            background-color: #fff;
+            border-color: var(--dc-teal);
+            box-shadow: 0 0 0 3px rgba(46, 143, 140, 0.15);
+        }
+
+        .trat-input::placeholder {
+            color: #a9bccb;
+        }
+
+    /* ── Odontograma ── */
+    .odo-lienzo {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 4px 0;
+    }
+
+    .odo-leyenda {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 6px;
+    }
+
+    .odo-leyenda-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 5px 13px;
+        border-radius: 999px;
+        border: 1px solid;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    .odo-sw {
+        width: 12px;
+        height: 12px;
+        border-radius: 4px;
+        border: 1.5px solid;
+        flex: none;
+    }
+
+    .odo-aviso {
+        margin-top: 16px;
+        padding: 10px 16px;
+        border-radius: 10px;
+        background: rgba(214, 158, 46, 0.1);
+        border: 1px solid rgba(214, 158, 46, 0.35);
+        border-left: 4px solid #d69e2e;
+        color: #7a5c12;
+        font-size: 0.82rem;
+    }
+
+    .odo-detalle {
+        margin-top: 26px;
+        padding-top: 24px;
+        border-top: 1px solid #eef2f7;
+    }
+
+    .piezas-barra {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+    }
+
+    .buscador {
+        flex: 0 1 280px;
+    }
+
+    .contador-pill {
+        padding: 6px 16px;
+        border-radius: 999px;
+        background: rgba(46, 143, 140, 0.1);
+        color: #216d6a;
+        font-size: 0.8rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* ── Tabla ── */
+    .tabla-scroll {
+        max-height: 420px;
+        overflow-y: auto;
+        border: 1px solid var(--dc-input-borde);
+        border-radius: 12px;
+    }
+
+    .piezas-tabla {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.92rem;
+    }
+
+        .piezas-tabla thead th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            padding: 12px 16px;
+            background: #eef4f9;
+            border-bottom: 1px solid var(--dc-input-borde);
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--dc-suave);
+            text-align: left;
+        }
+
+        .piezas-tabla td {
+            padding: 10px 16px;
+            border-bottom: 1px solid #f0f4f8;
+            color: var(--dc-tinta);
+            vertical-align: middle;
+        }
+
+        .piezas-tabla tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .piezas-tabla tbody tr:hover td {
+            background: #f8fbfe;
+        }
+
+    .col-id {
+        width: 70px;
+    }
+
+    .col-estado {
+        width: 190px;
+    }
+
+    .celda-id {
+        color: var(--dc-suave);
+        font-size: 0.85rem;
+    }
+
+    .nombre-pieza {
+        font-weight: 600;
+    }
+
+    .tabla-sin-datos {
+        margin: 14px 0 0;
+        text-align: center;
+    }
+
+    /* ── Etiquetas de estado ── */
+    .badge-custom {
+        display: inline-block;
+        padding: 4px 13px;
+        border-radius: 999px;
+        font-size: 0.76rem;
+        font-weight: 700;
+    }
+
+    .badge-sana {
+        background: #E6F4F1;
+        color: #1B5F5D;
+    }
+
+    .badge-caries {
+        background: #FBE4E4;
+        color: #8F2626;
+    }
+
+    .badge-extraccion {
+        background: #FBE4E4;
+        color: #8F2626;
+    }
+
+    .badge-restauracion {
+        background: #E3ECF9;
+        color: #1E4478;
+    }
+
+    .badge-corona {
+        background: #FAEEDA;
+        color: #7A5209;
+    }
+
+    .badge-implante {
+        background: #EDE9F8;
+        color: #41338C;
+    }
+
+    .badge-ausente {
+        background: #EEF1F4;
+        color: #5A6672;
+    }
+
+    .badge-neutro {
+        background: #f0f4f8;
+        color: #5a6672;
+    }
+
+    /* ── Estado vacío ── */
+    .estado-vacio {
+        padding: 34px 20px 30px;
+        text-align: center;
+        border: 1px dashed var(--dc-input-borde);
+        border-radius: 12px;
+        background: var(--dc-input-bg);
+    }
+
+    .estado-vacio-titulo {
+        margin: 0 0 6px;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--dc-tinta);
+    }
+
+    .estado-vacio-texto {
+        margin: 0 auto 18px;
+        max-width: 380px;
+        font-size: 0.88rem;
+        line-height: 1.5;
+        color: var(--dc-suave);
+    }
+
+    .btn-inv-primary.btn-vacio {
+        display: inline-flex;
+        align-items: center;
+        height: 44px;
+        padding: 0 24px;
+        border: none;
+        border-radius: 8px;
+        background: var(--dc-verde);
+        color: #fff;
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: background .18s ease, box-shadow .18s ease;
+    }
+
+        .btn-inv-primary.btn-vacio:hover,
+        .btn-inv-primary.btn-vacio:focus {
+            background: var(--dc-verde-hover);
+            color: #fff;
+            text-decoration: none;
+            box-shadow: 0 6px 14px rgba(47, 109, 92, 0.28);
+        }
+
+    /* ── Mensajes ── */
+    .alerta-rojo {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 20px;
+        padding: 12px 18px;
+        border-radius: 10px;
+        background: rgba(220, 53, 53, 0.07);
+        border: 1px solid rgba(220, 53, 53, 0.3);
+        border-left: 4px solid var(--dc-error);
+        color: #9b2020;
+        font-size: 0.88rem;
+    }
+
+    /* ── Accesibilidad y responsive ── */
+    .trat-input:focus-visible,
+    .btn-header:focus-visible,
+    .btn-inv-primary.btn-vacio:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+    }
+
+    .trat-input:focus-visible {
+        outline-color: var(--dc-teal);
+    }
+
+    @@media (max-width: 680px) {
+        .inv-page {
+            padding: 22px 14px 40px;
+        }
+
+        .inv-header {
+            padding: 22px;
+        }
+
+        .trat-card-bar {
+            padding: 16px 20px;
+        }
+
+        .trat-card-body {
+            padding: 20px 20px 22px;
+        }
+
+        .buscador {
+            flex: 1 1 100%;
+        }
+
+        .col-estado {
+            width: 140px;
+        }
+
+        .piezas-tabla td,
+        .piezas-tabla thead th {
+            padding: 10px 10px;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .trat-input,
+        .btn-header,
+        .btn-inv-primary.btn-vacio {
+            transition: none;
+        }
+    }
+</style>
 
 @section Scripts {
     <script>
-        function filtrarTabla() {
-            var filtro = document.getElementById("buscador").value.toLowerCase();
-            document.querySelectorAll("#tablaOdontograma tbody tr").forEach(function (fila) {
-                fila.style.display = fila.innerText.toLowerCase().indexOf(filtro) > -1 ? "" : "none";
-            });
+    function filtrarTabla() {
+        var filtro = document.getElementById("buscador").value.toLowerCase();
+        var visibles = 0;
+
+        document.querySelectorAll("#tablaOdontograma tbody tr").forEach(function (fila) {
+            var coincide = fila.innerText.toLowerCase().indexOf(filtro) > -1;
+            fila.style.display = coincide ? "" : "none";
+            if (coincide) { visibles++; }
+        });
+
+        document.getElementById("sinResultados").style.display = visibles === 0 ? "block" : "none";
+    }
+
+    var detalles = [
+        @if (Model.Detalles != null)
+        {
+            foreach (var d in Model.Detalles)
+            {
+                @: { n: "@d.NumeroPieza", e: "@d.EstadoPieza" },
+            }
         }
+    ];
+
+    // Código de color clínico: rojo lo pendiente, azul lo ya tratado
+    var S = {
+        "sana":         { f: "#E6F4F1", s: "#2E8F8C", t: "#1B5F5D", k: "Sana" },
+        "caries":       { f: "#FBE4E4", s: "#C0392B", t: "#8F2626", k: "Caries" },
+        "restaur":      { f: "#E3ECF9", s: "#2C5DA8", t: "#1E4478", k: "Restauración" },
+        "corona":       { f: "#FAEEDA", s: "#9A6B0C", t: "#7A5209", k: "Corona" },
+        "implante":     { f: "#EDE9F8", s: "#5B4BB0", t: "#41338C", k: "Implante" },
+        "extrac":       { f: "#FBE4E4", s: "#C0392B", t: "#8F2626", k: "Extracción" },
+        "ausente":      { f: "#EEF1F4", s: "#AFBCC8", t: "#5A6672", k: "Ausente" }
+    };
+    var DEF = { f: "#FFFFFF", s: "#C9D6E2" };
+
+    // Se resuelve por prefijo para no depender de las tildes
+    function claveDe(estado) {
+        var e = String(estado || "").trim().toLowerCase();
+        var ks = Object.keys(S);
+        for (var i = 0; i < ks.length; i++) { if (e.indexOf(ks[i]) === 0) { return ks[i]; } }
+        return null;
+    }
+
+    var FDI_SUP = [18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28];
+    var FDI_INF = [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38];
+    var TODAS = FDI_SUP.concat(FDI_INF);
+
+    var porFdi = {}, validos = 0;
+
+    detalles.forEach(function (d) {
+        var n = parseInt(d.n, 10);
+        if (TODAS.indexOf(n) !== -1) { porFdi[n] = d.e; validos++; }
+    });
+
+    var porOrden = validos === 0 && detalles.length > 0;
+    if (porOrden) {
+        detalles.forEach(function (d, i) { if (TODAS[i]) { porFdi[TODAS[i]] = d.e; } });
+    }
+
+    function anchoDe(n) { var d = n % 10; return d >= 6 ? 30 : (d >= 4 ? 23 : (d === 2 ? 18 : 20)); }
+    function raicesDe(n) { return n % 10 >= 6 ? 2 : 1; }
+
+    function corona(w) {
+        var h = w / 2;
+        return "M" + (-h) + " 0 L" + h + " 0 L" + h + " 17 Q" + h + " 26 " + (h - 7) + " 26 L" + (-h + 7) + " 26 Q" + (-h) + " 26 " + (-h) + " 17 Z";
+    }
+
+    function raiz(w, n) {
+        if (n === 2) {
+            var a = w / 4;
+            return "M" + (-a - 5) + " 0 C" + (-a - 5) + " -16 " + (-a - 2) + " -26 " + (-a) + " -33 C" + (-a + 2) + " -26 " + (-a + 5) + " -16 " + (-a + 5) + " 0 Z" +
+                   " M" + (a - 5) + " 0 C" + (a - 5) + " -16 " + (a - 2) + " -26 " + a + " -33 C" + (a + 2) + " -26 " + (a + 5) + " -16 " + (a + 5) + " 0 Z";
+        }
+        var b = w / 2 - 3;
+        return "M" + (-b) + " 0 C" + (-b) + " -18 -4 -28 0 -36 C4 -28 " + b + " -18 " + b + " 0 Z";
+    }
+
+    function surcos(n, w) {
+        var d = n % 10, h = w / 2;
+        if (d >= 6) return '<path d="M' + (-h + 5) + ' 19 L' + (h - 5) + ' 19 M0 13 L0 26" stroke="currentColor" stroke-width="1" fill="none" opacity=".3"/>';
+        if (d >= 4) return '<path d="M0 14 L0 26" stroke="currentColor" stroke-width="1" fill="none" opacity=".3"/>';
+        return "";
+    }
+
+    function marca(n, clave) {
+        var w = anchoDe(n), h = w / 2;
+        if (clave === "extrac") return '<path d="M' + (-h - 2) + ' -2 L' + (h + 2) + ' 28 M' + (h + 2) + ' -2 L' + (-h - 2) + ' 28" stroke="#C0392B" stroke-width="2.2" stroke-linecap="round" fill="none"/>';
+        if (clave === "ausente") return '<path d="M' + (-h - 3) + ' 13 L' + (h + 3) + ' 13" stroke="#8A97A4" stroke-width="2" stroke-linecap="round"/>';
+        if (clave === "corona") return '<path d="' + corona(w + 5) + '" transform="translate(0,-2)" fill="none" stroke="#9A6B0C" stroke-width="2"/>';
+        if (clave === "implante") return '<path d="M-5 -8 L5 -8 M-5 -15 L5 -15 M-5 -22 L4 -22" stroke="#5B4BB0" stroke-width="1.8" stroke-linecap="round"/>';
+        return "";
+    }
+
+    // Las piezas se reparten por longitud de arco, no por ángulo:
+    // por ángulo los molares se encabalgan y los incisivos quedan separados.
+    function arcada(cx, cy, rx, ry, dir, nums) {
+        var N = 1200, cum = [0], i;
+
+        function pt(t) { return { x: cx + rx * Math.cos(t), y: cy - dir * ry * Math.sin(t) }; }
+
+        for (i = 1; i <= N; i++) {
+            var p1 = pt(Math.PI + Math.PI * (i - 1) / N), p2 = pt(Math.PI + Math.PI * i / N);
+            cum.push(cum[i - 1] + Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)));
+        }
+
+        function tEn(s) { for (var j = 1; j <= N; j++) { if (cum[j] >= s) return Math.PI + Math.PI * j / N; } return 2 * Math.PI; }
+
+        var sep = 4, largo = 0;
+        nums.forEach(function (n) { largo += anchoDe(n); });
+        largo += sep * (nums.length - 1);
+
+        var s = (cum[N] - largo) / 2, out = "";
+
+        nums.forEach(function (n) {
+            var w = anchoDe(n);
+            s += w / 2;
+
+            var t = tEn(s), p = pt(t);
+            var vx = rx * Math.cos(t), vy = -dir * ry * Math.sin(t);
+            var full = Math.atan2(-vx, vy) * 180 / Math.PI, rot;
+
+            // Rotación amortiguada al 55%: los molares se inclinan sin acostarse
+            if (dir === 1) { rot = full * 0.55; }
+            else { rot = full > 0 ? 180 + (full - 180) * 0.55 : -180 + (full + 180) * 0.55; }
+
+            var rr = rot * Math.PI / 180, dx = -Math.sin(rr), dy = Math.cos(rr);
+
+            var clave = claveDe(porFdi[n]);
+            var c = clave ? S[clave] : DEF;
+            var op = clave === "ausente" ? ' opacity=".5"' : '';
+
+            out += '<g' + op + ' style="color:' + c.s + '" transform="translate(' + p.x.toFixed(1) + ',' + p.y.toFixed(1) + ') rotate(' + rot.toFixed(1) + ')">' +
+                   '<path d="' + raiz(w, raicesDe(n)) + '" fill="' + (clave === "implante" ? "#F3F0FB" : c.f) + '" stroke="' + c.s + '" stroke-width="1.4" stroke-linejoin="round"/>' +
+                   '<path d="' + corona(w) + '" fill="' + c.f + '" stroke="' + c.s + '" stroke-width="1.4" stroke-linejoin="round"/>' +
+                   surcos(n, w) + (clave ? marca(n, clave) : "") + '</g>' +
+                   '<text x="' + (p.x + dx * 44).toFixed(1) + '" y="' + (p.y + dy * 44 + 4).toFixed(1) + '" text-anchor="middle" font-size="11" font-family="inherit" fill="#7C8FA0">' + n + '</text>';
+
+            s += w / 2 + sep;
+        });
+
+        return out;
+    }
+
+    (function iniciar() {
+        var svg = document.getElementById("odo");
+        if (!svg) { return; }
+
+        svg.innerHTML = '<path d="M340 236 L340 284" stroke="#D9E3EC" stroke-width="1" stroke-dasharray="4 5"/>' +
+                        arcada(340, 34, 268, 118, 1, FDI_SUP) +
+                        arcada(340, 486, 268, 118, -1, FDI_INF);
+
+        // La leyenda solo muestra los estados que este paciente realmente tiene
+        var conteo = {};
+        detalles.forEach(function (d) {
+            var k = claveDe(d.e);
+            if (k) { conteo[k] = (conteo[k] || 0) + 1; }
+        });
+
+        var html = "";
+        Object.keys(S).forEach(function (k) {
+            if (!conteo[k]) { return; }
+            html += '<span class="odo-leyenda-item" style="background:' + S[k].f + ';border-color:' + S[k].s + ';color:' + S[k].t + '">' +
+                    '<span class="odo-sw" style="background:' + S[k].f + ';border-color:' + S[k].s + '"></span>' +
+                    S[k].k + ' · ' + conteo[k] + '</span>';
+        });
+        document.getElementById("odoLeyenda").innerHTML = html;
+
+        if (porOrden) {
+            document.getElementById("avisoNumeracion").style.display = "block";
+        }
+    })();
     </script>
 }
