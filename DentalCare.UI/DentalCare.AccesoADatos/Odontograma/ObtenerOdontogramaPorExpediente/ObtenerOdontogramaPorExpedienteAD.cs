@@ -1,6 +1,5 @@
 ﻿using DentalCare.Abstraccion.AccesoADatos.Odontograma.ObtenerOdontogramaPorExpediente;
 using DentalCare.Abstraccion.Modelo.Odontograma;
-
 using System.Linq;
 
 namespace DentalCare.AccesoADatos.Odontograma.ObtenerOdontogramaPorExpediente
@@ -16,30 +15,40 @@ namespace DentalCare.AccesoADatos.Odontograma.ObtenerOdontogramaPorExpediente
 
         public OdontogramaDto Obtener(int idExpediente)
         {
-            var odontograma = _contexto.Expedientes
+            // Paso 1: obtener el ID_ODONTOGRAMA del expediente
+            var idOdontograma = _contexto.Expedientes
                 .Where(e => e.IdExpediente == idExpediente)
                 .Select(e => e.IdOdontograma)
                 .FirstOrDefault();
 
-            if (odontograma == 0) return null;
+            if (idOdontograma == 0) return null;
 
-            var detalles = (
+            // Paso 2: obtener detalles a memoria
+            var rawDetalles = (
                 from detalle in _contexto.OdontogramaDetalles
-                where detalle.IdOdontograma == odontograma
+                where detalle.IdOdontograma == idOdontograma
                 join pieza in _contexto.PiezasDentales
                     on detalle.IdPieza equals pieza.IdPieza
-                select new OdontogramaDetalleDto
+                select new
                 {
-                    IdDetalle = detalle.IdDetalle,
-                    IdPieza = detalle.IdPieza,
-                    NumeroPieza = pieza.NumeroPieza,
-                    EstadoPieza = detalle.EstadoPieza
+                    detalle.IdDetalle,
+                    detalle.IdPieza,
+                    pieza.NumeroPieza,
+                    detalle.EstadoPieza
                 }
             ).ToList();
 
+            var detalles = rawDetalles.Select(d => new OdontogramaDetalleDto
+            {
+                IdDetalle = d.IdDetalle,
+                IdPieza = d.IdPieza,
+                NumeroPieza = d.NumeroPieza,
+                EstadoPieza = d.EstadoPieza
+            }).ToList();
+
             return new OdontogramaDto
             {
-                IdOdontograma = odontograma,
+                IdOdontograma = idOdontograma,
                 IdExpediente = idExpediente,
                 Detalles = detalles
             };

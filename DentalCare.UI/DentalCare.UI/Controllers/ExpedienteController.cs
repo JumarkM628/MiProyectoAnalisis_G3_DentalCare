@@ -190,8 +190,14 @@ namespace DentalCare.UI.Controllers
 
         public ActionResult RegistrarOdontograma(int id)
         {
-            var dto = new OdontogramaDto { IdExpediente = id };
+            // Si ya existe odontograma, cargar los detalles existentes para mostrarlos
+            var existente = _obtenerOdontogramaLN.Obtener(id);
+            var dto = existente ?? new OdontogramaDto { IdExpediente = id };
+            dto.IdExpediente = id;
+            // Limpiar detalles para el formulario de nuevos — los existentes se muestran en la vista
+            dto.Detalles = new System.Collections.Generic.List<OdontogramaDetalleDto>();
             CargarDropdownsOdontograma(dto);
+            ViewBag.DetallesExistentes = existente?.Detalles;
             return View(dto);
         }
 
@@ -213,7 +219,7 @@ namespace DentalCare.UI.Controllers
                 return View(dto);
             }
             TempData["Exito"] = "Odontograma registrado correctamente.";
-            return RedirectToAction("DetallesAlerta", new { id });
+            return RedirectToAction("ObtenerTodosLosExpedientes", new { id });
         }
 
         public ActionResult VerOdontograma(int id)
