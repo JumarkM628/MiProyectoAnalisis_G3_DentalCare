@@ -1,603 +1,973 @@
 ﻿@model List<DentalCare.Abstraccion.Modelo.Catalogo.CatalogoDto>
+
 @{
     ViewBag.Title = "Costos de Tratamiento";
-    decimal costoPromedio = Model != null && Model.Any() ? Model.Average(c => c.Costo) : 0;
-    var masEconomico = Model != null && Model.Any() ? Model.OrderBy(c => c.Costo).First() : null;
-    var masCaro = Model != null && Model.Any() ? Model.OrderByDescending(c => c.Costo).First() : null;
+
+    var hayDatos = Model != null && Model.Any();
+    decimal costoPromedio = hayDatos ? Model.Average(c => c.Costo) : 0;
+    var masEconomico = hayDatos ? Model.OrderBy(c => c.Costo).First() : null;
+    var masCaro = hayDatos ? Model.OrderByDescending(c => c.Costo).First() : null;
+    int total = Model != null ? Model.Count : 0;
 }
-<style>
-    .ct-page {
-        padding: 32px 0
-    }
 
-    .ct-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 28px
-    }
+@functions {
+    // Quita tildes y pasa a minúsculas. Se usa para las clases de categoría
+    // y para el filtro: así "Cirugía" y "Cirugia" son la misma cosa.
+    static string SinAcentos(string texto)
+    {
+        if (string.IsNullOrEmpty(texto)) return "";
 
-    .ct-header-left h1 {
-        font-size: 22px;
-        font-weight: 700;
-        color: #0C1B33;
-        margin: 0 0 4px
-    }
+        var descompuesto = texto.Normalize(System.Text.NormalizationForm.FormD);
+        var sb = new System.Text.StringBuilder();
 
-    .ct-header-left p {
-        font-size: 13px;
-        color: #6B7A99;
-        margin: 0
-    }
-
-    .metricas-grid {
-        display: grid;
-        grid-template-columns: repeat(4,1fr);
-        gap: 14px;
-        margin-bottom: 20px
-    }
-
-    .metrica-card {
-        background: #fff;
-        border: 1px solid #E8ECF4;
-        border-radius: 14px;
-        padding: 18px 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 6px
-    }
-
-    .metrica-label {
-        font-size: 11px;
-        font-weight: 700;
-        color: #8896B0;
-        text-transform: uppercase;
-        letter-spacing: .07em
-    }
-
-    .metrica-valor {
-        font-size: 22px;
-        font-weight: 700;
-        color: #0C1B33
-    }
-
-    .metrica-sub {
-        font-size: 12px;
-        color: #6B7A99
-    }
-
-    .ct-card {
-        background: #fff;
-        border: 1px solid #E8ECF4;
-        border-radius: 14px;
-        padding: 24px;
-        margin-bottom: 20px
-    }
-
-    .ct-card-title {
-        font-size: 11px;
-        font-weight: 700;
-        color: #8896B0;
-        text-transform: uppercase;
-        letter-spacing: .07em;
-        margin-bottom: 16px
-    }
-
-    .filtros-row {
-        display: flex;
-        gap: 12px;
-        align-items: flex-end;
-        flex-wrap: wrap
-    }
-
-    .fg {
-        display: flex;
-        flex-direction: column;
-        gap: 5px
-    }
-
-        .fg label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #3D4D6B
-        }
-
-        .fg input, .fg select {
-            border: 1px solid #DDE1EC;
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 13px;
-            color: #0C1B33;
-            background: #fff;
-            font-family: inherit;
-            min-width: 150px
-        }
-
-            .fg input:focus, .fg select:focus {
-                outline: none;
-                border-color: #378ADD
+        foreach (var ch in descompuesto)
+        {
+            if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch) != System.Globalization.UnicodeCategory.NonSpacingMark)
+            {
+                sb.Append(ch);
             }
-
-    .btn-limpiar {
-        padding: 9px 14px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 600;
-        border: 1px solid #DDE1EC;
-        background: #fff;
-        color: #3D4D6B;
-        cursor: pointer;
-        font-family: inherit
-    }
-
-        .btn-limpiar:hover {
-            background: #F5F6FA
         }
 
-    .layout-split {
-        display: grid;
-        grid-template-columns: 1fr 260px;
-        gap: 20px;
-        align-items: start
+        return sb.ToString().Normalize(System.Text.NormalizationForm.FormC).ToLowerInvariant().Trim();
     }
 
-    .ct-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 13px
+    static string ClaseCategoria(string categoria)
+    {
+        var c = SinAcentos(categoria);
+        if (c.StartsWith("preventiv")) return "cat-preventivo";
+        if (c.StartsWith("estetic")) return "cat-estetico";
+        if (c.StartsWith("restaurad")) return "cat-restaurador";
+        if (c.StartsWith("cirug")) return "cat-cirugia";
+        if (c.StartsWith("ortodon")) return "cat-ortodoncia";
+        if (c.StartsWith("endodon")) return "cat-endodoncia";
+        return "cat-otros";
     }
+}
 
-        .ct-table thead tr {
-            border-bottom: 2px solid #E8ECF4
-        }
+<div class="inv-page">
 
-        .ct-table th {
-            text-align: left;
-            padding: 10px 12px;
-            color: #8896B0;
-            font-weight: 700;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: .05em;
-            white-space: nowrap
-        }
-
-        .ct-table td {
-            padding: 12px;
-            color: #3D4D6B;
-            border-bottom: 1px solid #F0F2F8;
-            vertical-align: middle
-        }
-
-        .ct-table tbody tr:hover {
-            background: #F9FAFC
-        }
-
-    .td-nombre {
-        font-weight: 600;
-        color: #0C1B33
-    }
-
-    .td-right {
-        text-align: right;
-        font-weight: 600;
-        color: #0C1B33
-    }
-
-    .badge-cat {
-        font-size: 11px;
-        font-weight: 600;
-        padding: 3px 10px;
-        border-radius: 20px;
-        white-space: nowrap
-    }
-
-    .badge-Preventivo {
-        background: #E6F1FB;
-        color: #185FA5
-    }
-
-    .badge-Estetico {
-        background: #F0EBFB;
-        color: #6B3FA0
-    }
-
-    .badge-Restaurador {
-        background: #EAF3DE;
-        color: #3B6D11
-    }
-
-    .badge-Cirugia {
-        background: #FCEBEB;
-        color: #A0291E
-    }
-
-    .badge-Ortodoncia {
-        background: #FAEEDA;
-        color: #854F0B
-    }
-
-    .badge-Endodoncia {
-        background: #E6F7F3;
-        color: #1A7A5E
-    }
-
-    .btn-accion {
-        border: none;
-        background: none;
-        cursor: pointer;
-        font-size: 12px;
-        font-weight: 600;
-        padding: 4px 10px;
-        border-radius: 6px;
-        font-family: inherit
-    }
-
-    .btn-editar {
-        color: #185FA5;
-        background: #E6F1FB
-    }
-
-        .btn-editar:hover {
-            background: #B5D4F4
-        }
-
-    .btn-ver {
-        color: #3B6D11;
-        background: #EAF3DE
-    }
-
-        .btn-ver:hover {
-            background: #C7E5A5
-        }
-
-    .detalle-panel {
-        background: #F9FAFC;
-        border: 1px solid #E8ECF4;
-        border-radius: 14px;
-        padding: 20px
-    }
-
-    .detalle-titulo {
-        font-size: 15px;
-        font-weight: 700;
-        color: #0C1B33;
-        margin-bottom: 4px
-    }
-
-    .detalle-cat {
-        font-size: 12px;
-        color: #6B7A99;
-        margin-bottom: 16px
-    }
-
-    .detalle-fila {
-        display: flex;
-        justify-content: space-between;
-        padding: 9px 0;
-        border-bottom: 1px solid #E8ECF4;
-        font-size: 13px
-    }
-
-        .detalle-fila:last-child {
-            border-bottom: none
-        }
-
-        .detalle-fila .dk {
-            color: #6B7A99
-        }
-
-        .detalle-fila .dv {
-            font-weight: 600;
-            color: #0C1B33
-        }
-
-    .mini-barra-wrap {
-        margin-top: 14px
-    }
-
-    .mini-barra-label {
-        font-size: 11px;
-        color: #8896B0;
-        margin-bottom: 4px
-    }
-
-    .mini-barra-bg {
-        background: #E8ECF4;
-        border-radius: 20px;
-        height: 6px
-    }
-
-    .mini-barra-fill {
-        background: #185FA5;
-        border-radius: 20px;
-        height: 6px;
-        transition: width .4s
-    }
-
-    .paginacion-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding-top: 16px;
-        font-size: 13px;
-        color: #6B7A99
-    }
-
-    .pag-btns {
-        display: flex;
-        gap: 6px
-    }
-
-    .pag-btn {
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        border: 1px solid #DDE1EC;
-        background: #fff;
-        color: #3D4D6B;
-        cursor: pointer;
-        font-family: inherit
-    }
-
-        .pag-btn:hover {
-            background: #F5F6FA
-        }
-
-        .pag-btn.activo {
-            background: #185FA5;
-            color: #fff;
-            border-color: #185FA5
-        }
-
-    .alert-custom {
-        display: none;
-        padding: 12px 16px;
-        border-radius: 10px;
-        font-size: 13px;
-        margin-bottom: 20px;
-        align-items: center;
-        gap: 10px
-    }
-
-        .alert-custom.show {
-            display: flex
-        }
-
-    .alert-success-custom {
-        background: #EAF3DE;
-        color: #3B6D11;
-        border: 1px solid #97C459
-    }
-
-    .alert-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: currentColor;
-        flex-shrink: 0
-    }
-
-    .btn-secundario {
-        padding: 9px 20px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        border: 1px solid #DDE1EC;
-        background: #fff;
-        color: #3D4D6B;
-        cursor: pointer;
-        font-family: inherit;
-        text-decoration: none;
-        display: inline-block
-    }
-
-        .btn-secundario:hover {
-            background: #F5F6FA;
-            text-decoration: none;
-            color: #3D4D6B
-        }
-
-    .btn-primario {
-        padding: 9px 24px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        border: none;
-        background: #185FA5;
-        color: #fff;
-        cursor: pointer;
-        font-family: inherit;
-        text-decoration: none;
-        display: inline-block
-    }
-
-        .btn-primario:hover {
-            background: #0C447C;
-            text-decoration: none;
-            color: #fff
-        }
-
-    @@media(max-width:900px) {
-        .layout-split {
-            grid-template-columns: 1fr
-        }
-
-        .metricas-grid {
-            grid-template-columns: repeat(2,1fr)
-        }
-
-        .ct-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 12px
-        }
-    }
-</style>
-
-<div class="container ct-page">
-
-    <div class="ct-header">
-        <div class="ct-header-left">
-            <h1>Costos de tratamiento</h1>
-            <p>Consultá, filtrá y editá los costos de cada tratamiento disponible</p>
+    <div class="inv-header exp-header">
+        <div>
+            <h1 class="inv-titulo">Costos de tratamiento</h1>
+            <p class="inv-subtitulo">Consultá, filtrá y editá los costos de cada tratamiento disponible.</p>
         </div>
-        @Html.ActionLink("← Volver", "HistorialPagos", "Pago", null, new { @class = "btn-secundario" })
+        @Html.ActionLink("Volver", "Menu", "Contabilidad", null, new { @class = "btn-header" })
     </div>
 
     @if (TempData["Exito"] != null)
     {
-        <div class="alert-custom alert-success-custom show">
-            <div class="alert-dot"></div>
-            <span>@TempData["Exito"]</span>
-        </div>
+        <div class="alerta-verde">@TempData["Exito"]</div>
     }
 
     <div class="metricas-grid">
+
         <div class="metrica-card">
             <div class="metrica-label">Tratamientos activos</div>
-            <div class="metrica-valor">@(Model?.Count ?? 0)</div>
+            <div class="metrica-valor">@total</div>
             <div class="metrica-sub">en catálogo actual</div>
         </div>
+
         <div class="metrica-card">
             <div class="metrica-label">Costo promedio</div>
             <div class="metrica-valor">&#8353; @costoPromedio.ToString("N0")</div>
             <div class="metrica-sub">por tratamiento</div>
         </div>
+
         <div class="metrica-card">
             <div class="metrica-label">Más económico</div>
-            <div class="metrica-valor" style="font-size:15px;">@(masEconomico?.Nombre ?? "—")</div>
-            <div class="metrica-sub">&#8353; @(masEconomico?.Costo.ToString("N0") ?? "0")</div>
+            <div class="metrica-valor valor-texto">@(masEconomico != null ? masEconomico.Nombre : "—")</div>
+            <div class="metrica-sub">&#8353; @(masEconomico != null ? masEconomico.Costo.ToString("N0") : "0")</div>
         </div>
+
         <div class="metrica-card">
             <div class="metrica-label">Más costoso</div>
-            <div class="metrica-valor" style="font-size:15px;">@(masCaro?.Nombre ?? "—")</div>
-            <div class="metrica-sub">&#8353; @(masCaro?.Costo.ToString("N0") ?? "0")</div>
+            <div class="metrica-valor valor-texto">@(masCaro != null ? masCaro.Nombre : "—")</div>
+            <div class="metrica-sub">&#8353; @(masCaro != null ? masCaro.Costo.ToString("N0") : "0")</div>
         </div>
+
     </div>
 
-    <div class="ct-card" style="padding:18px 24px;">
-        <div class="filtros-row">
-            <div class="fg"><label>Buscar tratamiento</label><input type="text" id="inputBuscar" placeholder="Ej: limpieza..." oninput="filtrarTabla()" /></div>
-            <div class="fg">
-                <label>Categoría</label>
-                <select id="selCat" onchange="filtrarTabla()">
-                    <option value="">Todas</option>
-                    <option>Preventivo</option>
-                    <option>Estético</option>
-                    <option>Restaurador</option>
-                    <option>Cirugía</option>
-                    <option>Ortodoncia</option>
-                    <option>Endodoncia</option>
-                </select>
+    <div class="trat-form-card">
+
+        <div class="trat-card-bar">Catálogo de tratamientos</div>
+
+        <div class="trat-card-body">
+
+            <div class="filtro-barra">
+
+                <div class="filtro-campo">
+                    <label class="trat-label" for="inputBuscar">Buscar tratamiento</label>
+                    <input type="text" id="inputBuscar" class="trat-input" placeholder="Ej: limpieza..." oninput="filtrarTabla()" />
+                </div>
+
+                <div class="filtro-campo">
+                    <label class="trat-label" for="selCat">Categoría</label>
+                    <select id="selCat" class="trat-input" onchange="filtrarTabla()">
+                        <option value="">Todas</option>
+                        <option value="preventivo">Preventivo</option>
+                        <option value="estetico">Estético</option>
+                        <option value="restaurador">Restaurador</option>
+                        <option value="cirugia">Cirugía</option>
+                        <option value="ortodoncia">Ortodoncia</option>
+                        <option value="endodoncia">Endodoncia</option>
+                    </select>
+                </div>
+
+                <button type="button" class="btn-inv-cancelar" onclick="limpiarFiltros()">Limpiar</button>
+
+                <span class="contador-pill" id="pagInfo">@total tratamientos</span>
+
             </div>
-            <button class="btn-limpiar" onclick="limpiarFiltros()">&#x2715; Limpiar</button>
-        </div>
-    </div>
 
-    <div class="layout-split">
-        <div class="ct-card" style="padding:0;overflow:hidden;">
-            <div style="padding:20px 24px 0;"><div class="ct-card-title">Catálogo de tratamientos</div></div>
-            <div style="overflow-x:auto;">
-                <table class="ct-table" id="tablaCatalogo">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Tratamiento</th>
-                            <th>Categoría</th>
-                            <th>Duración</th>
-                            <th style="text-align:right">Costo (&#8353;)</th>
-                            <th style="text-align:right">Anterior</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model == null || !Model.Any())
-                        {
-                            <tr><td colspan="7" style="text-align:center;padding:24px;color:#8896B0;">No hay tratamientos en el catálogo.</td></tr>
-                        }
-                        else
-                        {
-                            foreach (var c in Model)
+            @if (!hayDatos)
+            {
+                <div class="estado-vacio">
+                    <p class="estado-vacio-titulo">Catálogo vacío</p>
+                    <p class="estado-vacio-texto">Todavía no hay tratamientos registrados en el catálogo.</p>
+                </div>
+            }
+            else
+            {
+                <div class="tabla-scroll">
+                    <table class="rep-tabla" id="tablaCatalogo">
+                        <thead>
+                            <tr>
+                                <th class="col-num">#</th>
+                                <th>Tratamiento</th>
+                                <th class="col-cat">Categoría</th>
+                                <th class="col-dur">Duración</th>
+                                <th class="col-monto">Costo</th>
+                                <th class="col-monto">Anterior</th>
+                                <th class="col-acciones">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in Model)
                             {
-                                string catClass = "badge-" + (c.Categoria ?? "Otros").Replace(" ", "").Replace("é", "e").Replace("É", "E");
-                                <tr data-nombre="@c.Nombre.ToLower()" data-cat="@c.Categoria">
-                                    <td style="color:#8896B0;font-size:11px;">@c.IdCatalogo</td>
-                                    <td class="td-nombre">@c.Nombre</td>
-                                    <td><span class="badge-cat @catClass">@c.Categoria</span></td>
-                                    <td>@(c.DuracionMin.HasValue ? c.DuracionMin + " min" : "—")</td>
-                                    <td class="td-right">&#8353; @c.Costo.ToString("N0")</td>
-                                    <td class="td-right" style="color:#8896B0;font-weight:400;">&#8353; @(c.CostoAnterior?.ToString("N0") ?? "—")</td>
-                                    <td style="display:flex;gap:5px;">
-                                        <button class="btn-accion btn-ver" type="button"
-                                                onclick="verDetalle(@c.IdCatalogo,'@c.Nombre','@c.Categoria',@c.Costo,@(c.CostoAnterior ?? 0),'@(c.DuracionMin?.ToString() ?? "—")','@(c.FechaActualizacion?.ToString("dd/MM/yyyy") ?? "—")')">
-                                            Ver
-                                        </button>
-                                        @Html.ActionLink("Editar", "EditarCosto", "Catalogo", new { id = c.IdCatalogo }, new { @class = "btn-accion btn-editar" })
+                                var nombre = c.Nombre ?? "";
+                                var categoria = c.Categoria ?? "";
+                                var textoCat = categoria == "" ? "—" : categoria;
+
+                                <tr data-nombre="@SinAcentos(nombre)" data-cat="@SinAcentos(categoria)">
+                                    <td class="celda-num">@c.IdCatalogo</td>
+                                    <td class="celda-desc">@nombre</td>
+                                    <td><span class="badge-cat @ClaseCategoria(categoria)">@textoCat</span></td>
+                                    <td class="celda-suave">@(c.DuracionMin.HasValue ? c.DuracionMin + " min" : "—")</td>
+                                    <td class="celda-monto">&#8353; @c.Costo.ToString("N0")</td>
+                                    <td class="celda-monto celda-suave">&#8353; @(c.CostoAnterior.HasValue ? c.CostoAnterior.Value.ToString("N0") : "—")</td>
+                                    <td>
+                                        <div class="celda-acciones">
+                                            @* Los datos viajan en atributos data-*, no dentro del onclick:
+                                                un nombre con apóstrofo rompía el JavaScript de la fila. *@
+                                            <button type="button" class="btn-accion btn-ver"
+                                                    data-id="@c.IdCatalogo"
+                                                    data-nombre="@nombre"
+                                                    data-cat="@textoCat"
+                                                    data-catclase="@ClaseCategoria(categoria)"
+                                                    data-costo="@c.Costo.ToString("N0")"
+                                                    data-costoant="@(c.CostoAnterior.HasValue ? c.CostoAnterior.Value.ToString("N0") : "—")"
+                                                    data-duracion="@(c.DuracionMin.HasValue ? c.DuracionMin + " min" : "—")"
+                                                    data-fecha="@(c.FechaActualizacion.HasValue ? c.FechaActualizacion.Value.ToString("dd/MM/yyyy") : "—")"
+                                                    onclick="verDetalle(this)">
+                                                Ver
+                                            </button>
+                                            @Html.ActionLink("Editar", "EditarCosto", "Catalogo", new { id = c.IdCatalogo }, new { @class = "btn-accion btn-editar" })
+                                        </div>
                                     </td>
                                 </tr>
                             }
-                        }
-                    </tbody>
-                </table>
-            </div>
-            <div class="paginacion-row" style="padding:12px 24px 16px;">
-                <span id="pagInfo">@(Model?.Count ?? 0) tratamientos</span>
-            </div>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="trat-hint sin-resultados" id="sinResultados" style="display:none;">Ningún tratamiento coincide con los filtros aplicados.</p>
+            }
+
         </div>
 
-        <div class="detalle-panel" id="panelDetalle">
-            <div class="detalle-titulo" id="detNombre">Seleccioná un tratamiento</div>
-            <div class="detalle-cat" id="detCat">para ver su detalle</div>
-            <div id="detContenido" style="display:none;">
-                <div class="detalle-fila"><span class="dk">Duración</span><span class="dv" id="detDuracion">—</span></div>
-                <div class="detalle-fila"><span class="dk">Costo actual</span><span class="dv" id="detCosto">—</span></div>
-                <div class="detalle-fila"><span class="dk">Costo anterior</span><span class="dv" id="detCostoAnt">—</span></div>
-                <div class="detalle-fila"><span class="dk">Últ. actualización</span><span class="dv" id="detFecha">—</span></div>
-                <div style="margin-top:16px;" id="detEditarBtn"></div>
+    </div>
+
+</div>
+
+<!-- DETALLE -->
+<div class="modal-fondo" id="modalDetalle" onclick="cerrarDetalleFondo(event)">
+    <div class="modal-caja" role="dialog" aria-modal="true" aria-labelledby="detNombre">
+
+        <div class="modal-cabecera">
+            <div>
+                <div class="modal-titulo" id="detNombre">—</div>
+                <span class="badge-cat cat-otros" id="detCat">—</span>
             </div>
-            <div id="detPlaceholder" style="text-align:center;padding:24px 0;color:#8896B0;font-size:13px;">
-                Hacé clic en "Ver" para ver el detalle aquí.
-            </div>
+            <button type="button" class="modal-cerrar" onclick="cerrarDetalle()" aria-label="Cerrar">&#x2715;</button>
         </div>
+
+        <div class="modal-cuerpo">
+            <div class="detalle-fila"><span class="dk">Duración</span><span class="dv" id="detDuracion">—</span></div>
+            <div class="detalle-fila"><span class="dk">Costo actual</span><span class="dv dv-monto" id="detCosto">—</span></div>
+            <div class="detalle-fila"><span class="dk">Costo anterior</span><span class="dv dv-suave" id="detCostoAnt">—</span></div>
+            <div class="detalle-fila"><span class="dk">Última actualización</span><span class="dv" id="detFecha">—</span></div>
+        </div>
+
+        <div class="modal-botones">
+            <a href="#" class="btn-inv-primary" id="detEditarLink">Editar costo</a>
+            <button type="button" class="btn-inv-cancelar" onclick="cerrarDetalle()">Cerrar</button>
+        </div>
+
     </div>
 </div>
 
-@section Scripts {
-    <script>var idSeleccionado = null;
+<style>
+    /* ── Tokens (los mismos del resto del sistema) ── */
+    .inv-page {
+        padding: 36px 20px 56px;
+        --dc-teal-oscuro: #0f3b3c;
+        --dc-teal: #2e8f8c;
+        --dc-teal-barra: #1c6a68;
+        --dc-tinta: #1e2d3d;
+        --dc-suave: #6b7f92;
+        --dc-input-bg: #f5f8fe;
+        --dc-input-borde: #dde5f3;
+        --dc-verde: #2f6d5c;
+        --dc-verde-hover: #275c4d;
+        --dc-gris: #e9ebed;
+        --dc-gris-hover: #dde1e5;
+        --dc-error: #c0392b;
+        --dc-ancho: 1100px;
+    }
 
-        function verDetalle(id, nombre, cat, costo, costoAnt, duracion, fecha) {
-            idSeleccionado = id;
-            document.getElementById('detNombre').textContent    = nombre;
-            document.getElementById('detCat').textContent       = cat;
-            document.getElementById('detDuracion').textContent  = duracion + (duracion !== '—' ? ' min' : '');
-            document.getElementById('detCosto').innerHTML       = '&#8353; ' + costo.toLocaleString('es-CR');
-            document.getElementById('detCostoAnt').innerHTML    = '&#8353; ' + (costoAnt || 0).toLocaleString('es-CR');
-            document.getElementById('detFecha').textContent     = fecha;
-            document.getElementById('detEditarBtn').innerHTML   =
-                '<a href="/Catalogo/EditarCosto/' + id + '" class="btn-accion btn-editar" style="width:100%;padding:9px;display:block;text-align:center;">&#x270E; Editar costo</a>';
-            document.getElementById('detContenido').style.display   = 'block';
-            document.getElementById('detPlaceholder').style.display = 'none';
+    /* ── Encabezado ── */
+    .inv-header {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 20px;
+        padding: 28px 34px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, var(--dc-teal-oscuro) 0%, var(--dc-teal) 100%);
+        box-shadow: 0 10px 26px rgba(15, 59, 60, 0.18);
+    }
+
+    .exp-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .inv-titulo {
+        margin: 0;
+        color: #fff;
+        font-size: 1.55rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+    }
+
+    .inv-subtitulo {
+        margin: 10px 0 0;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    .btn-header {
+        display: inline-flex;
+        align-items: center;
+        height: 40px;
+        padding: 0 20px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: background .18s ease, border-color .18s ease;
+    }
+
+        .btn-header:hover,
+        .btn-header:focus {
+            background: rgba(255, 255, 255, 0.22);
+            border-color: #fff;
+            color: #fff;
+            text-decoration: none;
+        }
+
+    /* ── Métricas ── */
+    .metricas-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        max-width: var(--dc-ancho);
+        margin: 0 auto 20px;
+    }
+
+    .metrica-card {
+        padding: 18px 22px;
+        border-radius: 14px;
+        background: #fff;
+        border: 1px solid #e8edf4;
+        box-shadow: 0 6px 18px rgba(15, 59, 60, 0.05);
+    }
+
+    .metrica-label {
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--dc-suave);
+    }
+
+    .metrica-valor {
+        margin: 6px 0 2px;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--dc-tinta);
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* Cuando el valor es un nombre y no un número, baja de tamaño */
+    .valor-texto {
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+
+    .metrica-sub {
+        font-size: 0.78rem;
+        color: var(--dc-suave);
+    }
+
+    /* ── Tarjeta ── */
+    .trat-form-card {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 22px;
+        padding: 0;
+        overflow: hidden;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 10px 26px rgba(15, 59, 60, 0.09);
+    }
+
+    .trat-card-bar {
+        padding: 18px 30px;
+        background: linear-gradient(135deg, var(--dc-teal-oscuro) 0%, var(--dc-teal-barra) 100%);
+        color: #fff;
+        font-size: 1.02rem;
+        font-weight: 700;
+    }
+
+    .trat-card-body {
+        padding: 24px 30px 28px;
+    }
+
+    /* ── Filtros ── */
+    .filtro-barra {
+        display: flex;
+        align-items: flex-end;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    .filtro-campo {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .trat-label {
+        margin: 0;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--dc-tinta);
+    }
+
+    .trat-hint {
+        font-size: 0.8rem;
+        color: var(--dc-suave);
+    }
+
+    /* background-color, no el atajo background: el select usa background-image */
+    .trat-input {
+        box-sizing: border-box;
+        height: 44px;
+        min-width: 210px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 1px solid var(--dc-input-borde);
+        background-color: var(--dc-input-bg);
+        font-family: inherit;
+        font-size: 0.92rem;
+        color: var(--dc-tinta);
+        outline: none;
+        transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+    }
+
+        .trat-input:hover {
+            border-color: #c8d6ec;
+        }
+
+        .trat-input:focus {
+            background-color: #fff;
+            border-color: var(--dc-teal);
+            box-shadow: 0 0 0 3px rgba(46, 143, 140, 0.15);
+        }
+
+        .trat-input::placeholder {
+            color: #a9bccb;
+        }
+
+    select.trat-input {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        padding-right: 40px;
+        cursor: pointer;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236b7f92' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+    }
+
+        select.trat-input::-ms-expand {
+            display: none;
+        }
+
+    .contador-pill {
+        margin-left: auto;
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: rgba(46, 143, 140, 0.1);
+        color: #216d6a;
+        font-size: 0.8rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    /* ── Tabla ── */
+    .tabla-scroll {
+        overflow-x: auto;
+        border: 1px solid var(--dc-input-borde);
+        border-radius: 12px;
+    }
+
+    .rep-tabla {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+        .rep-tabla thead th {
+            padding: 12px 16px;
+            background: #eef4f9;
+            border-bottom: 1px solid var(--dc-input-borde);
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--dc-suave);
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .rep-tabla td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f4f8;
+            color: var(--dc-tinta);
+            vertical-align: middle;
+        }
+
+        .rep-tabla tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .rep-tabla tbody tr:hover td {
+            background: #f8fbfe;
+        }
+
+    .col-num {
+        width: 60px;
+    }
+
+    .col-cat {
+        width: 140px;
+    }
+
+    .col-dur {
+        width: 100px;
+    }
+
+    .col-monto {
+        width: 120px;
+        text-align: right !important;
+    }
+
+    /* Ancho suficiente para que Ver y Editar queden en la misma línea */
+    .col-acciones {
+        width: 170px;
+    }
+
+    .celda-num {
+        color: var(--dc-suave);
+        font-size: 0.85rem;
+    }
+
+    .celda-desc {
+        font-weight: 600;
+        min-width: 180px;
+    }
+
+    /* Ancho fijo por dígito: los costos quedan en columna y se comparan */
+    .celda-monto {
+        text-align: right;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+    .celda-suave {
+        color: var(--dc-suave);
+        font-weight: 500;
+    }
+
+    .celda-acciones {
+        display: flex;
+        gap: 8px;
+        flex-wrap: nowrap;
+    }
+
+    .sin-resultados {
+        margin: 16px 0 0;
+        text-align: center;
+    }
+
+    /* ── Categorías ── */
+    .badge-cat {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .cat-preventivo {
+        background: #e4eef7;
+        color: #29566f;
+    }
+
+    .cat-estetico {
+        background: #ede9f8;
+        color: #41338c;
+    }
+
+    .cat-restaurador {
+        background: #e3f4ea;
+        color: #1d6b41;
+    }
+
+    .cat-cirugia {
+        background: #fbe4e4;
+        color: #8f2626;
+    }
+
+    .cat-ortodoncia {
+        background: #fdf1d8;
+        color: #7a5c12;
+    }
+
+    .cat-endodoncia {
+        background: rgba(46, 143, 140, 0.12);
+        color: #1b5f5d;
+    }
+
+    .cat-otros {
+        background: #eef1f4;
+        color: #5a6672;
+    }
+
+    /* ── Acciones de fila ── */
+    .btn-accion {
+        display: inline-flex;
+        align-items: center;
+        height: 32px;
+        padding: 0 14px;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        font-family: inherit;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: background .15s ease;
+    }
+
+    .btn-ver {
+        background: var(--dc-input-bg);
+        color: #3d5670;
+        border-color: var(--dc-input-borde);
+    }
+
+        .btn-ver:hover {
+            background: #e4edf8;
+            color: #2b405a;
+        }
+
+    .btn-editar {
+        background: rgba(46, 143, 140, 0.1);
+        color: #216d6a;
+        border-color: rgba(46, 143, 140, 0.3);
+    }
+
+        .btn-editar:hover,
+        .btn-editar:focus {
+            background: rgba(46, 143, 140, 0.18);
+            color: #1b5f5d;
+            text-decoration: none;
+        }
+
+    /* ── Estado vacío ── */
+    .estado-vacio {
+        padding: 40px 20px;
+        text-align: center;
+        border: 1px dashed var(--dc-input-borde);
+        border-radius: 12px;
+        background: var(--dc-input-bg);
+    }
+
+    .estado-vacio-titulo {
+        margin: 0 0 6px;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--dc-tinta);
+    }
+
+    .estado-vacio-texto {
+        margin: 0 auto;
+        max-width: 420px;
+        font-size: 0.88rem;
+        line-height: 1.5;
+        color: var(--dc-suave);
+    }
+
+    /* ── Botones ── */
+    .btn-inv-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 44px;
+        padding: 0 24px;
+        border: none;
+        border-radius: 8px;
+        background: var(--dc-verde);
+        color: #fff;
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background .18s ease, box-shadow .18s ease;
+    }
+
+        .btn-inv-primary:hover,
+        .btn-inv-primary:focus {
+            background: var(--dc-verde-hover);
+            color: #fff;
+            text-decoration: none;
+            box-shadow: 0 6px 14px rgba(47, 109, 92, 0.28);
+        }
+
+    .btn-inv-cancelar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 44px;
+        padding: 0 22px;
+        border: none;
+        border-radius: 8px;
+        background: var(--dc-gris);
+        color: #5a6672;
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background .18s ease, color .18s ease;
+    }
+
+        .btn-inv-cancelar:hover {
+            background: var(--dc-gris-hover);
+            color: var(--dc-tinta);
+        }
+
+    /* ── Mensajes ── */
+    .alerta-verde {
+        max-width: var(--dc-ancho);
+        margin: 0 auto 18px;
+        padding: 12px 18px;
+        border-radius: 10px;
+        background: rgba(46, 143, 140, 0.08);
+        border: 1px solid rgba(46, 143, 140, 0.3);
+        border-left: 4px solid var(--dc-teal);
+        color: #1b5f5d;
+        font-size: 0.88rem;
+    }
+
+    /* ── Ventana de detalle ── */
+    .modal-fondo {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 59, 60, 0.5);
+        z-index: 1050;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+        .modal-fondo.show {
+            display: flex;
+        }
+
+    .modal-caja {
+        width: 100%;
+        max-width: 460px;
+        border-radius: 16px;
+        background: #fff;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(15, 59, 60, 0.3);
+    }
+
+    .modal-cabecera {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 22px 24px 18px;
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    .modal-titulo {
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--dc-tinta);
+        line-height: 1.3;
+    }
+
+    .modal-cerrar {
+        width: 30px;
+        height: 30px;
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--dc-suave);
+        font-family: inherit;
+        font-size: 0.9rem;
+        cursor: pointer;
+        flex: none;
+        transition: background .15s ease;
+    }
+
+        .modal-cerrar:hover {
+            background: #f0f4f8;
+            color: var(--dc-tinta);
+        }
+
+    .modal-cuerpo {
+        padding: 6px 24px 4px;
+    }
+
+    .detalle-fila {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 16px;
+        padding: 13px 0;
+        border-bottom: 1px solid #f2f5f9;
+        font-size: 0.88rem;
+    }
+
+        .detalle-fila:last-child {
+            border-bottom: none;
+        }
+
+        .detalle-fila .dk {
+            color: var(--dc-suave);
+        }
+
+        .detalle-fila .dv {
+            font-weight: 700;
+            color: var(--dc-tinta);
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+    .dv-monto {
+        font-size: 1.05rem;
+    }
+
+    .dv-suave {
+        color: var(--dc-suave);
+        font-weight: 600;
+    }
+
+    .modal-botones {
+        display: flex;
+        gap: 10px;
+        padding: 18px 24px 22px;
+    }
+
+        .modal-botones .btn-inv-primary {
+            flex: 1;
+        }
+
+    /* ── Accesibilidad y responsive ── */
+    .trat-input:focus-visible,
+    .btn-accion:focus-visible,
+    .btn-inv-primary:focus-visible,
+    .btn-inv-cancelar:focus-visible,
+    .modal-cerrar:focus-visible {
+        outline: 2px solid var(--dc-teal);
+        outline-offset: 2px;
+    }
+
+    .btn-header:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+    }
+
+    @@media (max-width: 900px) {
+        .metricas-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 680px) {
+        .inv-page {
+            padding: 22px 14px 40px;
+        }
+
+        .inv-header {
+            padding: 22px;
+        }
+
+        .metricas-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .trat-card-bar {
+            padding: 16px 20px;
+        }
+
+        .trat-card-body {
+            padding: 20px 20px 22px;
+        }
+
+        .filtro-campo {
+            flex: 1 1 100%;
+        }
+
+        .trat-input {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .contador-pill {
+            margin-left: 0;
+        }
+
+        .modal-botones {
+            flex-direction: column;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .trat-input,
+        .btn-header,
+        .btn-accion,
+        .btn-inv-primary,
+        .btn-inv-cancelar {
+            transition: none;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Los datos llegan en atributos data-* del propio botón.
+        // Antes venían incrustados en el onclick, y un nombre con
+        // apóstrofo ("Extracción d'urgencia") rompía la fila entera.
+        function verDetalle(boton) {
+            document.getElementById('detNombre').textContent = boton.getAttribute('data-nombre');
+            document.getElementById('detDuracion').textContent = boton.getAttribute('data-duracion');
+            document.getElementById('detCosto').innerHTML = '&#8353; ' + boton.getAttribute('data-costo');
+            document.getElementById('detCostoAnt').innerHTML = '&#8353; ' + boton.getAttribute('data-costoant');
+            document.getElementById('detFecha').textContent = boton.getAttribute('data-fecha');
+
+            var etiqueta = document.getElementById('detCat');
+            etiqueta.textContent = boton.getAttribute('data-cat');
+            etiqueta.className = 'badge-cat ' + boton.getAttribute('data-catclase');
+
+            document.getElementById('detEditarLink').href =
+                '/Catalogo/EditarCosto/' + boton.getAttribute('data-id');
+
+            document.getElementById('modalDetalle').classList.add('show');
+        }
+
+        function cerrarDetalle() {
+            document.getElementById('modalDetalle').classList.remove('show');
+        }
+
+        // Cerrar al hacer clic afuera de la caja, no al hacer clic adentro
+        function cerrarDetalleFondo(e) {
+            if (e.target === document.getElementById('modalDetalle')) {
+                cerrarDetalle();
+            }
+        }
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') { cerrarDetalle(); }
+        });
+
+        function normalizar(texto) {
+            texto = (texto || '').toLowerCase();
+            if (texto.normalize) {
+                texto = texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            }
+            return texto;
         }
 
         function filtrarTabla() {
-            var b   = document.getElementById('inputBuscar').value.toLowerCase();
-            var cat = document.getElementById('selCat').value.toLowerCase();
-            var v = 0;
-            document.querySelectorAll('#tablaCatalogo tbody tr').forEach(function(fila) {
-                var matchB   = fila.getAttribute('data-nombre').includes(b);
-                var matchCat = !cat || fila.getAttribute('data-cat').toLowerCase() === cat;
-                var mostrar  = matchB && matchCat;
-                fila.style.display = mostrar ? '' : 'none';
-                if (mostrar) v++;
-            });
-            document.getElementById('pagInfo').textContent = v + ' tratamientos';
+            var buscado = normalizar(document.getElementById('inputBuscar').value);
+            var categoria = document.getElementById('selCat').value;
+            var filas = document.querySelectorAll('#tablaCatalogo tbody tr');
+            var visibles = 0;
+
+            for (var i = 0; i < filas.length; i++) {
+                var nombre = filas[i].getAttribute('data-nombre') || '';
+                var cat = filas[i].getAttribute('data-cat') || '';
+
+                var coincideNombre = nombre.indexOf(buscado) > -1;
+                var coincideCat = !categoria || cat.indexOf(categoria) === 0;
+                var mostrar = coincideNombre && coincideCat;
+
+                filas[i].style.display = mostrar ? '' : 'none';
+                if (mostrar) { visibles++; }
+            }
+
+            document.getElementById('pagInfo').textContent =
+                visibles === 1 ? '1 tratamiento' : visibles + ' tratamientos';
+
+            var aviso = document.getElementById('sinResultados');
+            if (aviso) { aviso.style.display = visibles === 0 ? 'block' : 'none'; }
         }
 
         function limpiarFiltros() {
             document.getElementById('inputBuscar').value = '';
             document.getElementById('selCat').value = '';
             filtrarTabla();
-        }</script>
+        }
+    </script>
 }

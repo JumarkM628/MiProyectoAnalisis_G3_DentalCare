@@ -1,0 +1,14 @@
+﻿@model string
+
+@*
+    Va en: Views/Shared/ReporteHtml.cshtml
+
+    Es el puente entre los reportes armados con StringBuilder y el layout.
+    Al pasar por View() en vez de Content(), la respuesta se renderiza dentro
+    de _Layout.cshtml y vuelven el navbar y el footer.
+
+    El controller ya escapa el contenido con HtmlEncode antes de armar la
+    cadena, por eso acá se puede usar Html.Raw sin abrir un hueco de XSS.
+*@
+
+@Html.Raw(Model)

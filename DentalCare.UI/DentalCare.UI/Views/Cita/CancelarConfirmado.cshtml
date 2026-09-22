@@ -3,56 +3,232 @@
     ViewBag.Title = "CancelarConfirmado";
 }
 
-<div class="container" style="max-width:560px; padding:24px;">
+<style>
 
-    <h2 style="font-weight:600; color:#c0392b;">
-        <i class="fa fa-times-circle"></i> Confirmar Cancelación
-    </h2>
-
-    @* Escenario 2: mensaje de confirmación *@
-    <div class="alert alert-warning" style="margin-top:16px;">
-        <strong>¿Está seguro que desea cancelar esta cita?</strong><br />
-        El horario quedará disponible para otros pacientes.
-    </div>
-
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">@TempData["Error"]</div>
+    body {
+        background: #f4f7fb;
     }
 
-    <div class="panel panel-default">
-        <div class="panel-heading"><strong>Datos de la Cita</strong></div>
-        <div class="panel-body">
-            <table class="table table-condensed" style="margin-bottom:0;">
-                <tr><td><strong>ID Cita</strong></td><td>@Model.IdCita</td></tr>
-                <tr><td><strong>Paciente</strong></td><td>@Model.NombrePaciente</td></tr>
-                <tr><td><strong>Doctor</strong></td><td>@Model.NombreDoctor</td></tr>
-                <tr><td><strong>Fecha</strong></td><td>@(Model.Fecha.HasValue ? Model.Fecha.Value.ToString("dd/MM/yyyy") : "—")</td></tr>
-                <tr><td><strong>Hora</strong></td><td>@Model.HoraString</td></tr>
-                <tr><td><strong>Motivo</strong></td><td>@Model.NombreMotivo</td></tr>
-            </table>
-        </div>
+    .cancelar-container {
+        max-width: 620px;
+        margin: 40px auto;
+        padding: 24px;
+    }
+
+    .cancelar-header {
+        background: linear-gradient(135deg, #b91c1c, #e74c3c);
+        padding: 28px 30px;
+        border-radius: 20px 20px 0 0;
+        color: white;
+        box-shadow: 0 10px 30px rgba(185,28,28,.20);
+    }
+
+        .cancelar-header h2 {
+            margin: 0;
+            font-weight: 700;
+            color: white;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cancelar-header p {
+            margin: 10px 0 0;
+            color: rgba(255,255,255,.9);
+            font-size: .92rem;
+        }
+
+    .cancelar-card {
+        background: white;
+        border-radius: 0 0 20px 20px;
+        padding: 30px;
+        box-shadow: 0 8px 25px rgba(0,0,0,.08);
+        margin-bottom: 25px;
+    }
+
+    .datos-cita {
+        background: #F4FBFA;
+        border: 1px solid #E6F1EF;
+        border-radius: 14px;
+        padding: 8px 20px;
+        margin-top: 20px;
+    }
+
+        .datos-cita h4 {
+            color: #1F6B75;
+            font-weight: 700;
+            font-size: .95rem;
+            margin: 14px 0 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #CFE8E6;
+        }
+
+    .fila-dato {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 9px 0;
+        border-bottom: 1px dashed #DCEEEC;
+        font-size: .92rem;
+    }
+
+        .fila-dato:last-child {
+            border-bottom: none;
+            padding-bottom: 16px;
+        }
+
+        .fila-dato strong {
+            color: #6B8E89;
+            font-weight: 600;
+        }
+
+        .fila-dato span {
+            color: #16302D;
+            font-weight: 500;
+            text-align: right;
+        }
+
+    label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        box-shadow: none;
+        transition: all .3s ease;
+    }
+
+        .form-control:focus {
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 4px rgba(231,76,60,.15);
+        }
+
+    .btn-confirmar-cancelacion {
+        background: linear-gradient(135deg, #e74c3c, #b91c1c);
+        border: none;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: .3s;
+    }
+
+        .btn-confirmar-cancelacion:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(231,76,60,.30);
+        }
+
+    .btn-volver {
+        background: #e5e7eb;
+        color: #374151;
+        padding: 12px 24px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        margin-left: 10px;
+    }
+
+        .btn-volver:hover {
+            text-decoration: none;
+            background: #d1d5db;
+            color: #111827;
+        }
+
+    .acciones-cancelar {
+        margin-top: 22px;
+        display: flex;
+    }
+
+    @@media(max-width:768px) {
+
+        .acciones-cancelar {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-volver {
+            margin-left: 0;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="cancelar-container">
+
+    <div class="cancelar-header">
+        <h2>
+            <i class="fa fa-times-circle"></i>
+            Confirmar Cancelación
+        </h2>
+        <p>
+            ¿Está seguro que desea cancelar esta cita? El horario quedará disponible para otros pacientes.
+        </p>
     </div>
 
-    @using (Html.BeginForm("CancelarConfirmado", "Cita", new { id = Model.IdCita }, FormMethod.Post))
-    {
-        @Html.AntiForgeryToken()
+    <div class="cancelar-card">
 
-        <div class="form-group" style="margin-top:16px;">
-            <label for="motivoCancelacion"><strong>Motivo de la cancelación</strong></label>
-            <textarea name="motivoCancelacion" id="motivoCancelacion" class="form-control"
-                      rows="3" maxlength="300" required
-                      placeholder="Describa el motivo de la cancelación..."></textarea>
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        <div class="datos-cita">
+            <h4><i class="fa fa-calendar"></i> Datos de la Cita</h4>
+
+            <div class="fila-dato">
+                <strong>ID Cita</strong>
+                <span>@Model.IdCita</span>
+            </div>
+            <div class="fila-dato">
+                <strong>Paciente</strong>
+                <span>@Model.NombrePaciente</span>
+            </div>
+            <div class="fila-dato">
+                <strong>Doctor</strong>
+                <span>@Model.NombreDoctor</span>
+            </div>
+            <div class="fila-dato">
+                <strong>Fecha</strong>
+                <span>@(Model.Fecha.HasValue ? Model.Fecha.Value.ToString("dd/MM/yyyy") : "—")</span>
+            </div>
+            <div class="fila-dato">
+                <strong>Hora</strong>
+                <span>@Model.HoraString</span>
+            </div>
+            <div class="fila-dato">
+                <strong>Motivo</strong>
+                <span>@Model.NombreMotivo</span>
+            </div>
         </div>
 
-        <div style="margin-top:16px;">
-            <button type="submit" class="btn btn-danger">
-                Sí, cancelar cita
-            </button>
-            @Html.ActionLink("Volver", "ObtenerTodasLasCitas", "Cita",
-                null, new { @class = "btn btn-default", style = "margin-left:8px;" })
-        </div>
-    }
+        @using (Html.BeginForm("CancelarConfirmado", "Cita", new { id = Model.IdCita }, FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group" style="margin-top:22px;">
+                <label for="motivoCancelacion">Motivo de la cancelación</label>
+                <textarea name="motivoCancelacion" id="motivoCancelacion" class="form-control"
+                          rows="3" maxlength="300" required
+                          placeholder="Describa el motivo de la cancelación..."></textarea>
+            </div>
+
+            <div class="acciones-cancelar">
+                <button type="submit" class="btn btn-confirmar-cancelacion">
+                    Sí, cancelar cita
+                </button>
+                @Html.ActionLink("Volver", "ObtenerTodasLasCitas", "Cita",
+                    null, new { @class = "btn-volver" })
+            </div>
+        }
+
+    </div>
+
 </div>
 
 

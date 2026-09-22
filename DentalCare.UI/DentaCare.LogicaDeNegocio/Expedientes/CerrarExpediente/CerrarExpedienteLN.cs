@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DentalCare.Abstraccion.AccesoADatos.Expediente.CerrarExpediente;
+﻿using DentalCare.Abstraccion.AccesoADatos.Expediente.CerrarExpediente;
 using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.CerrarExpediente;
-using DentalCare.Abstraccion.LogicaDeNegocio.Expedientes.CrearExpediente;
-using DentalCare.Abstraccion.Modelo.Bitacora;
 using DentalCare.Abstraccion.Modelo.Expedientes;
 
 namespace DentaCare.LogicaDeNegocio.Expedientes.CerrarExpediente
@@ -39,17 +32,7 @@ namespace DentaCare.LogicaDeNegocio.Expedientes.CerrarExpediente
             if (!cerrado)
                 return "Ocurrió un error al cerrar el expediente.";
 
-            var bitacora = new BitacoraDto
-            {
-                Modulo = "Expediente",
-                Accion = "Cierre",
-                Descripcion = $"Se cerró el expediente ID {id}.",
-                NombreUsuario = nombreDoctora,
-                FechaHora = DateTime.Now
-            };
-
-            _cerrarExpedienteAD.RegistrarCierreEnBitacora(bitacora);
-
+            // El trigger trg_Expediente_Update registra el cierre automáticamente
             return null;
         }
     }

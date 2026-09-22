@@ -67,7 +67,7 @@ namespace DentalCare.Abstraccion.Modelo.Usuarios
         [Display(Name = "Teléfono")]
         public string Telefono { get; set; }
 
-        [Required(ErrorMessage = "El correo es obligatorio.")]
+
         [EmailAddress(ErrorMessage = "El formato del correo no es válido.")]
         [StringLength(150, ErrorMessage = "Máximo 150 caracteres.")]
         [Display(Name = "Correo Electrónico")]

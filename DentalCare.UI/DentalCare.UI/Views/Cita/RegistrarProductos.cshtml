@@ -104,8 +104,21 @@
         <button id="nextBtn" onclick="cambiarPagina(1)">Siguiente →</button>
     </div>
 
-    <div style="margin-top: 20px;">
+    <div style="margin-top: 18px; display:flex; gap:12px; align-items:center;">
         @Html.ActionLink("← Volver a Citas", "ObtenerTodasLasCitas", "Cita", null, new { @class = "btn-usuario-primary" })
+        @using (Html.BeginForm("Finalizar", "Cita", FormMethod.Post, new { style = "display:inline-block;" }))
+        {
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@(ViewBag.IdCita ?? 0)" />
+            var productosCount = (Model == null) ? 0 : Model.Count();
+            <button type="submit"
+                    class="btn-usuario-primary"
+                    style="background:#ff7a7a;"
+                    @(productosCount == 0 ? "disabled=\"disabled\"" : "")>
+                Finalizar cita
+            </button>
+        }
+        @Html.ActionLink("Mostrar productos", "RegistrarProductos", "Cita", new { id = ViewBag.IdCita, viewOnly = true }, new { @class = "btn-usuario-primary", style = "background:#f3f4f6; color:#111;" })
     </div>
 
 </div>
@@ -289,7 +302,8 @@
 </style>
 
 @section Scripts {
-    <script>let paginaActual = 1;
+    <script>
+        let paginaActual = 1;
         const filasPorPagina = 10;
 
         function obtenerFilasVisibles() {
@@ -339,5 +353,6 @@
 
         document.addEventListener("DOMContentLoaded", function () {
             mostrarPagina();
-        });</script>
+        });
+    </script>
 }

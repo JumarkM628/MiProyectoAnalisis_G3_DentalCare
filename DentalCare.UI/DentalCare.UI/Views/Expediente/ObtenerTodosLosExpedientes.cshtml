@@ -23,12 +23,12 @@
 
         <div>
             @Html.ActionLink(
-                "+ Nuevo Expediente",
-                "CrearExpediente",
-                "Expediente",
-                null,
-                new { @class = "btn-usuario-primary" }
-            )
+            "+ Nuevo Expediente",
+            "CrearExpediente",
+            "Expediente",
+            null,
+            new { @class = "btn-inv-primary" })
+            
         </div>
 
     </div>
@@ -212,6 +212,24 @@
 </div>
 
 <style>
+
+    .btn-inv-primary {
+        display: inline-flex;
+        align-items: center;
+        height: 46px;
+        padding: 0 26px;
+        border-radius: 8px;
+        background: #2f6d5c;
+        color: #fff;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+        .btn-inv-primary:hover {
+            background: #275c4d;
+            color: #fff;
+            text-decoration: none;
+        }
 
     .usuarios-page {
         min-height: 100vh;

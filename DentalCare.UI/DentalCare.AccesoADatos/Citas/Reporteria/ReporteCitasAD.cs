@@ -26,6 +26,8 @@ namespace DentalCare.AccesoADatos.Citas.Reporteria
                        from doctor in doctorGrupo.DefaultIfEmpty()
                        join motivo in _contexto.MotivosCita on cita.IdMotivo equals motivo.IdMotivo
                        join estado in _contexto.Estados on cita.IdEstado equals estado.IdEstado
+                       join motCancel in _contexto.MotivoCancelacionCita on cita.IdCancelacion equals motCancel.IdCancelacion into motCancelGrp
+                       from motCancel in motCancelGrp.DefaultIfEmpty()
                        where cita.Fecha >= desde && cita.Fecha <= hasta
                        select new
                        {

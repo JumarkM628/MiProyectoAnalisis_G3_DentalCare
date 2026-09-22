@@ -11,6 +11,5 @@ namespace DentalCare.Abstraccion.AccesoADatos.Usuarios.EditarUsuario
     {
         void Editar(UsuarioDto dto);
         bool ExisteCedulaEnOtroUsuario(int idUsuario, string numeroCedula);
-        bool ExisteCorreoEnOtroUsuario(int idUsuario, string correo);
     }
 }

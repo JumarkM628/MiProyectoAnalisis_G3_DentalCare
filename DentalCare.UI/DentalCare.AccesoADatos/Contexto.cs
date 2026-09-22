@@ -52,7 +52,7 @@ namespace DentalCare.AccesoADatos
         public DbSet<ArchivoClinicoEntidad> ArchivosClinicos { get; set; }
 
         // Bitácora
-        public DbSet<BitacoraEntidad> Bitacoras { get; set; }
+        public DbSet<EventoEntidad> Eventos { get; set; }
 
         //odontograma
         public DbSet<OdontogramaEntidad> Odontogramas { get; set; }
@@ -71,6 +71,8 @@ namespace DentalCare.AccesoADatos
         public DbSet<ProcedimientoEntidad> Procedimientos { get; set; }
         public DbSet<ComprasProductoEntidad> ComprasProducto { get; set; }
         public DbSet<ProveedorProductoEntidad> ProveedorProductos { get; set; }
+        public DbSet<CategoriaProductoEntidad> CategoriasProducto { get; set; }
+        public DbSet<ProveedorEntidad> Proveedores { get; set; }
 
         //Pagos
         public DbSet<MetodoPagoEntidad> MetodosPago { get; set; }

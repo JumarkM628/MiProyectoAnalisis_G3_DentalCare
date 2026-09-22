@@ -1,0 +1,60 @@
+﻿@model IEnumerable<DentalCare.Abstraccion.Modelo.Reporteria.ReporteProductosVencerDto>
+
+@{
+    ViewBag.Title = "ProductosPorVencer";
+}
+
+<div class="reporte-card">
+    <h3>Productos Próximos a Vencer</h3>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alerta-item alerta-rojo">@ViewBag.Error</div>
+    }
+
+    <div style="margin:12px 0;">
+        @using (Html.BeginForm("ProductosPorVencer", "Reporteria", FormMethod.Get))
+        {
+            <label>Fecha Inicio</label>
+            <input type="date" name="fechaInicio" value="@(Request["fechaInicio"] ?? DateTime.Today.ToString("yyyy-MM-dd"))" class="form-control" style="display:inline-block;width:auto;margin-right:8px;" />
+            <label>Fecha Fin</label>
+            <input type="date" name="fechaFin" value="@(Request["fechaFin"] ?? DateTime.Today.AddDays(30).ToString("yyyy-MM-dd"))" class="form-control" style="display:inline-block;width:auto;margin-right:8px;" />
+            <button type="submit" class="btn-filtrar-reporte">Consultar</button>
+        }
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="rep-placeholder">No hay productos próximos a vencer para las fechas seleccionadas.</div>
+    }
+    else
+    {
+        <table class="tabla-reporte">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th>Stock Actual</th>
+                    <th>Fecha Vencimiento</th>
+                    <th>Proveedor</th>
+                    <th>Fecha Registro</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td>@p.IdProducto</td>
+                        <td>@p.NombreProducto</td>
+                        <td>@p.CategoriaProducto</td>
+                        <td>@p.StockActual</td>
+                        <td>@(p.FechaVencimiento?.ToString("dd/MM/yyyy") ?? "—")</td>
+                        <td>@p.Proveedor</td>
+                        <td>@(p.FechaRegistro?.ToString("dd/MM/yyyy") ?? "—")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

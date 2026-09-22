@@ -1,14 +1,10 @@
 ﻿using DentalCare.Abstraccion.AccesoADatos.Usuarios.ObtenerUsuarioPorId;
 using DentalCare.Abstraccion.Modelo.Usuarios;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DentalCare.AccesoADatos.Usuarios.ObtenerUsuarioPorId
 {
-    public class ObtenerUsuarioPorIdAD: IObtenerUsuarioPorIdAD
+    public class ObtenerUsuarioPorIdAD : IObtenerUsuarioPorIdAD
     {
         private readonly Contexto _contexto;
 
@@ -31,9 +27,10 @@ namespace DentalCare.AccesoADatos.Usuarios.ObtenerUsuarioPorId
                     on usuario.IdUsuario equals telefono.IdUsuario into telefonoGrupo
                 from telefono in telefonoGrupo.DefaultIfEmpty()
 
-                join correo in _contexto.Correos
-                    on usuario.IdUsuario equals correo.IdUsuario into correoGrupo
-                from correo in correoGrupo.DefaultIfEmpty()
+                    // JOIN con AspNetUsers para obtener el Email directamente
+                join aspNet in _contexto.AspNetUsers
+                    on usuario.ASPNET_USER_ID equals aspNet.Id into aspNetGrupo
+                from aspNet in aspNetGrupo.DefaultIfEmpty()
 
                 join area in _contexto.Areas
                     on usuario.IdAreaUsuario equals area.IdAreaUsuario
@@ -54,7 +51,8 @@ namespace DentalCare.AccesoADatos.Usuarios.ObtenerUsuarioPorId
                     TipoCedula = cedula != null ? cedula.TipoCedula : "",
                     NumeroCedula = cedula != null ? cedula.NumeroCedula : "",
                     Telefono = telefono != null ? telefono.Telefono : "",
-                    Correo = correo != null ? correo.Correo : "",
+                    // Correo viene de AspNetUsers.Email
+                    Correo = aspNet != null ? aspNet.Email : "",
                     IdAreaUsuario = usuario.IdAreaUsuario,
                     NombreArea = area.NombreTipoUsuario,
                     IdEspecialidad = usuario.IdEspecialidad,

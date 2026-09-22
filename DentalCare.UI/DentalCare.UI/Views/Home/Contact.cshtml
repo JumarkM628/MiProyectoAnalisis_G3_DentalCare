@@ -2,6 +2,38 @@
     ViewBag.Title = "Contacto";
 }
 
+<style>
+    .page-hero {
+        background-image:
+            linear-gradient(135deg, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.40) 100%),
+            url('@Url.Content("~/Content/Images/Promocion.png")') !important;
+        background-size: cover !important;
+        background-position: center center !important;
+        background-repeat: no-repeat !important;
+    }
+
+    .btn-enviar-contacto {
+        background: linear-gradient(135deg, #3E8E7E, #2F6E62);
+        border: none;
+        color: white;
+        padding: 12px 26px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: .2s;
+    }
+
+        .btn-enviar-contacto:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(62,142,126,.30);
+        }
+
+    .contact-form-card .form-control:focus {
+        border-color: #2C8C99;
+        box-shadow: 0 0 0 4px rgba(44,140,153,.15);
+    }
+</style>
+
 <main class="full-width-main">
 
     <!-- Page Hero -->
@@ -44,7 +76,7 @@
                                 </div>
                             </li>
                         </ul>
-         
+
                     </div>
                 </div>
 
@@ -75,7 +107,7 @@
                                 <label for="mensaje" class="form-label">Mensaje *</label>
                                 <textarea class="form-control" id="mensaje" name="mensaje" rows="5" placeholder="" required></textarea>
                             </div>
-                            <button type="submit" class="btn btn-info">Enviar mensaje</button>
+                            <button type="submit" class="btn btn-enviar-contacto">Enviar mensaje</button>
                         </form>
                     </div>
                 </div>

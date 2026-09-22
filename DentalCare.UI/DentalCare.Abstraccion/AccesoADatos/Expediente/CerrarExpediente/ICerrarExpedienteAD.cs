@@ -12,6 +12,5 @@ namespace DentalCare.Abstraccion.AccesoADatos.Expediente.CerrarExpediente
     {
         ExpedienteDto ObtenerExpedientePorId(int id);
         bool CerrarExpediente(int id);
-        void RegistrarCierreEnBitacora(BitacoraDto bitacora);
     }
 }

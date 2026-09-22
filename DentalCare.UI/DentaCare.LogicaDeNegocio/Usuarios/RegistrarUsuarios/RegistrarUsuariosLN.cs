@@ -2,15 +2,10 @@
 using DentalCare.Abstraccion.LogicaDeNegocio.Usuarios.RegistrarUsuario;
 using DentalCare.Abstraccion.Modelo.Usuarios;
 using DentalCare.AccesoADatos.Usuarios.RegistrarUsuario;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DentaCare.LogicaDeNegocio.Usuarios.RegistrarUsuarios
 {
-    public class RegistrarUsuariosLN: IRegistrarUsuariosLN
+    public class RegistrarUsuariosLN : IRegistrarUsuariosLN
     {
         IRegistrarUsuariosAD _registrarUsuariosAD;
 
@@ -21,11 +16,10 @@ namespace DentaCare.LogicaDeNegocio.Usuarios.RegistrarUsuarios
 
         public string RegistrarUsuario(UsuarioDto dto)
         {
+            // Solo validamos cédula duplicada
+            // El correo lo maneja Identity al momento del registro de cuenta
             if (_registrarUsuariosAD.ExisteCedula(dto.NumeroCedula))
                 return "Ya existe un usuario registrado con esa cédula.";
-
-            if (_registrarUsuariosAD.ExisteCorreo(dto.Correo))
-                return "Ya existe un usuario registrado con ese correo electrónico.";
 
             _registrarUsuariosAD.RegistrarUsuario(dto);
             return null;

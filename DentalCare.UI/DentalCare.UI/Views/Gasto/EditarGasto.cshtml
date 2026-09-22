@@ -1,0 +1,142 @@
+﻿@model DentalCare.Abstraccion.Modelo.Gasto.GastoDto
+@{ ViewBag.Title = "Editar Gasto"; }
+
+<div class="usuarios-page" style="max-width:620px; margin:0 auto;">
+    <div class="usuarios-header">
+        <div>
+            <h1 class="usuarios-titulo"><i class="fa fa-pencil"></i> Editar Gasto</h1>
+            <p class="usuarios-subtitulo">Corregí los datos de un gasto ya registrado.</p>
+        </div>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""] != null)
+    {
+        <div class="alert alert-danger">@Html.ValidationMessage("")</div>
+    }
+
+    @using (Html.BeginForm("EditarGasto", "Gasto", new { id = Model.IdGasto }, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.IdGasto)
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Datos del Gasto</strong></div>
+            <div class="panel-body">
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.TipoGasto)<span class="text-danger"> *</span>
+                    @Html.DropDownListFor(m => m.TipoGasto, Model.ListaTiposGasto,
+                             "-- Seleccione categoría --", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.TipoGasto, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Concepto)<span class="text-danger"> *</span>
+                    @Html.TextAreaFor(m => m.Concepto, new
+                    {
+                        @class = "form-control",
+                        rows = "3",
+                        placeholder = "Describa el concepto del gasto"
+                    })
+                    @Html.ValidationMessageFor(m => m.Concepto, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Monto)<span class="text-danger"> *</span>
+                    @Html.TextBoxFor(m => m.Monto, new
+                    {
+                        @class = "form-control",
+                        placeholder = "0.00",
+                        type = "number",
+                        step = "0.01",
+                        min = "0.01",
+                        value = Model.Monto.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
+                    })
+                    @Html.ValidationMessageFor(m => m.Monto, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Fecha)<span class="text-danger"> *</span>
+                    @Html.TextBoxFor(m => m.Fecha, "{0:yyyy-MM-dd}",
+                             new { @class = "form-control", type = "date" })
+                    @Html.ValidationMessageFor(m => m.Fecha, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.IdEstado)<span class="text-danger"> *</span>
+                    @Html.DropDownListFor(m => m.IdEstado, Model.ListaEstados,
+                             "-- Seleccione --", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.IdEstado, "", new { @class = "text-danger" })
+                </div>
+
+            </div>
+        </div>
+        <div style="margin-top:20px;">
+            <button type="submit" class="btn-usuario-primary">Guardar cambios</button>
+            @Html.ActionLink("Cancelar", "ReporteGastos", "Gasto",
+                     null, new { @class = "btn btn-default", style = "margin-left:8px;" })
+        </div>
+    }
+</div>
+
+<style>
+    .panel {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .panel-heading {
+        background: #f5f7fa;
+        padding: 12px 16px;
+        border-bottom: 1px solid #ddd;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .panel-body {
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .btn-default {
+        background: #f0f0f0;
+        color: #333;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-default:hover {
+            background: #ddd;
+        }
+
+    .btn-usuario-primary {
+        background: #8FFDFF;
+        color: #000;
+        text-decoration: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+        .btn-usuario-primary:hover {
+            background: #6EA0FF;
+            color: #fff;
+            text-decoration: none;
+        }
+</style>
+@section Scripts { @Scripts.Render("~/bundles/jqueryval") }

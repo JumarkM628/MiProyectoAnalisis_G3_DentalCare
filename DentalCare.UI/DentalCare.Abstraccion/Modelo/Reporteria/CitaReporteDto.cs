@@ -11,5 +11,8 @@ namespace DentalCare.Abstraccion.Modelo.Reporteria
         public string NombreDoctor { get; set; }
         public string NombreMotivo { get; set; }
         public string NombreEstado { get; set; }
+        public string MotivoCancelacion { get; set; }
+        public DateTime? FechaCancelacion { get; set; }
+
     }
 }

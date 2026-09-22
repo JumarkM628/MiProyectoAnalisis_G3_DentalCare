@@ -1,0 +1,64 @@
+﻿@model IEnumerable<DentalCare.Abstraccion.Modelo.Reporteria.ReporteCitasCanceladasDto>
+
+@{
+    ViewBag.Title = "CitasCanceladas";
+}
+
+<div class="reporte-card">
+    <h3>Citas Canceladas</h3>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alerta-item alerta-rojo">@TempData["Error"]</div>
+    }
+
+    <div style="margin:12px 0;">
+        @using (Html.BeginForm("CitasCanceladasPorPeriodo", "Reporteria", FormMethod.Get))
+        {
+            <label>Desde</label>
+            <input type="date" name="desde" class="form-control" style="display:inline-block;width:auto;margin-right:8px;" />
+            <label>Hasta</label>
+            <input type="date" name="hasta" class="form-control" style="display:inline-block;width:auto;margin-right:8px;" />
+            <button type="submit" class="btn-filtrar-reporte">Consultar</button>
+        }
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="rep-placeholder">No existen citas canceladas para el periodo indicado.</div>
+    }
+    else
+    {
+        <table class="tabla-reporte">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ID Usuario</th>
+                    <th>Paciente</th>
+                    <th>Fecha Cita</th>
+                    <th>Hora</th>
+                    <th>Motivo Cita</th>
+                    <th>Estado</th>
+                    <th>Motivo Cancelación</th>
+                    <th>Fecha Cancelación</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model)
+                {
+                    <tr>
+                        <td>@c.IdCita</td>
+                        <td>@c.IdUsuario</td>
+                        <td>@c.NombrePaciente</td>
+                        <td>@(c.FechaCita?.ToString("dd/MM/yyyy") ?? "-")</td>
+                        <td>@(c.HoraCita.HasValue ? c.HoraCita.Value.ToString(@"hh\:mm") : "-")</td>
+                        <td>@(string.IsNullOrEmpty(c.MotivoCita) ? "-" : c.MotivoCita)</td>
+                        <td>@(string.IsNullOrEmpty(c.EstadoCita) ? "-" : c.EstadoCita)</td>
+                        <td>@(string.IsNullOrEmpty(c.MotivoCancelacion) ? "-" : c.MotivoCancelacion)</td>
+                        <td>@(c.FechaCancelacion?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

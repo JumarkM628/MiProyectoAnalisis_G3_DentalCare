@@ -1,5 +1,4 @@
-﻿using DentalCare.Abstraccion.Modelo.Bitacora;
-using DentalCare.Abstraccion.Modelo.Producto;
+﻿using DentalCare.Abstraccion.Modelo.Producto;
 
 namespace DentalCare.Abstraccion.AccesoADatos.Producto
 {
@@ -7,6 +6,6 @@ namespace DentalCare.Abstraccion.AccesoADatos.Producto
     {
         ProductoDto ObtenerProductoPorId(int id);
         bool GuardarCambios(ProductoDto dto);
-        void RegistrarCambioEnBitacora(BitacoraDto bitacora);
+
     }
 }

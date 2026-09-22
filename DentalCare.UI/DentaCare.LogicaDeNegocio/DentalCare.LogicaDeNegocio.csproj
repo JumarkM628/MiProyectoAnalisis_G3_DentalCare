@@ -45,10 +45,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Archivo\SubirArchivo\ArchivoClinicoLN.cs" />
+    <Compile Include="Bitacora\ObtenerEventosLN.cs" />
     <Compile Include="Catalogo\ActualizarCosto\ActualizarCostoLN.cs" />
     <Compile Include="Catalogo\ObtenerCatalogo\ObtenerCatalogoLN.cs" />
     <Compile Include="Citas\AgregarCita\AgregarCitaLN.cs" />
     <Compile Include="Citas\CambiarEstadoCita\CambiarEstadoCitaLN.cs" />
+    <Compile Include="Citas\ObtenerCitaPorId\ObtenerCitaPorIdLN.cs" />
     <Compile Include="Citas\ObtenerCitasPaciente\ObtenerCitasPacienteLN.cs" />
     <Compile Include="Citas\ObtenerTodasLasCitas\ObtenerTodasLasCitasLN.cs" />
     <Compile Include="Citas\RecordatorioCitaServicios\RecordatorioCitaServicio.cs" />
@@ -68,9 +70,17 @@
     <Compile Include="Producto\EditarProducto\EditarProductoLN.cs" />
     <Compile Include="Producto\RegistrarProducto\RegistrarProductoLN.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reporteria\Citas\ReporteCitasCanceladasLN.cs" />
     <Compile Include="Reporteria\Citas\ReporteCitasLN.cs" />
+    <Compile Include="Reporteria\Expediente\ReporteExpedienteLN.cs" />
+    <Compile Include="Reporteria\Expediente\ReporteProcedimientosLN.cs" />
+    <Compile Include="Reporteria\Finanzas\ReporteGastosLN.cs" />
+    <Compile Include="Reporteria\Inventario\ReporteInventarioLN.cs" />
+    <Compile Include="Reporteria\Producto\ReporteBajoStockLN.cs" />
     <Compile Include="Reporteria\Producto\ReporteLotesLN.cs" />
     <Compile Include="Reporteria\Producto\ReporteProductosLN.cs" />
+    <Compile Include="Reporteria\Producto\ReporteProductosVencerLN.cs" />
+    <Compile Include="Reporteria\Usuario\HistorialDoctoraLN.cs" />
     <Compile Include="Servicios\Correo\Correo.cs" />
     <Compile Include="Tratamiento\AgregarTratamiento\RegistrarTratamientoLN.cs" />
     <Compile Include="Tratamiento\ObtenerTratamientoPorCita\ObtenerTratamientosPorCitaLN.cs" />

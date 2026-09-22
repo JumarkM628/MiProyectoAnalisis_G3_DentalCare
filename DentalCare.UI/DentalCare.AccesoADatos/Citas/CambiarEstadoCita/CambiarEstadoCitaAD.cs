@@ -74,13 +74,13 @@ namespace DentalCare.AccesoADatos.Citas.CambiarEstadoCita
                         IdEstado = 1 // estado "Activo" del registro de motivo
                     };
                     _contexto.MotivoCancelacionCita.Add(motivo);
-                    _contexto.SaveChanges(); 
+                    _contexto.SaveChanges();
 
                     var cita = _contexto.Citas.First(c => c.IdCita == idCita);
                     cita.IdEstado = idEstado;
                     cita.IdCancelacion = nuevoId;
-                    cita.Fecha = DateTime.Now;
-                    _contexto.SaveChanges(); 
+                    cita.FechaCancelacion = DateTime.Now;
+                    _contexto.SaveChanges();
 
                     trans.Commit();
                 }

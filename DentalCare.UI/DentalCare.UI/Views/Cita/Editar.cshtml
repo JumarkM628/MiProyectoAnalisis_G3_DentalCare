@@ -4,80 +4,204 @@
     ViewBag.Title = "Editar";
 }
 
-<div class="usuarios-page" style="max-width:700px; margin:0 auto;">
-    <div class="usuarios-header">
-        <h1 class="usuarios-titulo">
-            <i class="fa fa-pencil"></i> Editar Cita #@Model.IdCita
-        </h1>
-    </div>
-
-    @using (Html.BeginForm())
-    {
-        @Html.AntiForgeryToken()
-        @Html.HiddenFor(m => m.IdCita)
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.IdDoctor, "Doctor")
-            @Html.DropDownListFor(m => m.IdDoctor, Model.ListaDoctores, "Seleccione doctor", new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.IdDoctor)
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.IdMotivo, "Motivo")
-            @Html.DropDownListFor(m => m.IdMotivo, Model.ListaMotivos, "Seleccione motivo", new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.IdMotivo)
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.IdEstado, "Estado")
-            @Html.DropDownListFor(m => m.IdEstado, Model.ListaEstados, new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.IdEstado)
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.Fecha, "Fecha")
-            @Html.TextBoxFor(m => m.Fecha, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
-            @Html.ValidationMessageFor(m => m.Fecha)
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.HoraString, "Hora")
-            @Html.TextBoxFor(m => m.HoraString, new { @class = "form-control", placeholder = "HH:mm" })
-            @Html.ValidationMessageFor(m => m.HoraString)
-        </div>
-
-        <div class="form-group" style="margin-top:20px;">
-            <button type="submit" class="btn-usuario-primary">Guardar cambios</button>
-            @Html.ActionLink("Volver", "ObtenerTodasLasCitas", null, new { @class = "btn btn-default" })
-        </div>
-    }
-</div>
-
 <style>
+
+    body {
+        background: #f4f7fb;
+    }
+
+    .page-header-custom {
+        background: linear-gradient(135deg, #16302D, #1F6B75, #2C8C99);
+        padding: 30px;
+        border-radius: 20px;
+        color: white;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(22,48,45,.25);
+    }
+
+        .page-header-custom h2 {
+            margin: 0;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-header-custom p {
+            margin-top: 10px;
+            opacity: .95;
+        }
+
+    .panel {
+        border: none !important;
+        border-radius: 18px !important;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,.08);
+        margin-bottom: 25px;
+    }
+
+    .panel-heading {
+        background: linear-gradient(135deg,#16302D,#1F6B75) !important;
+        color: white !important;
+        border: none !important;
+        padding: 18px 22px !important;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .panel-body {
+        background: white;
+        padding: 25px;
+    }
+
+    label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 5px;
+        display: block;
+    }
+
     .form-group {
-        margin-bottom: 15px;
+        margin-bottom: 18px;
     }
 
     .form-control {
         width: 100%;
+        height: 45px;
         padding: 8px 12px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+        border-radius: 10px;
+        border: 1px solid #CFE8E6;
+        box-shadow: none;
         box-sizing: border-box;
+        transition: all .3s ease;
     }
 
-    .btn-default {
-        background: #f0f0f0;
-        color: #333;
-        padding: 8px 16px;
-        border-radius: 4px;
+        .form-control:focus {
+            border-color: #2C8C99;
+            box-shadow: 0 0 0 4px rgba(44,140,153,.15);
+            outline: none;
+        }
+
+    .btn-guardar {
+        background: linear-gradient(135deg,#3E8E7E,#2F6E62);
+        border: none;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: .3s;
+        cursor: pointer;
+    }
+
+        .btn-guardar:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(62,142,126,.30);
+        }
+
+    .btn-cancelar {
+        background: #e5e7eb;
+        color: #374151;
+        padding: 12px 24px;
+        border-radius: 10px;
         text-decoration: none;
-        display: inline-block;
+        font-weight: 600;
         margin-left: 10px;
     }
 
-        .btn-default:hover {
-            background: #ddd;
+        .btn-cancelar:hover {
+            text-decoration: none;
+            background: #d1d5db;
+            color: #111827;
         }
+
+    .acciones {
+        margin-top: 25px;
+        display: flex;
+    }
+
+    @@media(max-width:768px) {
+
+        .acciones {
+            flex-direction: column;
+        }
+
+        .btn-cancelar {
+            margin-left: 0;
+            margin-top: 10px;
+            text-align: center;
+        }
+    }
 </style>
 
+<div class="container" style="max-width:700px; padding:25px;">
+
+    <div class="page-header-custom">
+        <h2>
+            <i class="fa fa-pencil"></i>
+            Editar Cita #@Model.IdCita
+        </h2>
+        <p>
+            Actualice los datos de la cita seleccionada.
+        </p>
+    </div>
+
+    <div class="panel panel-default">
+
+        <div class="panel-heading">
+            <i class="glyphicon glyphicon-calendar"></i>
+            Detalles de la Cita
+        </div>
+
+        <div class="panel-body">
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.IdCita)
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.IdDoctor, "Doctor")
+                    @Html.DropDownListFor(m => m.IdDoctor, Model.ListaDoctores, "Seleccione doctor", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.IdDoctor, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.IdMotivo, "Motivo")
+                    @Html.DropDownListFor(m => m.IdMotivo, Model.ListaMotivos, "Seleccione motivo", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.IdMotivo, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.IdEstado, "Estado")
+                    @Html.DropDownListFor(m => m.IdEstado, Model.ListaEstados, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.IdEstado, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Fecha, "Fecha")
+                    @Html.TextBoxFor(m => m.Fecha, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                    @Html.ValidationMessageFor(m => m.Fecha, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.HoraString, "Hora")
+                    @Html.TextBoxFor(m => m.HoraString, new { @class = "form-control", placeholder = "HH:mm" })
+                    @Html.ValidationMessageFor(m => m.HoraString, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="acciones">
+                    <button type="submit" class="btn-guardar">
+                        <i class="glyphicon glyphicon-floppy-disk"></i>
+                        Guardar Cambios
+                    </button>
+                    @Html.ActionLink("Volver", "ObtenerTodasLasCitas", null, new { @class = "btn-cancelar" })
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

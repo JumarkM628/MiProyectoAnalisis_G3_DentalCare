@@ -8,9 +8,10 @@ namespace DentalCare.AccesoADatos.Entidades.Procedimiento
     public class ProcedimientoEntidad
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)] //added maybe delete later
         public int ID_PROCEDIMIENTO { get; set; }
         public int ID_CITA { get; set; }
-        public int ID_TRATAMIENTO { get; set; }
+        public int? ID_TRATAMIENTO { get; set; } //Changed to ?
         public string DESCRIPCION { get; set; }
         public DateTime? FECHA { get; set; }
         public string OBSERVACIONES { get; set; }

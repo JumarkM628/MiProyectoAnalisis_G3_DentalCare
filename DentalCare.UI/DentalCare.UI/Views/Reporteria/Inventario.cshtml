@@ -1,23 +1,156 @@
-﻿
-<h2>Inventario</h2>
+﻿@model List<DentalCare.Abstraccion.Modelo.Reporteria.InventarioReporteDto>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Producto</th>
-            <th>Stock</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr style="background-color:gold;">
-            <td>Anestesia</td>
-            <td>2</td>
-        </tr>
+@{
+    ViewBag.Title = "Inventario - Reporte";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
-        <tr style="background-color:red; color:white;">
-            <td>Guantes</td>
-            <td>0</td>
-        </tr>
-    </tbody>
-</table>
+<style>
+    .reporte-page {
+        min-height: 100vh;
+        padding: 40px 32px 60px;
+        background: linear-gradient(180deg,#F4FBFA 0%,#ffffff 220px);
+    }
 
+    .reporte-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 18px;
+        border-radius: 12px;
+        background: linear-gradient(135deg,#16302D 0%,#1F6B75 60%,#2C8C99 100%);
+        color: white;
+        margin-bottom: 20px;
+    }
+
+    .reporte-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 8px 30px rgba(0,0,0,.06);
+        border-top: 4px solid #16302D;
+    }
+
+    .tabla-reporte {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+        .tabla-reporte th {
+            background: #EAF5F3;
+            color: #16302D;
+            text-align: left;
+            padding: 12px;
+            font-weight: 700;
+            border-bottom: 2px solid #CFE8E6;
+        }
+
+        .tabla-reporte td {
+            padding: 12px;
+            border-bottom: 1px solid #edf2f7;
+            color: #374151;
+            vertical-align: middle;
+        }
+
+    .badge-stock {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: .85rem;
+    }
+
+    .badge-ok {
+        background: #E6F9F1;
+        color: #0f6e56;
+        border: 1px solid #1abcb0;
+    }
+
+    .badge-warn {
+        background: #FFF6E5;
+        color: #7A5B00;
+        border: 1px solid #FFD36B;
+    }
+
+    .badge-empty {
+        background: #FDECEA;
+        color: #8B1C1C;
+        border: 1px solid #F79A9A;
+    }
+
+    .producto-name {
+        font-weight: 600;
+        color: #16302D;
+    }
+
+    .acciones-link {
+        color: #2C8C99;
+        text-decoration: none;
+        font-weight: 600;
+    }
+</style>
+
+<div class="reporte-page">
+    <div class="container" style="max-width:1100px; margin:0 auto;">
+        <div class="reporte-header">
+            <div>
+                <h2 style="margin:0"><i class="fa fa-box"></i> Reporte de Inventario</h2>
+                <p style="margin:6px 0 0; color:#CFE8E6">Listado actual del inventario — muestra indicadores según stock mínimo.</p>
+            </div>
+            @Html.ActionLink("← Volver a Reportería", "Index", "Reporteria", null, new { @class = "btn-volver-reporte", style = "background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2); color:white; padding:10px 14px; border-radius:8px; text-decoration:none;" })
+        </div>
+
+        <div class="reporte-card">
+            <h4 style="margin:0 0 8px;"><i class="fa fa-table"></i> Inventario</h4>
+
+            <table class="tabla-reporte" aria-live="polite">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Stock</th>
+                        <th>Mínimo</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model == null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" style="text-align:center; padding:30px; color:#6b7280;">No hay datos de inventario.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            var clase = "badge-ok";
+                            var texto = "Suficiente";
+                            if (item.Stock == 0)
+                            {
+                                clase = "badge-empty";
+                                texto = "Agotado";
+                            }
+                            else if (item.Stock <= item.StockMinimo)
+                            {
+                                clase = "badge-warn";
+                                texto = "Bajo";
+                            }
+                            <tr>
+                                <td>
+                                    <div class="producto-name">@item.Producto</div>
+                                </td>
+                                <td>
+                                    <span class="badge-stock @clase">@item.Stock</span>
+                                </td>
+                                <td>@item.StockMinimo</td>
+                                <td>@item.Estado</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

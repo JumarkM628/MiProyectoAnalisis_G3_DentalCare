@@ -1,0 +1,70 @@
+﻿@using System.Web.Mvc
+@model IEnumerable<DentalCare.Abstraccion.Modelo.Reporteria.ProductoInventarioDto>
+
+@{
+    ViewBag.Title = "Productos con Stock Bajo";
+}
+
+<div class="reporte-card">
+    <h3>Productos con Stock Igual o Menor al Mínimo</h3>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alerta-item alerta-rojo">@TempData["Error"]</div>
+    }
+
+    <div style="margin:12px 0;">
+        @using (Html.BeginForm("ProductosStockBajo", "Reporteria", FormMethod.Get))
+        {
+            <label>Filtrar por categoría:</label>
+            @Html.DropDownList(
+                     "categoriaId",
+                     (IEnumerable<SelectListItem>)ViewBag.Categorias ?? new List<SelectListItem>(),
+                     "-- Todas --",
+                     new { @class = "form-control" }
+                 )
+            <button type="submit" class="btn-filtrar-reporte" style="margin-left:8px;">Filtrar</button>
+        }
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="rep-placeholder">
+            No hay productos con bajo stock para mostrar.
+        </div>
+    }
+    else
+    {
+        <table class="tabla-reporte">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th>Stock Actual</th>
+                    <th>Stock Mínimo</th>
+                    <th>Fecha Vencimiento</th>
+                    <th>Proveedor</th>
+                    <th>Fecha Registro</th>
+                    <th>Fecha Modificación</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td>@p.IdProducto</td>
+                        <td>@p.NombreProducto</td>
+                        <td>@p.CategoriaProducto</td>
+                        <td>@p.StockActual</td>
+                        <td>@p.StockMinimo</td>
+                        <td>@(p.FechaVencimiento?.ToString("dd/MM/yyyy") ?? "—")</td>
+                        <td>@p.Proveedor</td>
+                        <td>@(p.FechaRegistro?.ToString("dd/MM/yyyy") ?? "—")</td>
+                        <td>@(p.FechaModificacion?.ToString("dd/MM/yyyy") ?? "—")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

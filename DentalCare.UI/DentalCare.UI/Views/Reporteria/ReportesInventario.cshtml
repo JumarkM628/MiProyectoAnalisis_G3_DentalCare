@@ -1,0 +1,40 @@
+﻿@model List<DentalCare.Abstraccion.Modelo.Reporteria.InventarioReporteDto>
+
+@{
+    ViewBag.Title = "Inventario - Reporte";
+}
+
+<h2>Inventario</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Stock</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model == null || !Model.Any())
+        {
+            <tr>
+                <td colspan="3">No hay datos de inventario.</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Producto</td>
+                    <td>@item.Stock</td>
+                    <td>@item.Estado</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<div>
+    @Html.ActionLink("← Volver a Reportería", "Index", "Reporteria", null, new { @class = "btn-usuario-primary" })
+</div>
