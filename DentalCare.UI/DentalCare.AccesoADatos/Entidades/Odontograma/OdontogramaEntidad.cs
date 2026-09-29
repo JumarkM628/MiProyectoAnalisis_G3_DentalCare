@@ -9,7 +9,7 @@ namespace DentalCare.AccesoADatos.Entidades.Odontograma
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        [Column("ID_ODONTOLOGIA")]
+        [Column("ID_ODONTOGRAMA")]
         public int IdOdontograma { get; set; }
 
         [Column("FECHA")]

@@ -141,15 +141,19 @@ namespace DentalCare.UI.Controllers
                 }
                 else dto.ListaPacientes = new List<SelectListItem>();
 
-                // Citas finalizadas
+                // Citas finalizadas — se incluye el IdPaciente dueño de cada cita
+                // (codificado en el Value como "IdCita|IdPaciente", igual que ListaCatalogo)
+                // para que la vista pueda filtrar por paciente sin necesitar una llamada AJAX.
                 var estadoFin = ctx.Estados.FirstOrDefault(e => e.NombreEstado == "Finalizada");
                 if (estadoFin != null)
                 {
-                    dto.ListaCitas = ctx.Citas
-                        .Where(c => c.IdEstado == estadoFin.IdEstado)
-                        .Select(c => new SelectListItem
+                    dto.ListaCitas = (
+                        from c in ctx.Citas
+                        join uc in ctx.UsuarioCitas on c.IdCita equals uc.IdCita
+                        where c.IdEstado == estadoFin.IdEstado
+                        select new SelectListItem
                         {
-                            Value = c.IdCita.ToString(),
+                            Value = c.IdCita + "|" + uc.IdUsuario,
                             Text = "Cita #" + c.IdCita + " — " + c.Fecha.ToString()
                         }).ToList();
                 }

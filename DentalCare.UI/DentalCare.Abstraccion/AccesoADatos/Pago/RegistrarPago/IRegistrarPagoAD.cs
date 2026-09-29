@@ -12,5 +12,6 @@ namespace DentalCare.Abstraccion.AccesoADatos.Pago.RegistrarPago
         void Registrar(PagoDto dto);
         bool ExisteCitaFinalizada(int idCita);
         bool YaTienePago(int idCita);
+        bool CitaPerteneceAPaciente(int idCita, int idPaciente);
     }
 }

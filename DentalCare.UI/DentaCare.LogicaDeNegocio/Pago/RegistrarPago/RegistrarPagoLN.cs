@@ -29,6 +29,11 @@ namespace DentaCare.LogicaDeNegocio.Pago.RegistrarPago
             if (_registrarAD.YaTienePago(dto.IdCitaForm))
                 return "Esta cita ya tiene un pago registrado.";
 
+            // Verificar que la cita realmente pertenezca al paciente seleccionado,
+            // para evitar que un pago quede asociado al paciente equivocado.
+            if (!_registrarAD.CitaPerteneceAPaciente(dto.IdCitaForm, dto.IdPacienteForm))
+                return "La cita seleccionada no pertenece al paciente indicado.";
+
             _registrarAD.Registrar(dto);
             return null;
         }

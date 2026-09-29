@@ -33,6 +33,7 @@ namespace DentalCare.Abstraccion.Modelo.Pagos
         // ================================================================
 
         // Paso 1: paciente y cita
+        [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar un paciente.")]
         [Display(Name = "Paciente")]
         public int IdPacienteForm { get; set; }
 

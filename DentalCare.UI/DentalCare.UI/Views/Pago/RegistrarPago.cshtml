@@ -25,6 +25,7 @@
     @using (Html.BeginForm("RegistrarPago", "Pago", FormMethod.Post, new { id = "formPago" }))
     {
         @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.IdPacienteForm, new { id = "hiddenPaciente" })
         @Html.HiddenFor(m => m.IdMetodoPago, new { id = "hiddenMetodo" })
         @Html.HiddenFor(m => m.Monto, new { id = "hiddenMonto" })
         @Html.HiddenFor(m => m.IdCitaForm, new { id = "hiddenCita" })
@@ -674,6 +675,7 @@
         font-size: 0.9rem;
         font-weight: 700;
         cursor: pointer;
+        box-shadow: 0 4px 10px rgba(47, 109, 92, 0.22);
         transition: background .18s ease, box-shadow .18s ease;
     }
 
@@ -902,18 +904,38 @@
             document.getElementById('alertaGlobal').style.display = 'none';
         }
 
-        // Para el dropdown de citas filtrar por paciente necesitamos
-        // cargar todas las citas finalizadas y mostrarlas todas por ahora
-        // (con dropdown sin AJAX)
+        // El value de cada cita viene codificado como "idCita|idPaciente"
+        // (mismo patrón que ya usa el catálogo de tratamientos). Esto permite
+        // filtrar por paciente en el cliente sin necesitar una llamada AJAX.
         function cargarCitas() {
+            var pac = document.getElementById('selectPaciente');
             var sel = document.getElementById('selectCita');
             sel.innerHTML = '<option value="">-- Seleccionar cita --</option>';
-            citasData.forEach(function (c) {
+
+            document.getElementById('hiddenPaciente').value = pac.value || 0;
+
+            if (!pac.value) {
+                sel.disabled = true;
+                sel.innerHTML = '<option value="">-- Primero seleccioná un paciente --</option>';
+                document.getElementById('infoCita').style.display = 'none';
+                return;
+            }
+
+            var citasDelPaciente = citasData.filter(function (c) {
+                return c.value.split('|')[1] === pac.value;
+            });
+
+            citasDelPaciente.forEach(function (c) {
                 var opt = document.createElement('option');
-                opt.value = c.value;
+                opt.value = c.value.split('|')[0];
                 opt.textContent = c.text;
                 sel.appendChild(opt);
             });
+
+            if (citasDelPaciente.length === 0) {
+                sel.innerHTML = '<option value="">-- Este paciente no tiene citas finalizadas --</option>';
+            }
+
             sel.disabled = false;
             document.getElementById('infoCita').style.display = 'none';
             document.getElementById('errPaciente').style.display = 'none';

@@ -53,7 +53,7 @@ namespace DentalCare.AccesoADatos.Expedientes.CrearExpediente
                         .FirstOrDefault();
 
                     int nuevoIdOdontograma = _contexto.Database
-                        .SqlQuery<int>("SELECT ISNULL(MAX(ID_ODONTOLOGIA), 0) + 1 FROM FIDE_ODONTOGRAMA_TB")
+                        .SqlQuery<int>("SELECT ISNULL(MAX(ID_ODONTOGRAMA), 0) + 1 FROM FIDE_ODONTOGRAMA_TB")
                         .FirstOrDefault();
 
                     int nuevoIdCita = _contexto.Database
@@ -96,7 +96,7 @@ namespace DentalCare.AccesoADatos.Expedientes.CrearExpediente
                         nuevoIdPieza, "11", dto.IdEstado);
 
                     _contexto.Database.ExecuteSqlCommand(
-                        "INSERT INTO FIDE_ODONTOGRAMA_TB (ID_ODONTOLOGIA, FECHA, ID_PIEZA, ID_ESTADO) VALUES (@p0, @p1, @p2, @p3)",
+                        "INSERT INTO FIDE_ODONTOGRAMA_TB (ID_ODONTOGRAMA, FECHA, ID_PIEZA, ID_ESTADO) VALUES (@p0, @p1, @p2, @p3)",
                         nuevoIdOdontograma, DateTime.Now, nuevoIdPieza, dto.IdEstado);
 
                     _contexto.Database.ExecuteSqlCommand(
@@ -124,10 +124,20 @@ namespace DentalCare.AccesoADatos.Expedientes.CrearExpediente
 
                     transaccion.Commit();
                 }
-                catch
+                catch (Exception errorOriginal)
                 {
-                    transaccion.Rollback();
-                    throw;
+                    try
+                    {
+                        transaccion.Rollback();
+                    }
+                    catch
+                    {
+                        // Si el Rollback también falla (p. ej. porque la excepción
+                        // original ya dejó la conexión inválida), lo ignoramos:
+                        // lo que importa es no perder la excepción original de abajo.
+                    }
+
+                    System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(errorOriginal).Throw();
                 }
             }
         }

@@ -113,5 +113,15 @@ namespace DentalCare.AccesoADatos.Pago.RegistroPago
             return _contexto.ContabilidadCitas
                 .Any(cc => cc.IdCita == idCita);
         }
+
+        // Verificar que la cita seleccionada realmente pertenezca al paciente
+        // seleccionado. Es una segunda barrera de seguridad además del filtro
+        // que ya hace la vista, por si el formulario se manipula o el
+        // JavaScript falla.
+        public bool CitaPerteneceAPaciente(int idCita, int idPaciente)
+        {
+            return _contexto.UsuarioCitas
+                .Any(uc => uc.IdCita == idCita && uc.IdUsuario == idPaciente);
+        }
     }
 }
