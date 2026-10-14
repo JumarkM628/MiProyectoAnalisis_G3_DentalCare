@@ -64,14 +64,38 @@ namespace DentalCare.AccesoADatos.Citas.AgregarCita
                 .Any(c => c.NumeroCedula == cedulaPaciente);
         }
 
+        // Citas que ocupan un horario: todas excepto las Canceladas y Rechazadas,
+        // que liberan el horario del doctor.
+        private IQueryable<CitaEntidad> CitasQueOcupanHorario()
+        {
+            var estadosQueLiberan = _contexto.Estados
+                .Where(e => e.NombreEstado == "Cancelada" || e.NombreEstado == "Rechazada")
+                .Select(e => e.IdEstado);
+
+            return _contexto.Citas.Where(c => !estadosQueLiberan.Contains(c.IdEstado));
+        }
+
         // Escenario 2: verificar horario ocupado para ese doctor
         public bool HorarioOcupado(int idDoctor, DateTime fecha, TimeSpan hora)
         {
-            return _contexto.Citas
+            return CitasQueOcupanHorario()
                 .Any(c => c.IdDoctor == idDoctor
                        && c.Fecha == fecha
-                       && c.Hora == hora
-                       && c.IdEstado == 1); // Solo citas activas
+                       && c.Hora == hora);
+        }
+
+        // Horas ya ocupadas del doctor en una fecha (formato HH:mm)
+        public List<string> ObtenerHorasOcupadas(int idDoctor, DateTime fecha)
+        {
+            var horas = CitasQueOcupanHorario()
+                .Where(c => c.IdDoctor == idDoctor && c.Fecha == fecha && c.Hora != null)
+                .Select(c => c.Hora.Value)
+                .ToList();
+
+            return horas
+                .OrderBy(h => h)
+                .Select(h => h.ToString(@"hh\:mm"))
+                .ToList();
         }
     }
 }

@@ -2,6 +2,13 @@
 
 @{
     ViewBag.Title = "Inventario";
+
+    var nombresCategoria = ViewBag.NombresCategoria as Dictionary<int, string> ?? new Dictionary<int, string>();
+    var usos = ViewBag.UsoProducto as Dictionary<int, int> ?? new Dictionary<int, int>();
+    var compras = ViewBag.ComprasProducto as Dictionary<int, int> ?? new Dictionary<int, int>();
+    var tratamientos = ViewBag.Tratamientos as List<string> ?? new List<string>();
+    string ordenActual = ViewBag.Orden as string ?? "nombre";
+    string tratamientoActual = ViewBag.Tratamiento as string ?? "";
 }
 
 <div class="usuarios-page">
@@ -42,11 +49,56 @@
             <input type="text"
                    id="buscador"
                    class="usuario-input"
-                   placeholder="Buscar producto, código o lote..."
+                   placeholder="Buscar producto, código, categoría o lote..."
                    onkeyup="filtrarTabla()" />
         </div>
 
     </div>
+
+    <!-- Filtros y ordenamiento -->
+    <form method="get" action="@Url.Action("InventarioIndex", "Inventario")" class="inv-filtros">
+
+        <div class="inv-filtro">
+            <label for="filtroCategoria">Categoría</label>
+            <select id="filtroCategoria" onchange="filtrarTabla()">
+                <option value="">Todas</option>
+                @foreach (var nombre in nombresCategoria.Values.OrderBy(n => n))
+                {
+                    <option value="@nombre">@nombre</option>
+                }
+            </select>
+        </div>
+
+        <div class="inv-filtro">
+            <label for="orden">Ordenar por</label>
+            <select id="orden" name="orden" onchange="this.form.submit()">
+                <option value="nombre" @(ordenActual == "nombre" ? "selected" : "")>Nombre</option>
+                <option value="utilizacion" @(ordenActual == "utilizacion" ? "selected" : "")>Mayor utilización</option>
+                <option value="compras" @(ordenActual == "compras" ? "selected" : "")>Mayores compras</option>
+                <option value="lote" @(ordenActual == "lote" ? "selected" : "")>Lote (agrupado, más utilizados primero)</option>
+            </select>
+        </div>
+
+        <div class="inv-filtro">
+            <label for="tratamiento">Tipo de tratamiento</label>
+            <select id="tratamiento" name="tratamiento" onchange="this.form.submit()">
+                <option value="">Todos</option>
+                @foreach (var t in tratamientos)
+                {
+                    <option value="@t" @(t == tratamientoActual ? "selected" : "")>@t</option>
+                }
+            </select>
+        </div>
+
+    </form>
+
+    @if (!string.IsNullOrEmpty(tratamientoActual))
+    {
+        <p class="inv-nota">
+            Mostrando solo los productos utilizados en el tratamiento <strong>@tratamientoActual</strong>.
+            La columna "Utilizado" indica la cantidad usada en ese tratamiento.
+        </p>
+    }
 
     <!-- Tabla -->
     <div class="usuarios-table-wrapper">
@@ -63,6 +115,8 @@
                         <th>Unidad</th>
                         <th>Stock Actual</th>
                         <th>Mínimo de Stock</th>
+                        <th>Utilizado</th>
+                        <th>Comprado</th>
                         <th>Lote</th>
                         <th>Vencimiento</th>
                         <th>Estado</th>
@@ -75,7 +129,7 @@
                     @if (Model == null || !Model.Any())
                     {
                         <tr>
-                            <td colspan="10" class="usuarios-empty-row">
+                            <td colspan="12" class="usuarios-empty-row">
                                 No hay productos registrados.
                             </td>
                         </tr>
@@ -90,7 +144,7 @@
 
                                 <td>@p.NOMBRE_PRODUCTO</td>
 
-                                <td>@p.ID_CATEGORIA</td>
+                                <td>@(nombresCategoria.ContainsKey(p.ID_CATEGORIA) ? nombresCategoria[p.ID_CATEGORIA] : "Categoría " + p.ID_CATEGORIA)</td>
 
                                 <td>@p.UNIDAD_MEDIDA</td>
 
@@ -105,6 +159,10 @@
                                 </td>
 
                                 <td>@p.STOCK_MINIMO</td>
+
+                                <td>@(usos.ContainsKey(p.ID_PRODUCTO) ? usos[p.ID_PRODUCTO] : 0)</td>
+
+                                <td>@(compras.ContainsKey(p.ID_PRODUCTO) ? compras[p.ID_PRODUCTO] : 0)</td>
 
                                 <td>@p.LOTE</td>
 
@@ -292,9 +350,10 @@
     .td-muted {
         color: #6b7280;
     }
+
     .pagination-container {
-    margin-bottom: 40px;
-}
+        margin-bottom: 40px;
+    }
     /* Badges de estado */
     .estado-badge {
         display: inline-block;
@@ -353,38 +412,38 @@
     }
 
     .stock {
-    padding: 4px 10px;
-    border-radius: 8px;
-    font-weight: 700;
-    display: inline-block;
-}
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-weight: 700;
+        display: inline-block;
+    }
 
-.stock-ok {
-    background: #e6f9f0;
-    color: #1f7a4a;
-    border: 1px solid #34d399;
-}
+    .stock-ok {
+        background: #e6f9f0;
+        color: #1f7a4a;
+        border: 1px solid #34d399;
+    }
 
-.stock-bajo {
-    background: #fff1f2;
-    color: #b42318;
-    border: 1px solid #f87171;
-    animation: parpadeo 1.2s infinite;
-}
+    .stock-bajo {
+        background: #fff1f2;
+        color: #b42318;
+        border: 1px solid #f87171;
+        animation: parpadeo 1.2s infinite;
+    }
 
-.fecha {
-    padding: 4px 8px;
-    border-radius: 6px;
-    display: inline-block;
-}
+    .fecha {
+        padding: 4px 8px;
+        border-radius: 6px;
+        display: inline-block;
+    }
 
-.vence-alerta {
-    background: #fff3cd;
-    color: #856404;
-    border: 1px solid #ffeeba;
-    font-weight: 700;
-    animation: pulso 1.5s infinite;
-}
+    .vence-alerta {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+        font-weight: 700;
+        animation: pulso 1.5s infinite;
+    }
 
 
     /* Botones de acción */
@@ -500,13 +559,50 @@
 </style>
 
 @section Scripts {
+    <style>
+        .inv-filtros {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 0 0 18px;
+        }
+
+        .inv-filtro {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 200px;
+        }
+
+            .inv-filtro label {
+                font-size: .8rem;
+                font-weight: 600;
+                color: #4b5563;
+                margin: 0;
+            }
+
+            .inv-filtro select {
+                height: 40px;
+                border: 1px solid #d1d5db;
+                border-radius: 8px;
+                padding: 0 10px;
+                background: #fff;
+            }
+
+        .inv-nota {
+            color: #4b5563;
+            margin: 0 0 14px;
+            font-size: .9rem;
+        }
+    </style>
+
     <script>
         let paginaActual = 1;
         const filasPorPagina = 10;
 
         function obtenerFilasVisibles() {
             return Array.from(
-                document.querySelectorAll("#tablaCitas tbody tr")
+                document.querySelectorAll("#tablaInventario tbody tr")
             ).filter(fila =>
                 fila.style.display !== "none" &&
                 !fila.classList.contains("usuarios-empty-row"));
@@ -543,12 +639,16 @@
 
         function filtrarTabla() {
             let filtro = document.getElementById("buscador").value.toLowerCase();
-            let filas = document.querySelectorAll("#tablaCitas tbody tr");
+            let categoria = document.getElementById("filtroCategoria").value.toLowerCase();
+            let filas = document.querySelectorAll("#tablaInventario tbody tr");
             let visibles = 0;
 
             filas.forEach(function (fila) {
                 if (fila.classList.contains("usuarios-empty-row")) return;
-                let mostrar = fila.innerText.toLowerCase().includes(filtro);
+                // La columna 3 es la categoría
+                let celdaCategoria = fila.cells[2].innerText.trim().toLowerCase();
+                let mostrar = fila.innerText.toLowerCase().includes(filtro) &&
+                    (categoria === "" || celdaCategoria === categoria);
                 fila.style.display = mostrar ? "" : "none";
                 if (mostrar) visibles++;
             });

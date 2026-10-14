@@ -98,7 +98,7 @@
 
                         <div class="trat-campo">
                             @Html.LabelFor(model => model.FechaVencimiento, "Fecha de Vencimiento", new { @class = "trat-label" })
-                            @Html.TextBoxFor(model => model.FechaVencimiento, new { @class = "trat-input", type = "date" })
+                            @Html.TextBoxFor(model => model.FechaVencimiento, "{0:yyyy-MM-dd}", new { @class = "trat-input", type = "date", min = DateTime.Today.ToString("yyyy-MM-dd") })
                             @Html.ValidationMessageFor(model => model.FechaVencimiento, "", new { @class = "trat-error" })
                         </div>
 

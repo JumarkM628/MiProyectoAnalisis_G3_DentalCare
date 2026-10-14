@@ -4,6 +4,13 @@
 
 <main class="full-width-main">
 
+    @if (ViewBag.CitasHoy != null)
+    {
+        <div class="container" style="padding-top:20px;">
+            @Html.Partial("_CitasHoy", (List<DentalCare.Abstraccion.Modelo.Citas.CitaDto>)ViewBag.CitasHoy)
+        </div>
+    }
+
     <!-- Hero -->
     <section class="hero full-width-section" style="background-image: url('@Url.Content("~/Content/Images/Promocion.png")'); background-size: cover; background-position: center center; background-repeat: no-repeat;">
         <div class="hero-overlay">

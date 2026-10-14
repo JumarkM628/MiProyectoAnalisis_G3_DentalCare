@@ -61,12 +61,12 @@
 
                         <div class="trat-campo">
                             @Html.LabelFor(m => m.CantidadActual, "Cantidad Actual", new { @class = "trat-label" })
-                            @Html.TextBoxFor(m => m.CantidadActual, new { @class = "trat-input", type = "number" })
+                            @Html.TextBoxFor(m => m.CantidadActual, new { @class = "trat-input", type = "number", min = "0" })
                         </div>
 
                         <div class="trat-campo">
                             @Html.LabelFor(m => m.CantidadMinima, "Cantidad Mínima", new { @class = "trat-label" })
-                            @Html.TextBoxFor(m => m.CantidadMinima, new { @class = "trat-input", type = "number" })
+                            @Html.TextBoxFor(m => m.CantidadMinima, new { @class = "trat-input", type = "number", min = "0" })
                             <span class="trat-hint">Cuando el stock baje de aquí, se genera una alerta.</span>
                         </div>
 

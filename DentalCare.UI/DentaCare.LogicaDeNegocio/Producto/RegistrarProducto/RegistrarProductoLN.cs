@@ -1,6 +1,7 @@
 ﻿using DentalCare.Abstraccion.AccesoADatos.Producto;
 using DentalCare.Abstraccion.LogicaDeNegocio.Producto;
 using DentalCare.Abstraccion.Modelo.Producto;
+using System;
 
 namespace DentaCare.LogicaDeNegocio.Producto.RegistrarProducto
 {
@@ -15,6 +16,13 @@ namespace DentaCare.LogicaDeNegocio.Producto.RegistrarProducto
 
         public string RegistrarProducto(ProductoDto dto)
         {
+            if (dto.CantidadActual < 0)
+                return "La cantidad actual no puede ser negativa.";
+            if (dto.CantidadMinima < 0)
+                return "La cantidad mínima no puede ser negativa.";
+            if (dto.FechaVencimiento.Date < DateTime.Today)
+                return "La fecha de vencimiento no puede ser anterior a la fecha actual.";
+
             if (_registrarProductoAD.ExisteCodigoProducto(dto.CodigoProducto))
                 return "Ya existe un producto registrado con ese código.";
             bool guardado = _registrarProductoAD.GuardarNuevoProducto(dto);

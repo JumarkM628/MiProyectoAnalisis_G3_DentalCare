@@ -1,0 +1,107 @@
+﻿@model List<DentalCare.Abstraccion.Modelo.Citas.CitaDto>
+
+@if (Model != null)
+{
+    <div class="citas-hoy">
+        <div class="citas-hoy-header">
+            <i class="fa fa-bell"></i>
+            <strong>Citas de hoy</strong>
+            <span class="citas-hoy-count">@Model.Count</span>
+        </div>
+
+        @if (Model.Count == 0)
+        {
+            <p class="citas-hoy-vacio">No hay citas programadas para hoy.</p>
+        }
+        else
+        {
+            <ul class="citas-hoy-lista">
+                @foreach (var c in Model)
+                {
+                    <li>
+                        <span class="citas-hoy-hora">@(c.Hora.HasValue ? c.Hora.Value.ToString(@"hh\:mm") : "--:--")</span>
+                        <span><strong>@c.NombrePaciente</strong> con @c.NombreDoctor &middot; @c.NombreMotivo</span>
+                        <span class="citas-hoy-estado">@c.NombreEstado</span>
+                    </li>
+                }
+            </ul>
+        }
+
+        <div class="citas-hoy-link">
+            @Html.ActionLink("Ver todas las citas", "ObtenerTodasLasCitas", "Cita")
+        </div>
+    </div>
+
+    <style>
+        .citas-hoy {
+            background: #fff;
+            border: 1px solid #cfe3dc;
+            border-left: 5px solid #2f6d5c;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin: 0 0 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.05);
+        }
+
+        .citas-hoy-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1f4f43;
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+        }
+
+        .citas-hoy-count {
+            background: #2f6d5c;
+            color: #fff;
+            border-radius: 999px;
+            padding: 1px 10px;
+            font-size: .85rem;
+            font-weight: 700;
+        }
+
+        .citas-hoy-vacio {
+            margin: 0;
+            color: #6b7280;
+        }
+
+        .citas-hoy-lista {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+            .citas-hoy-lista li {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                padding: 6px 0;
+                border-top: 1px solid #eef2f1;
+                flex-wrap: wrap;
+            }
+
+        .citas-hoy-hora {
+            font-weight: 700;
+            color: #2f6d5c;
+            min-width: 52px;
+        }
+
+        .citas-hoy-estado {
+            margin-left: auto;
+            font-size: .8rem;
+            background: #e8f3ef;
+            color: #1f4f43;
+            border-radius: 6px;
+            padding: 2px 8px;
+        }
+
+        .citas-hoy-link {
+            margin-top: 8px;
+            text-align: right;
+            font-size: .9rem;
+        }
+    </style>
+}
+
+

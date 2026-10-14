@@ -12,5 +12,6 @@ namespace DentalCare.Abstraccion.AccesoADatos.Citas.AgregarCita
         void Agregar(CitaDto dto, int idPaciente);
         bool ExistePaciente(string cedulaPaciente);
         bool HorarioOcupado(int idDoctor, DateTime fecha, TimeSpan hora);
+        List<string> ObtenerHorasOcupadas(int idDoctor, DateTime fecha);
     }
 }

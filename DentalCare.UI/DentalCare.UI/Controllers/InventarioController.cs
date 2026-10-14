@@ -8,6 +8,7 @@ using DentaCare.LogicaDeNegocio.Producto.RegistrarProducto;
 using DentalCare.Abstraccion.LogicaDeNegocio.Producto;
 using DentalCare.Abstraccion.Modelo.Producto;
 using DentalCare.AccesoADatos;
+using DentalCare.AccesoADatos.Entidades.Producto;
 using Microsoft.AspNet.Identity;
 using DentalCare.AccesoADatos.Producto.EditarProducto;
 using DentalCare.AccesoADatos.Producto.RegistrarProducto;
@@ -28,11 +29,91 @@ namespace DentalCare.UI.Controllers
         }
 
         // GET: Inventario
-        public ActionResult InventarioIndex()
+        // orden: nombre (por defecto) | utilizacion | compras | lote
+        // tratamiento: descripción del tratamiento para mostrar solo los productos usados en él
+        public ActionResult InventarioIndex(string orden = "nombre", string tratamiento = null)
         {
             using (var contexto = new Contexto())
             {
                 var productos = contexto.Productos.ToList();
+
+                // Nombres de categoría (los IDs de respaldo coinciden con CargarDropdowns)
+                var nombresCategoria = new Dictionary<int, string>
+                {
+                    { 1, "Consumible" }, { 2, "Medicamento" }, { 3, "Instrumental" }, { 4, "Higiene" }
+                };
+                foreach (var cat in contexto.CategoriasProducto.ToList())
+                    nombresCategoria[cat.IdCategoria] = cat.NombreCategoria;
+
+                // Cantidad total utilizada y comprada por producto
+                var usoTotal = contexto.UsoProductos
+                    .GroupBy(u => u.ID_PRODUCTO)
+                    .Select(g => new { Id = g.Key, Total = g.Sum(x => x.CANTIDAD) })
+                    .ToList()
+                    .ToDictionary(x => x.Id, x => x.Total ?? 0);
+
+                var comprasTotal = contexto.ComprasProducto
+                    .GroupBy(c => c.ID_PRODUCTO)
+                    .Select(g => new { Id = g.Key, Total = g.Sum(x => x.CANTIDAD) })
+                    .ToList()
+                    .ToDictionary(x => x.Id, x => x.Total);
+
+                // Filtro por tipo de tratamiento: solo productos usados en ese tratamiento
+                var usoMostrado = usoTotal;
+                if (!string.IsNullOrWhiteSpace(tratamiento))
+                {
+                    var idsTratamiento = contexto.PlanesTratamiento
+                        .Where(t => t.Descripcion == tratamiento)
+                        .Select(t => (int?)t.IdTratamiento)
+                        .ToList();
+
+                    usoMostrado = (
+                        from u in contexto.UsoProductos
+                        join p in contexto.Procedimientos on u.ID_PROCEDIMIENTO equals p.ID_PROCEDIMIENTO
+                        where idsTratamiento.Contains(p.ID_TRATAMIENTO)
+                        group u by u.ID_PRODUCTO into g
+                        select new { Id = g.Key, Total = g.Sum(x => x.CANTIDAD) })
+                        .ToList()
+                        .ToDictionary(x => x.Id, x => x.Total ?? 0);
+
+                    productos = productos
+                        .Where(p => usoMostrado.ContainsKey(p.ID_PRODUCTO))
+                        .ToList();
+                }
+
+                Func<ProductoEntidad, int> uso = p => usoMostrado.ContainsKey(p.ID_PRODUCTO) ? usoMostrado[p.ID_PRODUCTO] : 0;
+                Func<ProductoEntidad, int> compras = p => comprasTotal.ContainsKey(p.ID_PRODUCTO) ? comprasTotal[p.ID_PRODUCTO] : 0;
+
+                switch (orden)
+                {
+                    case "utilizacion":
+                        productos = productos.OrderByDescending(uso).ThenBy(p => p.NOMBRE_PRODUCTO).ToList();
+                        break;
+                    case "compras":
+                        productos = productos.OrderByDescending(compras).ThenBy(p => p.NOMBRE_PRODUCTO).ToList();
+                        break;
+                    case "lote":
+                        // Agrupa por lote y, dentro de cada lote, el más utilizado primero
+                        productos = productos.OrderBy(p => p.LOTE).ThenByDescending(uso).ThenBy(p => p.NOMBRE_PRODUCTO).ToList();
+                        break;
+                    default:
+                        orden = "nombre";
+                        productos = productos.OrderBy(p => p.NOMBRE_PRODUCTO).ToList();
+                        break;
+                }
+
+                ViewBag.Orden = orden;
+                ViewBag.Tratamiento = tratamiento;
+                ViewBag.Tratamientos = contexto.PlanesTratamiento
+                    .Where(t => t.Descripcion != null && t.Descripcion != "")
+                    .Select(t => t.Descripcion)
+                    .Distinct()
+                    .OrderBy(d => d)
+                    .ToList();
+                ViewBag.NombresCategoria = nombresCategoria;
+                ViewBag.UsoProducto = usoMostrado;
+                ViewBag.ComprasProducto = comprasTotal;
+
                 return View(productos);
             }
         }
@@ -162,6 +243,16 @@ namespace DentalCare.UI.Controllers
 
                 if (producto == null)
                     return HttpNotFound();
+
+                // No se aceptan fechas de vencimiento ya pasadas (salvo que no se haya cambiado la fecha guardada)
+                bool fechaSinCambio = producto.FECHA_VENCIMIENTO.HasValue
+                    && producto.FECHA_VENCIMIENTO.Value.Date == model.FechaVencimiento.Date;
+                if (model.FechaVencimiento.Date < DateTime.Today && !fechaSinCambio)
+                {
+                    ModelState.AddModelError("FechaVencimiento", "La fecha de vencimiento no puede ser anterior a la fecha actual.");
+                    CargarDropdowns();
+                    return View(model);
+                }
 
                 producto.CODIGO_PRODUCTO = model.CodigoProducto;
                 producto.NOMBRE_PRODUCTO = model.NombreProducto;

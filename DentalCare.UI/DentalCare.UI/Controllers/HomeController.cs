@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using DentaCare.LogicaDeNegocio.Citas.ObtenerTodasLasCitas;
 
 namespace DentalCare.UI.Controllers
 {
@@ -10,6 +11,20 @@ namespace DentalCare.UI.Controllers
     {
         public ActionResult Index()
         {
+            // Recordatorio de citas del día para el personal que ya inició sesión
+            if (User.Identity.IsAuthenticated && !User.IsInRole("Paciente"))
+            {
+                try
+                {
+                    var todas = new ObtenerTodasLasCitasLN().Obtener();
+                    ViewBag.CitasHoy = CitaController.FiltrarCitasDeHoy(todas);
+                }
+                catch
+                {
+                    ViewBag.CitasHoy = null;
+                }
+            }
+
             return View();
         }
 

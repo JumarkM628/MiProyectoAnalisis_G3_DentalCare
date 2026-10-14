@@ -378,6 +378,7 @@
     <Content Include="Views\Bitacora\ObtenerTodosLosEventos.cshtml" />
     <Content Include="Views\Cita\DetalleCita.cshtml" />
     <Content Include="Views\Shared\ReporteHtml.cshtml" />
+    <Content Include="Views\Shared\_CitasHoy.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

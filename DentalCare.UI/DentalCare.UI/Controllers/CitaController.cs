@@ -46,7 +46,34 @@ namespace DentalCare.UI.Controllers
         public ActionResult ObtenerTodasLasCitas()
         {
             List<CitaDto> lista = _obtenerLN.Obtener();
+
+            // Recordatorio de las citas del día (solo para el personal)
+            if (!User.IsInRole("Paciente"))
+                ViewBag.CitasHoy = FiltrarCitasDeHoy(lista);
+
             return View(lista);
+        }
+
+        // Citas de hoy que siguen vigentes (se excluyen Canceladas y Rechazadas)
+        public static List<CitaDto> FiltrarCitasDeHoy(IEnumerable<CitaDto> citas)
+        {
+            DateTime hoy = DateTime.Today;
+            var excluidas = new[] { "Cancelada", "Rechazada" };
+
+            return citas
+                .Where(c => c.Fecha.HasValue
+                         && c.Fecha.Value.Date == hoy
+                         && !excluidas.Contains(c.NombreEstado))
+                .OrderBy(c => c.Hora)
+                .ToList();
+        }
+
+        // GET: Cita/HorasOcupadas?idDoctor=1&fecha=2026-10-14
+        [HttpGet]
+        public JsonResult HorasOcupadas(int idDoctor, DateTime fecha)
+        {
+            var horas = _agregarLN.ObtenerHorasOcupadas(idDoctor, fecha);
+            return Json(horas, JsonRequestBehavior.AllowGet);
         }
 
         // GET: Cita/Detalle/5

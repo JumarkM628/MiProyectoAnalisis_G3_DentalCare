@@ -52,5 +52,10 @@ namespace DentaCare.LogicaDeNegocio.Citas.AgregarCita
             _agregarAD.Agregar(dto, idPaciente);
             return null;
         }
+
+        public List<string> ObtenerHorasOcupadas(int idDoctor, DateTime fecha)
+        {
+            return _agregarAD.ObtenerHorasOcupadas(idDoctor, fecha.Date);
+        }
     }
 }
