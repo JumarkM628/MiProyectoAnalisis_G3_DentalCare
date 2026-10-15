@@ -35,6 +35,10 @@ namespace DentaCare.LogicaDeNegocio.Citas.AgregarCita
                 return "El formato de la hora no es válido.";
             }
 
+            // Horario de atención: de 8:00 a.m. a 5:00 p.m.
+            if (dto.Hora.Value < new System.TimeSpan(8, 0, 0) || dto.Hora.Value > new System.TimeSpan(17, 0, 0))
+                return "El horario de atención es de 8:00 a.m. a 5:00 p.m. Seleccione una hora dentro de ese rango.";
+
             // Escenario 4: paciente no registrado
             if (!_agregarAD.ExistePaciente(dto.CedulaPaciente))
                 return "El paciente no está registrado en el sistema. Por favor registrelo antes de agendar una cita.";

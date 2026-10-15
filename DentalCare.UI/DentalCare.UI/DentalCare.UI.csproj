@@ -264,6 +264,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Content\Images\Cuál-es-la-diferencia-entre-un-dentista-y-un-odontologo.webp" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
+    <Content Include="Scripts\horarios-cita.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
     <Content Include="Scripts\jquery-3.7.0.slim.js" />

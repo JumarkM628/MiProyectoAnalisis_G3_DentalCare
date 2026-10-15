@@ -400,7 +400,45 @@ namespace DentalCare.UI.Controllers
             }
         }
 
-        public ActionResult ReportesPacientesAtendidos(int page = 1, int pageSize = 20)
+        // Script del boton "Descargar PDF". Genera el PDF en el navegador con jsPDF
+        // a partir de los datos embebidos en la pagina (todas las filas del filtro).
+        private const string ScriptPdfPacientes = @"<script>
+(function () {
+    var boton = document.getElementById('btnPdfPacientes');
+    if (!boton) return;
+    boton.addEventListener('click', function () {
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+            alert('No se pudo cargar el generador de PDF. Revise su conexion a internet e intente de nuevo.');
+            return;
+        }
+        var datos = JSON.parse(document.getElementById('datosPacientesPdf').textContent);
+        var doc = new window.jspdf.jsPDF({ orientation: 'landscape' });
+        var ahora = new Date();
+        var generado = ahora.toLocaleDateString('es-CR') + ' ' +
+            ahora.toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' });
+
+        doc.setFontSize(16);
+        doc.text('Reporte de Pacientes Atendidos - DentalCare', 14, 16);
+        doc.setFontSize(10);
+        doc.text(datos.rango, 14, 23);
+        doc.text('Total de citas: ' + datos.total + '   |   Generado: ' + generado, 14, 29);
+
+        doc.autoTable({
+            startY: 34,
+            head: [['#', 'Paciente', 'Doctor', 'Fecha', 'Hora', 'Motivo', 'Estado']],
+            body: datos.filas,
+            styles: { fontSize: 9 },
+            headStyles: { fillColor: [47, 109, 92] },
+            alternateRowStyles: { fillColor: [245, 248, 254] }
+        });
+
+        var p = ahora.getFullYear() + '-' + ('0' + (ahora.getMonth() + 1)).slice(-2) + '-' + ('0' + ahora.getDate()).slice(-2);
+        doc.save('Pacientes_Atendidos_' + p + '.pdf');
+    });
+})();
+</script>";
+
+        public ActionResult ReportesPacientesAtendidos(DateTime? desde, DateTime? hasta, int page = 1, int pageSize = 20)
         {
             using (var contexto = new Contexto())
             {
@@ -428,10 +466,26 @@ namespace DentalCare.UI.Controllers
                                NombreEstado = estado != null ? estado.NombreEstado : "-"
                            }).ToList();
 
-                int total = raw.Count;
+                // Validacion del rango de fechas
+                string errorRango = null;
+                if (desde.HasValue && hasta.HasValue && hasta.Value.Date < desde.Value.Date)
+                {
+                    errorRango = "La fecha \"Hasta\" no puede ser anterior a la fecha \"Desde\".";
+                    raw = raw.Where(r => false).ToList();
+                }
+                else
+                {
+                    if (desde.HasValue) raw = raw.Where(r => r.Fecha.Value.Date >= desde.Value.Date).ToList();
+                    if (hasta.HasValue) raw = raw.Where(r => r.Fecha.Value.Date <= hasta.Value.Date).ToList();
+                }
+
+                var ordenadas = raw.OrderByDescending(r => r.Fecha).ThenByDescending(r => r.Hora).ToList();
+
+                int total = ordenadas.Count;
+                if (page < 1) page = 1;
                 int totalPages = (int)Math.Ceiling(total / (double)pageSize);
 
-                var lista = raw.OrderByDescending(r => r.Fecha).ThenByDescending(r => r.Hora)
+                var lista = ordenadas
                                .Skip((page - 1) * pageSize).Take(pageSize)
                                .Select(r => new CitaReporteDto
                                {
@@ -444,10 +498,23 @@ namespace DentalCare.UI.Controllers
                                    NombreEstado = r.NombreEstado
                                }).ToList();
 
+                // Parametros de filtro para conservarlos al paginar
+                string filtroQs = (desde.HasValue ? "&desde=" + desde.Value.ToString("yyyy-MM-dd") : "")
+                                + (hasta.HasValue ? "&hasta=" + hasta.Value.ToString("yyyy-MM-dd") : "");
+
                 var sb = new System.Text.StringBuilder();
                 sb.Append(AbrirReporte("Pacientes Atendidos",
                                        "Citas anteriores a la fecha de hoy.",
                                        "Pacientes atendidos"));
+
+                sb.Append(FiltroFechas("ReportesPacientesAtendidos", desde, hasta, total, "citas"));
+
+                if (errorRango != null)
+                {
+                    sb.Append("<div style=\"margin:0 0 16px;padding:12px 16px;border-radius:8px;background:#fdecea;" +
+                              "border:1px solid #f5c6cb;color:#c0392b;font-weight:600;\">" +
+                              System.Net.WebUtility.HtmlEncode(errorRango) + "</div>");
+                }
 
                 if (!lista.Any())
                 {
@@ -455,6 +522,8 @@ namespace DentalCare.UI.Controllers
                 }
                 else
                 {
+                    sb.Append("<div style=\"margin:0 0 16px;\"><button type=\"button\" id=\"btnPdfPacientes\" class=\"btn-inv-primary\">Descargar PDF</button></div>");
+
                     sb.Append("<div class=\"tabla-scroll\"><table class=\"rep-tabla\"><thead><tr>");
                     sb.Append("<th>#</th><th>Paciente</th><th>Doctor</th><th>Fecha</th><th>Hora</th><th>Motivo</th><th>Estado</th>");
                     sb.Append("</tr></thead><tbody>");
@@ -474,14 +543,41 @@ namespace DentalCare.UI.Controllers
                     sb.Append("<div class=\"rep-paginacion\">");
                     if (page > 1)
                     {
-                        sb.Append("<a href=\"/Reporteria/ReportesPacientesAtendidos?page=" + (page - 1) + "&pageSize=" + pageSize + "\">&larr; Anterior</a>");
+                        sb.Append("<a href=\"/Reporteria/ReportesPacientesAtendidos?page=" + (page - 1) + "&pageSize=" + pageSize + filtroQs + "\">&larr; Anterior</a>");
                     }
                     sb.Append("<span>Pagina " + page + " de " + Math.Max(totalPages, 1) + "</span>");
                     if (page < totalPages)
                     {
-                        sb.Append("<a href=\"/Reporteria/ReportesPacientesAtendidos?page=" + (page + 1) + "&pageSize=" + pageSize + "\">Siguiente &rarr;</a>");
+                        sb.Append("<a href=\"/Reporteria/ReportesPacientesAtendidos?page=" + (page + 1) + "&pageSize=" + pageSize + filtroQs + "\">Siguiente &rarr;</a>");
                     }
                     sb.Append("</div>");
+
+                    // Datos para el PDF: todas las filas del filtro (no solo la pagina actual)
+                    string rangoTexto = (desde.HasValue || hasta.HasValue)
+                        ? "Rango: " + (desde.HasValue ? desde.Value.ToString("dd/MM/yyyy") : "inicio") +
+                          " al " + (hasta.HasValue ? hasta.Value.ToString("dd/MM/yyyy") : "ayer")
+                        : "Rango: todas las citas anteriores a la fecha de hoy";
+
+                    int fila = 0;
+                    var filasPdf = ordenadas.Select(r => new[]
+                    {
+                        (++fila).ToString(),
+                        r.NombrePaciente,
+                        r.NombreDoctor,
+                        r.Fecha.HasValue ? r.Fecha.Value.ToString("dd/MM/yyyy") : "-",
+                        r.Hora.HasValue ? r.Hora.Value.ToString(@"hh\:mm") : "-",
+                        r.NombreMotivo,
+                        r.NombreEstado
+                    }).ToList();
+
+                    var serializador = new System.Web.Script.Serialization.JavaScriptSerializer { MaxJsonLength = int.MaxValue };
+                    string json = serializador.Serialize(new { rango = rangoTexto, total = total, filas = filasPdf })
+                                              .Replace("<", "\\u003c");
+
+                    sb.Append("<script id=\"datosPacientesPdf\" type=\"application/json\">" + json + "</script>");
+                    sb.Append("<script src=\"https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js\"></script>");
+                    sb.Append("<script src=\"https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js\"></script>");
+                    sb.Append(ScriptPdfPacientes);
                 }
 
                 sb.Append(CerrarReporte());

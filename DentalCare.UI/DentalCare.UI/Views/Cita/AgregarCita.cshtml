@@ -213,8 +213,9 @@
 
                     <div class="col-md-4 form-group">
                         @Html.LabelFor(m => m.HoraString)<span class="text-danger"> *</span>
-                        @Html.TextBoxFor(m => m.HoraString,
-                            new { @class = "form-control", type = "time" })
+                        <select id="HoraString" name="HoraString" class="form-control" data-valor="@Model.HoraString">
+                            <option value="">-- Seleccione hora --</option>
+                        </select>
                         @Html.ValidationMessageFor(m => m.HoraString, "", new { @class = "text-danger" })
                         <small id="horasOcupadas" class="help-block"></small>
                     </div>
@@ -284,37 +285,14 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 
+    <script src="@Url.Content("~/Scripts/horarios-cita.js")"></script>
     <script>
-        // Muestra los horarios ocupados del doctor en la fecha elegida.
-        // Las citas canceladas o rechazadas liberan su horario y no aparecen.
-        (function () {
-            var doctor = document.getElementById('IdDoctor');
-            var fecha = document.getElementById('Fecha');
-            var salida = document.getElementById('horasOcupadas');
-            if (!doctor || !fecha || !salida) return;
-
-            function cargar() {
-                if (!doctor.value || !fecha.value) {
-                    salida.textContent = 'Seleccione doctor y fecha para ver los horarios ocupados.';
-                    return;
-                }
-                var url = '@Url.Action("HorasOcupadas", "Cita")' +
-                    '?idDoctor=' + encodeURIComponent(doctor.value) +
-                    '&fecha=' + encodeURIComponent(fecha.value);
-
-                fetch(url, { credentials: 'same-origin' })
-                    .then(function (r) { return r.json(); })
-                    .then(function (horas) {
-                        salida.textContent = horas.length
-                            ? 'Horarios ocupados: ' + horas.join(', ') + '. Las citas canceladas liberan su horario.'
-                            : 'El doctor no tiene horarios ocupados en esa fecha.';
-                    })
-                    .catch(function () { salida.textContent = ''; });
-            }
-
-            doctor.addEventListener('change', cargar);
-            fecha.addEventListener('change', cargar);
-            cargar();
-        })();
+        window.horariosCita = DentalCareHorarios.iniciar({
+            hora: 'HoraString',
+            doctor: 'IdDoctor',
+            fecha: 'Fecha',
+            aviso: 'horasOcupadas',
+            url: '@Url.Action("HorasOcupadas", "Cita")'
+        });
     </script>
 }

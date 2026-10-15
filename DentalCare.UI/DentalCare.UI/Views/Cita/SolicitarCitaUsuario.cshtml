@@ -80,9 +80,11 @@
                         <div class="form-group">
                             @Html.LabelFor(m => m.HoraString)
                             <span class="text-danger"> *</span>
-                            @Html.TextBoxFor(m => m.HoraString,
-                                     new { @class = "form-control", type = "time" })
+                            <select id="HoraString" name="HoraString" class="form-control" data-valor="@Model.HoraString">
+                                <option value="">-- Seleccione hora --</option>
+                            </select>
                             @Html.ValidationMessageFor(m => m.HoraString, "", new { @class = "text-danger" })
+                            <small id="avisoHoras" class="text-muted"></small>
                         </div>
 
                         <div class="form-group">
@@ -126,7 +128,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/locale/es.js"></script>
 
-    <script>$(document).ready(function () {
+    <script src="@Url.Content("~/Scripts/horarios-cita.js")"></script>
+    <script>
+        window.horariosCita = DentalCareHorarios.iniciar({
+            hora: 'HoraString',
+            doctor: 'IdDoctor',
+            fecha: 'inputFecha',
+            aviso: 'avisoHoras',
+            url: '@Url.Action("HorasOcupadas", "Cita")'
+        });
+    </script>
+
+    <script>
+    $(document).ready(function () {
 
             var fechaSeleccionada = $('#inputFecha').val();
 
@@ -173,6 +187,7 @@
                     fechaSeleccionada = date.format('YYYY-MM-DD');
 
                     $('#inputFecha').val(fechaSeleccionada);
+                    if (window.horariosCita) window.horariosCita.recargar();
 
                     $('.fc-day').css('background-color', '');
 
