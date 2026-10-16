@@ -73,7 +73,8 @@ namespace DentalCare.AccesoADatos.Expedientes.CrearExpediente
                         $"DESCRIPCION:{dto.Descripcion ?? string.Empty}|" +
                         $"ALTERNATIVAS:{dto.Alternativas}|" +
                         $"CONSECUENCIAS:{dto.Consecuencias}|" +
-                        $"OTRO:{dto.Otro ?? string.Empty}";
+                        $"OTRO:{dto.Otro ?? string.Empty}|" +
+                        $"RESPONSABLE:{dto.IdDoctorResponsable}";
 
                     _contexto.Database.ExecuteSqlCommand(
                         "INSERT INTO FIDE_CONSENTIMIENTO_TB (ID_CONSENTIMIENTO, DESCRIPCION, FECHA, ID_ESTADO) VALUES (@p0, @p1, @p2, @p3)",

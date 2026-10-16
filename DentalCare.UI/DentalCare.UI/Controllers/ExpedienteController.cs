@@ -18,6 +18,7 @@ using DentalCare.LogicaDeNegocio.Expedientes.CrearExpediente;
 using DentalCare.LogicaDeNegocio.Expedientes.ObtenerTodosLosExpedientes;
 using DentalCare.LogicaDeNegocio.Odontograma.ObtenerOdontogramaPorExpediente;
 using DentalCare.LogicaDeNegocio.Odontograma.RegistrarOdontograma;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,6 +68,19 @@ namespace DentalCare.UI.Controllers
         public ActionResult CrearExpediente()
         {
             var dto = CargarDropdowns(new ExpedienteDto());
+
+            // Si quien crea el expediente es un doctor, queda preseleccionado como responsable
+            if (User.IsInRole("Doctor"))
+            {
+                string aspNetUserId = User.Identity.GetUserId();
+                using (var ctx = new Contexto())
+                {
+                    var yo = ctx.Usuarios.FirstOrDefault(u => u.ASPNET_USER_ID == aspNetUserId);
+                    if (yo != null && dto.ListaDoctores.Any(d => d.Value == yo.IdUsuario.ToString()))
+                        dto.IdDoctorResponsable = yo.IdUsuario;
+                }
+            }
+
             return View(dto);
         }
 
@@ -242,6 +256,24 @@ namespace DentalCare.UI.Controllers
                     Value = e.IdEstado.ToString(),
                     Text = e.NombreEstado
                 }).ToList();
+
+                // Doctores activos para elegir al responsable del expediente
+                var rolDoctor = ctx.AspNetRoles.FirstOrDefault(r => r.Name == "Doctor");
+                if (rolDoctor != null)
+                {
+                    var idsAspNetDoctores = ctx.AspNetUserRoles
+                        .Where(ur => ur.RoleId == rolDoctor.Id)
+                        .Select(ur => ur.UserId).ToList();
+
+                    dto.ListaDoctores = ctx.Usuarios
+                        .Where(u => idsAspNetDoctores.Contains(u.ASPNET_USER_ID) && u.IdEstado == 1)
+                        .Select(u => new SelectListItem
+                        {
+                            Value = u.IdUsuario.ToString(),
+                            Text = u.Nombre + " " + u.PrimerApellido
+                        }).ToList();
+                }
+                else dto.ListaDoctores = new List<SelectListItem>();
             }
             return dto;
         }

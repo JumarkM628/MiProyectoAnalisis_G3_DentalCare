@@ -54,6 +54,20 @@
 
                 </div>
 
+                <div class="trat-fila">
+
+                    <div class="trat-campo">
+                        <div class="trat-label-row">
+                            @Html.LabelFor(m => m.IdDoctorResponsable, new { @class = "trat-label" })
+                            <span class="required">*</span>
+                        </div>
+                        @Html.DropDownListFor(m => m.IdDoctorResponsable, Model.ListaDoctores, "-- Seleccione doctor --", new { @class = "trat-input" })
+                        @Html.ValidationMessageFor(m => m.IdDoctorResponsable, "", new { @class = "trat-error" })
+                        <span class="trat-hint">Doctor que queda a cargo del expediente.</span>
+                    </div>
+
+                </div>
+
             </div>
 
         </div>

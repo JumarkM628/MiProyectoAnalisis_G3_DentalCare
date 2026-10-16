@@ -64,5 +64,13 @@ namespace DentalCare.Abstraccion.Modelo.Expedientes
         public int IdEstado { get; set; }
 
         public IEnumerable<SelectListItem> ListaEstados { get; set; }
+
+        [Required(ErrorMessage = "Seleccione el doctor responsable.")]
+        [Display(Name = "Doctor responsable")]
+        public int? IdDoctorResponsable { get; set; }
+
+        public string NombreDoctor { get; set; }
+
+        public IEnumerable<SelectListItem> ListaDoctores { get; set; }
     }
 }

@@ -10,6 +10,11 @@
         <div class="exp-header-texto">
             <h1 class="inv-titulo">Expediente #@Model.Expediente.IdExpediente</h1>
             <p class="inv-subtitulo">Paciente: <strong>@Model.Expediente.NombrePaciente</strong></p>
+            <p class="inv-subtitulo">
+                Doctor responsable: <strong>@(string.IsNullOrEmpty(Model.Expediente.NombreDoctor) ? "Sin doctor asignado" : Model.Expediente.NombreDoctor)</strong>
+                &nbsp;&middot;&nbsp;
+                Fecha de creación: <strong>@(Model.Expediente.FechaCreacion.HasValue ? Model.Expediente.FechaCreacion.Value.ToString("dd/MM/yyyy") : "—")</strong>
+            </p>
         </div>
         @Html.ActionLink("Volver", "ObtenerTodosLosExpedientes", "Expediente", null, new { @class = "btn-header" })
     </div>

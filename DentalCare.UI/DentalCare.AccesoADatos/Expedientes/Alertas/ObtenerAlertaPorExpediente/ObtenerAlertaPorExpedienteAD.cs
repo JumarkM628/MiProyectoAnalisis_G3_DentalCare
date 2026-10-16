@@ -85,6 +85,7 @@ namespace DentalCare.AccesoADatos.Alertas.ObtenerAlertaPorExpediente
                 NombreEstado = rawExpediente.NombreEstado,
                 IdEstado = rawExpediente.IdEstado,
                 FechaCreacion = rawExpediente.FechaDeCreacion,
+                NombreDoctor = ObtenerNombreDoctor(rawExpediente.DescConsentimiento, rawExpediente.IdExpediente),
                 Objetivo = ObtenerTodosLosExpedientesAD.ExtraerCampo(rawExpediente.DescConsentimiento, "OBJETIVO"),
                 Descripcion = ObtenerTodosLosExpedientesAD.ExtraerCampo(rawExpediente.DescConsentimiento, "DESCRIPCION"),
                 Alternativas = ObtenerTodosLosExpedientesAD.ExtraerCampo(rawExpediente.DescConsentimiento, "ALTERNATIVAS"),
@@ -122,6 +123,39 @@ namespace DentalCare.AccesoADatos.Alertas.ObtenerAlertaPorExpediente
                 Expediente = expedienteDto,
                 Alerta = alertaDto
             };
+        }
+
+        // Doctor responsable: se guarda en el consentimiento al crear el expediente.
+        // En expedientes antiguos (sin ese dato) se usa el doctor del procedimiento
+        // registrado; si tampoco existe, devuelve null.
+        private string ObtenerNombreDoctor(string descConsentimiento, int idExpediente)
+        {
+            int idDoctor;
+            int.TryParse(ExtraerCampo(descConsentimiento, "RESPONSABLE"), out idDoctor);
+
+            if (idDoctor == 0)
+            {
+                int idProcedimiento = _contexto.Expedientes
+                    .Where(e => e.IdExpediente == idExpediente)
+                    .Select(e => e.IdProcedimiento)
+                    .FirstOrDefault();
+
+                idDoctor = (from p in _contexto.Procedimientos
+                            join c in _contexto.Citas on p.ID_CITA equals c.IdCita
+                            where p.ID_PROCEDIMIENTO == idProcedimiento && c.IdDoctor != null
+                            select c.IdDoctor.Value).FirstOrDefault();
+            }
+
+            if (idDoctor == 0) return null;
+
+            var doctor = _contexto.Usuarios
+                .Where(u => u.IdUsuario == idDoctor)
+                .Select(u => new { u.Nombre, u.PrimerApellido, u.SegundoApellido })
+                .FirstOrDefault();
+
+            return doctor == null
+                ? null
+                : (doctor.Nombre + " " + doctor.PrimerApellido + " " + doctor.SegundoApellido).Trim();
         }
 
         // Método local para extraer campos del string concatenado
