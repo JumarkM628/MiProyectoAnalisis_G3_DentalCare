@@ -116,20 +116,20 @@
 
                                 <td>
                                     @(string.IsNullOrEmpty(usuario.TipoCedula)
-                                        ? "—"
-                                        : usuario.TipoCedula)
+        ? "—"
+        : usuario.TipoCedula)
                                 </td>
 
                                 <td>
                                     @(string.IsNullOrEmpty(usuario.NumeroCedula)
-                                        ? "—"
-                                        : usuario.NumeroCedula)
+        ? "—"
+        : usuario.NumeroCedula)
                                 </td>
 
                                 <td>
                                     @(string.IsNullOrEmpty(usuario.Telefono)
-                                        ? "—"
-                                        : usuario.Telefono)
+        ? "—"
+        : usuario.Telefono)
                                 </td>
 
                                 <td>
@@ -155,14 +155,14 @@
 
                                 <td>
                                     @(string.IsNullOrEmpty(usuario.NombreEspecialidad)
-                                        ? "—"
-                                        : usuario.NombreEspecialidad)
+        ? "—"
+        : usuario.NombreEspecialidad)
                                 </td>
 
                                 <td class="td-muted">
                                     @(usuario.FechaContratacion.HasValue
-                                        ? usuario.FechaContratacion.Value.ToString("dd/MM/yyyy")
-                                        : "—")
+        ? usuario.FechaContratacion.Value.ToString("dd/MM/yyyy")
+        : "—")
                                 </td>
 
                                 <td>
@@ -189,13 +189,16 @@
                                             new { id = usuario.IdUsuario },
                                             new { @class = "accion-btn accion-ver" })
 
-                                        @Html.ActionLink(
-                                            "Editar",
-                                            "EditarUsuario",
-                                            new { id = usuario.IdUsuario },
-                                            new { @class = "accion-btn accion-editar" })
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Recepcionista") || User.IsInRole("Paciente"))
+                                        {
+                                            @Html.ActionLink(
+                                                "Editar",
+                                                "EditarUsuario",
+                                                new { id = usuario.IdUsuario },
+                                                new { @class = "accion-btn accion-editar" })
+                                        }
 
-                                        @if (!(User.IsInRole("Paciente")))
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Recepcionista"))
                                         {
                                             <a href="@Url.Action("DesactivarUsuario", "Usuario", new { id = usuario.IdUsuario })"
                                                class="accion-btn accion-desactivar"
