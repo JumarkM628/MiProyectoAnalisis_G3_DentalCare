@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Web.Mvc;
 using DentaCare.LogicaDeNegocio.Reporteria.Citas;
 using DentaCare.LogicaDeNegocio.Reporteria.Expediente;
@@ -205,6 +207,22 @@ namespace DentalCare.UI.Controllers
                    System.Net.WebUtility.HtmlEncode(texto) + "</p></div>";
         }
 
+        // ─────────────────────────────────────────────────────────────
+        // Ayudante más reciente para correcciones borrar si no funciona.
+        // ─────────────────────────────────────────────────────────────
+        private static string EncabezadoOrdenable(string etiqueta, string campo, string sortBy, string sortDir,
+                                          DateTime? desde, DateTime? hasta, string clase = "")
+        {
+            bool activo = string.Equals(sortBy, campo, StringComparison.OrdinalIgnoreCase);
+            string nuevaDir = (activo && sortDir != "desc") ? "desc" : "asc";
+            string flecha = activo ? (sortDir == "desc" ? " &#9660;" : " &#9650;") : "";
+            string href = "/Reporteria/ReportesTratamientos?sortBy=" + campo + "&sortDir=" + nuevaDir
+                        + (desde.HasValue ? "&desde=" + desde.Value.ToString("yyyy-MM-dd") : "")
+                        + (hasta.HasValue ? "&hasta=" + hasta.Value.ToString("yyyy-MM-dd") : "");
+            return "<th class=\"" + clase + "\"><a href=\"" + href + "\" style=\"color:inherit;text-decoration:none;\">"
+                 + System.Net.WebUtility.HtmlEncode(etiqueta) + flecha + "</a></th>";
+        }
+
         // Devuelve el HTML ya armado a traves de la vista puente
         // Views/Shared/ReporteHtml.cshtml para que pase por _Layout.
         // El cast a object es obligatorio: sin el, C# elige la sobrecarga
@@ -229,8 +247,62 @@ namespace DentalCare.UI.Controllers
         public ActionResult LotesMenosComprados() => PartialView(_reporteLotesLN.ObtenerLotesMenosComprados());
         public ActionResult HistorialLotePorTratamiento() => PartialView(_reporteLotesLN.ObtenerHistorialLotePorTratamiento());
         public ActionResult ReportesCitas() => View();
+        //El viejo ReportesTratamientos, no tengo mucha experiencia con codigo de este tipo entonces esto es por si acaso
+        //        public ActionResult ReportesTratamientos(DateTime? desde, DateTime? hasta)
+        //{
+        //  using (var contexto = new Contexto())
+        //{
+        //var query = contexto.PlanesTratamiento.AsQueryable();
+        //      if (desde.HasValue) query = query.Where(t => t.FechaInicio >= desde.Value);
+        //      if (hasta.HasValue) query = query.Where(t => t.FechaInicio <= hasta.Value);
 
-        public ActionResult ReportesTratamientos(DateTime? desde, DateTime? hasta)
+        //var raw = (from t in query
+        //join estado in contexto.Estados on t.IdEstado equals estado.IdEstado into estadoGrp
+        //from estado in estadoGrp.DefaultIfEmpty()
+        //select new { Tratamiento = t, NombreEstado = estado != null ? estado.NombreEstado : "-" })
+        //         .OrderBy(x => x.Tratamiento.FechaInicio).ToList();
+
+        //var sb = new System.Text.StringBuilder();
+        //sb.Append(AbrirReporte("Reportes de Tratamientos",
+        //                               "Planes de tratamiento registrados en la clinica.",
+        //                               "Tratamientos"));
+        //        sb.Append(FiltroFechas("ReportesTratamientos", desde, hasta, raw.Count, "tratamientos"));
+
+        //if (!raw.Any())
+        //{
+        //sb.Append(EstadoVacio("Sin resultados",
+        //desde.HasValue || hasta.HasValue
+        //? "No hay tratamientos en el rango de fechas seleccionado."
+        //: "Todavia no hay planes de tratamiento registrados."));
+        //}
+        //else
+        //{
+        //sb.Append("<div class=\"tabla-scroll\"><table class=\"rep-tabla\"><thead><tr>");
+        //sb.Append("<th>#</th><th>Descripcion</th><th>Inicio</th><th>Fin</th><th>Estado</th>");
+        //sb.Append("<th class=\"col-monto\">Monto</th><th>Cita</th>");
+        //sb.Append("</tr></thead><tbody>");
+        //int i = 1;
+        //foreach (var item in raw)
+        //{
+        //var t = item.Tratamiento;
+        //sb.Append("<tr>");
+        //sb.Append("<td class=\"celda-num\">" + i++ + "</td>");
+        //sb.Append("<td class=\"celda-desc\">" + System.Net.WebUtility.HtmlEncode(t.Descripcion) + "</td>");
+        //sb.Append("<td>" + (t.FechaInicio.HasValue? t.FechaInicio.Value.ToString("dd/MM/yyyy") : "&mdash;") + "</td>");
+        //sb.Append("<td>" + (t.FechaFin.HasValue? t.FechaFin.Value.ToString("dd/MM/yyyy") : "&mdash;") + "</td>");
+        //sb.Append("<td><span class=\"rep-badge\">" + System.Net.WebUtility.HtmlEncode(item.NombreEstado) + "</span></td>");
+        //sb.Append("<td class=\"celda-monto\">" + (t.Monto.HasValue? "&#8353; " + t.Monto.Value.ToString("N2") : "&mdash;") + "</td>");
+        //sb.Append("<td class=\"celda-num\">" + (t.IdCita.HasValue? t.IdCita.ToString() : "&mdash;") + "</td>");
+        //sb.Append("</tr>");
+        //}
+        //sb.Append("</tbody></table></div>");
+        //}
+
+        //sb.Append(CerrarReporte());
+        //return VistaReporte("Reportes de Tratamientos", sb);
+        //}
+        //} 
+        public ActionResult ReportesTratamientos(DateTime? desde, DateTime? hasta, string sortBy = "fecha", string sortDir = "asc")
         {
             using (var contexto = new Contexto())
             {
@@ -244,11 +316,29 @@ namespace DentalCare.UI.Controllers
                            select new { Tratamiento = t, NombreEstado = estado != null ? estado.NombreEstado : "-" })
                           .OrderBy(x => x.Tratamiento.FechaInicio).ToList();
 
+                bool asc = sortDir != "desc";
+                var ordenado = raw.OrderBy(x => x.Tratamiento.FechaInicio);
+                switch ((sortBy ?? "").ToLower())
+                {
+                    case "descripcion": ordenado = asc ? raw.OrderBy(x => x.Tratamiento.Descripcion) : raw.OrderByDescending(x => x.Tratamiento.Descripcion); break;
+                    case "estado": ordenado = asc ? raw.OrderBy(x => x.NombreEstado) : raw.OrderByDescending(x => x.NombreEstado); break;
+                    case "monto": ordenado = asc ? raw.OrderBy(x => x.Tratamiento.Monto) : raw.OrderByDescending(x => x.Tratamiento.Monto); break;
+                    case "cita": ordenado = asc ? raw.OrderBy(x => x.Tratamiento.IdCita) : raw.OrderByDescending(x => x.Tratamiento.IdCita); break;
+                    default: ordenado = asc ? raw.OrderBy(x => x.Tratamiento.FechaInicio) : raw.OrderByDescending(x => x.Tratamiento.FechaInicio); break;
+                }
+                raw = ordenado.ToList();
+
                 var sb = new System.Text.StringBuilder();
                 sb.Append(AbrirReporte("Reportes de Tratamientos",
                                        "Planes de tratamiento registrados en la clinica.",
                                        "Tratamientos"));
                 sb.Append(FiltroFechas("ReportesTratamientos", desde, hasta, raw.Count, "tratamientos"));
+                if (desde.HasValue && hasta.HasValue && desde.Value.Date > hasta.Value.Date)
+                {
+                    sb.Append("<div style=\"margin:0 0 16px;padding:12px 16px;border-radius:8px;background:#fdecea;" +
+                              "border:1px solid #f5c6cb;color:#c0392b;font-weight:600;\">" +
+                              "La fecha \"Hasta\" no puede ser anterior a la fecha \"Desde\".</div>");
+                }
 
                 if (!raw.Any())
                 {
@@ -260,22 +350,39 @@ namespace DentalCare.UI.Controllers
                 else
                 {
                     sb.Append("<div class=\"tabla-scroll\"><table class=\"rep-tabla\"><thead><tr>");
-                    sb.Append("<th>#</th><th>Descripcion</th><th>Inicio</th><th>Fin</th><th>Estado</th>");
-                    sb.Append("<th class=\"col-monto\">Monto</th><th>Cita</th>");
+                    sb.Append("<th>#</th>");
+                    sb.Append(EncabezadoOrdenable("Descripcion", "descripcion", sortBy, sortDir, desde, hasta));
+                    sb.Append(EncabezadoOrdenable("Inicio", "fecha", sortBy, sortDir, desde, hasta));
+                    sb.Append("<th>Fin</th>");
+                    sb.Append(EncabezadoOrdenable("Estado", "estado", sortBy, sortDir, desde, hasta));
+                    sb.Append(EncabezadoOrdenable("Monto", "monto", sortBy, sortDir, desde, hasta, "col-monto"));
+                    sb.Append(EncabezadoOrdenable("Cita", "cita", sortBy, sortDir, desde, hasta));
+                    sb.Append("<th>Detalle</th>");
                     sb.Append("</tr></thead><tbody>");
                     int i = 1;
                     foreach (var item in raw)
                     {
+                        int n = i++;
                         var t = item.Tratamiento;
                         sb.Append("<tr>");
-                        sb.Append("<td class=\"celda-num\">" + i++ + "</td>");
+                        sb.Append("<td class=\"celda-num\">" + n + "</td>");
                         sb.Append("<td class=\"celda-desc\">" + System.Net.WebUtility.HtmlEncode(t.Descripcion) + "</td>");
                         sb.Append("<td>" + (t.FechaInicio.HasValue ? t.FechaInicio.Value.ToString("dd/MM/yyyy") : "&mdash;") + "</td>");
                         sb.Append("<td>" + (t.FechaFin.HasValue ? t.FechaFin.Value.ToString("dd/MM/yyyy") : "&mdash;") + "</td>");
                         sb.Append("<td><span class=\"rep-badge\">" + System.Net.WebUtility.HtmlEncode(item.NombreEstado) + "</span></td>");
                         sb.Append("<td class=\"celda-monto\">" + (t.Monto.HasValue ? "&#8353; " + t.Monto.Value.ToString("N2") : "&mdash;") + "</td>");
                         sb.Append("<td class=\"celda-num\">" + (t.IdCita.HasValue ? t.IdCita.ToString() : "&mdash;") + "</td>");
+                        sb.Append("<td><button type=\"button\" class=\"btn-inv-cancelar\" style=\"height:32px;padding:0 12px;border:none;cursor:pointer;\" " +
+                                  "onclick=\"var r=document.getElementById('det" + n + "');r.style.display=(r.style.display==='none'?'table-row':'none');\">Ver</button></td>");
                         sb.Append("</tr>");
+                        sb.Append("<tr id=\"det" + n + "\" style=\"display:none;\"><td colspan=\"8\" style=\"background:#f8fbfe;\">" +
+                                  "<strong>Descripcion:</strong> " + System.Net.WebUtility.HtmlEncode(t.Descripcion) +
+                                  " &nbsp;|&nbsp; <strong>Inicio:</strong> " + (t.FechaInicio.HasValue ? t.FechaInicio.Value.ToString("dd/MM/yyyy") : "&mdash;") +
+                                  " &nbsp;|&nbsp; <strong>Fin:</strong> " + (t.FechaFin.HasValue ? t.FechaFin.Value.ToString("dd/MM/yyyy") : "&mdash;") +
+                                  " &nbsp;|&nbsp; <strong>Estado:</strong> " + System.Net.WebUtility.HtmlEncode(item.NombreEstado) +
+                                  " &nbsp;|&nbsp; <strong>Monto:</strong> " + (t.Monto.HasValue ? "&#8353; " + t.Monto.Value.ToString("N2") : "&mdash;") +
+                                  " &nbsp;|&nbsp; <strong>Cita:</strong> " + (t.IdCita.HasValue ? t.IdCita.ToString() : "&mdash;") +
+                                  "</td></tr>");
                     }
                     sb.Append("</tbody></table></div>");
                 }
@@ -717,6 +824,7 @@ namespace DentalCare.UI.Controllers
             return View("StockBajo", ln.ObtenerProductosStockBajo(categoriaId));
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult ProductosPorVencer()
         {
             try { return View(_reporteProductosVencerLN.ObtenerProductosPorVencer(null, null)); }
@@ -724,8 +832,16 @@ namespace DentalCare.UI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult ProductosPorVencer(DateTime? fechaInicio, DateTime? fechaFin)
         {
+            ViewBag.FechaInicio = fechaInicio.HasValue ? fechaInicio.Value.ToString("yyyy-MM-dd") : null;
+            ViewBag.FechaFin = fechaFin.HasValue ? fechaFin.Value.ToString("yyyy-MM-dd") : null;
+            if (fechaInicio.HasValue && fechaFin.HasValue && fechaInicio.Value.Date > fechaFin.Value.Date)
+            {
+                ViewBag.Error = "El rango de fechas ingresado no es válido.";
+                return View(new List<ReporteProductosVencerDto>());
+            }
             try { return View(_reporteProductosVencerLN.ObtenerProductosPorVencer(fechaInicio, fechaFin)); }
             catch (ArgumentException ex) { ViewBag.Error = ex.Message; return View(_reporteProductosVencerLN.ObtenerProductosPorVencer(null, null)); }
             catch (Exception ex) { ViewBag.Error = ex.Message; return View(new List<ReporteProductosVencerDto>()); }

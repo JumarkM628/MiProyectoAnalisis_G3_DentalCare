@@ -1,4 +1,8 @@
-﻿using DentaCare.LogicaDeNegocio.Pago.ObtenerPago;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using DentaCare.LogicaDeNegocio.Pago.EditarPago;
+using DentaCare.LogicaDeNegocio.Pago.ObtenerPago;
 using DentaCare.LogicaDeNegocio.Pago.RegistrarPago;
 using DentalCare.Abstraccion.LogicaDeNegocio.Catalogo.ObtenerCatalogo;
 using DentalCare.Abstraccion.LogicaDeNegocio.Pago.ActualizarEstadoPago;
@@ -8,9 +12,6 @@ using DentalCare.Abstraccion.Modelo.Pagos;
 using DentalCare.AccesoADatos;
 using DentalCare.LogicaDeNegocio.Catalogo.ObtenerCatalogo;
 using DentalCare.LogicaDeNegocio.Pagos.ActualizarEstadoPago;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
 
 namespace DentalCare.UI.Controllers
 {
@@ -98,6 +99,22 @@ namespace DentalCare.UI.Controllers
         {
             string error = _actualizarLN.ActualizarAPagado(id);
             TempData[error != null ? "Error" : "Exito"] = error ?? "Pago actualizado a pagado.";
+            return RedirectToAction("HistorialPagos");
+        }
+
+        // ---------------------------------------------------------------
+        // Editar: Esto es para actualizar el pago registrado no es un "Editar" verdadero solo si esta en pendiente si esta confirmado se deshabilita
+        // ---------------------------------------------------------------
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditarPago(int id, decimal monto, int idMetodoPago)
+        {
+            var error = new EditarPagoLN().Actualizar(id, monto, idMetodoPago);
+
+            if (error != null) TempData["Error"] = error;
+            else TempData["Exito"] = "El pago se actualizó correctamente.";
+
             return RedirectToAction("HistorialPagos");
         }
 

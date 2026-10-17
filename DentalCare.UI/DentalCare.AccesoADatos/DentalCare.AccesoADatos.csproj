@@ -112,6 +112,7 @@
     <Compile Include="Gastos\RegistrarGasto\RegistrarGastoAD.cs" />
     <Compile Include="Odontograma\ObtenerOdontogramaPorExpediente\ObtenerOdontogramaPorExpedienteAD.cs" />
     <Compile Include="Odontograma\RegistrarOdontograma\RegistrarOdontogramaAD.cs" />
+    <Compile Include="Pago\EditarPago\EditarPagoAD.cs" />
     <Compile Include="Pago\ObtenerPago\ObtenerPagosAD.cs" />
     <Compile Include="Pago\RegistroPago\RegistrarPagoAD.cs" />
     <Compile Include="Producto\EditarProducto\EditarProductoAD.cs" />

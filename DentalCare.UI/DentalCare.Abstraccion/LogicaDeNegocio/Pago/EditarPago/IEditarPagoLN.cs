@@ -1,10 +1,9 @@
 using DentalCare.Abstraccion.Modelo.Pagos;
-
+using System.Collections.Generic;
 namespace DentalCare.Abstraccion.LogicaDeNegocio.Pago.EditarPago
 {
     public interface IEditarPagoLN
     {
-        PagoDto ObtenerPorId(int idContabilidad);
-        string Editar(PagoDto dto, string nombreUsuario);
+        string Actualizar(int idContabilidad, decimal monto, int idMetodoPago);
     }
 }

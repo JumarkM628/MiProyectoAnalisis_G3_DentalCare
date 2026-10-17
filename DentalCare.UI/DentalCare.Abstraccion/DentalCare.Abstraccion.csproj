@@ -86,6 +86,7 @@
     <Compile Include="AccesoADatos\Gastos\RegistrarGastos\IRegistrarGastoAD.cs" />
     <Compile Include="AccesoADatos\Odontograma\RegistrarOdontograma\IRegistrarOdontogramaAD.cs" />
     <Compile Include="AccesoADatos\Odontograma\ObtenerOdontogramaPorExpediente\ObtenerOdontogramaPorExpediente.cs" />
+    <Compile Include="AccesoADatos\Pago\EditarPago\IEditarPagoAD.cs" />
     <Compile Include="AccesoADatos\Pago\ObtenerPago\IObtenerPagosAD.cs" />
     <Compile Include="AccesoADatos\Pago\RegistrarPago\IRegistrarPagoAD.cs" />
     <Compile Include="AccesoADatos\Producto\IEditarProductoAD.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="LogicaDeNegocio\Odontograma\RegistrarOdontograma\IObtenerOdontogramaPorExpedienteLN.cs" />
     <Compile Include="LogicaDeNegocio\Odontograma\RegistrarOdontograma\IRegistrarOdontogramaLN.cs" />
     <Compile Include="LogicaDeNegocio\Pago\ActualizarEstadoPago\IActualizarEstadoPagoLN.cs" />
+    <Compile Include="LogicaDeNegocio\Pago\EditarPago\IEditarPagoLN.cs" />
     <Compile Include="LogicaDeNegocio\Pago\ObtenerPago\IObtenerPagosLN.cs" />
     <Compile Include="LogicaDeNegocio\Pago\RegistrarPago\IRegistrarPagoLN.cs" />
     <Compile Include="LogicaDeNegocio\Producto\IEditarProductoLN.cs" />

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using DentalCare.AccesoADatos;
+using DentalCare.UI.Models.Contabilidad;
 
 namespace DentalCare.UI.Controllers
 {
@@ -44,17 +46,47 @@ namespace DentalCare.UI.Controllers
 
         // POST: Contabilidad/CostosTratamiento
         [HttpPost]
-        public ActionResult CostosTratamiento(FormCollection collection)
+        public ActionResult CostosTratamiento(int? idCita, DateTime? desde, DateTime? hasta)
         {
-            try
+            var vm = new CostosTratamientoViewModel { IdCita = idCita, Desde = desde, Hasta = hasta };
+
+            if (desde.HasValue && hasta.HasValue && desde.Value.Date > hasta.Value.Date)
             {
-                // TODO: Agregar lógica de costos de tratamiento (MDC-002)
-                return RedirectToAction("Menu");
+                vm.Error = "La fecha \"Hasta\" no puede ser anterior a la fecha \"Desde\".";
+                return View(vm);
             }
-            catch
+
+            using (var ctx = new Contexto())
             {
-                return View();
+                var q = ctx.PlanesTratamiento.AsQueryable();
+                if (idCita.HasValue) q = q.Where(t => t.IdCita == idCita.Value);
+                if (desde.HasValue)
+                {
+                    var d = desde.Value.Date;
+                    q = q.Where(t => t.FechaInicio >= d);
+                }
+                if (hasta.HasValue)
+                {
+                    var h = hasta.Value.Date.AddDays(1); 
+                    q = q.Where(t => t.FechaInicio < h);
+                }
+
+                vm.Items = (from t in q
+                            join e in ctx.Estados on t.IdEstado equals e.IdEstado into eg
+                            from e in eg.DefaultIfEmpty()
+                            orderby t.FechaInicio
+                            select new CostoTratamientoItem
+                            {
+                                IdPlan = t.IdTratamiento, 
+                                Descripcion = t.Descripcion,
+                                FechaInicio = t.FechaInicio,
+                                FechaFin = t.FechaFin,
+                                Estado = e != null ? e.NombreEstado : "-",
+                                IdCita = t.IdCita,
+                                Monto = t.Monto
+                            }).ToList();
             }
+            return View(vm);
         }
 
         // GET: Contabilidad/Gastos

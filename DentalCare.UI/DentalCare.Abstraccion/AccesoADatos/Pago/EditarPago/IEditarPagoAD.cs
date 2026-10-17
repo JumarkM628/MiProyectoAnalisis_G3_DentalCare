@@ -4,9 +4,8 @@ namespace DentalCare.Abstraccion.AccesoADatos.Pago.EditarPago
 {
     public interface IEditarPagoAD
     {
-        PagoDto ObtenerPorId(int idContabilidad);
-        bool ExistePago(int idContabilidad);
+        bool Existe(int idContabilidad);
         bool EstaPagado(int idContabilidad);
-        void Actualizar(PagoDto dto, string nombreUsuario);
+        void Actualizar(int idContabilidad, decimal monto, int idMetodoPago);
     }
 }

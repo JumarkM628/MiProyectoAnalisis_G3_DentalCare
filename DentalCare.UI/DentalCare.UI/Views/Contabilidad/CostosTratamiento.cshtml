@@ -1,4 +1,5 @@
-﻿@{
+﻿@model DentalCare.UI.Models.Contabilidad.CostosTratamientoViewModel
+@{
     ViewBag.Title = "Costos de Tratamiento";
 }
 
@@ -604,6 +605,70 @@
         <span>El costo del tratamiento fue actualizado correctamente.</span>
     </div>
 
+    <!-- Verificación -->
+    @if (Model != null)
+    {
+        if (!string.IsNullOrEmpty(Model.Error))
+        {
+            <div class="alert alert-danger">@Model.Error</div>
+        }
+
+        <div class="metricas-grid" style="grid-template-columns: repeat(2, 1fr);">
+            <div class="metrica-card">
+                <div class="metrica-label">Total a pagar</div>
+                <div class="metrica-valor">&#8353; @Model.Total.ToString("N2")</div>
+                <div class="metrica-sub">@Model.Items.Count tratamientos listados</div>
+            </div>
+        </div>
+
+        <div class="ct-card" style="padding: 18px 24px;">
+            <form method="get" action="@Url.Action("CostosTratamiento", "Contabilidad")" class="filtros-row">
+                <div class="filtro-group">
+                    <label>Cita #</label>
+                    <input type="number" name="idCita" value="@Model.IdCita" />
+                </div>
+                <div class="filtro-group">
+                    <label>Desde</label>
+                    <input type="date" name="desde" value="@(Model.Desde.HasValue ? Model.Desde.Value.ToString("yyyy-MM-dd") : "")" />
+                </div>
+                <div class="filtro-group">
+                    <label>Hasta</label>
+                    <input type="date" name="hasta" value="@(Model.Hasta.HasValue ? Model.Hasta.Value.ToString("yyyy-MM-dd") : "")" />
+                </div>
+                <button type="submit" class="btn-filtrar">Calcular total</button>
+            </form>
+        </div>
+
+        if (Model.Items.Any())
+        {
+            <div class="ct-card" style="padding:0; overflow:hidden;">
+                <table class="ct-table">
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>Inicio</th>
+                            <th>Estado</th>
+                            <th>Cita</th>
+                            <th style="text-align:right">Costo (&#8353;)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in Model.Items)
+                        {
+                            <tr>
+                                <td class="td-nombre">@t.Descripcion</td>
+                                <td>@(t.FechaInicio.HasValue ? t.FechaInicio.Value.ToString("dd/MM/yyyy") : "—")</td>
+                                <td>@t.Estado</td>
+                                <td>@(t.IdCita.HasValue ? t.IdCita.Value.ToString() : "—")</td>
+                                <td class="td-right">@((t.Monto ?? 0m).ToString("N2"))</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    }
+
     <!-- MÉTRICAS -->
     <div class="metricas-grid">
         <div class="metrica-card">
@@ -787,185 +852,186 @@
 </div>
 
 @section scripts {
-    <script>var tratamientos = [
-        { cod:'TRT-001', nombre:'Limpieza dental',         cat:'Preventivo',  duracion:'45 min',  costo:35000, costoAnt:30000, fecha:'15/03/2026', veces:128, pop:95 },
-        { cod:'TRT-002', nombre:'Blanqueamiento',           cat:'Estético',    duracion:'60 min',  costo:45000, costoAnt:42000, fecha:'20/02/2026', veces:64,  pop:55 },
-        { cod:'TRT-003', nombre:'Radiografía periapical',   cat:'Preventivo',  duracion:'15 min',  costo:12000, costoAnt:10000, fecha:'01/01/2026', veces:210, pop:100 },
-        { cod:'TRT-004', nombre:'Extracción dental simple', cat:'Cirugía',     duracion:'30 min',  costo:25000, costoAnt:25000, fecha:'01/01/2026', veces:87,  pop:68 },
-        { cod:'TRT-005', nombre:'Ortodoncia (mensualidad)', cat:'Ortodoncia',  duracion:'30 min',  costo:55000, costoAnt:50000, fecha:'01/02/2026', veces:45,  pop:42 },
-        { cod:'TRT-006', nombre:'Resina dental',            cat:'Restaurador', duracion:'50 min',  costo:30000, costoAnt:28000, fecha:'10/03/2026', veces:102, pop:79 },
-        { cod:'TRT-007', nombre:'Endodoncia',               cat:'Endodoncia',  duracion:'90 min',  costo:80000, costoAnt:75000, fecha:'01/04/2026', veces:31,  pop:28 },
-        { cod:'TRT-008', nombre:'Corona de porcelana',      cat:'Restaurador', duracion:'120 min', costo:95000, costoAnt:90000, fecha:'15/02/2026', veces:22,  pop:20 },
-        { cod:'TRT-009', nombre:'Implante dental',          cat:'Cirugía',     duracion:'180 min', costo:350000,costoAnt:320000,fecha:'01/03/2026', veces:11,  pop:10 },
-        { cod:'TRT-010', nombre:'Profilaxis infantil',      cat:'Preventivo',  duracion:'30 min',  costo:18000, costoAnt:15000, fecha:'01/01/2026', veces:76,  pop:60 },
-        { cod:'TRT-011', nombre:'Blanqueamiento láser',     cat:'Estético',    duracion:'90 min',  costo:75000, costoAnt:70000, fecha:'20/02/2026', veces:18,  pop:16 },
-        { cod:'TRT-012', nombre:'Puente dental (3 piezas)', cat:'Restaurador', duracion:'90 min',  costo:120000,costoAnt:110000,fecha:'15/01/2026', veces:9,   pop:8  },
-        { cod:'TRT-013', nombre:'Extracción de muela juicio',cat:'Cirugía',   duracion:'60 min',  costo:40000, costoAnt:38000, fecha:'10/02/2026', veces:53,  pop:46 },
-        { cod:'TRT-014', nombre:'Sellante dental',          cat:'Preventivo',  duracion:'20 min',  costo:8000,  costoAnt:8000,  fecha:'01/01/2026', veces:149, pop:98 },
-    ];
+    <script>
+    var tratamientos = [
+            { cod: 'TRT-001', nombre: 'Limpieza dental', cat: 'Preventivo', duracion: '45 min', costo: 35000, costoAnt: 30000, fecha: '15/03/2026', veces: 128, pop: 95 },
+            { cod: 'TRT-002', nombre: 'Blanqueamiento', cat: 'Estético', duracion: '60 min', costo: 45000, costoAnt: 42000, fecha: '20/02/2026', veces: 64, pop: 55 },
+            { cod: 'TRT-003', nombre: 'Radiografía periapical', cat: 'Preventivo', duracion: '15 min', costo: 12000, costoAnt: 10000, fecha: '01/01/2026', veces: 210, pop: 100 },
+            { cod: 'TRT-004', nombre: 'Extracción dental simple', cat: 'Cirugía', duracion: '30 min', costo: 25000, costoAnt: 25000, fecha: '01/01/2026', veces: 87, pop: 68 },
+            { cod: 'TRT-005', nombre: 'Ortodoncia (mensualidad)', cat: 'Ortodoncia', duracion: '30 min', costo: 55000, costoAnt: 50000, fecha: '01/02/2026', veces: 45, pop: 42 },
+            { cod: 'TRT-006', nombre: 'Resina dental', cat: 'Restaurador', duracion: '50 min', costo: 30000, costoAnt: 28000, fecha: '10/03/2026', veces: 102, pop: 79 },
+            { cod: 'TRT-007', nombre: 'Endodoncia', cat: 'Endodoncia', duracion: '90 min', costo: 80000, costoAnt: 75000, fecha: '01/04/2026', veces: 31, pop: 28 },
+            { cod: 'TRT-008', nombre: 'Corona de porcelana', cat: 'Restaurador', duracion: '120 min', costo: 95000, costoAnt: 90000, fecha: '15/02/2026', veces: 22, pop: 20 },
+            { cod: 'TRT-009', nombre: 'Implante dental', cat: 'Cirugía', duracion: '180 min', costo: 350000, costoAnt: 320000, fecha: '01/03/2026', veces: 11, pop: 10 },
+            { cod: 'TRT-010', nombre: 'Profilaxis infantil', cat: 'Preventivo', duracion: '30 min', costo: 18000, costoAnt: 15000, fecha: '01/01/2026', veces: 76, pop: 60 },
+            { cod: 'TRT-011', nombre: 'Blanqueamiento láser', cat: 'Estético', duracion: '90 min', costo: 75000, costoAnt: 70000, fecha: '20/02/2026', veces: 18, pop: 16 },
+            { cod: 'TRT-012', nombre: 'Puente dental (3 piezas)', cat: 'Restaurador', duracion: '90 min', costo: 120000, costoAnt: 110000, fecha: '15/01/2026', veces: 9, pop: 8 },
+            { cod: 'TRT-013', nombre: 'Extracción de muela juicio', cat: 'Cirugía', duracion: '60 min', costo: 40000, costoAnt: 38000, fecha: '10/02/2026', veces: 53, pop: 46 },
+            { cod: 'TRT-014', nombre: 'Sellante dental', cat: 'Preventivo', duracion: '20 min', costo: 8000, costoAnt: 8000, fecha: '01/01/2026', veces: 149, pop: 98 },
+        ];
 
-    var filtrado    = [...tratamientos];
-    var paginaActual = 1;
-    var porPagina    = 10;
-    var seleccionado = null;
+        var filtrado = [...tratamientos];
+        var paginaActual = 1;
+        var porPagina = 10;
+        var seleccionado = null;
 
-    var badgeClass = {
-        'Preventivo':  'badge-preventivo',
-        'Estético':    'badge-estetico',
-        'Restaurador': 'badge-restaurador',
-        'Cirugía':     'badge-cirugia',
-        'Ortodoncia':  'badge-ortodoncia',
-        'Endodoncia':  'badge-endodoncia',
-    };
+        var badgeClass = {
+            'Preventivo': 'badge-preventivo',
+            'Estético': 'badge-estetico',
+            'Restaurador': 'badge-restaurador',
+            'Cirugía': 'badge-cirugia',
+            'Ortodoncia': 'badge-ortodoncia',
+            'Endodoncia': 'badge-endodoncia',
+        };
 
-    function formatColones(n) {
-        return '&#8353;' + n.toLocaleString('es-CR');
-    }
-
-    function renderTabla() {
-        var tbody = document.getElementById('cuerpoTabla');
-        var inicio = (paginaActual - 1) * porPagina;
-        var slice  = filtrado.slice(inicio, inicio + porPagina);
-
-        if (slice.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:#8896B0;">No se encontraron tratamientos con esos filtros.</td></tr>';
-            document.getElementById('paginacionInfo').textContent = 'Sin resultados';
-            return;
+        function formatColones(n) {
+            return '&#8353;' + n.toLocaleString('es-CR');
         }
 
-        var html = '';
-        slice.forEach(function(t, i) {
-            html += '<tr>'
-                + '<td style="color:#8896B0;font-size:11px;">' + t.cod + '</td>'
-                + '<td class="td-nombre">' + t.nombre + '</td>'
-                + '<td><span class="badge-cat ' + (badgeClass[t.cat] || '') + '">' + t.cat + '</span></td>'
-                + '<td>' + t.duracion + '</td>'
-                + '<td class="td-right">' + formatColones(t.costo) + '</td>'
-                + '<td class="td-right" style="color:#8896B0;font-weight:400;">' + t.fecha + '</td>'
-                + '<td><button class="btn-accion btn-ver" onclick="verDetalle(' + (inicio + i) + ')">Ver</button></td>'
-                + '</tr>';
-        });
-        tbody.innerHTML = html;
+        function renderTabla() {
+            var tbody = document.getElementById('cuerpoTabla');
+            var inicio = (paginaActual - 1) * porPagina;
+            var slice = filtrado.slice(inicio, inicio + porPagina);
 
-        var total = filtrado.length;
-        var fin   = Math.min(inicio + porPagina, total);
-        document.getElementById('paginacionInfo').textContent =
-            'Mostrando ' + (inicio + 1) + '–' + fin + ' de ' + total + ' tratamientos';
+            if (slice.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:#8896B0;">No se encontraron tratamientos con esos filtros.</td></tr>';
+                document.getElementById('paginacionInfo').textContent = 'Sin resultados';
+                return;
+            }
 
-        actualizarPaginacion();
-    }
+            var html = '';
+            slice.forEach(function (t, i) {
+                html += '<tr>'
+                    + '<td style="color:#8896B0;font-size:11px;">' + t.cod + '</td>'
+                    + '<td class="td-nombre">' + t.nombre + '</td>'
+                    + '<td><span class="badge-cat ' + (badgeClass[t.cat] || '') + '">' + t.cat + '</span></td>'
+                    + '<td>' + t.duracion + '</td>'
+                    + '<td class="td-right">' + formatColones(t.costo) + '</td>'
+                    + '<td class="td-right" style="color:#8896B0;font-weight:400;">' + t.fecha + '</td>'
+                    + '<td><button class="btn-accion btn-ver" onclick="verDetalle(' + (inicio + i) + ')">Ver</button></td>'
+                    + '</tr>';
+            });
+            tbody.innerHTML = html;
 
-    function actualizarPaginacion() {
-        var totalPags = Math.ceil(filtrado.length / porPagina);
-        var p1 = document.getElementById('pag1');
-        var p2 = document.getElementById('pag2');
-        p1.classList.toggle('activo', paginaActual === 1);
-        p2.classList.toggle('activo', paginaActual === 2);
-        p2.style.display = totalPags > 1 ? '' : 'none';
-    }
+            var total = filtrado.length;
+            var fin = Math.min(inicio + porPagina, total);
+            document.getElementById('paginacionInfo').textContent =
+                'Mostrando ' + (inicio + 1) + '–' + fin + ' de ' + total + ' tratamientos';
 
-    function cambiarPagina(delta) {
-        var totalPags = Math.ceil(filtrado.length / porPagina);
-        paginaActual = Math.max(1, Math.min(totalPags, paginaActual + delta));
-        renderTabla();
-    }
-
-    function irPagina(n) {
-        paginaActual = n;
-        renderTabla();
-    }
-
-    function filtrarTabla() {
-        var buscar   = document.getElementById('inputBuscar').value.toLowerCase();
-        var cat      = document.getElementById('selectCategoria').value;
-        var costoMin = parseFloat(document.getElementById('costoMin').value) || 0;
-        var costoMax = parseFloat(document.getElementById('costoMax').value) || 9999999;
-
-        filtrado = tratamientos.filter(function(t) {
-            return t.nombre.toLowerCase().includes(buscar)
-                && (cat === '' || t.cat === cat)
-                && t.costo >= costoMin
-                && t.costo <= costoMax;
-        });
-        paginaActual = 1;
-        renderTabla();
-    }
-
-    function limpiarFiltros() {
-        document.getElementById('inputBuscar').value    = '';
-        document.getElementById('selectCategoria').value = '';
-        document.getElementById('costoMin').value        = '';
-        document.getElementById('costoMax').value        = '';
-        filtrado = [...tratamientos];
-        paginaActual = 1;
-        renderTabla();
-    }
-
-    function verDetalle(idx) {
-        seleccionado = filtrado[idx];
-        document.getElementById('detNombre').textContent = seleccionado.nombre;
-        document.getElementById('detCat').innerHTML      = '<span class="badge-cat ' + (badgeClass[seleccionado.cat] || '') + '">' + seleccionado.cat + '</span>';
-        document.getElementById('detCodigo').textContent  = seleccionado.cod;
-        document.getElementById('detDuracion').textContent = seleccionado.duracion;
-        document.getElementById('detCosto').innerHTML     = formatColones(seleccionado.costo);
-        document.getElementById('detCostoAnt').innerHTML  = formatColones(seleccionado.costoAnt);
-        document.getElementById('detFecha').textContent   = seleccionado.fecha;
-        document.getElementById('detVeces').textContent   = seleccionado.veces + ' veces';
-        document.getElementById('detBarra').style.width   = seleccionado.pop + '%';
-
-        document.getElementById('detContenido').style.display  = 'block';
-        document.getElementById('detPlaceholder').style.display = 'none';
-    }
-
-    var tratamientoEnEdicion = null;
-
-    function abrirModal() {
-        if (!seleccionado) return;
-        tratamientoEnEdicion = seleccionado;
-        document.getElementById('modalSubtitulo').textContent  = 'Actualizá el costo de: ' + seleccionado.nombre;
-        document.getElementById('editNombre').value            = seleccionado.nombre;
-        document.getElementById('editCategoria').value         = seleccionado.cat;
-        document.getElementById('editCostoActual').value       = seleccionado.costo;
-        document.getElementById('editCostoNuevo').value        = '';
-        document.getElementById('editMotivo').value            = '';
-        document.getElementById('modalEditar').classList.add('show');
-    }
-
-    function cerrarModal() {
-        document.getElementById('modalEditar').classList.remove('show');
-    }
-
-    function guardarCambio() {
-        var nuevo = parseFloat(document.getElementById('editCostoNuevo').value);
-        if (!nuevo || nuevo <= 0) {
-            alert('Ingresá un nuevo costo válido.');
-            return;
-        }
-        if (!tratamientoEnEdicion) return;
-
-        // Actualizar datos quemados
-        var idx = tratamientos.indexOf(tratamientoEnEdicion);
-        if (idx > -1) {
-            tratamientos[idx].costoAnt = tratamientos[idx].costo;
-            tratamientos[idx].costo    = nuevo;
-            tratamientos[idx].fecha    = new Date().toLocaleDateString('es-CR');
+            actualizarPaginacion();
         }
 
-        cerrarModal();
-        filtrado = [...tratamientos];
-        renderTabla();
-
-        // Si el panel está mostrando este tratamiento, refresca
-        if (seleccionado === tratamientoEnEdicion) {
-            verDetalle(filtrado.indexOf(tratamientoEnEdicion));
+        function actualizarPaginacion() {
+            var totalPags = Math.ceil(filtrado.length / porPagina);
+            var p1 = document.getElementById('pag1');
+            var p2 = document.getElementById('pag2');
+            p1.classList.toggle('activo', paginaActual === 1);
+            p2.classList.toggle('activo', paginaActual === 2);
+            p2.style.display = totalPags > 1 ? '' : 'none';
         }
 
-        document.getElementById('alertaExito').classList.add('show');
-        setTimeout(function() {
-            document.getElementById('alertaExito').classList.remove('show');
-        }, 4000);
-    }
+        function cambiarPagina(delta) {
+            var totalPags = Math.ceil(filtrado.length / porPagina);
+            paginaActual = Math.max(1, Math.min(totalPags, paginaActual + delta));
+            renderTabla();
+        }
 
-    // Init
-    renderTabla();</script>
+        function irPagina(n) {
+            paginaActual = n;
+            renderTabla();
+        }
+
+        function filtrarTabla() {
+            var buscar = document.getElementById('inputBuscar').value.toLowerCase();
+            var cat = document.getElementById('selectCategoria').value;
+            var costoMin = parseFloat(document.getElementById('costoMin').value) || 0;
+            var costoMax = parseFloat(document.getElementById('costoMax').value) || 9999999;
+
+            filtrado = tratamientos.filter(function (t) {
+                return t.nombre.toLowerCase().includes(buscar)
+                    && (cat === '' || t.cat === cat)
+                    && t.costo >= costoMin
+                    && t.costo <= costoMax;
+            });
+            paginaActual = 1;
+            renderTabla();
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('inputBuscar').value = '';
+            document.getElementById('selectCategoria').value = '';
+            document.getElementById('costoMin').value = '';
+            document.getElementById('costoMax').value = '';
+            filtrado = [...tratamientos];
+            paginaActual = 1;
+            renderTabla();
+        }
+
+        function verDetalle(idx) {
+            seleccionado = filtrado[idx];
+            document.getElementById('detNombre').textContent = seleccionado.nombre;
+            document.getElementById('detCat').innerHTML = '<span class="badge-cat ' + (badgeClass[seleccionado.cat] || '') + '">' + seleccionado.cat + '</span>';
+            document.getElementById('detCodigo').textContent = seleccionado.cod;
+            document.getElementById('detDuracion').textContent = seleccionado.duracion;
+            document.getElementById('detCosto').innerHTML = formatColones(seleccionado.costo);
+            document.getElementById('detCostoAnt').innerHTML = formatColones(seleccionado.costoAnt);
+            document.getElementById('detFecha').textContent = seleccionado.fecha;
+            document.getElementById('detVeces').textContent = seleccionado.veces + ' veces';
+            document.getElementById('detBarra').style.width = seleccionado.pop + '%';
+
+            document.getElementById('detContenido').style.display = 'block';
+            document.getElementById('detPlaceholder').style.display = 'none';
+        }
+
+        var tratamientoEnEdicion = null;
+
+        function abrirModal() {
+            if (!seleccionado) return;
+            tratamientoEnEdicion = seleccionado;
+            document.getElementById('modalSubtitulo').textContent = 'Actualizá el costo de: ' + seleccionado.nombre;
+            document.getElementById('editNombre').value = seleccionado.nombre;
+            document.getElementById('editCategoria').value = seleccionado.cat;
+            document.getElementById('editCostoActual').value = seleccionado.costo;
+            document.getElementById('editCostoNuevo').value = '';
+            document.getElementById('editMotivo').value = '';
+            document.getElementById('modalEditar').classList.add('show');
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalEditar').classList.remove('show');
+        }
+
+        function guardarCambio() {
+            var nuevo = parseFloat(document.getElementById('editCostoNuevo').value);
+            if (!nuevo || nuevo <= 0) {
+                alert('Ingresá un nuevo costo válido.');
+                return;
+            }
+            if (!tratamientoEnEdicion) return;
+
+            // Actualizar datos quemados
+            var idx = tratamientos.indexOf(tratamientoEnEdicion);
+            if (idx > -1) {
+                tratamientos[idx].costoAnt = tratamientos[idx].costo;
+                tratamientos[idx].costo = nuevo;
+                tratamientos[idx].fecha = new Date().toLocaleDateString('es-CR');
+            }
+
+            cerrarModal();
+            filtrado = [...tratamientos];
+            renderTabla();
+
+            // Si el panel está mostrando este tratamiento, refresca
+            if (seleccionado === tratamientoEnEdicion) {
+                verDetalle(filtrado.indexOf(tratamientoEnEdicion));
+            }
+
+            document.getElementById('alertaExito').classList.add('show');
+            setTimeout(function () {
+                document.getElementById('alertaExito').classList.remove('show');
+            }, 4000);
+        }
+
+        // Init
+        renderTabla();</script>
 }

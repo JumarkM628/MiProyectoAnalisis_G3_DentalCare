@@ -65,6 +65,7 @@
     <Compile Include="Odontograma\RegistrarOdontograma\ObtenerOdontogramaPorExpedienteLN.cs" />
     <Compile Include="Odontograma\RegistrarOdontograma\RegistrarOdontogramaLN.cs" />
     <Compile Include="Pago\ActualizarEstadoPago\ActualizarEstadoPagoLN.cs" />
+    <Compile Include="Pago\EditarPago\EditarPagoLN.cs" />
     <Compile Include="Pago\ObtenerPago\ObtenerPagosLN.cs" />
     <Compile Include="Pago\RegistrarPago\RegistrarPagoLN.cs" />
     <Compile Include="Producto\EditarProducto\EditarProductoLN.cs" />
