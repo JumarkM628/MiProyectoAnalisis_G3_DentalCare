@@ -65,7 +65,7 @@ namespace DentalCare.UI
 
             //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             //{
-            //    ClientId = "",
+            //    ClientId = "",                      
             //    ClientSecret = ""
             //});
 

@@ -27,7 +27,7 @@ using Microsoft.AspNet.Identity;
 
 namespace DentalCare.UI.Controllers
 {
-    [Authorize(Roles = "Admin,Recepcionista")]
+    [Authorize(Roles = "Admin,Recepcionista,Doctor")]
     public class ReporteriaController : Controller
     {
         private readonly IReporteProductosLN _reporteProductosLN;
@@ -349,6 +349,91 @@ namespace DentalCare.UI.Controllers
 
                 sb.Append(CerrarReporte());
                 return VistaReporte("Productos Utilizados", sb);
+            }
+        }
+
+        // Permite filtrar los productos utilizados por paciente y por rango de fechas.
+        // Los usuarios con rol Doctor/Doctora sólo verán los consumos asociados a sus citas.
+        public ActionResult ReportesProductosUtilizadosPorPaciente(int? pacienteId, DateTime? desde, DateTime? hasta)
+        {
+            using (var contexto = new Contexto())
+            {
+                var query = from uso in contexto.UsoProductos
+                            join prod in contexto.Productos on uso.ID_PRODUCTO equals prod.ID_PRODUCTO into prodGrp
+                            from prod in prodGrp.DefaultIfEmpty()
+                            join proc in contexto.Procedimientos on uso.ID_PROCEDIMIENTO equals proc.ID_PROCEDIMIENTO into procGrp
+                            from proc in procGrp.DefaultIfEmpty()
+                            join cita in contexto.Citas on proc.ID_CITA equals cita.IdCita into citaGrp
+                            from cita in citaGrp.DefaultIfEmpty()
+                            join uc in contexto.UsuarioCitas on cita.IdCita equals uc.IdCita into ucGrp
+                            from uc in ucGrp.DefaultIfEmpty()
+                            join paciente in contexto.Usuarios on uc.IdUsuario equals paciente.IdUsuario into pacienteGrp
+                            from paciente in pacienteGrp.DefaultIfEmpty()
+                            join estado in contexto.Estados on uso.ID_ESTADO equals estado.IdEstado into estadoGrp
+                            from estado in estadoGrp.DefaultIfEmpty()
+                            select new
+                            {
+                                Uso = uso,
+                                NombreProducto = prod != null ? prod.NOMBRE_PRODUCTO : "-",
+                                ProcedimientoDescripcion = proc != null ? proc.DESCRIPCION : "-",
+                                FechaCita = cita != null ? cita.Fecha : (DateTime?)null,
+                                NombreEstado = estado != null ? estado.NombreEstado : "-",
+                                NombrePaciente = paciente != null ? paciente.Nombre + " " + paciente.PrimerApellido : "Sin asignar",
+                                IdPaciente = paciente != null ? paciente.IdUsuario : (int?)null,
+                                IdDoctor = cita != null ? cita.IdDoctor : (int?)null
+                            };
+
+                var lista = query.ToList();
+
+                // Si el usuario es doctor/doctora, limitar al id del doctor
+                if (User.IsInRole("Doctor") || User.IsInRole("Doctora"))
+                {
+                    var aspNetId = User.Identity.GetUserId();
+                    var doc = contexto.Usuarios.FirstOrDefault(u => u.ASPNET_USER_ID == aspNetId);
+                    if (doc != null) lista = lista.Where(l => l.IdDoctor == doc.IdUsuario).ToList();
+                }
+
+                // Filtrado por paciente
+                if (pacienteId.HasValue) lista = lista.Where(l => l.IdPaciente == pacienteId.Value).ToList();
+
+                // Filtrado por fechas (fecha de la cita)
+                if (desde.HasValue) lista = lista.Where(l => l.FechaCita.HasValue && l.FechaCita.Value.Date >= desde.Value.Date).ToList();
+                if (hasta.HasValue) lista = lista.Where(l => l.FechaCita.HasValue && l.FechaCita.Value.Date <= hasta.Value.Date).ToList();
+
+                var sb = new System.Text.StringBuilder();
+                sb.Append(AbrirReporte("Productos Utilizados por Paciente",
+                                       "Consumo de productos filtrado por paciente y rango de fechas.",
+                                       "Productos utilizados"));
+
+                sb.Append(FiltroFechas("ReportesProductosUtilizadosPorPaciente", desde, hasta, lista.Count, "registros"));
+
+                if (!lista.Any())
+                {
+                    sb.Append(EstadoVacio("Sin resultados", "No se encontraron registros para los filtros seleccionados."));
+                }
+                else
+                {
+                    sb.Append("<div class=\"tabla-scroll\"><table class=\"rep-tabla\"><thead><tr>");
+                    sb.Append("<th>#</th><th>Paciente</th><th>Producto</th><th>Procedimiento</th><th>Cantidad</th><th>Fecha</th><th>Estado</th>");
+                    sb.Append("</tr></thead><tbody>");
+                    int i = 1;
+                    foreach (var item in lista)
+                    {
+                        sb.Append("<tr>");
+                        sb.Append("<td class=\"celda-num\">" + i++ + "</td>");
+                        sb.Append("<td class=\"celda-desc\">" + System.Net.WebUtility.HtmlEncode(item.NombrePaciente) + "</td>");
+                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(item.NombreProducto) + "</td>");
+                        sb.Append("<td>" + System.Net.WebUtility.HtmlEncode(item.ProcedimientoDescripcion) + "</td>");
+                        sb.Append("<td>" + (item.Uso.CANTIDAD.HasValue ? item.Uso.CANTIDAD.Value.ToString() : "&mdash;") + "</td>");
+                        sb.Append("<td>" + (item.FechaCita.HasValue ? item.FechaCita.Value.ToString("dd/MM/yyyy") : "&mdash;") + "</td>");
+                        sb.Append("<td><span class=\"rep-badge\">" + System.Net.WebUtility.HtmlEncode(item.NombreEstado) + "</span></td>");
+                        sb.Append("</tr>");
+                    }
+                    sb.Append("</tbody></table></div>");
+                }
+
+                sb.Append(CerrarReporte());
+                return VistaReporte("Productos Utilizados por Paciente", sb);
             }
         }
 
