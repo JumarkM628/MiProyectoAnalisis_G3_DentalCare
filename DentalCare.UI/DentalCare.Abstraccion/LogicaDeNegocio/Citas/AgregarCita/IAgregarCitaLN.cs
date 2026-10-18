@@ -10,6 +10,6 @@ namespace DentalCare.Abstraccion.LogicaDeNegocio.Citas.AgregarCita
     public interface IAgregarCitaLN
     {
         string Agregar(CitaDto dto);
-        List<string> ObtenerHorasOcupadas(int idDoctor, DateTime fecha);
+        List<string> ObtenerHorasOcupadas(int idDoctor, DateTime fecha, int? idCitaExcluir = null);
     }
 }

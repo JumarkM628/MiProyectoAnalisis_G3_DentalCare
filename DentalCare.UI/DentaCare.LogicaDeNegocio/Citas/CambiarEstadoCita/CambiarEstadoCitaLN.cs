@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using DentalCare.Abstraccion.AccesoADatos.Citas.CambiarEstadoCita;
 using DentalCare.Abstraccion.AccesoADatos.UsoProducto;
 using DentalCare.Abstraccion.LogicaDeNegocio.Citas.CambiarEstadoCita;
+using DentalCare.Abstraccion.Modelo.Citas;
 using DentalCare.AccesoADatos;
 using DentalCare.AccesoADatos.Citas.CambiarEstadoCita;
 using DentalCare.AccesoADatos.UsoProducto.RegistrarUsoProducto;
@@ -87,6 +88,24 @@ namespace DentaCare.LogicaDeNegocio.Citas.CambiarEstadoCita
             if (!_cambiarAD.ExisteCita(idCita))
                 return "No se encontró la cita.";
             _cambiarAD.RegistrarAusencia(idCita);
+            return null;
+        }
+        //validación de la reprogramación de la cita
+        public string Reprogramar(CitaDto dto)
+        {
+            if (!_cambiarAD.ExisteCita(dto.IdCita))
+                return "No se encontró la cita.";
+
+            if (string.IsNullOrEmpty(dto.HoraString) || !TimeSpan.TryParse(dto.HoraString, out var hora))
+                return "El formato de la hora no es válido.";
+
+            if (hora < new TimeSpan(8, 0, 0) || hora > new TimeSpan(17, 0, 0))
+                return "El horario de atención es de 8:00 a.m. a 5:00 p.m.";
+
+            if (_cambiarAD.HorarioOcupadoPorOtra(dto.IdCita, dto.IdDoctor, dto.Fecha.Value, hora))
+                return "El doctor ya tiene una cita agendada en esa fecha y hora. Por favor seleccione otro horario.";
+
+            _cambiarAD.Reprogramar(dto.IdCita, dto.Fecha.Value, hora, dto.IdDoctor, dto.IdMotivo, dto.IdEstado);
             return null;
         }
         private void EnviarCorreoRechazo(string destinatario, int idCita)

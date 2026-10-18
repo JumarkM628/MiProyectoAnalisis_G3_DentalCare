@@ -75,7 +75,13 @@ namespace DentalCare.UI.Controllers
             var horas = _agregarLN.ObtenerHorasOcupadas(idDoctor, fecha);
             return Json(horas, JsonRequestBehavior.AllowGet);
         }
-
+        // GET: Cita/HorasOcupadas?idDoctor=1&fecha=2026-10-14
+        [HttpGet]
+        public JsonResult HorasOcupadas(int idDoctor, DateTime fecha, int? idCita = null)
+        {
+            var horas = _agregarLN.ObtenerHorasOcupadas(idDoctor, fecha, idCita);
+            return Json(horas, JsonRequestBehavior.AllowGet);
+        }
         // GET: Cita/Detalle/5
         public ActionResult Detalle(int id)
         {
@@ -87,6 +93,7 @@ namespace DentalCare.UI.Controllers
             }
             return View("DetalleCita", cita);
         }
+
 
         // GET: Cita/AgregarCita
         public ActionResult AgregarCita()
@@ -200,24 +207,17 @@ namespace DentalCare.UI.Controllers
         public ActionResult Editar(CitaDto dto)
         {
             ModelState.Remove("Hora");
+            ModelState.Remove("CedulaPaciente");   // el formulario de editar no la envía
             if (!ModelState.IsValid)
             {
                 CargarDropdowns(dto);
                 return View(dto);
             }
 
-            string nombreEstado = ObtenerNombreEstado(dto.IdEstado);
-            if (string.IsNullOrEmpty(nombreEstado))
-            {
-                TempData["Error"] = "Estado inválido.";
-                CargarDropdowns(dto);
-                return View(dto);
-            }
-
-            string error = _cambiarEstadoLN.EditarEstado(dto.IdCita, nombreEstado, 1);
+            string error = _cambiarEstadoLN.Reprogramar(dto);
             if (error != null)
             {
-                TempData["Error"] = error;
+                ModelState.AddModelError(string.Empty, error);
                 CargarDropdowns(dto);
                 return View(dto);
             }

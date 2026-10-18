@@ -34,7 +34,30 @@ namespace DentalCare.AccesoADatos.Citas.CambiarEstadoCita
                 throw new Exception($"El estado '{nombreEstado}' no existe en la base de datos.");
             return estado.IdEstado;
         }
+        //metodos de citas
+        public bool HorarioOcupadoPorOtra(int idCita, int idDoctor, DateTime fecha, TimeSpan hora)
+        {
+            var estadosQueLiberan = _contexto.Estados
+                .Where(e => e.NombreEstado == "Cancelada" || e.NombreEstado == "Rechazada")
+                .Select(e => e.IdEstado);
 
+            return _contexto.Citas.Any(c => c.IdCita != idCita
+                && !estadosQueLiberan.Contains(c.IdEstado)
+                && c.IdDoctor == idDoctor
+                && c.Fecha == fecha.Date
+                && c.Hora == hora);
+        }
+
+        public void Reprogramar(int idCita, DateTime fecha, TimeSpan hora, int idDoctor, int idMotivo, int idEstado)
+        {
+            var cita = _contexto.Citas.First(c => c.IdCita == idCita);
+            cita.Fecha = fecha.Date;
+            cita.Hora = hora;
+            cita.IdDoctor = idDoctor;
+            cita.IdMotivo = idMotivo;
+            cita.IdEstado = idEstado;
+            _contexto.SaveChanges();
+        }
         // Cambiar estado usando el nombre, no el ID
         public void CambiarEstado(int idCita, string nombreEstado, int idMotivoCancelacion = 1)
         {

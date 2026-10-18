@@ -16,6 +16,8 @@ namespace DentalCare.Abstraccion.AccesoADatos.Citas.CambiarEstadoCita
         void RegistrarFinalizacion(int idCita, TimeSpan horaFin);
         bool ExisteCita(int idCita);
         string ObtenerCorreoPaciente(int idCita);
+        bool HorarioOcupadoPorOtra(int idCita, int idDoctor, DateTime fecha, TimeSpan hora);
+        void Reprogramar(int idCita, DateTime fecha, TimeSpan hora, int idDoctor, int idMotivo, int idEstado);
 
     }
 }

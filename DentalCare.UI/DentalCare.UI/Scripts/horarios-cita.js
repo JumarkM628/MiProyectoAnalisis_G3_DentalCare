@@ -69,7 +69,7 @@ window.DentalCareHorarios = (function () {
             var url = opc.url +
                 '?idDoctor=' + encodeURIComponent(doctor.value) +
                 '&fecha=' + encodeURIComponent(fecha.value);
-
+            if (opc.idCita) url += '&idCita=' + encodeURIComponent(opc.idCita);
             fetch(url, { credentials: 'same-origin' })
                 .then(function (r) { return r.json(); })
                 .then(pintar)

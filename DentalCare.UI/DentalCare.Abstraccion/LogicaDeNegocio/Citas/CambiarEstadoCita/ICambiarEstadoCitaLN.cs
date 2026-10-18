@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DentalCare.Abstraccion.Modelo.Citas;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,6 @@ namespace DentalCare.Abstraccion.LogicaDeNegocio.Citas.CambiarEstadoCita
         string Finalizar(int idCita, TimeSpan horaFin);
         string EditarEstado(int idCita, string nuevoEstado, int motivoCancelacion = 1);
         string Ausente(int idCita);
+        string Reprogramar(CitaDto dto);
     }
 }

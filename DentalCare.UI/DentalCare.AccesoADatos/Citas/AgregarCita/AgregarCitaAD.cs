@@ -85,10 +85,11 @@ namespace DentalCare.AccesoADatos.Citas.AgregarCita
         }
 
         // Horas ya ocupadas del doctor en una fecha (formato HH:mm)
-        public List<string> ObtenerHorasOcupadas(int idDoctor, DateTime fecha)
+        public List<string> ObtenerHorasOcupadas(int idDoctor, DateTime fecha, int? idCitaExcluir = null)
         {
             var horas = CitasQueOcupanHorario()
-                .Where(c => c.IdDoctor == idDoctor && c.Fecha == fecha && c.Hora != null)
+                .Where(c => c.IdDoctor == idDoctor && c.Fecha == fecha && c.Hora != null
+                         && (!idCitaExcluir.HasValue || c.IdCita != idCitaExcluir.Value))
                 .Select(c => c.Hora.Value)
                 .ToList();
 
