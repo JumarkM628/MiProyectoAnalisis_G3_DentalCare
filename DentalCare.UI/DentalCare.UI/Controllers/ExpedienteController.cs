@@ -124,6 +124,7 @@ namespace DentalCare.UI.Controllers
                     Desde = desde,
                     Hasta = hasta,
                     IdTratamiento = idTratamiento,
+                    Detalle = _obtenerAlertaLN.Obtener(idExpediente),   
                     Procedimientos = procedimientos
                 };
                 return View("ProcedimientosExpediente", vm);

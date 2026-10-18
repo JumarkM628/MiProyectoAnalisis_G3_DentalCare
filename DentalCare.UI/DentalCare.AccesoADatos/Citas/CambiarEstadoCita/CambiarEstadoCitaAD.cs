@@ -69,7 +69,6 @@ namespace DentalCare.AccesoADatos.Citas.CambiarEstadoCita
                     var cita = _contexto.Citas.First(c => c.IdCita == idCita);
                     cita.IdEstado = idEstado;
                     cita.IdCancelacion = idMotivoCancelacion;
-                    cita.Fecha = DateTime.Now;
                     _contexto.SaveChanges();
                     trans.Commit();
                 }

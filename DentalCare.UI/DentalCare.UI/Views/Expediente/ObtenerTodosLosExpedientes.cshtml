@@ -153,6 +153,11 @@
                                             "DetallesAlerta",
                                             new { id = e.IdExpediente },
                                             new { @class = "accion-btn accion-ver" })
+                                        @Html.ActionLink(
+                                            "Historial",
+                                            "ProcedimientosExpediente",
+                                            new { idExpediente = e.IdExpediente },
+                                            new { @class = "accion-btn accion-ver" })
 
                                         @Html.ActionLink(
                                             "Odontograma",

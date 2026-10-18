@@ -49,7 +49,7 @@ namespace DentalCare.AccesoADatos.Reporteria.Expediente
             if (idTratamiento.HasValue)
                 query = query.Where(p => p.IdTratamiento == idTratamiento.Value);
 
-            return query.OrderByDescending(p => p.Fecha).ToList();
+            return query.OrderBy(p => p.Fecha).ThenBy(p => p.IdProcedimiento).ToList();
         }
     }
 }
