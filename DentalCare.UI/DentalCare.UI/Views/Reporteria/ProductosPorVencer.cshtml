@@ -12,16 +12,16 @@
         <div class="alerta-item alerta-rojo">@ViewBag.Error</div>
     }
 
-    <div style="margin:12px 0;">
-        @using (Html.BeginForm("ProductosPorVencer", "Reporteria", FormMethod.Get))
-        {
-            <label>Fecha Inicio</label>
-            <input type="date" name="fechaInicio" value="@(Request["fechaInicio"] ?? DateTime.Today.ToString("yyyy-MM-dd"))" class="form-control" style="display:inline-block;width:auto;margin-right:8px;" />
-            <label>Fecha Fin</label>
-            <input type="date" name="fechaFin" value="@(Request["fechaFin"] ?? DateTime.Today.AddDays(30).ToString("yyyy-MM-dd"))" class="form-control" style="display:inline-block;width:auto;margin-right:8px;" />
-            <button type="submit" class="btn-filtrar-reporte">Consultar</button>
-        }
-    </div>
+<div style="margin:12px 0;">
+    @using (Html.BeginForm("ProductosPorVencer", "Reporteria", FormMethod.Post))
+    {
+        <label>Fecha Inicio</label>
+        <input type="date" name="fechaInicio" value="@(Request["fechaInicio"] ?? DateTime.Today.ToString("yyyy-MM-dd"))" class="form-control" style="display:inline-block;width:auto;margin-right:8px;" />
+        <label>Fecha Fin</label>
+        <input type="date" name="fechaFin" value="@(Request["fechaFin"] ?? DateTime.Today.AddDays(30).ToString("yyyy-MM-dd"))" class="form-control" style="display:inline-block;width:auto;margin-right:8px;" />
+        <button type="submit" class="btn-filtrar-reporte">Consultar</button>
+    }
+</div>
 
     @if (Model == null || !Model.Any())
     {

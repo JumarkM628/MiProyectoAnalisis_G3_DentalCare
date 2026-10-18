@@ -73,6 +73,7 @@ namespace DentalCare.UI.Controllers
         {
             var pago = _actualizarLN.ObtenerPorId(id);
             if (pago == null) { TempData["Error"] = "No se encontró el pago."; return RedirectToAction("HistorialPagos"); }
+            if (pago.NombreEstado == "Activo") { TempData["Error"] = "El pago ya está cerrado (pagado) y no puede modificarse."; return RedirectToAction("HistorialPagos"); }
             return View(pago);
         }
 
@@ -80,6 +81,12 @@ namespace DentalCare.UI.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult MarcarPendienteConfirmado(int id)
         {
+            var pago = _actualizarLN.ObtenerPorId(id);
+            if (pago != null && pago.NombreEstado == "Activo")
+            {
+                TempData["Error"] = "El pago ya está cerrado (pagado) y no puede modificarse.";
+                return RedirectToAction("HistorialPagos");
+            }
             string error = _actualizarLN.RegistrarPendiente(id);
             TempData[error != null ? "Error" : "Exito"] = error ?? "Pago marcado como pendiente.";
             return RedirectToAction("HistorialPagos");
@@ -90,6 +97,7 @@ namespace DentalCare.UI.Controllers
         {
             var pago = _actualizarLN.ObtenerPorId(id);
             if (pago == null) { TempData["Error"] = "No se encontró el pago."; return RedirectToAction("HistorialPagos"); }
+            if (pago.NombreEstado == "Activo") { TempData["Error"] = "El pago ya está cerrado (pagado) y no puede modificarse."; return RedirectToAction("HistorialPagos"); }
             return View(pago);
         }
 
@@ -97,6 +105,12 @@ namespace DentalCare.UI.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult MarcarPagadoConfirmado(int id)
         {
+            var pago = _actualizarLN.ObtenerPorId(id);
+            if (pago != null && pago.NombreEstado == "Activo")
+            {
+                TempData["Error"] = "El pago ya está cerrado (pagado) y no puede modificarse.";
+                return RedirectToAction("HistorialPagos");
+            }
             string error = _actualizarLN.ActualizarAPagado(id);
             TempData[error != null ? "Error" : "Exito"] = error ?? "Pago actualizado a pagado.";
             return RedirectToAction("HistorialPagos");

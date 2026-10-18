@@ -196,5 +196,14 @@
             <span class="reporte-arrow">Ver reporte →</span>
         </a>
 
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="/Reporteria/ProductosPorVencer" class="reporte-card">
+                <div class="reporte-icon">⏳</div>
+                <h4>Reporte de Productos por Vencer</h4>
+                <p>Consultar productos próximos a vencer por rango de fechas.</p>
+                <span class="reporte-arrow">Ver reporte →</span>
+            </a>
+        }
     </div>
 </div>
