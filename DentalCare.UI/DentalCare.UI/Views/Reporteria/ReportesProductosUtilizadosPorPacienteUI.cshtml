@@ -1,0 +1,42 @@
+@{
+    ViewBag.Title = "Productos utilizados por paciente";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="trat-form-card">
+    <div class="trat-card-bar">Productos utilizados por paciente</div>
+    <div class="trat-card-body">
+        <form method="get" action="/Reporteria/ReportesProductosUtilizadosPorPaciente" class="filtro-barra">
+            <div class="filtro-campo">
+                <label class="trat-label" for="pacienteId">Paciente</label>
+                <select id="pacienteId" name="pacienteId" class="trat-input">
+                    <option value="">-- Todos --</option>
+                    @if (ViewBag.Pacientes != null)
+                    {
+                        foreach (var p in (System.Collections.Generic.List<System.Web.Mvc.SelectListItem>)ViewBag.Pacientes)
+                        {
+                            <option value="@p.Value">@p.Text</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="filtro-campo">
+                <label class="trat-label" for="desde">Desde</label>
+                <input type="date" id="desde" name="desde" class="trat-input" />
+            </div>
+
+            <div class="filtro-campo">
+                <label class="trat-label" for="hasta">Hasta</label>
+                <input type="date" id="hasta" name="hasta" class="trat-input" />
+            </div>
+
+            <div style="display:flex;gap:12px;align-items:flex-end;">
+                <button type="submit" class="btn-inv-primary">Filtrar</button>
+                <a href="/Reporteria" class="btn-inv-cancelar" style="display:inline-flex;align-items:center;">Volver</a>
+            </div>
+        </form>
+
+        <p style="margin-top:12px;color:#6b7f92;">Al enviar el formulario se generará el reporte en formato HTML.</p>
+    </div>
+</div>

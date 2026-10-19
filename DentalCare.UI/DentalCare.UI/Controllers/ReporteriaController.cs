@@ -150,6 +150,17 @@ namespace DentalCare.UI.Controllers
             _obtenerTodosLosUsuariosLN = new ObtenerTodosLosUsuariosLN();
         }
 
+        // Interfaz normal (formulario) para filtrar productos utilizados por paciente y rango de fechas.
+        public ActionResult ReportesProductosUtilizadosPorPacienteUI()
+        {
+            var lista = _obtenerTodosLosUsuariosLN.Obtener() ?? new System.Collections.Generic.List<DentalCare.Abstraccion.Modelo.Usuarios.UsuarioDto>();
+            var pacientes = lista.Where(u => string.Equals(u.RoleName, "Paciente", System.StringComparison.OrdinalIgnoreCase))
+                                 .Select(u => new SelectListItem { Value = u.IdUsuario.ToString(), Text = u.NombreCompleto })
+                                 .ToList();
+            ViewBag.Pacientes = pacientes;
+            return View();
+        }
+
         // ─────────────────────────────────────────────────────────────
         // Ayudantes de presentación de los reportes con StringBuilder.
         // Solo arman HTML: no consultan nada ni cambian comportamiento.
