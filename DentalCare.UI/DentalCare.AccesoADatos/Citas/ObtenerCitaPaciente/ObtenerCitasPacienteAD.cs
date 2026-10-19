@@ -53,6 +53,7 @@ namespace DentalCare.AccesoADatos.Citas.ObtenerCitaPaciente
                 select new
                 {
                     cita.IdCita,
+                    cita.Hora,
                     cita.Fecha,
                     cita.IdDoctor,
                     cita.IdMotivo,
@@ -69,6 +70,7 @@ namespace DentalCare.AccesoADatos.Citas.ObtenerCitaPaciente
             {
                 IdCita = r.IdCita,
                 Fecha = r.Fecha,
+                HoraString = r.Hora.HasValue ? r.Hora.Value.ToString(@"hh\:mm") : "—",
                 IdDoctor = r.IdDoctor ?? 0,
                 IdMotivo = r.IdMotivo,
                 IdEstado = r.IdEstado,
