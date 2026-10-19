@@ -102,12 +102,7 @@ namespace DentalCare.UI.Controllers
         }
 
         // GET: Cita/HorasOcupadas?idDoctor=1&fecha=2026-10-14
-        [HttpGet]
-        public JsonResult HorasOcupadas(int idDoctor, DateTime fecha)
-        {
-            var horas = _agregarLN.ObtenerHorasOcupadas(idDoctor, fecha);
-            return Json(horas, JsonRequestBehavior.AllowGet);
-        }
+        
         // GET: Cita/HorasOcupadas?idDoctor=1&fecha=2026-10-14
         [HttpGet]
         public JsonResult HorasOcupadas(int idDoctor, DateTime fecha, int? idCita = null)
