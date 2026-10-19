@@ -43,13 +43,46 @@ namespace DentalCare.UI.Controllers
         }
 
         // GET: Cita/ObtenerTodasLasCitas
-        public ActionResult ObtenerTodasLasCitas()
+        // Permite filtros opcionales y, si el usuario es Doctor, limita a sus citas
+        public ActionResult ObtenerTodasLasCitas(DateTime? desde, DateTime? hasta, int? idEstado)
         {
             List<CitaDto> lista = _obtenerLN.Obtener();
+
+            // Si es doctor, limitar a sus citas
+            if (User.IsInRole("Doctor"))
+            {
+                string aspNetId = User.Identity.GetUserId();
+                using (var ctx = new Contexto())
+                {
+                    var doc = ctx.Usuarios.FirstOrDefault(u => u.ASPNET_USER_ID == aspNetId);
+                    if (doc != null)
+                    {
+                        lista = lista.Where(c => c.IdDoctor == doc.IdUsuario).ToList();
+                    }
+                }
+            }
+
+            // Aplicar filtros por rango de fechas y estado
+            if (desde.HasValue)
+                lista = lista.Where(c => c.Fecha.HasValue && c.Fecha.Value.Date >= desde.Value.Date).ToList();
+            if (hasta.HasValue)
+                lista = lista.Where(c => c.Fecha.HasValue && c.Fecha.Value.Date <= hasta.Value.Date).ToList();
+            if (idEstado.HasValue)
+                lista = lista.Where(c => c.IdEstado == idEstado.Value).ToList();
 
             // Recordatorio de las citas del día (solo para el personal)
             if (!User.IsInRole("Paciente"))
                 ViewBag.CitasHoy = FiltrarCitasDeHoy(lista);
+
+            // Estados para el filtro
+            using (var ctx = new Contexto())
+            {
+                ViewBag.ListaEstados = ctx.Estados.Select(e => new SelectListItem { Value = e.IdEstado.ToString(), Text = e.NombreEstado }).ToList();
+            }
+
+            ViewBag.FiltroDesde = desde?.ToString("yyyy-MM-dd") ?? string.Empty;
+            ViewBag.FiltroHasta = hasta?.ToString("yyyy-MM-dd") ?? string.Empty;
+            ViewBag.FiltroEstado = idEstado?.ToString() ?? string.Empty;
 
             return View(lista);
         }

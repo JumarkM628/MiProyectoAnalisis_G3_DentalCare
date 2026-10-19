@@ -39,11 +39,40 @@
 
     <!-- Buscador -->
     <div class="usuarios-filtros">
-        <div class="buscador-wrapper">
-            <i class="fa fa-search"></i>
-            <input type="text" id="buscador" class="usuario-input"
-                   placeholder="Buscar por paciente, doctor o motivo..."
-                   onkeyup="filtrarTabla()" />
+        <form method="get" action="/Cita/ObtenerTodasLasCitas" style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:8px;">
+                <label style="font-weight:700;margin-right:6px;">Desde</label>
+                <input type="date" name="desde" class="usuario-input" value="@ViewBag.FiltroDesde" />
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <label style="font-weight:700;margin-right:6px;">Hasta</label>
+                <input type="date" name="hasta" class="usuario-input" value="@ViewBag.FiltroHasta" />
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <label style="font-weight:700;margin-right:6px;">Estado</label>
+                <select name="idEstado" class="usuario-input" style="height:40px;padding:8px 10px;">
+                    <option value="">-- Todos --</option>
+                    @if (ViewBag.ListaEstados != null)
+                    {
+                        foreach (var e in (System.Collections.Generic.List<System.Web.Mvc.SelectListItem>)ViewBag.ListaEstados)
+                        {
+                            <option value="@e.Value" @(e.Value == (string)ViewBag.FiltroEstado ? "selected" : "")>@e.Text</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div style="margin-left:auto;display:flex;gap:8px;">
+                <button type="submit" class="btn-usuario-primary">Filtrar</button>
+                <a href="/Cita/ObtenerTodasLasCitas" class="btn-usuario-primary" style="background:#eef2f7;color:#16302D;padding:10px 14px;border-radius:8px;text-decoration:none;">Limpiar</a>
+            </div>
+        </form>
+        <div style="margin-top:8px;">
+            <div class="buscador-wrapper">
+                <i class="fa fa-search"></i>
+                <input type="text" id="buscador" class="usuario-input"
+                       placeholder="Buscar por paciente, doctor o motivo..."
+                       onkeyup="filtrarTabla()" />
+            </div>
         </div>
     </div>
 
