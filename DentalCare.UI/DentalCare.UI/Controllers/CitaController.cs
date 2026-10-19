@@ -157,6 +157,9 @@ namespace DentalCare.UI.Controllers
             }
 
             TempData["Exito"] = "Cita registrada correctamente.";
+            // Si el flujo actual fue invocado por un paciente, redirigir a MisCitas
+            if (User != null && User.IsInRole("Paciente"))
+                return RedirectToAction("MisCitas");
             return RedirectToAction("ObtenerTodasLasCitas");
         }
 
@@ -421,7 +424,8 @@ namespace DentalCare.UI.Controllers
             }
 
             TempData["Exito"] = "¡Tu cita fue registrada correctamente! Te esperamos.";
-            return RedirectToAction("ObtenerTodasLasCitas");
+            // Si el usuario creó la cita desde la interfaz de paciente, devolver a sus citas
+            return RedirectToAction("MisCitas");
         }
 
         // ---------------------------------------------------------------
