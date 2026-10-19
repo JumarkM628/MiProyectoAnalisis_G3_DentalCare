@@ -14,7 +14,7 @@
     var exp = Model.Detalle?.Expediente;
     var alerta = Model.Detalle?.Alerta;
     var tieneAlerta = alerta != null && !string.IsNullOrWhiteSpace(alerta.AntecedentesMedicos);
-    var hayFiltros = Model.Desde.HasValue || Model.Hasta.HasValue || Model.IdTratamiento.HasValue;
+    var hayFiltros = Model.Desde.HasValue || Model.Hasta.HasValue;
     var total = Model.Procedimientos == null ? 0 : Model.Procedimientos.Count;
 }
 
@@ -138,10 +138,7 @@
                     <label for="hasta">Hasta</label>
                     <input type="date" id="hasta" name="hasta" value="@(Model.Hasta?.ToString("yyyy-MM-dd") ?? "")" />
                 </div>
-                <div class="filtro">
-                    <label for="idTratamiento">ID de tratamiento</label>
-                    <input type="number" min="1" id="idTratamiento" name="idTratamiento" value="@(Model.IdTratamiento?.ToString() ?? "")" />
-                </div>
+                @* Eliminado filtro por ID de tratamiento: solo filtros por fecha *@
                 <div class="filtro filtro-botones">
                     <button type="submit" class="btn-filtrar">Filtrar</button>
                     @if (hayFiltros)

@@ -110,12 +110,12 @@ namespace DentalCare.UI.Controllers
         public ActionResult Delete(int id) => View();
         [HttpPost] public ActionResult Delete(int id, FormCollection c) { try { return RedirectToAction("Index"); } catch { return View(); } }
 
-        public ActionResult ProcedimientosExpediente(int idExpediente, DateTime? desde, DateTime? hasta, int? idTratamiento)
+        public ActionResult ProcedimientosExpediente(int idExpediente, DateTime? desde, DateTime? hasta)
         {
             try
             {
                 var ln = new ReporteExpedienteLN();
-                var procedimientos = ln.ObtenerProcedimientosPorExpediente(idExpediente, desde, hasta, idTratamiento);
+                var procedimientos = ln.ObtenerProcedimientosPorExpediente(idExpediente, desde, hasta);
                 // El trigger trg_Expediente_Update registra los cambios automáticamente — BitacoraLN eliminado
 
                 var vm = new Abstraccion.Modelo.Expediente.ProcedimientosExpedienteModelDto
@@ -123,10 +123,33 @@ namespace DentalCare.UI.Controllers
                     IdExpediente = idExpediente,
                     Desde = desde,
                     Hasta = hasta,
-                    IdTratamiento = idTratamiento,
                     Detalle = _obtenerAlertaLN.Obtener(idExpediente),   
                     Procedimientos = procedimientos
                 };
+
+                // Registrar visualización en la bitácora cuando quien consulta es doctor
+                try
+                {
+                    if (User != null && User.IsInRole("Doctor"))
+                    {
+                        using (var ctx = new Contexto())
+                        {
+                            var desc = $"Usuario: {User.Identity.Name} consultó procedimientos del expediente {idExpediente}. Filtros: desde={desde?.ToString("yyyy-MM-dd") ?? ""}, hasta={hasta?.ToString("yyyy-MM-dd") ?? ""}";
+                            ctx.Eventos.Add(new DentalCare.AccesoADatos.Entidades.Bitacora.EventoEntidad
+                            {
+                                TablaDeEvento = "Expediente",
+                                TipoDeEvento = "Visualizacion",
+                                FechaDeEvento = DateTime.Now,
+                                DescripcionDeEvento = desc
+                            });
+                            ctx.SaveChanges();
+                        }
+                    }
+                }
+                catch
+                {
+                    // No bloquear la vista si falla el registro de bitácora
+                }
                 return View("ProcedimientosExpediente", vm);
             }
             catch (ArgumentException ex)
